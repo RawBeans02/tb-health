@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+.next/
+coverage/
+.env*
+!.env.example
+.DS_Store
+*.log
+# Keep the raw design zip out of git; commit the unzipped files in design/
+*.zip
