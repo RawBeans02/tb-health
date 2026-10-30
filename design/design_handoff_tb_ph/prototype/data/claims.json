@@ -1,0 +1,778 @@
+{
+ "meta": {
+  "title": "TB PH claims registry",
+  "generated": "2026-10-30",
+  "count": 44,
+  "rule": "Only show a claim with its source link. Numbers come from tb-ph-data.json. Regional snapshots come from different years and sources; always show the period."
+ },
+ "sources": {
+  "S1": {
+   "title": "WHO, Global Tuberculosis Report 2025 (data: WHO GTB report repository, snapshot 2025-07-30)",
+   "url": "https://www.who.int/teams/global-tuberculosis-programme/tb-reports/global-tuberculosis-report-2025"
+  },
+  "S3": {
+   "title": "WHO provisional monthly TB notifications",
+   "url": "https://extranet.who.int/tme/generateCSV.asp?ds=provisional_notifications"
+  },
+  "S4": {
+   "title": "PhilHealth, List of Accredited TB DOTS Clinics (30 Sep 2026)",
+   "url": "https://www.philhealth.gov.ph/partners/providers/facilities/accredited/DOTS_093026.pdf"
+  },
+  "S11": {
+   "title": "DZRH, DOH on Metro Manila TB cases (Mar 2026)",
+   "url": "https://dzrh.com.ph/post/more-contagious-than-covid-doh-explains-why-tb-cases-spiked-to-102000-in-metro-manila-post-lockdown"
+  },
+  "S12": {
+   "title": "WHO Philippines and DOH joint release (12 Nov 2025)",
+   "url": "https://www.who.int/philippines/news/detail/12-11-2025-who--doh-target-12m-filipinos-to-be-screened-for-tuberculosis-by-2026--philippines-aims-to-double-budget-for-tb-services"
+  },
+  "S13": {
+   "title": "PhilHealth news (11 Nov 2024): TB-DOTS package",
+   "url": "https://www.philhealth.gov.ph/news/up/article/2024/news_6731aabf922b2.php"
+  },
+  "S17": {
+   "title": "First national TB patient cost survey, PLOS ONE (2022)",
+   "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8884492/"
+  },
+  "S20": {
+   "title": "Stop TB Partnership, Philippines country brief",
+   "url": "https://www.stoptb.org/sites/default/files/documents/Philippines.pdf"
+  },
+  "S21": {
+   "title": "Philstar (28 Mar 2025): DOH target of 300 per 100,000 by 2030",
+   "url": "https://www.philstar.com/headlines/2025/03/28/2431788/doh-intensifies-search-unreported-tb-cases-ensures-treatment/amp/"
+  },
+  "S24": {
+   "title": "GMA News: PhilHealth YAKAP services (chest X-ray; 4,000+ clinics, Jan 2026)",
+   "url": "https://www.gmanetwork.com/news/topstories/nation/978959/philhealth-yakap-s-services-75-free-medicines-who-can-avail-and-how/story"
+  },
+  "S25": {
+   "title": "Cepheid (21 Mar 2025): Finding Missing TB Cases, The Philippines' Need for Speed",
+   "url": "https://prod-content.cepheid.com/en-CA/insights/insight-hub/community-and-global-health/2025/03/finding-missing-tuberculosis-tb-cases-philippines-need-for-speed.html"
+  },
+  "S26": {
+   "title": "Devex: Connecting the dots, optimizing TB diagnostics in the Philippines",
+   "url": "https://devex.shorthandstories.com/connecting-the-dots-optimizing-tb-diagnostics-in-the-philippines"
+  },
+  "S28": {
+   "title": "WHO Global TB Report 2025, featured topic: impact of 2025 funding cuts",
+   "url": "https://www.who.int/teams/global-programme-on-tuberculosis-and-lung-health/tb-reports/global-tuberculosis-report-2025/featured-topics/Impact-of-2025-funding-cuts"
+  },
+  "S29": {
+   "title": "Context (Thomson Reuters Foundation): How funding cuts affected TB services around the world",
+   "url": "https://www.context.news/socioeconomic-inclusion/how-funding-cuts-affected-tb-services-around-the-world"
+  },
+  "S30": {
+   "title": "Stop TB Partnership (3 Mar 2025): Impact of US Government funding halt on TB responses",
+   "url": "https://www.stoptb.org/sites/default/files/documents/Disruption US FUNDING halt030325.pdf"
+  },
+  "S31": {
+   "title": "GMA News: DOH calls for more investments to end TB by 2030 (treatment success vs 90% target)",
+   "url": "https://www.gmanetwork.com/news/topstories/nation/968970/doh-calls-for-more-investments-collaborations-to-end-tb-by-2030/story"
+  },
+  "S32": {
+   "title": "The Voice News Weekly (Apr 2024): DOH Central Luzon on TB",
+   "url": "https://thevoicenewsweekly.com/%f0%9d%90%82%f0%9d%90%a8%f0%9d%90%a6%f0%9d%90%9b%f0%9d%90%9a%f0%9d%90%ad%f0%9d%90%a2%f0%9d%90%a7%f0%9d%90%a0-%f0%9d%90%93%f0%9d%90%81-%f0%9d%90%ad%f0%9d%90%a1%f0%9d%90%ab%f0%9d%90%a8%f0%9d%90%ae"
+  },
+  "S33": {
+   "title": "Philippine News Agency (4 Aug 2023): DOH-11 TB cases Jan to Jun 2023",
+   "url": "https://beta.pna.gov.ph/articles/1207145"
+  },
+  "S34": {
+   "title": "Inquirer (21 Dec 2024): 1,280 TB cases logged in Tondo",
+   "url": "https://newsinfo.inquirer.net/?p=2017587"
+  }
+ },
+ "claims": [
+  {
+   "id": "burden-cases",
+   "topic": "burden",
+   "en": "About 724,000 people in the Philippines fell ill with TB in 2024. That is about 1,980 a day.",
+   "fil": "Mga 724,000 katao sa Pilipinas ang nagkasakit ng TB noong 2024. Mga 1,980 iyan bawat araw.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate (range 399,000 to 1.18 million)",
+   "data_key": "headline_2024.estimated_cases",
+   "year": 2024,
+   "use_on": [
+    "home",
+    "data",
+    "learn"
+   ]
+  },
+  {
+   "id": "burden-rate",
+   "topic": "burden",
+   "en": "Our TB rate is 625 per 100,000 people, almost 5 times the world rate of 131.",
+   "fil": "Ang antas ng TB sa atin ay 625 bawat 100,000 katao, halos 5 beses ng pandaigdigang antas na 131.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate",
+   "data_key": "headline_2024.incidence_rate_per_100k",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "burden-rank",
+   "topic": "burden",
+   "en": "The Philippines has the 3rd-most TB cases in the world, 6.8% of the global total.",
+   "fil": "Pangatlo ang Pilipinas sa pinakamaraming kaso ng TB sa mundo, 6.8% ng kabuuan.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate",
+   "data_key": "headline_2024.share_of_global_cases_pct",
+   "year": 2024,
+   "use_on": [
+    "data",
+    "learn"
+   ]
+  },
+  {
+   "id": "burden-sea",
+   "topic": "burden",
+   "en": "Among countries with over 1 million people, only Papua New Guinea has a higher TB rate. In Southeast Asia, ours is the highest.",
+   "fil": "Sa mga bansang may higit 1 milyong tao, Papua New Guinea lang ang may mas mataas na antas ng TB. Sa Timog-Silangang Asya, tayo ang pinakamataas.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate",
+   "data_key": "global_comparison.top8_by_rate_over_1M_people",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "burden-trend",
+   "topic": "burden",
+   "en": "Since 2015, our TB rate rose 13.6%. The world's fell 12.3%.",
+   "fil": "Mula 2015, tumaas nang 13.6% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang 12.3%.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate",
+   "data_key": "headline_2024.incidence_rate_change_since_2015_pct",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "burden-deaths",
+   "topic": "burden",
+   "en": "TB killed about 37,000 people in the Philippines in 2024, nearly 100 a day.",
+   "fil": "Mga 37,000 katao sa Pilipinas ang namatay sa TB noong 2024, halos 100 bawat araw.",
+   "sources": [
+    "S1",
+    "S12"
+   ],
+   "kind": "WHO estimate (range 32,800 to 42,400)",
+   "data_key": "headline_2024.estimated_deaths",
+   "year": 2024,
+   "use_on": [
+    "data",
+    "learn"
+   ]
+  },
+  {
+   "id": "gap-missed",
+   "topic": "detection",
+   "en": "About 179,000 people with TB, 1 in 4, were not diagnosed or not reported in 2024.",
+   "fil": "Mga 179,000 taong may TB, 1 sa bawat 4, ang hindi na-diagnose o hindi naiulat noong 2024.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate minus DOH notifications",
+   "data_key": "headline_2024.not_reached",
+   "year": 2024,
+   "use_on": [
+    "home",
+    "data"
+   ]
+  },
+  {
+   "id": "gap-record",
+   "topic": "detection",
+   "en": "TB notifications hit a record 575,770 in 2023, then 544,948 in 2024.",
+   "fil": "Umabot sa rekord na 575,770 ang naiulat na kaso ng TB noong 2023, at 544,948 noong 2024.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "DOH notifications reported to WHO",
+   "data_key": "notifications_annual",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "gap-covid",
+   "topic": "detection",
+   "en": "In April 2020, during the COVID-19 lockdown, only 10,489 TB cases were notified, the lowest month on record since 2020.",
+   "fil": "Noong Abril 2020, sa gitna ng COVID-19 lockdown, 10,489 lang ang naiulat na kaso ng TB, ang pinakamababang buwan mula 2020.",
+   "sources": [
+    "S3"
+   ],
+   "kind": "DOH notifications reported to WHO",
+   "data_key": "notifications_monthly",
+   "year": 2020,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "gap-2025",
+   "topic": "detection",
+   "en": "Provisional data show 535,063 TB cases notified in 2025.",
+   "fil": "Ayon sa pansamantalang datos, 535,063 na kaso ng TB ang naiulat noong 2025.",
+   "sources": [
+    "S3"
+   ],
+   "kind": "Provisional, will change",
+   "data_key": "notifications_monthly_annual_totals",
+   "year": 2025,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "who-men",
+   "topic": "who",
+   "en": "Nearly 2 in 3 people who fell ill with TB in 2024 were men (64%).",
+   "fil": "Halos 2 sa bawat 3 nagka-TB noong 2024 ay lalaki (64%).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate",
+   "data_key": "headline_2024.men",
+   "year": 2024,
+   "use_on": [
+    "data",
+    "learn"
+   ]
+  },
+  {
+   "id": "who-children",
+   "topic": "who",
+   "en": "About 73,000 children under 15 fell ill with TB in 2024. Children were 8.5% of notified cases.",
+   "fil": "Mga 73,000 batang wala pang 15 taong gulang ang nagka-TB noong 2024. 8.5% ng mga naiulat na kaso ay mga bata.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate; DOH notifications",
+   "data_key": "headline_2024.children_0_14",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "drivers-attributable",
+   "topic": "drivers",
+   "en": "In 2024, about 71,000 TB cases were linked to alcohol use disorders, 67,000 to smoking, 61,000 to undernutrition, 53,000 to diabetes and 4,600 to HIV. These overlap.",
+   "fil": "Noong 2024, mga 71,000 kaso ng TB ang may kaugnayan sa labis na pag-inom ng alak, 67,000 sa paninigarilyo, 61,000 sa kakulangan sa nutrisyon, 53,000 sa diabetes at 4,600 sa HIV. Nagsasapawan ang mga ito.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate, wide ranges",
+   "data_key": "risk_factor_attributable_cases_2024",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "drivers-slums",
+   "topic": "drivers",
+   "en": "35.9% of people in Philippine cities live in slum conditions (2022). TB spreads most where people share crowded rooms.",
+   "fil": "35.9% ng mga taga-lungsod sa Pilipinas ang nakatira sa mga slum (2022). Pinakamabilis kumalat ang TB kung saan siksikan ang mga tao sa iisang kuwarto.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "UN SDG database via WHO",
+   "data_key": "sdg_context",
+   "year": 2022,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "drivers-smoking",
+   "topic": "drivers",
+   "en": "20.4% of adults smoke: 36.2% of men and 4.5% of women (2022).",
+   "fil": "20.4% ng mga nasa hustong gulang ang naninigarilyo: 36.2% ng mga lalaki at 4.5% ng mga babae (2022).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO GHO",
+   "data_key": "sdg_context",
+   "year": 2022,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "drivers-nutrition",
+   "topic": "drivers",
+   "en": "9.9% of adults are undernourished (2022), which raises the risk of falling ill with TB.",
+   "fil": "9.9% ng mga nasa hustong gulang ang kulang sa nutrisyon (2022), na nagpapataas ng panganib na magkasakit ng TB.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO GHO",
+   "data_key": "sdg_context",
+   "year": 2022,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "drivers-uhc",
+   "topic": "drivers",
+   "en": "The Philippines scores 58 out of 100 on WHO's index of essential health service coverage (2021).",
+   "fil": "Nakakuha ang Pilipinas ng 58 sa 100 sa index ng WHO para sa saklaw ng mahahalagang serbisyong pangkalusugan (2021).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO GHO",
+   "data_key": "sdg_context",
+   "year": 2021,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "test-sites",
+   "topic": "testing",
+   "en": "992 sites used rapid molecular TB tests in 2024, up from 519 in 2020.",
+   "fil": "992 na site ang gumamit ng mabilis na molecular TB test noong 2024, mula 519 noong 2020.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "Reported by the NTP to WHO",
+   "data_key": "diagnostics_network",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data",
+    "home"
+   ]
+  },
+  {
+   "id": "test-volume",
+   "topic": "testing",
+   "en": "1.21 million rapid TB tests were done in 2024. About 1 in 5 found TB (20.7%).",
+   "fil": "1.21 milyong mabilis na TB test ang isinagawa noong 2024. Mga 1 sa bawat 5 ang may nakitang TB (20.7%).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "Reported by the NTP to WHO",
+   "data_key": "diagnostics_network",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "test-network",
+   "topic": "testing",
+   "en": "The National TB Program has 2,929 TB testing sites and 3,144 TB management units (2024).",
+   "fil": "May 2,929 TB testing site at 3,144 TB management unit ang National TB Program (2024).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "Reported by the NTP to WHO",
+   "data_key": "diagnostics_network",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "test-couriers",
+   "topic": "testing",
+   "en": "Motorcycle couriers carry sputum samples from health centers to GeneXpert labs, so many people never need to travel to the lab. One GeneXpert typically serves ten municipalities.",
+   "fil": "Dinadala ng mga motorcycle courier ang sample ng plema mula sa health center papunta sa GeneXpert lab, kaya marami ang hindi na kailangang pumunta mismo sa lab. Karaniwang sampung bayan ang pinagsisilbihan ng isang GeneXpert.",
+   "sources": [
+    "S25"
+   ],
+   "kind": "Reported",
+   "data_key": null,
+   "year": 2025,
+   "use_on": [
+    "home",
+    "learn"
+   ]
+  },
+  {
+   "id": "test-xray-yakap",
+   "topic": "testing",
+   "en": "PhilHealth's YAKAP primary care package covers a chest X-ray, and there were over 4,000 accredited YAKAP clinics as of January 2026.",
+   "fil": "Sakop ng YAKAP primary care package ng PhilHealth ang chest X-ray, at higit 4,000 na ang accredited na YAKAP clinic noong Enero 2026.",
+   "sources": [
+    "S24"
+   ],
+   "kind": "Reported",
+   "data_key": null,
+   "year": 2026,
+   "use_on": [
+    "home",
+    "learn"
+   ]
+  },
+  {
+   "id": "tx-success",
+   "topic": "treatment",
+   "en": "84% of people who started TB treatment in 2023 were cured or finished it. DOH's target is 90%.",
+   "fil": "84% ng nagsimula ng gamutan sa TB noong 2023 ang gumaling o nakatapos. 90% ang target ng DOH.",
+   "sources": [
+    "S1",
+    "S31"
+   ],
+   "kind": "DOH data reported to WHO",
+   "data_key": "treatment_outcomes.new_and_relapse_2023",
+   "year": 2023,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "tx-ltfu",
+   "topic": "treatment",
+   "en": "10.5% stopped treatment before finishing, the most common reason treatment did not succeed.",
+   "fil": "10.5% ang huminto sa gamutan bago matapos, ang pinakakaraniwang dahilan kung bakit hindi nagtagumpay ang gamutan.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "DOH data reported to WHO",
+   "data_key": "treatment_outcomes.new_and_relapse_2023",
+   "year": 2023,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "tx-dr",
+   "topic": "treatment",
+   "en": "About 28,000 people developed drug-resistant TB in 2024, but only 7,549 were confirmed by a lab (27%).",
+   "fil": "Mga 28,000 katao ang nagkaroon ng drug-resistant TB noong 2024, pero 7,549 lang ang nakumpirma ng laboratoryo (27%).",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO estimate; DOH data",
+   "data_key": "drug_resistant_tb",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "tx-dr-success",
+   "topic": "treatment",
+   "en": "75.6% of people treated for drug-resistant TB in 2022 succeeded. An all-oral 6-month regimen now replaces 2-year treatment.",
+   "fil": "75.6% ng mga ginamot para sa drug-resistant TB noong 2022 ang nagtagumpay. May gamutan na ngayong puro iniinom at 6 na buwan lang, kapalit ng 2 taon.",
+   "sources": [
+    "S1",
+    "S12"
+   ],
+   "kind": "DOH data reported to WHO",
+   "data_key": "treatment_outcomes.mdr_rr_2022",
+   "year": 2022,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "tx-hiv",
+   "topic": "treatment",
+   "en": "99% of people with both TB and HIV were on HIV treatment in 2024. 67% of TB patients knew their HIV status.",
+   "fil": "99% ng may TB at HIV ang naka-HIV treatment noong 2024. 67% ng mga pasyenteng may TB ang alam ang kanilang HIV status.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "DOH data reported to WHO",
+   "data_key": "tb_hiv",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "tx-free",
+   "topic": "treatment",
+   "en": "TB testing and medicines are free at public health centers, and PhilHealth's outpatient TB-DOTS package is ₱5,200 at accredited centers (as of November 2024).",
+   "fil": "Libre ang TB test at gamot sa mga pampublikong health center, at ₱5,200 ang outpatient TB-DOTS package ng PhilHealth sa mga accredited na center (noong Nobyembre 2024).",
+   "sources": [
+    "S11",
+    "S13"
+   ],
+   "kind": "Official",
+   "data_key": null,
+   "year": 2024,
+   "use_on": [
+    "home",
+    "learn"
+   ]
+  },
+  {
+   "id": "prev-tpt",
+   "topic": "prevention",
+   "en": "77,195 household contacts started TB preventive treatment in 2024, up from 5,821 in 2019.",
+   "fil": "77,195 na kasama sa bahay ng mga pasyente ang nagsimula ng TB preventive treatment noong 2024, mula 5,821 noong 2019.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "DOH data reported to WHO",
+   "data_key": "contacts_and_tpt_2024",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "prev-bcg",
+   "topic": "prevention",
+   "en": "86% of babies got the BCG vaccine in 2024. Coverage fell to 71% in 2021, during the pandemic.",
+   "fil": "86% ng mga sanggol ang nabakunahan ng BCG noong 2024. Bumaba ito sa 71% noong 2021, sa gitna ng pandemya.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO/UNICEF estimate",
+   "data_key": "bcg_coverage",
+   "year": 2024,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "cost-catastrophic",
+   "topic": "cost",
+   "en": "42% of families affected by TB faced catastrophic costs, and 90% of those with drug-resistant TB (2016 to 2017 survey).",
+   "fil": "42% ng mga pamilyang may TB ang nakaranas ng catastrophic na gastos, at 90% ng may drug-resistant TB (survey noong 2016 hanggang 2017).",
+   "sources": [
+    "S17"
+   ],
+   "kind": "National survey",
+   "data_key": "patient_costs",
+   "year": 2017,
+   "use_on": [
+    "learn",
+    "data"
+   ]
+  },
+  {
+   "id": "fund-2024",
+   "topic": "funding",
+   "en": "The TB program received US$119.1 million in 2024: 42% from the government, 31% from the Global Fund and 27% from USAID.",
+   "fil": "Nakatanggap ang TB program ng US$119.1 milyon noong 2024: 42% mula sa gobyerno, 31% mula sa Global Fund at 27% mula sa USAID.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "Reported by the NTP to WHO",
+   "data_key": "financing.received_2024",
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "fund-2025",
+   "topic": "funding",
+   "en": "For 2025, the TB program expected US$111.6 million, and more than half was to come from international donors.",
+   "fil": "Para sa 2025, inasahan ng TB program ang US$111.6 milyon, at mahigit kalahati nito ay manggagaling sana sa mga international donor.",
+   "sources": [
+    "S1",
+    "S28"
+   ],
+   "kind": "Expected funding, mid-2025; see caveat",
+   "data_key": "financing.expected_2025",
+   "year": 2025,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "fund-cuts",
+   "topic": "funding",
+   "en": "In 2025, USAID ceased to exist. WHO reports that in the Philippines this reduced community outreach, contact investigations and diagnostic work by partner organisations.",
+   "fil": "Noong 2025, nawala na ang USAID. Ayon sa WHO, nabawasan dahil dito ang community outreach, contact investigation at diagnostic na gawain ng mga partner organization sa Pilipinas.",
+   "sources": [
+    "S28",
+    "S29"
+   ],
+   "kind": "Reported by WHO",
+   "data_key": "financing.caveat_2025",
+   "year": 2025,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "fund-budget",
+   "topic": "funding",
+   "en": "DOH proposed ₱4.2 billion for TB services in 2026, up from ₱2.6 billion in 2025.",
+   "fil": "Nagmungkahi ang DOH ng ₱4.2 bilyon para sa serbisyo sa TB sa 2026, mula ₱2.6 bilyon noong 2025.",
+   "sources": [
+    "S12"
+   ],
+   "kind": "Official proposal",
+   "data_key": null,
+   "year": 2026,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "target-screen",
+   "topic": "targets",
+   "en": "The national TB plan aims to screen 12 million Filipinos by 2026.",
+   "fil": "Layunin ng pambansang plano sa TB na ma-screen ang 12 milyong Pilipino pagsapit ng 2026.",
+   "sources": [
+    "S12"
+   ],
+   "kind": "Official target",
+   "data_key": null,
+   "year": 2026,
+   "use_on": [
+    "data",
+    "learn"
+   ]
+  },
+  {
+   "id": "target-2030",
+   "topic": "targets",
+   "en": "DOH aims to bring the TB rate down to 300 per 100,000 by 2030. In 2024 it was 625.",
+   "fil": "Layunin ng DOH na pababain ang antas ng TB sa 300 bawat 100,000 pagsapit ng 2030. Noong 2024, 625 ito.",
+   "sources": [
+    "S21",
+    "S1"
+   ],
+   "kind": "Official target",
+   "data_key": "end_tb_milestones",
+   "year": 2030,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "target-endtb",
+   "topic": "targets",
+   "en": "The world's 2025 milestone was to halve the TB rate and cut deaths by 75% from 2015. For the Philippines that meant 275 per 100,000 and about 7,000 deaths.",
+   "fil": "Ang pandaigdigang target para sa 2025 ay hatiin ang antas ng TB at bawasan nang 75% ang namamatay mula 2015. Para sa Pilipinas, 275 bawat 100,000 iyon at mga 7,000 na namatay.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "WHO End TB Strategy",
+   "data_key": "end_tb_milestones",
+   "year": 2025,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "facilities",
+   "topic": "targets",
+   "en": "The National TB Program runs over 3,300 TB-DOTS facilities. About 2,100 are accredited by PhilHealth (September 2026 list).",
+   "fil": "Higit 3,300 ang TB-DOTS facility ng National TB Program. Mga 2,100 dito ang accredited ng PhilHealth (listahan noong Setyembre 2026).",
+   "sources": [
+    "S20",
+    "S4"
+   ],
+   "kind": "Official",
+   "data_key": null,
+   "year": 2026,
+   "use_on": [
+    "home",
+    "learn"
+   ]
+  },
+  {
+   "id": "region-ncr",
+   "topic": "regional",
+   "en": "Metro Manila: DOH reported over 102,000 TB cases (March 2026).",
+   "fil": "Metro Manila: Iniulat ng DOH ang higit 102,000 kaso ng TB (Marso 2026).",
+   "sources": [
+    "S11"
+   ],
+   "kind": "DOH, as reported in the news",
+   "data_key": null,
+   "year": 2026,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "region-r3",
+   "topic": "regional",
+   "en": "Central Luzon: DOH estimated 81,543 new TB cases for 2024. Bulacan detected the most cases in the region in 2023.",
+   "fil": "Gitnang Luzon: Tinantiya ng DOH ang 81,543 bagong kaso ng TB para sa 2024. Bulacan ang may pinakamaraming natuklasang kaso sa rehiyon noong 2023.",
+   "sources": [
+    "S32"
+   ],
+   "kind": "DOH regional office, as reported in the news",
+   "data_key": null,
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "region-r11",
+   "topic": "regional",
+   "en": "Davao Region: 10,363 TB cases were recorded from January to June 2023, 4,315 of them in Davao City.",
+   "fil": "Rehiyon ng Davao: 10,363 kaso ng TB ang naitala mula Enero hanggang Hunyo 2023, 4,315 dito sa Davao City.",
+   "sources": [
+    "S33"
+   ],
+   "kind": "DOH regional office, as reported in the news",
+   "data_key": null,
+   "year": 2023,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "region-tondo",
+   "topic": "regional",
+   "en": "Tondo, Manila: 1,280 TB cases were logged (reported December 2024).",
+   "fil": "Tondo, Maynila: 1,280 kaso ng TB ang naitala (iniulat noong Disyembre 2024).",
+   "sources": [
+    "S34"
+   ],
+   "kind": "As reported in the news",
+   "data_key": null,
+   "year": 2024,
+   "use_on": [
+    "data"
+   ]
+  },
+  {
+   "id": "survey-2016",
+   "topic": "regional",
+   "en": "In the 2016 national survey, 1,159 per 100,000 adults had lab-confirmed lung TB: 1,713 among men and 627 among women.",
+   "fil": "Sa pambansang survey noong 2016, 1,159 bawat 100,000 na nasa hustong gulang ang may lab-confirmed na TB sa baga: 1,713 sa mga lalaki at 627 sa mga babae.",
+   "sources": [
+    "S1"
+   ],
+   "kind": "National prevalence survey",
+   "data_key": "prevalence_survey_2016",
+   "year": 2016,
+   "use_on": [
+    "data"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Placeholder domain and .dc.html paths: rewrite to production URLs (/, /check, /places, /learn, /data, /about, /install) at handoff. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tbph.example.org/</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/check</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/places</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/learn</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/data</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/about</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://tbph.example.org/install</loc><lastmod>2026-10-30</lastmod></url>
+</urlset>

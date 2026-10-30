@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<header style="position:relative; padding-bottom:1px; color:#14212B; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <span aria-hidden="true" style="position:absolute; inset:0; background:{{ g.bg }}; backdrop-filter:{{ g.blur }}; -webkit-backdrop-filter:{{ g.blur }}; border-bottom:1px solid {{ g.line }};"></span>
+  <a href="#main" style="position:absolute; left:12px; top:-64px; z-index:5; background:#14212B; color:#F2F0EA; padding:12px 16px; border-radius:4px; font-size:16px; font-weight:700; text-decoration:none;" style-focus="top:8px; color:#F2F0EA;">{{ t.skip }}</a>
+  <div style="position:relative; max-width:1280px; margin:0 auto; padding:0 clamp(16px,5vw,64px); min-height:64px; display:flex; align-items:center; gap:{{ gap }};">
+    <a href="Home.dc.html" style="display:inline-flex; align-items:center; gap:9px; min-height:44px; flex:none; text-decoration:none; color:#14212B; font-family:Newsreader,Georgia,'Times New Roman',serif; font-weight:600; font-size:23px; letter-spacing:-0.01em; line-height:1; white-space:nowrap;" style-hover="color:#14212B;">
+      
+      <span><span style="color:#C42032;">{{ brandA }}</span>{{ brandB }}</span>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="{{ t.nav }}" style="margin-left:auto;">
+        <ul style="list-style:none; margin:0; padding:0; display:flex; gap:clamp(2px,0.6vw,8px);">
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+            <li style="display:flex;"><a href="{{ it.href }}" aria-current="{{ it.aria }}" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:16px; font-weight:{{ it.weight }}; color:#14212B; text-decoration:none; border-bottom:3px solid {{ it.line }}; white-space:nowrap;" style-hover="color:#1E6B70;">{{ it.label }}</a></li>
+          </sc-for>
+        </ul>
+      </nav>
+    </sc-if>
+    <div role="group" aria-label="Language / Wika" style="display:flex; flex:none; margin-left:{{ toggleMl }}; border:1.5px solid #14212B; border-radius:6px; overflow:hidden;">
+      <button type="button" lang="en" aria-pressed="{{ isEn }}" onClick="{{ toEn }}" style="min-height:44px; padding:{{ tpad }}; border:0; background:{{ enBg }}; color:{{ enFg }}; font-size:{{ tfs }}; font-weight:700; cursor:pointer;">English</button>
+      <button type="button" lang="fil" aria-pressed="{{ isFil }}" onClick="{{ toFil }}" style="min-height:44px; padding:{{ tpad }}; border:0; border-left:1.5px solid #14212B; background:{{ filBg }}; color:{{ filFg }}; font-size:{{ tfs }}; font-weight:700; cursor:pointer;">Filipino</button>
+    </div>
+  </div>
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="{{ t.nav }}" data-noprint="" style="position:fixed; left:12px; right:12px; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:60; max-width:560px; margin:0 auto; border-radius:30px; background:{{ g.bar }}; backdrop-filter:{{ g.blur }}; -webkit-backdrop-filter:{{ g.blur }}; border:1px solid {{ g.edge }}; box-shadow:0 10px 30px rgba(20,33,43,0.16);">
+      <ul style="list-style:none; margin:0; padding:4px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:2px;">
+        <sc-for list="{{ bottom }}" as="it" hint-placeholder-count="4">
+          <li style="display:flex;">
+            <a href="{{ it.href }}" aria-current="{{ it.aria }}" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:60px; padding:6px 4px; border-radius:26px; background:{{ it.pill }}; text-align:center; font-size:14px; line-height:1.15; font-weight:{{ it.weight }}; color:{{ it.color }}; text-decoration:none;">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="{{ it.d }}"></path></svg>
+              <span>{{ it.label }}</span>
+            </a>
+          </li>
+        </sc-for>
+      </ul>
+    </nav>
+  </sc-if>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:120},&quot;brand&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;TB PH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;fil&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en'|'fil'&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;check&quot;,&quot;learn&quot;,&quot;data&quot;,&quot;about&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onLang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(lang: 'en'|'fil') =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { vw: typeof window !== 'undefined' ? window.innerWidth : 1280, lang: 'en', glass: false };
+  nav = [
+    { k: 'home', href: 'Home.dc.html', en: 'Find TB care', fil: 'Hanapin ang gamutan' },
+    { k: 'check', href: 'Check.dc.html', en: 'Check symptoms', fil: 'Suriin ang sintomas' },
+    { k: 'learn', href: 'Learn.dc.html', en: 'Learn about TB', fil: 'Alamin ang TB' },
+    { k: 'data', href: 'Data.dc.html', en: 'The data', fil: 'Ang datos' },
+    { k: 'about', href: 'About.dc.html', en: 'About', fil: 'Tungkol sa amin' }
+  ];
+  copy = {
+    en: { skip: 'Skip to content', nav: 'Main' },
+    fil: { skip: 'Lumaktaw sa nilalaman', nav: 'Pangunahing nabigasyon' }
+  };
+  componentDidMount() {
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 60); };
+    window.addEventListener('resize', this.onR); this.detectGlass();
+  }
+  detectGlass() {
+    const mq = q => !!(window.matchMedia && window.matchMedia(q).matches);
+    const ok = !!(window.CSS && CSS.supports && (CSS.supports('backdrop-filter', 'blur(2px)') || CSS.supports('-webkit-backdrop-filter', 'blur(2px)')));
+    this.setState({ glass: ok && !mq('(prefers-reduced-transparency: reduce)') && !mq('(prefers-contrast: more)') });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); }
+  pick(l) { if (this.props.onLang) this.props.onLang(l); else this.setState({ lang: l }); }
+  renderVals() {
+    const lang = (this.props.lang || this.state.lang) === 'fil' ? 'fil' : 'en';
+    const t = this.copy[lang], cur = this.props.current || '', vw = this.state.vw;
+    const wide = vw >= (lang === 'fil' ? 1180 : 1000), tight = vw < 380;
+    const ICON = { home: 'M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21zM12 12.6a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z', check: 'M9 3h6v3H9zM8.5 4.5h-2A1.5 1.5 0 0 0 5 6v13.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5h-2M9 13.5l2 2 4-4.5', learn: 'M3 5.5c2.5-1 5.5-1 9 1 3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1zM12 6.5V20', data: 'M5 20v-8M12 20V5M19 20v-5M3 20h18' };
+    const mk = (n) => { const on = n.k === cur; return { href: n.href, label: n[lang], aria: on ? 'page' : 'false', weight: on ? 700 : 400, line: on ? '#1E6B70' : 'transparent', color: on ? '#175458' : '#14212B', pill: on ? 'rgba(30,107,112,0.14)' : 'transparent', d: ICON[n.k] || '' }; };
+    return {
+      t, brand: this.props.brand || 'TB PH', brandA: (this.props.brand || 'TB PH').split(' ')[0], brandB: (this.props.brand || 'TB PH').replace(/^\S+/, ''), wide,
+      g: this.state.glass ? { bg: 'rgba(255,255,255,0.72)', bar: 'rgba(255,255,255,0.68)', blur: 'blur(24px) saturate(1.5)', line: 'rgba(20,33,43,0.12)', edge: 'rgba(255,255,255,0.7)' } : { bg: '#FFFFFF', bar: '#FFFFFF', blur: 'none', line: '#D9D5CB', edge: '#D9D5CB' }, narrow: !wide,
+      items: this.nav.map(mk), bottom: this.nav.slice(0, 4).map(mk),
+      isEn: lang === 'en', isFil: lang === 'fil',
+      enBg: lang === 'en' ? '#14212B' : 'transparent', enFg: lang === 'en' ? '#F2F0EA' : '#14212B',
+      filBg: lang === 'fil' ? '#14212B' : 'transparent', filFg: lang === 'fil' ? '#F2F0EA' : '#14212B',
+      toEn: () => this.pick('en'), toFil: () => this.pick('fil'),
+      toggleMl: wide ? '4px' : 'auto',
+      tfs: tight ? '14px' : '15px', tpad: tight ? '0 9px' : '0 12px', gap: tight ? '8px' : 'clamp(10px,2vw,28px)'
+    };
+  }
+}
+</script>
+</body>
+</html>

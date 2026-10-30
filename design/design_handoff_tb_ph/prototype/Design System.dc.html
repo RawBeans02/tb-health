@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TB PH — design system v3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}body{margin:0;background:#F2F0EA;color:#14212B;font-family:Newsreader,Georgia,'Times New Roman',serif}a{color:#1E6B70;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,figure,ul,ol,dl,dd{margin:0}button,input,select{font:inherit;color:inherit}</style>
+</helmet>
+<div style="background:#F2F0EA; color:#14212B; padding:clamp(32px,6vw,80px) clamp(20px,5vw,64px) 120px;">
+<div style="max-width:1120px; margin:0 auto; display:grid; gap:clamp(72px,10vw,120px);">
+
+  <header style="display:grid; gap:20px; max-width:44rem;">
+    <p style="font-weight:600; font-size:23px;"><span style="color:#C42032;">TB</span> PH</p>
+    <h1 style="font-weight:500; font-size:clamp(2.25rem,1.4rem + 3.4vw,3.75rem); line-height:1.06; letter-spacing:-0.012em; color:#C42032;">Design system, version 3</h1>
+    <p style="font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45; text-wrap:pretty;">Paper from a clinic patient card, blue-black from chest X-ray film, the red of World TB Day for TB itself, teal for care. Everything else stays quiet so the route line and the dot field can carry the site.</p>
+  </header>
+
+  <section style="display:grid; gap:28px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+    <div style="display:grid; gap:12px; max-width:46rem;">
+      <h2 style="font-family:Newsreader,Georgia,serif; font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.375rem); line-height:1.12;">Version 3: red means TB, teal means care</h2>
+      <p style="font-size:18px; line-height:1.55;">The sun yellow, butter, mint and deep-teal panels from version 2 are gone. The brief never had them, and together they made the site look generic. The red of World TB Day replaces coral: it marks page titles, the wordmark, "you are here", urgent states and illness data, and it never goes on a button. Teal carries the route and every action. Paper and ink do the rest.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:20px;">
+      <div style="display:grid; gap:8px; align-content:start;"><div style="height:56px; border-radius:6px; background:#C42032;"></div><p style="font-size:15px; line-height:1.45;"><b>TB red</b> #C42032. Titles, you are here, urgent, illness. 5.1:1 on Paper.</p></div>
+      <div style="display:grid; gap:8px; align-content:start;"><div style="height:56px; border-radius:6px; background:#1E6B70;"></div><p style="font-size:15px; line-height:1.45;"><b>Teal</b> #1E6B70. Route, stops, buttons, Offers this. 5.4:1.</p></div>
+      <div style="display:grid; gap:8px; align-content:start;"><div style="height:56px; border-radius:6px; background:#175458;"></div><p style="font-size:15px; line-height:1.45;"><b>Teal deep</b> #175458. Teal text and hover. 7.5:1.</p></div>
+      <div style="display:grid; gap:8px; align-content:start;"><div style="height:56px; border-radius:6px; background:#FBFAF6; border:1px solid #D9D5CB;"></div><p style="font-size:15px; line-height:1.45;"><b>Field</b> #FBFAF6. Inputs and selected answers.</p></div>
+      <div style="display:grid; gap:8px; align-content:start;"><div style="height:56px; border-radius:6px; background:#14212B;"></div><p style="font-size:15px; line-height:1.45;"><b>Ink</b> #14212B. Text, selected filters, the focus ring. 14.4:1.</p></div>
+    </div>
+    <div style="display:grid; gap:10px; max-width:46rem; padding-top:20px; border-top:1px solid #D9D5CB;">
+      <p style="font-size:17px; font-weight:700;">Glass on the bars only</p>
+      <p style="font-size:17px; line-height:1.55;">The sticky header and the phone tab bar use a frosted material: Paper at 72% with a 24px blur, so the page shows through as you scroll. Content, rows and cards never use glass. When the browser can't blur, or Reduce Transparency or Increase Contrast is on, both bars turn solid Paper.</p>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-family:Newsreader,Georgia,serif; font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Route line and stops</h2>
+      <p style="font-size:18px; line-height:1.55;">A 6px teal line on a Rule track. When results load it draws in stop by stop and each stop fills in. That is the planner's only motion, and it is skipped when reduced motion is on.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px 72px; align-items:flex-start;">
+      <ol style="list-style:none; padding:0; margin:0; width:min(100%,420px);">
+        <li style="position:relative; display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 18px; padding-bottom:26px;"><span style="position:absolute; left:19px; top:14px; bottom:-18px; width:6px; background:#1E6B70;"></span><span style="position:relative; z-index:2; justify-self:center; margin-top:5px; width:18px; height:18px; border-radius:50%; background:#C42032; box-shadow:0 0 0 4px #F2F0EA, 0 0 0 6px #C42032;"></span><p style="font-size:18px; font-weight:700;">Quezon City</p></li>
+        <li style="position:relative; display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 18px; padding-bottom:26px;"><span style="position:absolute; left:19px; top:18px; bottom:-18px; width:6px; background:#1E6B70;"></span><span style="position:relative; z-index:2; justify-self:center; width:38px; height:38px; border-radius:50%; border:3px solid #1E6B70; background:#1E6B70; color:#F2F0EA; display:grid; place-items:center; font-weight:700;">1</span><p style="font-size:19px; font-weight:700; padding-top:6px;">Drawn stop</p></li>
+        <li style="position:relative; display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 18px; padding-bottom:26px;"><span style="position:absolute; left:19px; top:18px; bottom:-18px; width:6px; background:#D9D5CB;"></span><span style="position:relative; z-index:2; justify-self:center; width:38px; height:38px; border-radius:50%; border:3px solid #1E6B70; background:#F2F0EA; color:#175458; display:grid; place-items:center; font-weight:700;">2</span><p style="font-size:19px; font-weight:700; padding-top:6px;">Stop before the line arrives</p></li>
+        <li style="display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 18px;"><span style="position:relative; z-index:2; justify-self:center; margin-top:3px; width:26px; height:26px; border-radius:50%; border:7px solid #1E6B70; background:#F2F0EA;"></span><p style="font-size:19px; font-weight:700;">End of route: what to bring</p></li>
+      </ol>
+      <div style="display:grid; gap:14px; max-width:420px;">
+        <p style="font-size:17px; font-weight:700;">Service chips: shape and text carry the meaning, not colour alone</p>
+        <span style="justify-self:start; display:inline-flex; align-items:center; gap:7px; min-height:32px; padding:2px 12px; border:1.5px solid #1E6B70; background:#1E6B70; color:#F2F0EA; border-radius:4px; font-size:15px; font-weight:700;">✓ Offers this</span>
+        <span style="justify-self:start; display:inline-flex; align-items:center; gap:7px; min-height:32px; padding:2px 12px; border:1.5px solid #1E6B70; color:#175458; border-radius:4px; font-size:15px; font-weight:700;"><span style="width:11px; height:11px; border-radius:50%; border:2.5px solid #1E6B70;"></span>Collects your sample or refers you</span>
+        <span style="justify-self:start; display:inline-flex; align-items:center; gap:7px; min-height:32px; padding:2px 12px; border:1.5px dashed #56626A; color:#14212B; border-radius:4px; font-size:15px; font-weight:700;"><span style="width:11px; height:11px; border-radius:50%; border:2px dashed #56626A;"></span>Call to confirm</span>
+        <span style="justify-self:start; font-size:17px; font-weight:700; font-variant-numeric:tabular-nums;">about 3 km</span>
+        <p style="font-size:15px; line-height:1.5; color:#56626A;">Distances read "about" whenever the place or your location is approximate.</p>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:center;">
+      <span style="display:inline-flex; align-items:center; min-height:58px; padding:0 26px; background:#1E6B70; color:#F2F0EA; border-radius:10px; font-size:19px; font-weight:700;">Show me where to go</span>
+      <span style="display:inline-flex; align-items:center; min-height:48px; padding:0 18px; border:2px solid #1E6B70; color:#175458; border-radius:10px; font-size:17px; font-weight:700;">Commute directions</span>
+      <span style="display:inline-flex; align-items:center; min-height:48px; padding:0 4px; color:#175458; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px;">Call before you go</span>
+      <p style="font-size:15px; line-height:1.45; color:#56626A; max-width:24em;">Hierarchy: one solid teal button per screen, an outlined teal button for the action repeated on every row, and a text link for the rest.</p>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Color</h2>
+      <p style="font-size:19px; line-height:1.6;">Red and teal carry meaning, so they never decorate: red is TB, teal is care. Each ratio is measured against the surface the color is actually used on.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:36px 28px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#F2F0EA; border:1px solid #D9D5CB;"></div><p style="font-size:17px; font-weight:700;">Paper <span style="font-weight:400; color:#56626A;">#F2F0EA</span></p><p style="font-size:15px; line-height:1.45;">Page background. Ink on Paper 14.4:1.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#E8E4DA;"></div><p style="font-size:17px; font-weight:700;">Paper 2 <span style="font-weight:400; color:#56626A;">#E8E4DA</span></p><p style="font-size:15px; line-height:1.45;">New. Quiet fills: table heads, input wells. Ink 12.9:1, Muted 4.9:1.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#14212B;"></div><p style="font-size:17px; font-weight:700;">Ink <span style="font-weight:400; color:#56626A;">#14212B</span></p><p style="font-size:15px; line-height:1.45;">Text, solid marks, and the 37 dots for deaths.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#56626A;"></div><p style="font-size:17px; font-weight:700;">Muted <span style="font-weight:400; color:#56626A;">#56626A</span></p><p style="font-size:15px; line-height:1.45;">Refined from #5E6A70. Secondary text, axis labels. 5.5:1 on Paper, 4.9:1 on Paper 2.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#D9D5CB;"></div><p style="font-size:17px; font-weight:700;">Rule <span style="font-weight:400; color:#56626A;">#D9D5CB</span></p><p style="font-size:15px; line-height:1.45;">Gridlines and dividers. Decorative only — never the sole edge of a control.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#7A8C97;"></div><p style="font-size:17px; font-weight:700;">Dot <span style="font-weight:400; color:#56626A;">#7A8C97</span></p><p style="font-size:15px; line-height:1.45;">New, from the Ink family. People who fell ill; context bars. 3.1:1 on Paper (graphics).</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#C42032;"></div><p style="font-size:17px; font-weight:700;">TB red <span style="font-weight:400; color:#56626A;">#C42032</span></p><p style="font-size:15px; line-height:1.45;">World TB Day red. Page titles, the wordmark, you are here, urgent, illness data. 5.1:1 both ways, so it works as text. Never a button.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#FBFAF6; border:1px solid #D9D5CB;"></div><p style="font-size:17px; font-weight:700;">Field <span style="font-weight:400; color:#56626A;">#FBFAF6</span></p><p style="font-size:15px; line-height:1.45;">Inputs and selected answers.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#1E6B70;"></div><p style="font-size:17px; font-weight:700;">Teal <span style="font-weight:400; color:#56626A;">#1E6B70</span></p><p style="font-size:15px; line-height:1.45;">Care, testing, treatment, actions, links. 5.4:1 both ways.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#175458;"></div><p style="font-size:17px; font-weight:700;">Teal deep <span style="font-weight:400; color:#56626A;">#175458</span></p><p style="font-size:15px; line-height:1.45;">New. Hover and pressed teal. Paper on it 7.5:1.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#F0646C;"></div><p style="font-size:17px; font-weight:700;">TB red on Film <span style="font-weight:400; color:#56626A;">#F0646C</span></p><p style="font-size:15px; line-height:1.45;">Only on Film, where TB red is too dark. 5.7:1.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#0E1A22;"></div><p style="font-size:17px; font-weight:700;">Film <span style="font-weight:400; color:#56626A;">#0E1A22</span></p><p style="font-size:15px; line-height:1.45;">One band only: deaths, on the Data page. Paper 15.5:1, TB red on Film 5.7:1.</p></div>
+      <div style="display:grid; gap:10px; align-content:start;"><div style="height:64px; background:#A9B4BA;"></div><p style="font-size:17px; font-weight:700;">Film muted <span style="font-weight:400; color:#56626A;">#A9B4BA</span></p><p style="font-size:15px; line-height:1.45;">New. Secondary text on Film, 8.3:1.</p></div>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Type</h2>
+      <p style="font-size:19px; line-height:1.6;">Newsreader for headlines and reading, with optical sizes on. Atkinson Hyperlegible Next for every control, label, number and the whole screening flow, with tabular figures. Sentence case everywhere. Georgia and the system sans hold the layout while fonts load.</p>
+    </div>
+    <div style="display:grid; gap:28px;">
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Display — Newsreader 500, 36→60px, line 1.06</p><p style="flex:1 1 420px; font-weight:500; font-size:clamp(2.25rem,1.4rem + 3.4vw,3.75rem); line-height:1.06; letter-spacing:-0.012em; text-wrap:balance;">In 2024, about 724,000 Filipinos fell ill with TB.</p></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Heading 2 — Newsreader 500, 28→40px. Filipino runs longer; nothing truncates.</p><div style="flex:1 1 420px; display:grid; gap:12px;"><p style="font-weight:500; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance;">One in four was never found.</p><p lang="fil" style="font-weight:500; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance;">Isa sa bawat apat ang hindi natagpuan.</p></div></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Heading 3 — Newsreader 600, 22→24px</p><p style="flex:1 1 420px; font-weight:600; font-size:clamp(1.375rem,1.25rem + 0.4vw,1.5rem); line-height:1.25;">How it spreads</p></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Lede — Newsreader 400, 21→24px, line 1.45</p><p style="flex:1 1 420px; font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45;">Each dot is 1,000 people.</p></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Body — Newsreader 400, 19→20px, line 1.6, max 34em (about 68 characters)</p><p style="flex:1 1 420px; max-width:34em; font-size:clamp(1.1875rem,1.15rem + 0.15vw,1.25rem); line-height:1.6; text-wrap:pretty;">TB spreads through the air. When someone with TB in the lungs coughs, sneezes or spits, tiny droplets carry the germs, and people nearby breathe them in.</p></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Question — Atkinson 700, 26→30px</p><p style="flex:1 1 420px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-weight:700; font-size:clamp(1.625rem,1.5rem + 0.5vw,1.875rem); line-height:1.25;">Who are you checking for?</p></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Interface — Atkinson 400/700, 18px. Small 16px. Caption 15px in Muted.</p><div style="flex:1 1 420px; display:grid; gap:8px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;"><p style="font-size:18px; line-height:1.4;">Search by city, municipality or facility name</p><p style="font-size:16px; line-height:1.4;">Government — free TB care</p><p style="font-size:15px; line-height:1.45; color:#56626A;">Source: WHO Global Tuberculosis Report 2025. Estimates as of 2024.</p></div></div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px 32px; border-top:1px solid #D9D5CB; padding-top:20px;"><p style="flex:0 0 210px; font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A;">Figures — Atkinson, tabular, so columns line up</p><div style="flex:1 1 420px; display:grid; gap:2px; justify-items:start; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-variant-numeric:tabular-nums; font-size:18px;"><p>723,902</p><p>544,948</p><p>178,954</p></div></div>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">The dot unit</h2>
+      <p style="font-size:19px; line-height:1.6;">One dot is 1,000 people who fell ill with TB in 2024. The counts are computed from <code style="font-family:inherit; font-style:italic;">headline_2024</code>, divided by 1,000 and rounded: 724 fell ill, 179 never found, 37 died. Every state changes shape as well as color.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:40px 64px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+      <div style="display:grid; gap:14px; justify-items:start;"><div style="display:flex; align-items:center; gap:18px;"><span style="width:24px; height:24px; border-radius:50%; background:#7A8C97;"></span><span style="width:8px; height:8px; border-radius:50%; background:#7A8C97;"></span></div><p style="font-size:17px; font-weight:700;">Fell ill</p><p style="font-size:15px; line-height:1.45; color:#56626A; max-width:15em;">Filled, Dot. All 724 at the start.</p></div>
+      <div style="display:grid; gap:14px; justify-items:start;"><div style="display:flex; align-items:center; gap:18px;"><span style="width:24px; height:24px; border-radius:50%; border:4px solid #C42032;"></span><span style="width:8px; height:8px; border-radius:50%; border:1.6px solid #C42032;"></span></div><p style="font-size:17px; font-weight:700;">Never found</p><p style="font-size:15px; line-height:1.45; color:#56626A; max-width:15em;">Hollow red ring, stroke about a third of the radius. 179.</p></div>
+      <div style="display:grid; gap:14px; justify-items:start;"><div style="display:flex; align-items:center; gap:18px;"><span style="width:24px; height:24px; border-radius:50%; background:#14212B;"></span><span style="width:8px; height:8px; border-radius:50%; background:#14212B;"></span></div><p style="font-size:17px; font-weight:700;">Died</p><p style="font-size:15px; line-height:1.45; color:#56626A; max-width:15em;">Solid Ink. 37, chosen from dots that were found, so each count stays exact.</p></div>
+      <div style="display:grid; gap:10px; max-width:22em;"><p style="font-size:17px; font-weight:700;">Size</p><p style="font-size:15px; line-height:1.45; color:#56626A;">The field fits its stage: about 8px dots on an 11px pitch on a phone, up to 24px on a 34px pitch on desktop. On the Data page an 8px dot returns as a unit marker.</p></div>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Charts</h2>
+      <p style="font-size:19px; line-height:1.6;">Plain-language title, one-line takeaway, direct labels, then source and date. Horizontal gridlines in Rule, a baseline in Ink. Context in Dot; the subject in TB red (illness) or Teal (care). Ranges are bands or whiskers with a caption. On phones, time series become one row per year.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:48px 56px; align-items:flex-start;">
+      <figure style="flex:1 1 520px; max-width:640px; display:grid; gap:10px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+        <p style="font-family:Newsreader,Georgia,serif; font-weight:600; font-size:23px; line-height:1.25;">TB is rising, not falling</p>
+        <p style="font-size:17px; line-height:1.45;">625 per 100,000 in 2024, up 14% since 2015. The band is WHO's uncertainty range.</p>
+        <svg viewBox="0 0 600 240" role="img" aria-label="Sample line chart with uncertainty band, TB incidence per 100,000, 2010 to 2024" style="width:100%; height:auto; display:block; overflow:visible;">
+          <line x1="48" x2="460" y1="141.3" y2="141.3" stroke="#D9D5CB" stroke-width="1"></line>
+          <line x1="48" x2="460" y1="78.7" y2="78.7" stroke="#D9D5CB" stroke-width="1"></line>
+          <line x1="48" x2="460" y1="16" y2="16" stroke="#D9D5CB" stroke-width="1"></line>
+          <text x="40" y="209" text-anchor="end" font-size="14" fill="#56626A">0</text>
+          <text x="40" y="146.3" text-anchor="end" font-size="14" fill="#56626A">400</text>
+          <text x="40" y="83.7" text-anchor="end" font-size="14" fill="#56626A">800</text>
+          <text x="40" y="21" text-anchor="end" font-size="14" fill="#56626A">1,200</text>
+          <path d="{{ band }}" fill="#C42032" fill-opacity="0.16"></path>
+          <path d="{{ line }}" fill="none" stroke="#C42032" stroke-width="3" stroke-linejoin="round"></path>
+          <circle cx="{{ endX }}" cy="{{ endY }}" r="5" fill="#C42032"></circle>
+          <text x="{{ labX }}" y="{{ endY }}" font-size="15" font-weight="700" fill="#14212B" dominant-baseline="middle">625</text>
+          <text x="{{ labX }}" y="{{ endY2 }}" font-size="14" fill="#56626A" dominant-baseline="middle">per 100,000, 2024</text>
+          <line x1="48" x2="460" y1="204" y2="204" stroke="#14212B" stroke-width="1"></line>
+          <text x="48" y="228" font-size="14" fill="#56626A">2010</text>
+          <text x="460" y="228" font-size="14" fill="#56626A" text-anchor="end">2024</text>
+        </svg>
+        <p style="font-size:15px; line-height:1.45; color:#56626A;">Shaded band: WHO's 95% uncertainty range.</p>
+        <p style="font-size:15px; line-height:1.45; color:#56626A; border-top:1px solid #D9D5CB; padding-top:10px;">Source: WHO Global Tuberculosis Report 2025. Estimates as of 2024.</p>
+        <button type="button" style="justify-self:start; min-height:44px; padding:0; border:0; background:none; color:#1E6B70; font-size:16px; font-weight:700; text-decoration:underline; text-underline-offset:4px; cursor:pointer;">View as table</button>
+      </figure>
+      <div style="flex:1 1 320px; display:grid; gap:28px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+        <div style="display:grid; gap:10px;">
+          <p style="font-size:17px; font-weight:700;">Same chart on a phone</p>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:grid; grid-template-columns:44px minmax(0,1fr); align-items:center; gap:10px;">
+              <span style="font-size:15px; color:#56626A; font-variant-numeric:tabular-nums;">{{ r.year }}</span>
+              <svg viewBox="0 0 300 22" style="width:100%; height:22px; display:block; overflow:visible;" aria-hidden="true">
+                <rect x="0" y="5" width="{{ r.w }}" height="12" fill="#C42032"></rect>
+                <line x1="{{ r.lo }}" x2="{{ r.hi }}" y1="11" y2="11" stroke="#14212B" stroke-width="1.5"></line>
+                <line x1="{{ r.lo }}" x2="{{ r.lo }}" y1="6" y2="16" stroke="#14212B" stroke-width="1.5"></line>
+                <line x1="{{ r.hi }}" x2="{{ r.hi }}" y1="6" y2="16" stroke="#14212B" stroke-width="1.5"></line>
+              </svg>
+            </div>
+          </sc-for>
+          <p style="font-size:15px; line-height:1.45; color:#56626A;">Whiskers show the same uncertainty range.</p>
+        </div>
+        <div style="display:grid; gap:12px;">
+          <p style="font-size:17px; font-weight:700;">Marks</p>
+          <div style="display:flex; align-items:center; gap:12px;"><svg width="56" height="18" aria-hidden="true"><defs><pattern id="ds-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#F2F0EA"></rect><line x1="0" y1="0" x2="0" y2="6" stroke="#7A8C97" stroke-width="3"></line></pattern></defs><rect x="0" y="2" width="56" height="14" fill="url(#ds-hatch)" stroke="#7A8C97" stroke-width="1"></rect></svg><span style="font-size:16px;">Provisional (2025–26): hatched and labeled</span></div>
+          <div style="display:flex; align-items:center; gap:12px;"><svg width="56" height="18" aria-hidden="true"><rect x="0" y="2" width="56" height="14" fill="#7A8C97"></rect></svg><span style="font-size:16px;">Context</span></div>
+          <div style="display:flex; align-items:center; gap:12px;"><svg width="56" height="18" aria-hidden="true"><rect x="0" y="2" width="56" height="14" fill="#C42032"></rect></svg><span style="font-size:16px;">Illness, missed, deaths — always with a label</span></div>
+          <div style="display:flex; align-items:center; gap:12px;"><svg width="56" height="18" aria-hidden="true"><rect x="0" y="2" width="56" height="14" fill="#1E6B70"></rect></svg><span style="font-size:16px;">Found, treated, protected — always with a label</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:32px;">
+    <div style="display:grid; gap:10px; max-width:44rem;">
+      <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Buttons and inputs</h2>
+      <p style="font-size:19px; line-height:1.6;">Every target is at least 44px; answers in the screening flow are 60px or more. Focus is a 3px Ink outline with a 3px gap, visible on every surface. Labels sit above fields and never disappear.</p>
+    </div>
+    <div style="display:grid; gap:40px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+      <div style="display:flex; flex-wrap:wrap; gap:14px; align-items:center;">
+        <a href="#" style="display:inline-flex; align-items:center; min-height:56px; padding:0 24px; background:#1E6B70; color:#F2F0EA; border-radius:6px; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#F2F0EA;">Check your symptoms</a>
+        <a href="#" style="display:inline-flex; align-items:center; min-height:56px; padding:0 22px; border:2px solid #1E6B70; color:#1E6B70; border-radius:6px; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#1E6B70; color:#F2F0EA;">Find a TB-DOTS center</a>
+        <a href="#" style="display:inline-flex; align-items:center; min-height:56px; padding:0 24px; background:#F2F0EA; color:#C42032; border:2px solid #C42032; border-radius:6px; font-size:18px; font-weight:700; text-decoration:none;">Call 911</a>
+        <a href="#" style="font-size:18px;">Text link</a>
+        <span style="display:inline-flex; align-items:center; min-height:56px; padding:0 24px; background:#1E6B70; color:#F2F0EA; border-radius:6px; font-size:18px; font-weight:700; outline:3px solid #14212B; outline-offset:3px;">Focused</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:32px 48px; align-items:flex-start;">
+        <div style="flex:1 1 340px; max-width:520px; display:grid; gap:10px;">
+          <p style="font-size:17px; font-weight:700;">Answer choices</p>
+          <div style="display:flex; align-items:center; gap:14px; min-height:64px; padding:14px 18px; border:2px solid #1E6B70; background:#FBFAF6; border-radius:6px; font-size:18px;"><span style="flex:none; width:24px; height:24px; border-radius:4px; background:#1E6B70; display:grid; place-items:center; color:#F2F0EA; font-size:16px; font-weight:700;">✓</span>Cough, with or without phlegm</div>
+          <div style="display:flex; align-items:center; gap:14px; min-height:64px; padding:14px 18px; border:2px solid #56626A; border-radius:6px; font-size:18px;"><span style="flex:none; width:24px; height:24px; border-radius:4px; border:2px solid #56626A;"></span>Night sweats</div>
+          <div style="display:flex; align-items:center; gap:14px; min-height:64px; padding:14px 18px; border:2px solid #56626A; border-radius:6px; font-size:18px; margin-top:12px;"><span style="flex:none; width:24px; height:24px; border-radius:4px; border:2px solid #56626A;"></span>None of these</div>
+          <p style="font-size:15px; line-height:1.45; color:#56626A;">Selected: teal border, a lighter field and a check mark. "None of these" sits apart and clears the rest.</p>
+        </div>
+        <div style="flex:1 1 340px; max-width:520px; display:grid; gap:20px;">
+          <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">Search by city, municipality or facility name</span><input type="search" placeholder="" style="min-height:56px; padding:0 16px; border:2px solid #14212B; border-radius:10px; background:#FBFAF6; font-size:18px;"></label>
+          <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">Region</span><select style="min-height:56px; padding:0 16px; border:2px solid #14212B; border-radius:10px; background:#FBFAF6; font-size:18px;"><option>All regions</option></select></label>
+          <div style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">Segmented choice</span><div style="display:flex; border:1.5px solid #14212B; border-radius:6px; overflow:hidden; justify-self:start;"><span style="min-height:44px; display:flex; align-items:center; padding:0 14px; background:#14212B; color:#F2F0EA; font-size:15px; font-weight:700;">English</span><span style="min-height:44px; display:flex; align-items:center; padding:0 14px; border-left:1.5px solid #14212B; font-size:15px; font-weight:700;">Filipino</span></div></div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;"><span style="display:inline-flex; align-items:center; min-height:32px; padding:0 12px; border:1.5px solid #1E6B70; color:#1E6B70; border-radius:4px; font-size:15px; font-weight:700;">Government — free TB care</span><span style="display:inline-flex; align-items:center; min-height:32px; padding:0 12px; border:1.5px solid #56626A; color:#14212B; border-radius:4px; font-size:15px; font-weight:700;">Private — fees may apply</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:24px;">
+    <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">Layout and motion</h2>
+    <ul style="padding-left:1.1em; display:grid; gap:10px; max-width:44rem; font-size:19px; line-height:1.55;">
+      <li>One left-aligned reading column, 34em. Charts break out to 1,040px; the dot field runs to the edge of the screen.</li>
+      <li>Gutter 20–64px. Spacing steps: 4, 8, 12, 16, 24, 32, 48, 72, 112.</li>
+      <li>Whitespace and a single rule separate things. The only box on the site is the screening summary, drawn as a clinic patient card.</li>
+      <li>Two motion moments: the route line drawing in, and the dot field on the Data page. With reduced motion, both show their end state at once.</li>
+    </ul>
+  </section>
+
+  <section style="display:grid; gap:24px;">
+    <h2 style="font-weight:500; font-size:clamp(1.75rem,1.4rem + 1.3vw,2.25rem); line-height:1.15;">What changed in version 3, and the generic-look check</h2>
+    <ul style="padding-left:1.1em; display:grid; gap:10px; max-width:44rem; font-size:19px; line-height:1.55;">
+      <li>Version 2 used about 20 tints on Home. Version 3 uses eight colors: Paper, Field, Ink, Muted, Rule, Teal, Teal deep and TB red, plus Dot and Film for the data.</li>
+      <li>TB red replaces Coral and Coral deep. It passes AA as text, so one red covers titles, the 911 link and the URGENT screen. On Film it lightens to #F0646C.</li>
+      <li>Chips and badges are squared to 4px. The pills and the row of check icons under the planner are gone; the reassurance lines are plain text between rules.</li>
+      <li>One solid teal button per screen. The action repeated on every row is outlined, and "Call before you go" is a text link.</li>
+      <li>Glass appears on two surfaces, both navigation. The source of truth lists glass cards as a generic-look sign, and Apple's guidance keeps glass off content.</li>
+      <li>Muted stays #56626A; the original #5E6A70 dropped to 4.4:1 on Paper 2.</li>
+      <li>The 724 dots start in Dot, a blue-grey from the Ink family. Red appears only as the 179 hollow rings, and the 37 deaths can turn solid Ink.</li>
+      <li>Checked: no eyebrows, single-word highlights, decorative numbering, shadowed cards, gradients, scroll fades, monospace labels, arrow buttons, middle-dot strings or hairline columns.</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const S = [[2010,531,298,830],[2011,535,300,836],[2012,539,302,842],[2013,543,305,848],[2014,546,307,854],[2015,550,309,860],[2016,554,311,866],[2017,554,311,866],[2018,554,311,866],[2019,554,311,866],[2020,544,304,863],[2021,579,325,934],[2022,627,346,1013],[2023,632,348,1024],[2024,625,344,1015]];
+    const x = yr => 48 + (yr - 2010) / 14 * 412;
+    const y = v => 204 - v / 1200 * 188;
+    const f = n => n.toFixed(1);
+    const line = S.map((d, i) => (i ? 'L' : 'M') + f(x(d[0])) + ' ' + f(y(d[1]))).join(' ');
+    const band = S.map((d, i) => (i ? 'L' : 'M') + f(x(d[0])) + ' ' + f(y(d[3]))).join(' ') + ' ' + S.slice().reverse().map(d => 'L' + f(x(d[0])) + ' ' + f(y(d[2]))).join(' ') + ' Z';
+    const ticks = [0, 400, 800, 1200].map(v => ({ v: v.toLocaleString('en-US'), y: f(y(v)), ty: f(y(v) + 5) }));
+    const rows = S.slice(-3).reverse().map(d => ({ year: d[0], w: f(d[1] / 1100 * 300), lo: f(d[2] / 1100 * 300), hi: f(d[3] / 1100 * 300) }));
+    return { line, band, ticks, rows, endX: f(x(2024)), endY: f(y(625)), endY2: f(y(625) + 20), labX: f(x(2024) + 12) };
+  }
+}
+</script>
+</body>
+</html>

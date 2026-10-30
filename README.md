@@ -2,7 +2,7 @@
 
 Nonprofit internship project on TB (tuberculosis) health.
 
-Status: waiting for the Claude Design export. The stack is chosen from the design.
+Status: design handoff v6 imported; stack and build plan next.
 
 - `design/`: Claude Design export (unzipped)
 - `docs/`: brief and decisions

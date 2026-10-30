@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Page not found — TB PH</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,p,ul{margin:0}</style>
+</helmet>
+<div lang="{{ lang }}" style="min-height:100vh; display:flex; flex-direction:column; background:#F1F3F4;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(40px,7vw,88px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="max-width:760px; display:grid; gap:28px;">
+        <div style="display:grid; gap:12px;">
+          <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; text-wrap:balance;">{{ t.h1 }}</h1>
+          <p style="font-size:19px; line-height:1.5; color:#3F4B53; max-width:34em; text-wrap:pretty;">{{ t.lead }}</p>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+          <a href="Home.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:58px; padding:0 28px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">{{ t.find }}</a>
+          <a href="Check.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:58px; padding:0 26px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:20px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t.check }}</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: (() => { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } })() };
+  componentDidMount() { document.documentElement.lang = this.state.lang; }
+  setLang = (l) => { try { localStorage.setItem('tbph-lang', l); } catch (e) {} document.documentElement.lang = l; this.setState({ lang: l }); };
+  renderVals() {
+    const en = this.state.lang === 'en';
+    return {
+      lang: this.state.lang, setLang: this.setLang,
+      t: en ? { h1: "We can't find that page.", lead: 'The link may be old or mistyped. These will get you back on track:', find: 'Find TB care', check: 'Check symptoms' }
+            : { h1: 'Hindi namin mahanap ang pahinang iyon.', lead: 'Maaaring luma o mali ang link. Makatutulong ang mga ito:', find: 'Hanapin ang gamutan', check: 'Suriin ang sintomas' }
+    };
+  }
+}
+</script>
+</body>
+</html>

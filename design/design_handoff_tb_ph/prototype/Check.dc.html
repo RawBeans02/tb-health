@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Check symptoms — TB PH</title>
+  <meta name="description" content="Answer a few questions to see whether you should get tested for TB. About 2 minutes. Your answers stay on your device.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}[data-dark="true"] :focus-visible{outline-color:#FFFFFF}[data-choice]:focus-within{outline:3px solid #14212B;outline-offset:-3px}h1,h2,h3,p,ul,ol,dl,dd{margin:0}button,input,select{font:inherit;color:inherit}@media print{body{background:#fff!important}[data-noprint]{display:none!important}main{background:#fff!important;color:#000!important}[data-print-card]{background:#fff!important;break-inside:avoid}}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div data-noprint="" style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="check" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <main id="main" tabindex="-1" data-dark="{{ darkAttr }}" style="flex:1; background:{{ mainBg }}; color:{{ mainFg }}; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(16px,3vw,32px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="max-width:640px;">
+
+        <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid; gap:24px; padding-top:clamp(16px,4vw,48px);">
+            <div style="display:grid; gap:12px;">
+              <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+                <h1 ref="{{ iRef }}" tabindex="-1" style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; outline:none; text-wrap:balance;">Check your symptoms</h1>
+                <p style="font-size:19px; line-height:1.5; color:#3F4B53; text-wrap:pretty;">Answer a few questions to see whether you should get tested for TB. It takes about 2 minutes. This is not a diagnosis — only a test can tell whether you have TB.</p>
+              </sc-if>
+              <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+                <h1 ref="{{ iRef }}" tabindex="-1" style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; outline:none; text-wrap:balance;">Suriin ang iyong sintomas</h1>
+                <p style="font-size:19px; line-height:1.5; color:#3F4B53; text-wrap:pretty;">Sagutin ang ilang tanong para malaman kung dapat kang magpasuri para sa TB. Mga 2 minuto lang ito. Hindi ito diyagnosis — pagsusuri lang ang makapagsasabi kung may TB ka.</p>
+              </sc-if>
+            </div>
+            <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <li style="display:grid; grid-template-columns:56px minmax(0,1fr); align-items:center; min-height:56px;">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1E6B70" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="justify-self:center;"><rect x="6" y="10.5" width="12" height="9" rx="2"></rect><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"></path></svg>
+                <span style="padding:14px 16px 14px 0; font-size:18px; line-height:1.45; font-weight:700;">{{ t.privacyLine }}</span>
+              </li>
+            </ul>
+            <button type="button" onClick="{{ start }}" style="display:flex; align-items:center; justify-content:center; width:100%; max-width:560px; min-height:58px; padding:0 24px; border:0; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:#175458;">{{ t.start }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isQ }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:24px;">
+            <div style="display:grid; gap:12px;">
+              <button type="button" onClick="{{ back }}" style="justify-self:start; display:inline-flex; align-items:center; gap:6px; min-height:44px; margin-left:-2px; padding:0; border:0; background:none; color:#175458; font-size:17px; font-weight:700; cursor:pointer;" style-hover="color:#14212B; text-decoration:underline;"><span aria-hidden="true" style="font-size:26px; line-height:1; margin-top:-3px;">‹</span><span>{{ t.back }}</span></button>
+              <div style="display:grid; gap:8px; max-width:320px;">
+                <p style="font-size:16px; font-weight:700; color:#3F4B53; font-variant-numeric:tabular-nums;">{{ q.stepLabel }}</p>
+                <div aria-hidden="true" style="display:flex; gap:4px;">
+                  <sc-for list="{{ q.segs }}" as="g" hint-placeholder-count="6"><span style="flex:1; height:6px; border-radius:3px; background:{{ g.c }};"></span></sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="display:grid; gap:10px;">
+              <h1 id="q-title" ref="{{ qRef }}" tabindex="-1" style="font-weight:700; font-size:clamp(1.625rem,1.5rem + 0.5vw,1.875rem); line-height:1.25; letter-spacing:-0.02em; color:#C42032; outline:none; text-wrap:pretty;">{{ q.title }}</h1>
+              <sc-if value="{{ q.forOther }}" hint-placeholder-val="{{ false }}"><p style="font-size:18px; line-height:1.45; color:#3F4B53;">{{ q.otherLine }}</p></sc-if>
+              <p id="q-hint" style="font-size:17px; line-height:1.45; color:#3F4B53;">{{ q.hint }}</p>
+            </div>
+            <div role="{{ q.groupRole }}" aria-labelledby="q-title" aria-describedby="q-hint" style="display:grid; gap:12px;">
+              <div style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="4">
+                <label data-choice="" style="position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); cursor:pointer;">
+                  <input type="{{ q.inputType }}" name="{{ q.name }}" value="{{ o.k }}" checked="{{ o.on }}" onChange="{{ o.toggle }}" style="position:absolute; left:28px; top:50%; width:1px; height:1px; margin:0; opacity:0;">
+                  <span aria-hidden="true" style="display:flex; align-items:center; justify-content:center; padding-left:{{ o.pad }};"><span style="width:24px; height:24px; border-radius:{{ q.markRadius }}; border:2px solid {{ o.ring }}; background:{{ o.fill }}; display:grid; place-items:center;"><span style="width:10px; height:10px; border-radius:50%; background:{{ o.dot }};"></span></span></span>
+                  <span style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:60px; padding:12px 16px 12px {{ o.pad }}; border-top:{{ o.sep }}; font-size:18px; line-height:1.35; font-weight:{{ o.weight }};">
+                    <span>{{ o.label }}</span>
+                    <span aria-hidden="true" style="flex:none; color:#1E6B70; font-size:20px; font-weight:700;">{{ o.check }}</span>
+                  </span>
+                </label>
+                </sc-for>
+              </div>
+              <sc-if value="{{ q.hasNone }}" hint-placeholder-val="{{ false }}">
+                <div style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <label data-choice="" style="position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); cursor:pointer;">
+                  <input type="checkbox" name="{{ q.name }}" value="none" checked="{{ q.none.on }}" onChange="{{ q.toggleNone }}" style="position:absolute; left:28px; top:50%; width:1px; height:1px; margin:0; opacity:0;">
+                  <span aria-hidden="true" style="display:flex; align-items:center; justify-content:center; padding-left:0px;"><span style="width:24px; height:24px; border-radius:6px; border:2px solid {{ q.none.ring }}; background:{{ q.none.fill }}; display:grid; place-items:center;"><span style="width:10px; height:10px; border-radius:50%; background:{{ q.none.dot }};"></span></span></span>
+                  <span style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:60px; padding:12px 16px 12px 0px; border-top:0; font-size:18px; line-height:1.35; font-weight:{{ q.none.weight }};">
+                    <span>{{ q.noneLabel }}</span>
+                    <span aria-hidden="true" style="flex:none; color:#1E6B70; font-size:20px; font-weight:700;">{{ q.none.check }}</span>
+                  </span>
+                </label>
+                </div>
+              </sc-if>
+            </div>
+            <sc-if value="{{ err }}" hint-placeholder-val="{{ false }}"><p role="alert" style="font-size:17px; line-height:1.45; font-weight:700; color:#C42032;">{{ q.errText }}</p></sc-if>
+            <div style="position:sticky; bottom:{{ pinBottom }}; z-index:5; margin:0 -4px; padding:10px 4px; background:#F1F3F4;">
+              <button type="button" onClick="{{ next }}" style="display:flex; align-items:center; justify-content:center; width:100%; max-width:560px; min-height:58px; padding:0 24px; border:0; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:#175458;">{{ q.nextLabel }}</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isUrgent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:24px; padding:clamp(16px,4vw,40px) 0; color:#FFFFFF;">
+            <span aria-hidden="true" style="width:64px; height:6px; border-radius:3px; background:#F0646C;"></span>
+            <h1 ref="{{ rRef }}" tabindex="-1" style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.08; letter-spacing:-0.02em; outline:none; text-wrap:balance;">{{ r.title }}</h1>
+            <p style="font-size:20px; line-height:1.5; text-wrap:pretty;">{{ r.body }}</p>
+            <a href="tel:911" style="display:flex; align-items:center; justify-content:center; width:100%; max-width:560px; min-height:64px; padding:0 28px; border-radius:999px; background:#FFFFFF; color:#C42032; font-size:22px; font-weight:700; text-decoration:none;" style-hover="background:#F1F3F4; color:#C42032;">{{ r.button }}</a>
+            <div style="display:flex; flex-wrap:wrap; gap:12px;">
+              <button type="button" onClick="{{ back }}" style="min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(255,255,255,0.16); color:#FFFFFF; font-size:17px; font-weight:700; cursor:pointer;" style-hover="background:rgba(255,255,255,0.26);">{{ t.back }}</button>
+              <button type="button" onClick="{{ restart }}" style="min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(255,255,255,0.16); color:#FFFFFF; font-size:17px; font-weight:700; cursor:pointer;" style-hover="background:rgba(255,255,255,0.26);">{{ t.startOver }}</button>
+            </div>
+            <p style="font-size:16px; line-height:1.5; color:#A9B4BA; border-top:1px solid #33434D; padding-top:16px;">{{ t.foot }}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:28px; padding-top:clamp(8px,2vw,24px);">
+            <div data-noprint="" style="display:grid; gap:20px;">
+              <h1 ref="{{ rRef }}" tabindex="-1" style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; outline:none; text-wrap:balance;">{{ r.title }}</h1>
+              <p style="font-size:19px; line-height:1.55; text-wrap:pretty;">{{ r.body }}</p>
+              <sc-if value="{{ r.hasSteps }}" hint-placeholder-val="{{ false }}">
+                <ol style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                  <sc-for list="{{ r.steps }}" as="s" hint-placeholder-count="3">
+                    <li style="display:grid; grid-template-columns:56px minmax(0,1fr); align-items:center; min-height:60px;">
+                      <span aria-hidden="true" style="justify-self:center; width:30px; height:30px; border-radius:50%; background:#1E6B70; color:#FFFFFF; display:grid; place-items:center; font-size:15px; font-weight:700;">{{ s.n }}</span>
+                      <span style="padding:14px 16px 14px 0; border-top:{{ s.sep }}; font-size:18px; line-height:1.45;"><span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;">{{ s.n }}. </span>{{ s.text }}</span>
+                    </li>
+                  </sc-for>
+                </ol>
+              </sc-if>
+              <sc-if value="{{ r.hasNotes }}" hint-placeholder-val="{{ false }}">
+                <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                  <sc-for list="{{ r.notes }}" as="n" hint-placeholder-count="1">
+                    <li style="display:grid; grid-template-columns:56px minmax(0,1fr);">
+                      <span aria-hidden="true" style="justify-self:center; margin-top:15px; width:22px; height:22px; border-radius:50%; background:#14212B; color:#FFFFFF; display:grid; place-items:center; font-size:14px; font-weight:700;">i</span>
+                      <span style="padding:14px 16px 14px 0; border-top:{{ n.sep }}; font-size:18px; line-height:1.5;">{{ n.text }}</span>
+                    </li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+              <sc-if value="{{ r.handoff }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid; gap:12px; justify-items:start;">
+                  <a href="Home.dc.html?need=all" style="display:flex; align-items:center; justify-content:center; width:100%; max-width:560px; min-height:58px; padding:0 24px; border:0; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:#175458; color:#FFFFFF;">{{ r.find }}</a>
+                  <sc-if value="{{ r.isA }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ saveImage }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ r.save }}</button></sc-if>
+                </div>
+              </sc-if>
+              <p style="font-size:16px; line-height:1.5; color:#56626A;">{{ t.foot }}</p>
+            </div>
+
+            <section data-print-card="" aria-labelledby="card-title" style="border:2px solid #14212B; background:#FFFFFF; border-radius:4px;">
+              <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:6px 16px; padding:18px 22px 14px; border-bottom:2px solid #14212B;">
+                <h2 id="card-title" style="font-size:20px; font-weight:700; line-height:1.3;">{{ t.cardTitle }}</h2>
+                <p style="font-family:Newsreader,Georgia,serif; font-size:17px; font-weight:600;"><span style="color:#C42032;">TB</span> PH</p>
+              </div>
+              <dl style="padding:0 22px;">
+                <sc-for list="{{ card }}" as="row" hint-placeholder-count="8">
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:2px 20px; padding:12px 0; border-bottom:1px solid #DADDE0;">
+                    <dt style="font-size:15px; line-height:1.4; font-weight:700; color:#3F4B53;">{{ row.k }}</dt>
+                    <dd style="font-size:18px; line-height:1.4;">{{ row.v }}</dd>
+                  </div>
+                </sc-for>
+              </dl>
+              <p style="padding:12px 22px 16px; font-size:15px; line-height:1.45; color:#56626A;">{{ t.foot }}</p>
+            </section>
+            <p style="font-size:16px; line-height:1.45; color:#3F4B53; margin-top:-14px;">{{ t.cardPrivacy }}</p>
+            <div data-noprint="" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px;">
+              <button type="button" onClick="{{ saveImage }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t.saveImg }}</button>
+              <button type="button" onClick="{{ print }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t.print }}</button>
+              <button type="button" onClick="{{ restart }}" style="min-height:48px; padding:0 2px; border:0; background:none; color:#175458; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px; cursor:pointer;" style-hover="color:#14212B;">{{ t.startOver }}</button>
+            </div>
+            <p role="status" data-noprint="" style="font-size:17px; font-weight:700; color:#175458;">{{ savedMsg }}</p>
+            <sc-if value="{{ showInstall }}" hint-placeholder-val="{{ false }}">
+              <ul role="list" data-noprint="" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <li><a href="Install.dc.html" style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:12px 16px; color:#14212B; font-size:17px; line-height:1.4; text-decoration:none;" style-hover="background:#F6F8F8;"><span>{{ t.install }}</span><span aria-hidden="true" style="flex:none; font-size:26px; line-height:1; color:#8A949A;">›</span></a></li>
+              </ul>
+            </sc-if>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="check" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;preview&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;flow&quot;,&quot;urgent&quot;,&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;],&quot;default&quot;:&quot;flow&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Clinical review&quot;}}">
+class Component extends DCLogic {
+  state = { lang: this.readLang(), step: 'intro', a: this.blank(), err: false, saved: false, vw: typeof window !== 'undefined' ? window.innerWidth : 1280, standalone: false };
+  iRef = React.createRef();
+  qRef = React.createRef();
+  rRef = React.createRef();
+
+  YN = [{ k: 'yes', en: 'Yes', fil: 'Oo' }, { k: 'no', en: 'No', fil: 'Hindi' }];
+  Q = {
+    who: { type: 'single', en: 'Who are you checking for?', fil: 'Para kanino ang pagsusuring ito?', options: [
+      { k: 'self', en: 'Myself (15 or older)', fil: 'Para sa akin (15 taong gulang pataas)' },
+      { k: 'other_adult', en: 'Another adult (15 or older)', fil: 'Para sa ibang nasa hustong gulang (15 pataas)' },
+      { k: 'child', en: 'A child (under 15)', fil: 'Para sa isang bata (wala pang 15 taong gulang)' }] },
+    danger: { type: 'multi', en: 'Right now, is there any of these?', fil: 'Sa ngayon, mayroon ba nito?', options: [
+      { k: 'blood_lots', p: 'adult', en: 'Coughing up a lot of blood', fil: 'Umuubo ng maraming dugo' },
+      { k: 'breath', p: 'both', en: 'Severe difficulty breathing', fil: 'Matinding hirap sa paghinga' },
+      { k: 'chest', p: 'adult', en: 'Severe chest pain', fil: 'Matinding pananakit ng dibdib' },
+      { k: 'drowsy', p: 'both', en: 'Very drowsy, confused or hard to wake', fil: 'Sobrang antok, nalilito o mahirap gisingin' },
+      { k: 'no_drink', p: 'child', en: "Can't drink or breastfeed", fil: 'Hindi makainom o makasuso' },
+      { k: 'vomit_all', p: 'child', en: 'Vomits everything', fil: 'Isinusuka ang lahat ng kinakain o iniinom' },
+      { k: 'convulsions', p: 'child', en: 'Has had convulsions (seizures)', fil: 'Nagkaroon ng kombulsiyon (seizure)' }] },
+    symAdult: { type: 'multi', en: 'For 2 weeks or more, have you had any of these?', fil: 'Sa loob ng dalawang linggo o higit pa, nagkaroon ka ba ng alinman dito?', options: [
+      { k: 'cough', en: 'Cough, with or without phlegm', fil: 'Ubo, may plema man o wala' },
+      { k: 'fever', en: 'Fever with no clear cause', fil: 'Lagnat na hindi alam ang dahilan' },
+      { k: 'weight', en: 'Weight loss without trying', fil: 'Pagbaba ng timbang kahit hindi nagdidiyeta' },
+      { k: 'sweats', en: 'Night sweats', fil: 'Pagpapawis sa gabi' }] },
+    symChild: { type: 'multi', en: 'For 2 weeks or more, has the child had any of these?', fil: 'Sa loob ng dalawang linggo o higit pa, nagkaroon ba ang bata ng alinman dito?', options: [
+      { k: 'c_cough', en: "Cough or wheezing that isn't getting better", fil: 'Ubo o paghuni sa paghinga (wheezing) na hindi gumagaling' },
+      { k: 'c_fever', en: 'Fever with no clear cause', fil: 'Lagnat na hindi alam ang dahilan' },
+      { k: 'c_weight', en: 'Weight loss or not gaining weight', fil: 'Pagbaba ng timbang o hindi pagbigat' },
+      { k: 'c_tired', en: 'Unusually tired or less playful', fil: 'Matamlay o hindi na masyadong naglalaro' },
+      { k: 'c_antibiotic', en: 'Not getting better after antibiotics', fil: 'Hindi gumaling kahit uminom ng antibiotic' },
+      { k: 'c_viral', en: 'Not back to normal 2 weeks after a viral illness such as the flu', fil: 'Hindi pa bumabalik sa dati, dalawang linggo matapos ang trangkaso o ibang viral na sakit' }] },
+    blood: { type: 'single', en: 'Have you coughed up blood recently, even a small amount?', fil: 'Nakaubo ka ba ng dugo kamakailan, kahit kaunti?', options: this.YN },
+    recentAdult: { type: 'single', en: 'Do you have a cough, fever, night sweats or weight loss right now, even if it started less than 2 weeks ago?', fil: 'May ubo, lagnat, pagpapawis sa gabi o pagbaba ng timbang ka ba ngayon, kahit wala pang dalawang linggo?', options: this.YN },
+    recentChild: { type: 'single', en: 'Does the child have a cough, fever or weight loss right now, even if it started less than 2 weeks ago?', fil: 'May ubo, lagnat o pagbaba ng timbang ba ang bata ngayon, kahit wala pang dalawang linggo?', options: this.YN },
+    xray: { type: 'single', en: 'Did a chest X-ray in the past year show something that might be TB?', fil: 'May nakita bang posibleng TB sa chest X-ray mo sa nakalipas na isang taon?', options: [
+      { k: 'yes', en: 'Yes', fil: 'Oo' }, { k: 'no', en: 'No', fil: 'Wala' },
+      { k: 'unsure', en: "I'm not sure", fil: 'Hindi ako sigurado' }, { k: 'none', en: "I haven't had one", fil: 'Hindi pa ako nagpa-X-ray' }] },
+    risk: { type: 'multi', en: 'Do any of these apply?', fil: 'Alin dito ang totoo para sa iyo?', filChild: 'Alin dito ang totoo para sa bata?', options: [
+      { k: 'contact', p: 'both', high: true, en: 'Lives with, or spends a lot of time with, someone who has TB (now or in the last 2 years)', fil: 'Nakatira o madalas kasama ang taong may TB (ngayon o sa nakalipas na 2 taon)' },
+      { k: 'dr_contact', p: 'both', high: true, en: 'That person has drug-resistant TB', fil: 'Drug-resistant TB ang sakit ng taong iyon' },
+      { k: 'hiv', p: 'both', high: true, en: 'Has HIV', fil: 'May HIV' },
+      { k: 'diabetes', p: 'adult', high: true, en: 'Has diabetes', fil: 'May diabetes' },
+      { k: 'prev_tb', p: 'both', high: true, en: 'Was treated for TB before', fil: 'Dati nang nagamot sa TB' },
+      { k: 'age60', p: 'adult', high: true, en: 'Is 60 or older', fil: '60 taong gulang pataas' },
+      { k: 'under5', p: 'child', high: true, en: 'Is under 5 years old', fil: 'Wala pang 5 taong gulang' },
+      { k: 'underweight', p: 'both', high: true, en: 'Is very thin or undernourished', fil: 'Sobrang payat o kulang sa nutrisyon' },
+      { k: 'immuno', p: 'both', high: true, en: 'Takes medicines that weaken immunity (such as steroids or cancer treatment), or is on dialysis', fil: 'Umiinom ng gamot na nagpapahina ng resistensya (gaya ng steroids o gamot sa kanser), o nagda-dialysis' },
+      { k: 'smoke_alcohol', p: 'adult', high: false, en: 'Smokes, or drinks alcohol heavily', fil: 'Naninigarilyo, o malakas uminom ng alak' },
+      { k: 'crowded', p: 'adult', high: false, en: 'Lives or works in a crowded place (jail, dormitory, shelter), or is a health worker', fil: 'Nakatira o nagtatrabaho sa mataong lugar (kulungan, dormitoryo, shelter), o health worker' }] }
+  };
+  R = {
+    urgent: {
+      en: { title: 'Get emergency care now.', body: 'These signs need urgent attention. Go to the nearest hospital emergency room, or call 911.', button: 'Call 911' },
+      fil: { title: 'Magpatingin agad sa emergency.', body: 'Kailangan ng agarang atensiyon ang mga senyales na ito. Pumunta sa emergency room ng pinakamalapit na ospital, o tumawag sa 911.', button: 'Tumawag sa 911' } },
+    A: {
+      en: { title: 'Get tested for TB this week.', body: "Your answers match the signs health workers look for. Only a test can tell whether it's TB, and testing is free at public health centers.", steps: ['Go to your health center or a TB-DOTS center.', "Bring your summary and say how long you've had the symptoms.", 'Wear a mask and cover your cough until you get your results.'], find: 'Plan my route to a test', save: 'Save my summary' },
+      fil: { title: 'Magpasuri para sa TB ngayong linggo.', body: 'Tugma ang mga sagot mo sa mga senyales na hinahanap ng mga health worker. Pagsusuri lang ang makapagsasabi kung TB ito, at libre ang pagsusuri sa mga pampublikong health center.', steps: ['Pumunta sa inyong health center o sa isang TB-DOTS center.', 'Dalhin ang iyong buod at sabihin kung gaano katagal na ang mga sintomas.', 'Magsuot ng mask at takpan ang bibig kapag umuubo habang hinihintay ang resulta.'], find: 'Planuhin ang daan papunta sa pagsusuri', save: 'I-save ang aking buod' } },
+    B: {
+      en: { title: 'Get checked soon.', body: "Your symptoms are recent, but you're at higher risk of TB, and for people at higher risk even a short cough matters. Ask your health center about a chest X-ray." },
+      fil: { title: 'Magpatingin sa lalong madaling panahon.', body: 'Bago pa lang ang mga sintomas mo, pero mas mataas ang panganib mong magka-TB, at para sa mga nasa mas mataas na panganib, mahalaga kahit maikling ubo. Itanong sa inyong health center ang tungkol sa chest X-ray.' } },
+    C: {
+      en: { title: 'No signs of TB right now — but ask about screening.', body: "You're at higher risk of TB, so ask your health center about a TB check. If someone at home has TB, everyone in the household should be screened, and some may be offered TB preventive treatment (TPT)." },
+      fil: { title: 'Walang senyales ng TB sa ngayon — pero magtanong tungkol sa screening.', body: 'Mas mataas ang panganib mong magka-TB, kaya itanong sa inyong health center ang tungkol sa TB check. Kung may TB ang isang kasama sa bahay, dapat ipa-screen ang lahat ng nasa bahay, at maaaring bigyan ang ilan ng TB preventive treatment (TPT).' } },
+    D: {
+      en: { title: 'No signs of TB right now.', body: "Watch for these signs: a cough for 2 weeks or more, fever, night sweats or weight loss. If any of them lasts 2 weeks, get tested — it's free." },
+      fil: { title: 'Walang senyales ng TB sa ngayon.', body: 'Bantayan ang mga senyales na ito: ubo nang dalawang linggo o higit pa, lagnat, pagpapawis sa gabi o pagbaba ng timbang. Kung tumagal ang alinman nang dalawang linggo, magpasuri — libre ito.' } }
+  };
+  N = {
+    blood: { en: 'Because you coughed up blood, go today or tomorrow.', fil: 'Dahil nakaubo ka ng dugo, magpatingin ngayon o bukas.' },
+    dr: { en: 'Tell the health worker that you were treated for TB before, or that you were exposed to drug-resistant TB. You may need a test that also checks for drug resistance.', fil: 'Sabihin sa health worker na dati ka nang nagamot sa TB, o na na-expose ka sa drug-resistant TB. Maaaring kailanganin mo ng pagsusuring titingin din kung drug-resistant ito.' },
+    hiv: { en: 'Because you have HIV, tell your HIV care provider about these symptoms too.', fil: 'Dahil may HIV ka, ipaalam din ang mga sintomas na ito sa iyong HIV care provider.' },
+    child: { en: 'Bring the child to your health center or a pediatrician, and mention anyone at home who has TB.', fil: 'Dalhin ang bata sa inyong health center o sa pediatrician, at banggitin kung may kasama sa bahay na may TB.' },
+    xray_unsure: { en: 'Not sure about an old X-ray? Bring the result with you, or ask whether you need a new one.', fil: 'Hindi sigurado sa lumang X-ray? Dalhin ang resulta, o itanong kung kailangan mo ng bago.' },
+    recent: { en: 'Your symptoms started recently. If they last 2 weeks or more, get tested.', fil: 'Bago pa lang ang mga sintomas mo. Kung tumagal ang mga ito nang dalawang linggo o higit pa, magpasuri.' }
+  };
+  T = {
+    en: { step: (n, m) => 'Step ' + n + ' of ' + m, privacyLine: "Your answers stay on your device. We don't save or send them.", install: 'Save TB PH to your home screen for next time.', back: 'Back', next: 'Next', see: 'See my result', all: 'Choose all that apply.', one: 'Choose one answer.', errMulti: 'Choose at least one answer, or “None of these”.', errOne: 'Choose one answer to continue.', other: "Answer for the person you're checking for.", none: 'None of these', yes: 'Yes', no: 'No', start: 'Start', startOver: 'Start over', saveImg: 'Save as image', print: 'Print', saved: 'Your summary was saved as an image.', cardTitle: 'My TB check — show this to the health worker', cardPrivacy: 'This summary exists only on your device.', foot: 'This is not a diagnosis. Based on DOH and WHO screening guidance. Medical review: [partner clinicians — pending].', fields: ['Date', 'Checked for', 'Symptoms for 2 weeks or more', 'Blood in phlegm', 'Recent symptoms', 'Chest X-ray answer', 'Risk factors', 'Recommended next step'], noneVal: 'None', notAsked: 'Not asked', months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] },
+    fil: { step: (n, m) => 'Hakbang ' + n + ' sa ' + m, privacyLine: 'Mananatili lang sa iyong device ang mga sagot mo. Hindi namin ito sine-save o ipinapadala.', install: 'I-save ang TB PH sa home screen mo para sa susunod.', back: 'Bumalik', next: 'Susunod', see: 'Tingnan ang aking resulta', all: 'Piliin ang lahat ng naaangkop.', one: 'Pumili ng isang sagot.', errMulti: 'Pumili ng kahit isang sagot, o “Wala sa mga ito”.', errOne: 'Pumili ng isang sagot para magpatuloy.', other: 'Sagutin para sa taong sinusuri mo.', none: 'Wala sa mga ito', yes: 'Oo', no: 'Hindi', start: 'Simulan', startOver: 'Magsimula ulit', saveImg: 'I-save bilang larawan', print: 'I-print', saved: 'Na-save ang iyong buod bilang larawan.', cardTitle: 'Ang aking TB check — ipakita ito sa health worker', cardPrivacy: 'Nasa iyong device lang ang buod na ito.', foot: 'Hindi ito diyagnosis. Batay sa gabay ng DOH at WHO sa screening. Medical review: [mga katuwang na doktor — nakabinbin].', fields: ['Petsa', 'Para kanino', 'Sintomas nang 2 linggo o higit pa', 'Dugo sa plema', 'Bagong sintomas', 'Sagot tungkol sa chest X-ray', 'Mga risk factor', 'Inirerekomendang susunod na hakbang'], noneVal: 'Wala', notAsked: 'Hindi itinanong', months: ['Enero', 'Pebrero', 'Marso', 'Abril', 'Mayo', 'Hunyo', 'Hulyo', 'Agosto', 'Setyembre', 'Oktubre', 'Nobyembre', 'Disyembre'] }
+  };
+  SAMPLES = {
+    urgent: { who: 'self', danger: ['breath'], sym: [], blood: null, recent: null, xray: null, risk: [] },
+    A: { who: 'self', danger: ['none'], sym: ['cough', 'sweats'], blood: 'yes', recent: null, xray: 'unsure', risk: ['prev_tb', 'hiv'] },
+    B: { who: 'self', danger: ['none'], sym: ['none'], blood: 'no', recent: 'yes', xray: 'no', risk: ['diabetes'] },
+    C: { who: 'child', danger: ['none'], sym: ['none'], blood: null, recent: 'no', xray: null, risk: ['contact', 'dr_contact', 'under5'] },
+    D: { who: 'other_adult', danger: ['none'], sym: ['none'], blood: 'no', recent: 'yes', xray: 'none', risk: ['none'] }
+  };
+
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  blank() { return { who: null, danger: [], sym: [], blood: null, recent: null, xray: null, risk: [] }; }
+
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang; this.applyPreview();
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 80); };
+    window.addEventListener('resize', this.onR);
+    const h = document.documentElement;
+    this.env = () => this.setState({ standalone: h.getAttribute('data-standalone') === 'true' });
+    if (window.MutationObserver) { this.mo = new MutationObserver(this.env); this.mo.observe(h, { attributes: true, attributeFilter: ['data-standalone'] }); }
+    this.env();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); if (this.mo) this.mo.disconnect(); }
+  componentDidUpdate(pp) {
+    pp = pp || {};
+    if (pp.preview !== this.props.preview) this.applyPreview();
+    const prevStep = this.lastStep;
+    this.lastStep = this.state.step;
+    if (this.moved && prevStep !== this.state.step) {
+      this.moved = false;
+      const st = this.state.step;
+      const el = st === 'result' ? this.rRef.current : st === 'intro' ? this.iRef.current : this.qRef.current;
+      window.scrollTo(0, 0);
+      if (el) el.focus({ preventScroll: true });
+    }
+  }
+  applyPreview() {
+    const p = this.props.preview;
+    if (p && this.SAMPLES[p]) this.setState({ a: JSON.parse(JSON.stringify(this.SAMPLES[p])), step: 'result', err: false, saved: false });
+  }
+
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l });
+  };
+
+  seq(a) {
+    const child = a.who === 'child', s = ['who', 'danger', 'sym'];
+    if (!child) s.push('blood');
+    if (a.sym.includes('none')) s.push('recent');
+    if (!child) s.push('xray');
+    s.push('risk');
+    return s;
+  }
+  def(step, a) {
+    const child = a.who === 'child';
+    if (step === 'sym') return child ? this.Q.symChild : this.Q.symAdult;
+    if (step === 'recent') return child ? this.Q.recentChild : this.Q.recentAdult;
+    return this.Q[step];
+  }
+  evaluate(a) {
+    const has = arr => arr.some(k => k !== 'none');
+    if (has(a.danger)) return 'urgent';
+    if (has(a.sym) || a.blood === 'yes' || a.xray === 'yes') return 'A';
+    const high = a.risk.some(k => { const o = this.Q.risk.options.find(x => x.k === k); return o && o.high; });
+    if (a.recent === 'yes' && high) return 'B';
+    if (has(a.risk)) return 'C';
+    return 'D';
+  }
+  notes(a, r) {
+    if (r === 'urgent') return [];
+    const n = [];
+    if (a.blood === 'yes') n.push('blood');
+    if (a.risk.includes('prev_tb') || a.risk.includes('dr_contact')) n.push('dr');
+    if (a.risk.includes('hiv')) n.push('hiv');
+    if (a.who === 'child') n.push('child');
+    if (a.xray === 'unsure') n.push('xray_unsure');
+    if (a.recent === 'yes' && r === 'D') n.push('recent');
+    return n;
+  }
+
+  goto(step) { this.moved = true; this.setState({ step, err: false, saved: false }); }
+  start = () => this.goto('who');
+  restart = () => { this.moved = true; this.setState({ step: 'intro', a: this.blank(), err: false, saved: false }); };
+  next = () => {
+    const { step, a } = this.state, v = a[step];
+    if (Array.isArray(v) ? v.length === 0 : v == null) { this.setState({ err: true }); return; }
+    if (step === 'danger' && v.some(k => k !== 'none')) return this.goto('result');
+    const s = this.seq(a), i = s.indexOf(step);
+    this.goto(i >= s.length - 1 ? 'result' : s[i + 1]);
+  };
+  back = () => {
+    const { step, a } = this.state;
+    if (step === 'result') return this.goto(this.evaluate(a) === 'urgent' ? 'danger' : this.seq(a).slice(-1)[0]);
+    const s = this.seq(a), i = s.indexOf(step);
+    this.goto(i <= 0 ? 'intro' : s[i - 1]);
+  };
+  pickSingle(field, k) {
+    this.setState(s => {
+      const a = { ...s.a, [field]: k };
+      if (field === 'who' && s.a.who && (s.a.who === 'child') !== (k === 'child')) Object.assign(a, { danger: [], sym: [], blood: null, recent: null, xray: null, risk: [] });
+      return { a, err: false };
+    });
+  }
+  toggleMulti(field, k) {
+    this.setState(s => {
+      let v = s.a[field].slice();
+      if (k === 'none') v = v.includes('none') ? [] : ['none'];
+      else {
+        v = v.filter(x => x !== 'none');
+        v = v.includes(k) ? v.filter(x => x !== k) : v.concat(k);
+        if (field === 'risk' && !v.includes('contact')) v = v.filter(x => x !== 'dr_contact');
+      }
+      const a = { ...s.a, [field]: v };
+      if (field === 'sym' && !v.includes('none')) a.recent = null;
+      return { a, err: false };
+    });
+  }
+
+  fmtDate(lang) { const d = new Date(); return d.getDate() + ' ' + this.T[lang].months[d.getMonth()] + ' ' + d.getFullYear(); }
+  cardRows() {
+    const { lang, a } = this.state, T = this.T[lang], child = a.who === 'child';
+    const lab = (list, k) => { const o = list.find(x => x.k === k); return o ? o[lang] : ''; };
+    const many = (list, ks) => { const v = ks.filter(k => k !== 'none').map(k => lab(list, k)).filter(Boolean); return v.length ? v.join('; ') : T.noneVal; };
+    const yn = v => v === 'yes' ? T.yes : v === 'no' ? T.no : T.notAsked;
+    const r = this.evaluate(a);
+    return [
+      { k: T.fields[0], v: this.fmtDate(lang) },
+      { k: T.fields[1], v: lab(this.Q.who.options, a.who) || T.notAsked },
+      { k: T.fields[2], v: many(this.def('sym', a).options, a.sym) },
+      { k: T.fields[3], v: child ? T.notAsked : yn(a.blood) },
+      { k: T.fields[4], v: yn(a.recent) },
+      { k: T.fields[5], v: child ? T.notAsked : (lab(this.Q.xray.options, a.xray) || T.notAsked) },
+      { k: T.fields[6], v: many(this.Q.risk.options, a.risk) },
+      { k: T.fields[7], v: r === 'urgent' ? '' : this.R[r][lang].title }
+    ];
+  }
+
+  print = () => window.print();
+  saveImage = async () => {
+    const lang = this.state.lang, T = this.T[lang], rows = this.cardRows();
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (e) {}
+    const W = 1080, P = 76, inner = W - P * 2;
+    const c = document.createElement('canvas'), ctx = c.getContext('2d');
+    const F = (w, s) => w + ' ' + s + 'px "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif';
+    const wrap = (txt, f, max) => { ctx.font = f; const out = []; let line = ''; String(txt).split(' ').forEach(w => { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > max && line) { out.push(line); line = w; } else line = t; }); out.push(line); return out; };
+    const title = wrap(T.cardTitle, F(700, 40), inner);
+    const items = rows.map(r => ({ k: wrap(r.k, F(700, 26), inner), v: wrap(r.v, F(400, 32), inner) }));
+    const foot = wrap(T.foot, F(400, 24), inner), priv = wrap(T.cardPrivacy, F(400, 24), inner);
+    let h = P + 40 + title.length * 50 + 24 + 4;
+    items.forEach(it => { h += 22 + it.k.length * 34 + 6 + it.v.length * 42 + 22 + 2; });
+    h += 26 + foot.length * 32 + 10 + priv.length * 32 + P;
+    c.width = W; c.height = Math.ceil(h);
+    ctx.fillStyle = '#F2F0EA'; ctx.fillRect(0, 0, W, c.height);
+    ctx.strokeStyle = '#14212B'; ctx.lineWidth = 4; ctx.strokeRect(28, 28, W - 56, c.height - 56);
+    ctx.textBaseline = 'top';
+    let y = P;
+    ctx.fillStyle = '#14212B'; ctx.font = '600 28px Newsreader, Georgia, serif'; ctx.fillText('TB PH', P, y); y += 40;
+    ctx.font = F(700, 40); title.forEach(l => { ctx.fillText(l, P, y); y += 50; });
+    y += 24; ctx.fillRect(P, y, inner, 4); y += 4;
+    items.forEach(it => {
+      y += 22; ctx.fillStyle = '#56626A'; ctx.font = F(700, 26); it.k.forEach(l => { ctx.fillText(l, P, y); y += 34; });
+      y += 6; ctx.fillStyle = '#14212B'; ctx.font = F(400, 32); it.v.forEach(l => { ctx.fillText(l, P, y); y += 42; });
+      y += 22; ctx.fillStyle = '#D9D5CB'; ctx.fillRect(P, y, inner, 2); y += 2;
+    });
+    y += 26; ctx.fillStyle = '#56626A'; ctx.font = F(400, 24); foot.forEach(l => { ctx.fillText(l, P, y); y += 32; });
+    y += 10; priv.forEach(l => { ctx.fillText(l, P, y); y += 32; });
+    const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+    if (!blob) return;
+    const name = 'tb-check-summary.png';
+    try {
+      const file = new File([blob], name, { type: 'image/png' });
+      const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      if (coarse && navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: T.cardTitle }); this.setState({ saved: true }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    const url = URL.createObjectURL(blob), link = document.createElement('a');
+    link.href = url; link.download = name; document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    this.setState({ saved: true });
+  };
+
+  renderVals() {
+    const { lang, step, a, err, saved } = this.state, T = this.T[lang], en = lang === 'en';
+    const child = a.who === 'child', path = child ? 'child' : 'adult';
+    const isIntro = step === 'intro', isRes = step === 'result';
+    const res = isRes ? this.evaluate(a) : null;
+    let q = {};
+    if (!isIntro && !isRes) {
+      const d = this.def(step, a), multi = d.type === 'multi', v = a[step];
+      const on = k => multi ? v.includes(k) : v === k;
+      let opts = d.options.filter(o => !o.p || o.p === 'both' || o.p === path);
+      if (step === 'risk') opts = opts.filter(o => o.k !== 'dr_contact' || v.includes('contact'));
+      const s = this.seq(a), i = Math.max(0, s.indexOf(step));
+      const noneOn = multi && v.includes('none');
+      q = {
+        title: step === 'risk' && child && !en ? d.filChild : d[lang],
+        stepLabel: T.step(i + 1, s.length), segs: s.map((x, j) => ({ c: j <= i ? '#1E6B70' : '#DADDE0' })),
+        forOther: a.who === 'other_adult' && step !== 'who', otherLine: T.other,
+        hint: multi ? T.all : T.one, groupRole: multi ? 'group' : 'radiogroup', inputType: multi ? 'checkbox' : 'radio', name: 'q-' + step,
+        markRadius: multi ? '6px' : '50%',
+        options: opts.map((o, j) => { const sel = on(o.k); return { k: o.k, label: o[lang], on: sel, pad: o.k === 'dr_contact' ? '28px' : '0px', sep: j ? '1px solid #E3E6E8' : '0', weight: sel ? 700 : 400, check: sel ? '✓' : '', ring: sel ? '#1E6B70' : '#7A858C', fill: sel && multi ? '#1E6B70' : '#FFFFFF', dot: sel && !multi ? '#1E6B70' : 'transparent', toggle: () => multi ? this.toggleMulti(step, o.k) : this.pickSingle(step, o.k) }; }),
+        hasNone: multi, noneLabel: T.none, none: { on: noneOn, ring: noneOn ? '#1E6B70' : '#7A858C', fill: noneOn ? '#1E6B70' : '#FFFFFF', dot: 'transparent', weight: noneOn ? 700 : 400, check: noneOn ? '✓' : '' },
+        toggleNone: () => this.toggleMulti(step, 'none'),
+        errText: multi ? T.errMulti : T.errOne, nextLabel: i >= s.length - 1 ? T.see : T.next
+      };
+    }
+    let r = {};
+    if (res) {
+      const rr = this.R[res][lang], notes = this.notes(a, res);
+      r = { title: rr.title, body: rr.body, button: rr.button || '', hasSteps: !!rr.steps, steps: (rr.steps || []).map((text, i) => ({ text, n: i + 1, sep: i ? '1px solid #E3E6E8' : '0' })), isA: res === 'A', handoff: res === 'A' || res === 'B' || res === 'C', find: this.R.A[lang].find, save: rr.save || '', accent: res === 'A' || res === 'B' ? '#1E6B70' : '#14212B', hasNotes: notes.length > 0, notes: notes.map((k, i) => ({ text: this.N[k][lang], sep: i ? '1px solid #E3E6E8' : '0' })) };
+    }
+    const urgent = res === 'urgent';
+    return {
+      en, fil: !en, lang, setLang: this.setLang, t: T,
+      isIntro, isQ: !isIntro && !isRes, isUrgent: urgent, isResult: isRes && !urgent,
+      q, r, err, card: isRes && !urgent ? this.cardRows() : [], savedMsg: saved ? T.saved : '',
+      mainBg: urgent ? '#0E1A22' : '#F1F3F4', mainFg: urgent ? '#FFFFFF' : '#14212B', darkAttr: urgent ? 'true' : 'false',
+      pinBottom: this.state.vw < (lang === 'fil' ? 1180 : 1000) ? 'calc(84px + env(safe-area-inset-bottom))' : '0px',
+      showInstall: !this.state.standalone && (res === 'A' || res === 'B' || res === 'C'),
+      iRef: this.iRef, qRef: this.qRef, rRef: this.rRef,
+      start: this.start, next: this.next, back: this.back, restart: this.restart, saveImage: this.saveImage, print: this.print
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div>
+    <section id="story" style="position:relative; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif; display:grid; grid-template-columns:{{ L.cols }};">
+
+      <div ref="{{ stageRef }}" style="position:sticky; top:65px; height:{{ L.stageH }}; grid-column:{{ L.stageCol }}; grid-row:1; align-self:start; z-index:2; background:#F1F3F4;">
+        <canvas ref="{{ canvasRef }}" role="img" aria-label="{{ stageLabel }}" style="position:absolute; inset:0; width:100%; height:100%; display:block;"></canvas>
+        <sc-if value="{{ showLegend }}" hint-placeholder-val="{{ true }}">
+          <div aria-hidden="true" style="position:absolute; left:{{ L.legendL }}; right:20px; bottom:{{ L.legendB }}; display:flex; flex-wrap:wrap; align-items:center; gap:6px 20px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif; font-size:15px; line-height:1.3; color:#14212B;">
+            <span style="display:inline-flex; align-items:center; gap:8px;"><span style="width:12px; height:12px; border-radius:50%; background:#7A8C97; flex:none;"></span>{{ t.ill }}</span>
+            <sc-if value="{{ showMissed }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:8px;"><span style="width:12px; height:12px; border-radius:50%; border:2.5px solid #C42032; flex:none;"></span>{{ t.missed }}</span></sc-if>
+            <sc-if value="{{ showDied }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex; align-items:center; gap:8px;"><span style="width:12px; height:12px; border-radius:50%; background:#14212B; flex:none;"></span>{{ t.died }}</span></sc-if>
+            <span style="color:#56626A;">{{ t.unit }}</span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="grid-column:1; grid-row:1; padding-top:{{ L.textPad }}; position:relative; z-index:1;">
+
+        <div id="beat-1" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="0" style="max-width:34rem; display:grid; gap:18px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h1 style="letter-spacing:-0.02em; font-weight:700; font-size:clamp(2.25rem,1.4rem + 3.4vw,3.75rem); line-height:1.06;  text-wrap:balance; color:#C42032;">In 2024, about 724,000 Filipinos fell ill with TB.</h1>
+              <p style="font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45;">Each dot is 1,000 people.</p>
+              <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A; max-width:30em;">WHO estimate. The true number is likely between 399,000 and 1.18 million.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h1 style="letter-spacing:-0.02em; font-weight:700; font-size:clamp(2.25rem,1.4rem + 3.4vw,3.75rem); line-height:1.06;  text-wrap:balance; color:#C42032;">Noong 2024, tinatayang 724,000 Pilipino ang nagkasakit ng TB.</h1>
+              <p style="font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45;">Bawat tuldok ay 1,000 katao.</p>
+              <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A; max-width:30em;">Tantiya ng WHO. Malamang na nasa pagitan ng 399,000 at 1.18 milyon ang tunay na bilang.</p>
+            </sc-if>
+          </div>
+        </div>
+
+        <div id="beat-2" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="1" style="max-width:34rem;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <p style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance;">That's about 2,000 people every day — more than one every minute.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <p style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance;">Mga 2,000 katao iyan bawat araw — higit sa isa kada minuto.</p>
+            </sc-if>
+          </div>
+        </div>
+
+        <div id="beat-3" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="2" style="max-width:34rem; display:grid; gap:18px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">One in four was never found.</h2>
+              <p style="font-size:clamp(1.1875rem,1.15rem + 0.15vw,1.25rem); line-height:1.6; max-width:34em; text-wrap:pretty;">About 179,000 people with TB weren't diagnosed or weren't reported in 2024. Without treatment, they stay sick and can keep spreading it.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">Isa sa bawat apat ang hindi natagpuan.</h2>
+              <p style="font-size:clamp(1.1875rem,1.15rem + 0.15vw,1.25rem); line-height:1.6; max-width:34em; text-wrap:pretty;">Mga 179,000 taong may TB ang hindi na-diagnose o hindi naiulat noong 2024. Kapag hindi nagamot, patuloy silang may sakit at maaaring makahawa pa.</p>
+            </sc-if>
+          </div>
+        </div>
+
+        <div id="beat-4" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="3" style="max-width:34rem;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">TB took about 37,000 lives — nearly 100 every day.</h2>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">Mga 37,000 buhay ang kinuha ng TB — halos 100 bawat araw.</h2>
+            </sc-if>
+          </div>
+        </div>
+
+        <div id="beat-5" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="4" style="max-width:34rem; position:relative;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">The Philippines has the 3rd-most TB cases in the world, and the highest TB rate in Southeast Asia.</h2>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">Pangatlo ang Pilipinas sa pinakamaraming kaso ng TB sa mundo, at pinakamataas ang antas ng TB nito sa Timog-Silangang Asya.</h2>
+            </sc-if>
+            <div style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;">
+              <p>{{ t.seaCaption }}</p>
+              <ul>
+                <sc-for list="{{ sea }}" as="c" hint-placeholder-count="0"><li>{{ c.label }}</li></sc-for>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div id="beat-6" data-anchor="" style="min-height:{{ L.stepMinH }}; display:flex; flex-direction:column; justify-content:{{ L.stepJustify }}; padding:{{ L.stepPad }};">
+          <div data-beat="5" style="max-width:34rem; position:relative;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">Since 2015, our TB rate rose 14%. The world's fell 12%.</h2>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 style="font-weight:700; font-size:clamp(1.75rem,1.2rem + 1.6vw,2.5rem); line-height:1.15; text-wrap:balance; letter-spacing:-0.01em;">Mula 2015, tumaas nang 14% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang 12%.</h2>
+            </sc-if>
+            <div style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;">
+              <p>{{ t.change }}</p>
+              <ul>
+                <sc-for list="{{ slopeRows }}" as="r" hint-placeholder-count="0"><li>{{ r.label }}</li></sc-for>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="turn" data-anchor="" style="border-top:1px solid #E3E6E8; padding:clamp(72px,10vw,128px) 0 clamp(64px,8vw,104px);">
+      <div style="max-width:1280px; margin:0 auto; padding:0 clamp(20px,5vw,64px);">
+        <div style="max-width:42rem; display:grid; gap:24px;">
+          <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+            <h2 style="font-weight:700; font-size:clamp(2rem,1.3rem + 2.6vw,3.25rem); line-height:1.08; letter-spacing:-0.01em; text-wrap:balance;">TB is curable. Testing and treatment are free at public health centers.</h2>
+            <p style="font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45;">A cough that lasts 2 weeks deserves a test.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:14px; padding-top:8px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+              <a href="Check.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 26px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">Check your symptoms</a>
+              <a href="Home.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 24px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">Find TB care near you</a>
+            </div>
+            <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A; padding-top:24px;">Sources: WHO Global Tuberculosis Report 2025 (2024 estimates), DOH. Details on the <a href="#charts">Data page</a>.</p>
+          </sc-if>
+          <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+            <h2 style="font-weight:700; font-size:clamp(2rem,1.3rem + 2.6vw,3.25rem); line-height:1.08; letter-spacing:-0.01em; text-wrap:balance;">Nagagamot ang TB. Libre ang pagsusuri at gamutan sa mga pampublikong health center.</h2>
+            <p style="font-size:clamp(1.3125rem,1.2rem + 0.5vw,1.5rem); line-height:1.45;">Ang ubong umabot na nang dalawang linggo ay dapat ipasuri.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:14px; padding-top:8px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+              <a href="Check.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 26px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">Suriin ang iyong sintomas</a>
+              <a href="Home.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 24px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">Hanapin ang gamutan malapit sa iyo</a>
+            </div>
+            <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.45; color:#56626A; padding-top:24px;">Pinagmulan: WHO Global Tuberculosis Report 2025 (tantiya para sa 2024), DOH. Detalye sa <a href="#charts">pahinang Datos</a>.</p>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;fil&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en'|'fil'&quot;},&quot;previewBeat&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;scroll&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;],&quot;default&quot;:&quot;scroll&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;missedLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;scattered&quot;,&quot;grouped&quot;],&quot;default&quot;:&quot;scattered&quot;,&quot;tsType&quot;:&quot;'scattered'|'grouped'&quot;}}">
+class Component extends DCLogic {
+  state = { vw: window.innerWidth, vh: window.innerHeight, beat: 0, d: null };
+  stageRef = React.createRef();
+  canvasRef = React.createRef();
+  ov = { day: 0, bars: 0, slope: 0 };
+  ovT = { day: 0, bars: 0, slope: 0 };
+  C = { tint: [122, 140, 151], coral: [226, 85, 59], ink: [20, 33, 43] };
+
+  lang() { return this.props.lang === 'fil' ? 'fil' : 'en'; }
+  navH() { return window.innerWidth < (this.lang() === 'fil' ? 1180 : 1000) ? 66 : 0; }
+  reduced() { return !!this.props.reducedMotion || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+
+  componentDidMount() {
+    this.onScroll = () => { if (document.hidden) return this.checkBeat(); if (this.sRaf) return; this.sRaf = requestAnimationFrame(() => { this.sRaf = 0; this.checkBeat(); }); };
+    this.onResize = () => { clearTimeout(this.rT); this.rT = setTimeout(() => this.setState({ vw: window.innerWidth, vh: window.innerHeight }), 60); };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onResize);
+    this.onPin = (e) => { this.pin = e.detail == null ? null : e.detail; this.checkBeat(); };
+    window.addEventListener('tbph:beat', this.onPin);
+    fetch('data/tb-ph-data.json').then(r => r.json()).then(j => this.setData(j)).catch(e => console.warn('TB PH: could not load data/tb-ph-data.json', e));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.kick());
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.onResize);
+    if (this.ro) this.ro.disconnect();
+    cancelAnimationFrame(this.raf); clearTimeout(this.raf); cancelAnimationFrame(this.lt); clearTimeout(this.lt);
+    window.removeEventListener('tbph:beat', this.onPin);
+  }
+  componentDidUpdate(pp) {
+    pp = pp || {};
+    const p = this.props, s = this.state, last = this.last || {};
+    if (this.d && pp.missedLayout !== p.missedLayout) { this.assignKinds(); this.go(s.beat, true); }
+    if (pp.reducedMotion !== p.reducedMotion) this.go(s.beat, true);
+    if (pp.previewBeat !== p.previewBeat) this.checkBeat();
+    if (last.lang !== this.lang()) this.kick();
+    if (last.vw !== s.vw || last.vh !== s.vh) { this.layout(); this.checkBeat(); }
+    else if (this.dots && !this.L) this.layout();
+    this.last = { lang: this.lang(), vw: s.vw, vh: s.vh };
+  }
+
+  setData(j) {
+    const h = j.headline_2024, g = j.global_comparison;
+    this.d = {
+      n: Math.round(h.estimated_cases / 1000),
+      missed: Math.round(h.not_reached / 1000),
+      died: Math.round(h.estimated_deaths / 1000),
+      sea: g.southeast_asia_rates.map(c => ({ name: c.country, iso: c.iso3, rate: c.rate_per_100k })),
+      ph: h.incidence_rate_change_since_2015_pct,
+      world: g.global_2024.rate_change_since_2015_pct
+    };
+    let s = 724179037;
+    const rnd = () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const n = this.d.n;
+    this.shuffle = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) { const k = Math.floor(rnd() * (i + 1)); const tmp = this.shuffle[i]; this.shuffle[i] = this.shuffle[k]; this.shuffle[k] = tmp; }
+    this.dots = Array.from({ length: n }, () => ({ k: 0, dl: rnd(), x: 0, y: 0, r: 0, h: 0, a: 0, c: this.C.tint.slice(), f: null, t: null }));
+    this.assignKinds();
+    this.setState({ d: this.d });
+    this.layout();
+    this.checkBeat();
+  }
+  assignKinds() {
+    const { n, missed, died } = this.d;
+    this.dots.forEach(d => { d.k = 0; });
+    if (this.props.missedLayout === 'grouped') {
+      for (let i = n - missed; i < n; i++) this.dots[i].k = 1;
+      for (let i = n - missed - died; i < n - missed; i++) this.dots[i].k = 2;
+    } else {
+      for (let j = 0; j < missed; j++) this.dots[this.shuffle[j]].k = 1;
+      for (let j = missed; j < missed + died; j++) this.dots[this.shuffle[j]].k = 2;
+    }
+  }
+
+  retryLayout() {
+    if (this.lt) return;
+    const run = () => { this.lt = 0; this.layout(); };
+    this.lt = document.hidden ? setTimeout(run, 50) : requestAnimationFrame(run);
+  }
+  layout() {
+    const el = this.stageRef.current, cv = this.canvasRef.current;
+    if (!this.dots) return;
+    if (!el || !cv) return this.retryLayout();
+    if (window.ResizeObserver && this.roEl !== el) {
+      if (this.ro) this.ro.disconnect();
+      this.ro = new ResizeObserver(() => this.layout());
+      this.ro.observe(el); this.roEl = el;
+    }
+    const W = el.clientWidth, H = el.clientHeight;
+    if (W < 10 || H < 10) return this.retryLayout();
+    const firstLayout = !this.L;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const pw = Math.round(W * dpr), ph = Math.round(H * dpr);
+    if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+    this.ctx = cv.getContext('2d');
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.W = W; this.H = H; this.L = this.computeLayout(W, H);
+    if (!this.started) {
+      this.started = true;
+      this.dots.forEach((d, i) => { const p = this.L.field[i]; d.x = p.x; d.y = p.y; d.r = 0; d.a = 0; });
+      this.go(this.state.beat, false);
+    } else {
+      this.go(this.state.beat, true);
+    }
+    if (firstLayout) this.checkBeat();
+  }
+
+  computeLayout(W, H) {
+    const n = this.dots.length, roomy = W >= 520;
+    const padL = roomy ? 32 : 20, padR = roomy ? 48 : 20, padT = 46, padB = roomy ? 84 : 62;
+    const aw = W - padL - padR, ah = Math.max(60, H - padT - padB);
+    let best = { s: 0, cols: 1, rows: n };
+    for (let cols = 8; cols <= 110; cols++) { const rows = Math.ceil(n / cols); const s = Math.min(aw / cols, ah / rows); if (s > best.s) best = { s, cols, rows }; }
+    const s = Math.min(best.s, 34), cols = best.cols, rows = best.rows;
+    const ox = padL + (aw - cols * s) / 2 + s / 2, oy = padT + (ah - rows * s) / 2 + s / 2, r = s * 0.36;
+    const field = [];
+    for (let i = 0; i < n; i++) { const c = i % cols, rw = Math.floor(i / cols); field.push({ x: ox + c * s, y: oy + rw * s, r, c, rw }); }
+
+    const sea = this.d.sea, nb = sea.length, fs = roomy ? 15 : 13;
+    const top = padT + 10, bottom = H - (roomy ? 40 : 24);
+    const rowH = Math.min(roomy ? 46 : 32, (bottom - top) / nb), barH = Math.max(8, Math.round(rowH * 0.62));
+    const labelW = roomy ? 132 : 96, valW = 44, x0 = padL + labelW, maxW = Math.max(40, W - padR - valW - x0);
+    const brows = sea.map((c, k) => ({ name: c.name, iso: c.iso, rate: c.rate, y: top + k * rowH + (rowH - barH) / 2, w: c.rate / 700 * maxW }));
+    const p0 = brows[0];
+    const rr = Math.max(2, Math.round(barH / Math.sqrt(p0.w * barH / n)));
+    const bc = Math.ceil(n / rr), sx = p0.w / bc, sy = barH / rr, br = Math.max(0.9, Math.min(sx, sy) * 0.56);
+    const order = field.map((p, i) => i).sort((a, b) => field[a].c - field[b].c || field[a].rw - field[b].rw);
+    const bar = new Array(n);
+    order.forEach((i, j) => { const c = Math.floor(j / rr), rw = j % rr; bar[i] = { x: x0 + (c + 0.5) * sx, y: p0.y + (rw + 0.5) * sy, r: br }; });
+
+    const slope = { x1: padL + 28, x2: W - padR - (roomy ? 150 : 106), yt: padT + 40, yb: H - padB + 6, fs: roomy ? 16 : 14, padL, titleY: padT - 14 };
+    return { field, bars: { rows: brows, x0, barH, rowH, top, padL, titleY: padT - 14, fs }, bar, slope };
+  }
+
+  target(beat, i, d) {
+    const C = this.C;
+    if (beat <= 3) {
+      const p = this.L.field[i];
+      let c = C.tint, h = 0;
+      if (beat >= 2 && d.k === 1) { c = C.coral; h = 1; }
+      if (beat >= 3 && d.k === 2) c = C.ink;
+      return { x: p.x, y: p.y, r: p.r, h, a: 1, c };
+    }
+    const b = this.L.bar[i];
+    return { x: b.x, y: b.y, r: beat === 4 ? b.r : b.r * 0.6, h: 0, a: beat === 4 ? 1 : 0, c: C.coral };
+  }
+  apply(d, p) {
+    const f = d.f, t = d.t;
+    d.x = f.x + (t.x - f.x) * p; d.y = f.y + (t.y - f.y) * p; d.r = f.r + (t.r - f.r) * p;
+    d.h = f.h + (t.h - f.h) * p; d.a = f.a + (t.a - f.a) * p;
+    for (let k = 0; k < 3; k++) d.c[k] = f.c[k] + (t.c[k] - f.c[k]) * p;
+  }
+  go(beat, instant) {
+    if (!this.L || !this.dots) return;
+    const inst = instant || this.reduced() || document.hidden;
+    this.dots.forEach((d, i) => { d.f = { x: d.x, y: d.y, r: d.r, h: d.h, a: d.a, c: d.c.slice() }; d.t = this.target(beat, i, d); if (inst) this.apply(d, 1); });
+    this.ovT = { day: beat === 1 ? 1 : 0, bars: beat === 4 ? 1 : 0, slope: beat === 5 ? 1 : 0 };
+    if (inst) this.ov = { ...this.ovT };
+    this.t0 = performance.now(); this.dur = inst ? 0 : 1400; this.lastT = 0;
+    this.kick();
+  }
+  kick() {
+    if (this.raf) return;
+    this.raf = document.hidden ? setTimeout(() => this.frame(performance.now()), 16) : requestAnimationFrame(this.frame);
+  }
+  frame = (now) => {
+    this.raf = 0;
+    if (!this.ctx || !this.dots || !this.L) return;
+    const dt = this.lastT ? Math.min(50, now - this.lastT) : 16;
+    this.lastT = now;
+    let busy = false;
+    const dur = this.dur, el = now - this.t0;
+    if (dur > 0) {
+      for (const d of this.dots) {
+        if (!d.t) continue;
+        let p = (el - d.dl * dur * 0.4) / (dur * 0.6);
+        p = p <= 0 ? 0 : p >= 1 ? 1 : p;
+        if (p < 1) busy = true;
+        this.apply(d, p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+      }
+    }
+    const speed = { day: 300, bars: 500, slope: 1100 };
+    for (const k in this.ovT) {
+      const tv = this.ovT[k];
+      let v = this.ov[k];
+      if (v !== tv) {
+        const wait = k !== 'day' && tv > v && dur > 0 && el < dur * 0.55;
+        if (!wait) { const st = dt / speed[k]; v = tv > v ? Math.min(tv, v + st) : Math.max(tv, v - st); this.ov[k] = v; }
+        if (v !== tv) busy = true;
+      }
+    }
+    this.draw();
+    if (busy) this.kick(); else this.lastT = 0;
+  };
+
+  pinned() {
+    if (this.pin != null) return this.pin;
+    const p = this.props.previewBeat;
+    return p && p !== 'scroll' ? Math.max(0, Math.min(5, parseInt(p, 10) - 1)) : null;
+  }
+  checkBeat() {
+    const pin = this.pinned();
+    if (pin != null) { if (pin !== this.state.beat) { this.setState({ beat: pin }); this.go(pin, false); } return; }
+    const els = document.querySelectorAll('[data-beat]');
+    if (!els.length || !this.L) return;
+    const vh = window.innerHeight, wide = window.innerWidth >= 960;
+    const sh = this.stageRef.current ? this.stageRef.current.clientHeight : 0;
+    const first = els[0].getBoundingClientRect(), last = els[els.length - 1].getBoundingClientRect();
+    if (last.top - first.top < 40) return;
+    const trig = wide ? vh * 0.62 : 65 + sh + (vh - 65 - this.navH() - sh) * 0.6;
+    let b = 0;
+    els.forEach(el => { const i = +el.getAttribute('data-beat'); if (i > 0 && el.getBoundingClientRect().top < trig) b = Math.max(b, i); });
+    if (b !== this.state.beat) { this.setState({ beat: b }); this.go(b, false); }
+  }
+
+  font(w, px) { return w + ' ' + px + 'px "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif'; }
+  rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  draw() {
+    const ctx = this.ctx, ov = this.ov;
+    ctx.clearRect(0, 0, this.W, this.H);
+    if (ov.bars > 0.005) this.drawBars(ctx, ov.bars);
+    for (const d of this.dots) {
+      if (d.a < 0.01 || d.r < 0.25) continue;
+      ctx.globalAlpha = d.a;
+      ctx.fillStyle = 'rgb(' + (d.c[0] | 0) + ',' + (d.c[1] | 0) + ',' + (d.c[2] | 0) + ')';
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 6.2832); ctx.fill();
+      if (d.h > 0.01) {
+        const sw = Math.max(1.6, d.r * 0.34), ir = (d.r - sw) * d.h;
+        if (ir > 0.3) { ctx.fillStyle = '#F1F3F4'; ctx.beginPath(); ctx.arc(d.x, d.y, ir, 0, 6.2832); ctx.fill(); }
+      }
+    }
+    ctx.globalAlpha = 1;
+    if (ov.day > 0.005) this.drawDay(ctx, ov.day);
+    if (ov.bars > 0.005) this.drawBarLabels(ctx, ov.bars);
+    if (ov.slope > 0.005) this.drawSlope(ctx, ov.slope);
+    ctx.globalAlpha = 1;
+  }
+  drawDay(ctx, a) {
+    const p0 = this.L.field[0], p1 = this.L.field[1];
+    if (!p1) return;
+    const r = p0.r, pad = Math.max(4, r * 0.6);
+    const x = p0.x - r - pad, y = p0.y - r - pad, w = (p1.x - p0.x) + 2 * (r + pad), h = 2 * (r + pad);
+    ctx.globalAlpha = a; ctx.strokeStyle = '#14212B'; ctx.lineWidth = 1.5;
+    this.rr(ctx, x, y, w, h, h / 2); ctx.stroke();
+    ctx.fillStyle = '#14212B'; ctx.font = this.font(700, 14); ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+    ctx.fillText(this.lang() === 'fil' ? 'Isang araw ≈ 2 tuldok' : 'One day ≈ 2 dots', x, y - 6);
+    ctx.globalAlpha = 1;
+  }
+  drawBars(ctx, a) {
+    const B = this.L.bars;
+    ctx.globalAlpha = a; ctx.fillStyle = '#7A8C97';
+    B.rows.forEach((r, k) => { if (k > 0) ctx.fillRect(B.x0, r.y, r.w, B.barH); });
+    ctx.fillStyle = '#14212B'; ctx.fillRect(B.x0 - 1, B.top, 1, B.rows.length * B.rowH);
+    ctx.globalAlpha = 1;
+  }
+  drawBarLabels(ctx, a) {
+    const B = this.L.bars, fil = this.lang() === 'fil';
+    ctx.globalAlpha = a; ctx.textBaseline = 'middle';
+    ctx.font = this.font(400, 14); ctx.fillStyle = '#56626A'; ctx.textAlign = 'left';
+    ctx.fillText(fil ? 'Antas ng TB bawat 100,000 katao, 2024' : 'TB rate per 100,000 people, 2024', B.padL, B.titleY);
+    B.rows.forEach((r, k) => {
+      const cy = r.y + B.barH / 2, ph = k === 0;
+      ctx.fillStyle = '#14212B'; ctx.font = this.font(ph ? 700 : 400, B.fs); ctx.textAlign = 'right';
+      ctx.fillText(ph && fil ? 'Pilipinas' : r.name, B.x0 - 10, cy);
+      ctx.textAlign = 'left';
+      ctx.fillText(r.rate.toLocaleString('en-US'), B.x0 + r.w + 8, cy);
+    });
+    ctx.globalAlpha = 1;
+  }
+  drawSlope(ctx, a) {
+    const S = this.L.slope, d = this.d, fil = this.lang() === 'fil';
+    const y = v => S.yb - (v - 80) / 40 * (S.yb - S.yt);
+    ctx.globalAlpha = Math.min(1, a * 2.5);
+    ctx.fillStyle = '#56626A'; ctx.font = this.font(400, 14); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(fil ? 'Indeks: 2015 = 100' : 'Index: 2015 = 100', S.padL, S.titleY);
+    ctx.strokeStyle = '#E3E6E8'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(S.x1 - 10, y(100)); ctx.lineTo(S.x2 + 10, y(100)); ctx.stroke();
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText('2015', S.x1, S.yb + 14); ctx.fillText('2024', S.x2, S.yb + 14);
+    const q = Math.max(0, Math.min(1, a));
+    const vP = 100 + d.ph, vW = 100 + d.world;
+    const seg = (v, col) => {
+      const x2 = S.x1 + (S.x2 - S.x1) * q, y2 = y(100) + (y(v) - y(100)) * q;
+      ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(S.x1, y(100)); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(S.x1, y(100), 4.5, 0, 6.2832); ctx.fill();
+      if (q > 0.98) { ctx.beginPath(); ctx.arc(S.x2, y(v), 4.5, 0, 6.2832); ctx.fill(); }
+    };
+    seg(vW, '#14212B'); seg(vP, '#C42032');
+    if (q > 0.9) {
+      ctx.globalAlpha = Math.min(1, (q - 0.9) * 10);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      const lx = S.x2 + 14, o = S.fs * 0.62;
+      ctx.font = this.font(700, S.fs); ctx.fillStyle = '#C42032'; ctx.fillText(fil ? 'Pilipinas' : 'Philippines', lx, y(vP) - o);
+      ctx.font = this.font(400, S.fs); ctx.fillText('+' + d.ph.toFixed(1) + '%', lx, y(vP) + o);
+      ctx.font = this.font(700, S.fs); ctx.fillStyle = '#14212B'; ctx.fillText(fil ? 'Mundo' : 'World', lx, y(vW) - o);
+      ctx.font = this.font(400, S.fs); ctx.fillText('−' + Math.abs(d.world).toFixed(1) + '%', lx, y(vW) + o);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  renderVals() {
+    const { vw, vh, beat, d } = this.state;
+    const lang = this.lang(), navH = this.navH();
+    const en = lang === 'en', wide = vw >= 960;
+    const stageH = Math.round(Math.max(300, Math.min(vh * 0.52, vw * 1.15)));
+    const zone = Math.max(240, vh - 65 - navH - stageH);
+    const pad = 'clamp(20px,5vw,64px)';
+    const L = wide
+      ? { cols: 'minmax(0,5fr) minmax(0,7fr)', stageCol: '2', stageH: 'calc(100vh - ' + (65 + navH) + 'px)', textPad: '0px', stepMinH: '90vh', stepJustify: 'center', stepPad: '48px 40px 48px max(' + pad + ', calc((100vw - 1280px) / 2 + ' + pad + '))', legendL: '32px', legendB: '28px' }
+      : { cols: 'minmax(0,1fr)', stageCol: '1', stageH: stageH + 'px', textPad: stageH + 'px', stepMinH: (zone + 140) + 'px', stepJustify: 'flex-start', stepPad: '28px ' + pad + ' 40px', legendL: '20px', legendB: '14px' };
+    const t = en
+      ? { ill: 'Fell ill', missed: 'Never found', died: 'Died', unit: '1 dot = 1,000 people', country: 'Country', rate: 'TB rate per 100,000 people, 2024', seaCaption: 'TB rate per 100,000 people in Southeast Asia, 2024', change: 'Change in TB rate, 2015 to 2024' }
+      : { ill: 'Nagkasakit', missed: 'Hindi natagpuan', died: 'Namatay', unit: '1 tuldok = 1,000 katao', country: 'Bansa', rate: 'Antas ng TB bawat 100,000 katao, 2024', seaCaption: 'Antas ng TB bawat 100,000 katao sa Timog-Silangang Asya, 2024', change: 'Pagbabago sa antas ng TB, 2015 hanggang 2024' };
+    let stageLabel = '', sea = [], slopeRows = [];
+    if (d) {
+      const phRate = d.sea[0] ? d.sea[0].rate : '';
+      const ph = d.ph.toFixed(1), wo = Math.abs(d.world).toFixed(1);
+      const labs = en
+        ? ['A field of ' + d.n + ' dots. Each dot is 1,000 people who fell ill with TB in 2024.', 'The same field. About two dots fall ill every day.', d.missed + ' of the ' + d.n + ' dots are hollow: people who were never found.', d.died + ' dots are solid ink: people who died.', 'Bar chart of TB rates per 100,000 people in Southeast Asia, 2024. The Philippines is highest, at ' + phRate + '.', "Since 2015, the Philippines' TB rate rose " + ph + "%, while the world's fell " + wo + '%.']
+        : ['Isang hanay ng ' + d.n + ' tuldok. Bawat tuldok ay 1,000 taong nagkasakit ng TB noong 2024.', 'Ang parehong hanay. Mga dalawang tuldok ang nagkakasakit bawat araw.', d.missed + ' sa ' + d.n + ' tuldok ang walang laman: mga taong hindi natagpuan.', d.died + ' tuldok ang kulay itim: mga taong namatay.', 'Bar chart ng antas ng TB bawat 100,000 katao sa Timog-Silangang Asya, 2024. Pinakamataas ang Pilipinas, sa ' + phRate + '.', 'Mula 2015, tumaas nang ' + ph + '% ang antas ng TB sa Pilipinas, habang bumaba nang ' + wo + '% sa buong mundo.'];
+      stageLabel = labs[Math.min(beat, 5)];
+      sea = d.sea.map(c => ({ label: (c.iso === 'PHL' && !en ? 'Pilipinas' : c.name) + ': ' + c.rate.toLocaleString('en-US') }));
+      slopeRows = [{ label: (en ? 'Philippines' : 'Pilipinas') + ': +' + ph + '%' }, { label: (en ? 'World' : 'Mundo') + ': −' + wo + '%' }];
+    }
+    return {
+      en, fil: !en, lang, L, t,
+      stageRef: this.stageRef, canvasRef: this.canvasRef, stageLabel,
+      showLegend: beat <= 3, showMissed: beat >= 2 && beat <= 3, showDied: beat === 3,
+      sea, slopeRows
+    };
+  }
+}
+</script>
+</body>
+</html>

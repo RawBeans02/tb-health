@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="What TB is, how it spreads, the signs, who is at risk, free testing and treatment, drug-resistant TB, prevention, living with TB, and common myths.">
+  <title>Learn about TB — TB PH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:88px}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.6}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol,table{margin:0}button{font:inherit;color:inherit}summary{list-style:none}summary::-webkit-details-marker{display:none}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="learn" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(40px,7vw,88px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="display:grid; grid-template-columns:{{ L.cols }}; gap:{{ L.gap }}; align-items:start;">
+
+        <article style="min-width:0; max-width:760px; display:grid; gap:clamp(48px,7vw,72px);">
+          <header id="top" data-anchor="" style="display:grid; gap:24px;">
+            <div style="display:grid; gap:16px;">
+              
+              <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+                <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032;">Learn about TB</h1>
+              </sc-if>
+              <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+                <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032;">Alamin ang TB</h1>
+              </sc-if>
+            </div>
+            <sc-if value="{{ narrow }}" hint-placeholder-val="{{ true }}">
+              <details onToggle="{{ onToc }}" style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <summary style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:0 16px; font-size:18px; font-weight:700; cursor:pointer;"><span>{{ t.contents }}</span><span aria-hidden="true" style="font-size:26px; line-height:1; color:#8A949A; transform:rotate({{ tocRot }}); transition:transform 160ms ease;">›</span></summary>
+                <nav aria-label="{{ t.contents }}">
+                  <ul role="list" style="list-style:none; margin:0; padding:0;">
+                    <sc-for list="{{ toc }}" as="s" hint-placeholder-count="10"><li style="padding-left:16px;"><a href="{{ s.href }}" style="display:flex; align-items:center; min-height:48px; padding:8px 16px 8px 0; border-top:1px solid #E3E6E8; font-size:17px; line-height:1.35; color:#14212B; text-decoration:none;" style-hover="color:#175458;">{{ s.title }}</a></li></sc-for>
+                  </ul>
+                </nav>
+              </details>
+            </sc-if>
+          </header>
+
+          <section id="l1" data-anchor="" aria-labelledby="l1-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l1-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">What is TB?</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Tuberculosis (TB) is an infection caused by bacteria called <i>Mycobacterium tuberculosis</i>. It most often affects the lungs, but it can also affect other parts of the body, such as the lymph nodes, bones or brain. TB is preventable and curable.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Being infected is not the same as being sick. About a quarter of the world's people carry TB germs without being ill, and they can't spread it. Only about 5–10% of them will get sick in their lifetime. The risk is higher when the immune system is weak.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l1-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Ano ang TB?</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang tuberkulosis (TB) ay impeksiyong dulot ng bacteria na tinatawag na <i>Mycobacterium tuberculosis</i>. Kadalasang tinatamaan nito ang baga, pero maaari rin nitong tamaan ang ibang bahagi ng katawan gaya ng kulani, buto o utak. Naiiwasan at nagagamot ang TB.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Magkaiba ang pagkakaroon ng impeksiyon at ang pagkakasakit. Tinatayang isa sa bawat apat na tao sa mundo ang may dalang mikrobyo ng TB nang hindi nagkakasakit, at hindi sila nakakahawa. Mga 5–10% lang sa kanila ang magkakasakit sa buong buhay nila. Mas mataas ang panganib kapag mahina ang resistensya.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l1.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l1.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l1 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l2" data-anchor="" aria-labelledby="l2-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l2-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">How it spreads</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">TB spreads through the air. When someone with TB in the lungs coughs, sneezes or spits, tiny droplets carry the germs, and people nearby breathe them in. Inhaling just a few germs is enough to get infected. That's why TB passes most easily between people who share a room for a long time — at home, at work and in crowded places.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">TB does not spread through handshakes, shared plates or utensils, or by letting sweat dry on your back.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l2-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Paano ito kumakalat</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Kumakalat ang TB sa hangin. Kapag umubo, bumahing o dumura ang taong may TB sa baga, napupunta sa hangin ang maliliit na patak na may dalang mikrobyo, at nalalanghap ito ng mga taong malapit. Kaunting mikrobyo lang ang kailangang malanghap para mahawa. Kaya pinakamadaling magkahawaan ang mga taong matagal na magkasama sa iisang kuwarto — sa bahay, sa trabaho at sa mataong lugar.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Hindi naipapasa ang TB sa pakikipagkamay, sa paghiram ng plato o kubyertos, o sa pagpapatuyo ng pawis sa likod.</p>
+            </sc-if>
+            <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l2 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l3" data-anchor="" aria-labelledby="l3-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l3-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Signs and symptoms</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">The most common sign is a cough that lasts 2 weeks or more, with or without phlegm. Other signs are fever with no clear cause, night sweats, weight loss without trying, coughing up blood, chest pain, feeling weak or tired, and loss of appetite.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Symptoms can stay mild for months, so many people wait too long. Many Filipinos treat a long cough as an ordinary one and buy cough medicine instead of getting checked.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">In children, watch for a cough or wheezing that lasts 2 weeks or more, fever with no clear cause for 2 weeks or more, weight loss or not gaining weight, being unusually tired or less playful, not getting better after antibiotics, or not recovering 2 weeks after a viral illness like the flu.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l3-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Mga senyales at sintomas</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang pinakakaraniwang senyales ay ubo na tumatagal nang dalawang linggo o higit pa, may plema man o wala. Kabilang sa iba pang senyales ang lagnat na hindi alam ang dahilan, pagpapawis sa gabi, pagbaba ng timbang kahit hindi nagdidiyeta, pag-ubo ng dugo, pananakit ng dibdib, panghihina o madaling mapagod, at kawalan ng gana sa pagkain.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Maaaring banayad lang ang mga sintomas sa loob ng ilang buwan, kaya maraming naghihintay nang matagal. Maraming Pilipino ang nag-aakalang ordinaryong ubo lang ito at bumibili ng gamot sa ubo sa halip na magpatingin.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Sa mga bata, bantayan ang ubo o paghuni sa paghinga (wheezing) na tumatagal nang dalawang linggo o higit pa, lagnat na hindi alam ang dahilan nang dalawang linggo o higit pa, pagbaba ng timbang o hindi pagbigat, pagiging matamlay o hindi na masyadong naglalaro, hindi paggaling kahit uminom ng antibiotic, o hindi pagbalik ng dating lakas dalawang linggo matapos ang trangkaso o ibang viral na sakit.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l3.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l3.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l3 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l4" data-anchor="" aria-labelledby="l4-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l4-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Who's at higher risk</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Anyone can get TB. The risk is higher for people who live with or care for someone with TB; people living with HIV; people with diabetes; people who are undernourished; people who smoke or drink heavily; people treated for TB before; older adults; young children, especially under 5, who live with someone with TB; people whose immunity is weakened by medicines such as steroids or cancer treatment; and people in crowded places such as jails, as well as health workers.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">WHO estimates that in 2024, about 71,000 TB cases in the Philippines were linked to alcohol use disorders, 67,000 to smoking, 61,000 to undernutrition, 53,000 to diabetes and 4,600 to HIV. These overlap, so they don't add up to a total.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l4-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Sino ang mas nanganganib</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Kahit sino ay maaaring magka-TB. Mas mataas ang panganib para sa mga nakatira o nag-aalaga ng taong may TB; mga taong may HIV; mga may diabetes; mga kulang sa nutrisyon; mga naninigarilyo o malakas uminom ng alak; mga dati nang nagamot sa TB; matatanda; maliliit na bata, lalo na ang wala pang 5 taong gulang, na kasama sa bahay ang taong may TB; mga humina ang resistensya dahil sa gamot gaya ng steroids o gamutan sa kanser; at mga nasa mataong lugar gaya ng kulungan, pati na ang mga health worker.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Tantiya ng WHO para sa Pilipinas noong 2024: mga 71,000 kaso ng TB ang may kaugnayan sa labis na pag-inom ng alak, 67,000 sa paninigarilyo, 61,000 sa kakulangan sa nutrisyon, 53,000 sa diabetes at 4,600 sa HIV. Nagsasapawan ang mga ito, kaya hindi sila dapat pagsamahin.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l4.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l4.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l4 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l5" data-anchor="" aria-labelledby="l5-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l5-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Getting tested — it's free</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">If you've had a cough for 2 weeks or more, or any of the signs above, go to your barangay health station, rural health unit, city health center or a TB-DOTS center. Testing is free at public facilities.</p>
+              <ol style="padding-left:1.6em; display:grid; gap:14px; max-width:34em; font-size:18px; line-height:1.6;">
+                <li style="padding-left:6px;">A health worker asks about your symptoms and may send you for a chest X-ray. PhilHealth's Konsulta package covers chest X-rays for registered members.</li>
+                <li style="padding-left:6px;">You give a sputum (phlegm) sample. It's checked with a rapid molecular test such as Xpert MTB/RIF or TB-LAMP. Xpert can also show whether the TB resists rifampicin, a key TB medicine.</li>
+                <li style="padding-left:6px;">If you have TB, treatment starts right away, at the same center or one near your home.</li>
+              </ol>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">DOH also brings free screening to communities, including portable chest X-rays read with the help of AI.</p>
+              <div style="display:flex; flex-wrap:wrap; gap:12px; padding-top:4px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+                <a href="Check.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 24px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">Check your symptoms</a>
+                <a href="Home.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 22px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">Find TB care near you</a>
+              </div>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l5-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Magpasuri — libre ito</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Kung dalawang linggo ka nang inuubo o higit pa, o may alinman sa mga senyales sa itaas, pumunta sa barangay health station, rural health unit, city health center o TB-DOTS center. Libre ang pagsusuri sa mga pampublikong pasilidad.</p>
+              <ol style="padding-left:1.6em; display:grid; gap:14px; max-width:34em; font-size:18px; line-height:1.6;">
+                <li style="padding-left:6px;">Tatanungin ka ng health worker tungkol sa iyong mga sintomas at maaaring ipa-chest X-ray ka. Sakop ng Konsulta package ng PhilHealth ang chest X-ray para sa mga rehistradong miyembro.</li>
+                <li style="padding-left:6px;">Magbibigay ka ng sample ng plema. Susuriin ito gamit ang mabilis na molecular test gaya ng Xpert MTB/RIF o TB-LAMP. Kaya ring ipakita ng Xpert kung hindi tinatablan ng rifampicin — isang mahalagang gamot sa TB — ang iyong TB.</li>
+                <li style="padding-left:6px;">Kung may TB ka, magsisimula agad ang gamutan, sa parehong center o sa malapit sa inyong bahay.</li>
+              </ol>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Nagdadala rin ang DOH ng libreng screening sa mga komunidad, kabilang ang portable chest X-ray na binabasa sa tulong ng AI.</p>
+              <div style="display:flex; flex-wrap:wrap; gap:12px; padding-top:4px; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif;">
+                <a href="Check.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 24px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">Suriin ang iyong sintomas</a>
+                <a href="Home.dc.html" style="display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:0 22px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:18px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">Hanapin ang gamutan malapit sa iyo</a>
+              </div>
+            </sc-if>
+            <sc-if value="{{ nums.l5.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l5.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l5 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l6" data-anchor="" aria-labelledby="l6-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l6-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Treatment</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">TB is curable with the right medicines, taken every day for the full course.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Most TB (drug-susceptible TB) is treated with 6 months of daily pills. Children with non-severe TB can now be treated in 4 months.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">TB medicines are free at public health centers and TB-DOTS centers. PhilHealth also has an outpatient TB-DOTS benefit package at accredited centers (₱5,200 as of November 2024).</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">DOTS stands for "directly observed treatment, short-course": a health worker or treatment supporter helps you take your medicines and checks how you're doing.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Most people feel better within a few weeks. Keep going anyway — stopping early can bring TB back and make it resistant to medicines.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Tell your health worker right away if you notice yellow eyes or skin, a bad rash, changes in your eyesight, numbness, or vomiting that won't stop. Orange-red urine is a common, harmless effect of rifampicin.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l6-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Gamutan</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Nagagamot ang TB sa tamang gamot na iniinom araw-araw hanggang matapos ang buong gamutan.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang karaniwang TB (drug-susceptible TB) ay ginagamot sa loob ng 6 na buwan ng araw-araw na pag-inom ng gamot. Ang mga batang may hindi malubhang TB ay maaari nang gamutin sa loob ng 4 na buwan.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Libre ang gamot sa TB sa mga pampublikong health center at TB-DOTS center. May outpatient TB-DOTS benefit package din ang PhilHealth sa mga accredited na center (₱5,200 noong Nobyembre 2024).</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang DOTS ay "directly observed treatment, short-course": may health worker o treatment supporter na tutulong sa pag-inom mo ng gamot at titingin sa kalagayan mo.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Karamihan ay bumubuti ang pakiramdam sa loob ng ilang linggo. Ituloy pa rin — kapag huminto nang maaga, maaaring bumalik ang TB at hindi na ito tablan ng gamot.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Sabihin agad sa health worker kung naninilaw ang mata o balat, may malalang pantal, nagbabago ang paningin, namamanhid, o paulit-ulit na nagsusuka. Karaniwan at hindi delikado ang pagiging kulay kahel o mamula-mula ng ihi dahil sa rifampicin.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l6.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l6.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l6 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l7" data-anchor="" aria-labelledby="l7-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l7-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Drug-resistant TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Drug-resistant TB (DR-TB) doesn't respond to rifampicin, one of the main TB medicines. It can develop when treatment is stopped early or taken incorrectly, or it can be caught from someone who has DR-TB. In 2024, an estimated 27,900 Filipinos developed it, but only about 7,500 were confirmed by a laboratory. The Philippines now uses an all-oral regimen that shortens DR-TB treatment from 2 years to 6 months.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l7-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Drug-resistant TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang drug-resistant TB (DR-TB) ay hindi tinatablan ng rifampicin, isa sa mga pangunahing gamot sa TB. Maaari itong mangyari kapag itinigil nang maaga o mali ang pag-inom ng gamot, o maaari itong makuha sa taong may DR-TB. Noong 2024, tinatayang 27,900 Pilipino ang nagkaroon nito, pero mga 7,500 lang ang nakumpirma ng laboratoryo. Gumagamit na ang Pilipinas ng gamutang puro iniinom (all-oral) na nagpapaikli sa gamutan ng DR-TB mula 2 taon tungo sa 6 na buwan.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l7.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l7.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l7 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l8" data-anchor="" aria-labelledby="l8-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l8-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Preventing TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Finding and treating TB early is the most effective way to stop it from spreading.</p>
+              <ul role="list" style="list-style:none; padding:0; display:grid; gap:16px; max-width:34em;">
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Let fresh air in. Open windows — TB germs build up in closed, crowded rooms.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Cover your cough, and wear a mask while you're coughing.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>If someone at home has TB, everyone in the household should be checked. Some may be offered TB preventive treatment (TPT), a short course of medicine that keeps an infection from turning into disease. In 2024, 77,195 household contacts started TPT.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>The BCG vaccine, given to newborns, protects young children from severe forms of TB. There is still no vaccine for adults.</span></li>
+              </ul>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l8-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Pag-iwas sa TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ang maagang paghahanap at paggamot sa TB ang pinakamabisang paraan para mapigilan ang pagkalat nito.</p>
+              <ul role="list" style="list-style:none; padding:0; display:grid; gap:16px; max-width:34em;">
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Papasukin ang sariwang hangin. Buksan ang mga bintana — naiipon ang mikrobyo ng TB sa saradong kuwartong maraming tao.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Takpan ang bibig kapag umuubo, at magsuot ng mask habang inuubo.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Kung may TB ang isang kasama sa bahay, dapat ipasuri ang lahat ng nasa bahay. Maaaring bigyan ang ilan ng TB preventive treatment (TPT), isang maikling gamutan na pumipigil na maging sakit ang impeksiyon. Noong 2024, 77,195 na kasama sa bahay ng mga pasyente ang nagsimula ng TPT.</span></li>
+                <li style="display:grid; grid-template-columns:10px minmax(0,1fr); gap:16px; font-size:18px; line-height:1.6;"><span aria-hidden="true" style="width:10px; height:10px; border-radius:50%; background:#1E6B70; margin-top:0.62em;"></span><span>Ang bakunang BCG na ibinibigay sa mga bagong silang ay nagpoprotekta sa maliliit na bata laban sa malulubhang uri ng TB. Wala pang bakuna para sa mga nasa hustong gulang.</span></li>
+              </ul>
+            </sc-if>
+            <sc-if value="{{ nums.l8.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l8.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l8 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l9" data-anchor="" aria-labelledby="l9-h" style="display:grid; gap:20px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l9-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Living with TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Having TB is not your fault, and it doesn't define you. With treatment, people go back to school, work and family life. TB doesn't choose between rich and poor.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">TB can still cost families a lot even when the medicines are free — fares, lost income, food. In the first national patient cost survey, 42% of TB-affected households faced catastrophic costs, meaning TB costs above 20% of yearly household income. For drug-resistant TB, it was 90%. Ask your health center what support is available in your area.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l9-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Pamumuhay nang may TB</h2>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Hindi mo kasalanan ang pagkakaroon ng TB, at hindi ito ang buong pagkatao mo. Sa tulong ng gamutan, nakababalik ang mga tao sa pag-aaral, trabaho at buhay-pamilya. Walang pinipili ang TB, mayaman man o mahirap.</p>
+              <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Malaki pa rin ang gastos ng TB sa mga pamilya kahit libre ang gamot — pamasahe, nawawalang kita, pagkain. Sa unang pambansang survey ng gastos ng mga pasyente, 42% ng mga sambahayang may TB ang nakaranas ng "catastrophic" na gastos, ibig sabihin ay lumampas sa 20% ng taunang kita ng sambahayan ang gastos sa TB. Sa drug-resistant TB, 90% ito. Itanong sa inyong health center kung anong tulong ang mayroon sa inyong lugar.</p>
+            </sc-if>
+            <sc-if value="{{ nums.l9.has }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ t.byNumbers }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ nums.l9.items }}" as="c" hint-placeholder-count="2">
+                  <li style="padding-left:16px;"><div style="display:grid; gap:4px; padding:14px 16px 6px 0; border-top:{{ c.sep }};">
+                    <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.text }}</p>
+                    <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ c.kind }}. <sc-for list="{{ c.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                    <a href="{{ c.more }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.more }}</a>
+                  </div></li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-if>
+          <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l9 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+
+          <section id="l10" data-anchor="" aria-labelledby="l10-h" style="display:grid; gap:24px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h2 id="l10-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Myths and facts</h2>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h2 id="l10-h" style="font-weight:700; font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); line-height:1.2; letter-spacing:-0.01em; text-wrap:balance;">Mga maling akala at ang totoo</h2>
+            </sc-if>
+            <div role="table" aria-labelledby="l10-h" style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <div role="row" style="display:{{ L.head }}; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:20px; padding:12px 18px 10px; border-bottom:1px solid #E3E6E8;">
+                <span role="columnheader" style="font-size:15px; font-weight:700; color:#3F4B53;">{{ t.myth }}</span>
+                <span role="columnheader" style="font-size:15px; font-weight:700; color:#3F4B53;">{{ t.fact }}</span>
+              </div>
+              <sc-for list="{{ myths }}" as="m" hint-placeholder-count="6">
+                <div role="row" style="padding-left:18px;">
+                  <div style="display:grid; grid-template-columns:{{ L.mcols }}; gap:6px 20px; padding:14px 18px 14px 0; border-top:{{ m.sep }};">
+                    <div role="cell" style="display:grid; gap:2px;"><span style="display:{{ L.cellLabel }}; font-size:14px; font-weight:700; color:#C42032;">{{ t.myth }}</span><span style="font-size:17px; line-height:1.5; color:#3F4B53;">{{ m.myth }}</span></div>
+                    <div role="cell" style="display:grid; gap:2px;"><span style="display:{{ L.cellLabel }}; font-size:14px; font-weight:700; color:#175458;">{{ t.fact }}</span><span style="font-size:17px; line-height:1.5; font-weight:700;">{{ m.fact }}</span></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <p style="font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; font-size:15px; line-height:1.5; color:#56626A;">{{ t.sources }} <sc-for list="{{ src.l10 }}" as="s" hint-placeholder-count="1"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </section>
+        </article>
+
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ false }}">
+          <nav aria-label="{{ t.contents }}" style="position:sticky; top:96px; display:grid; gap:8px; padding:8px; border-radius:18px; background:#FFFFFF;">
+            <p style="padding:8px 12px 0; font-size:15px; font-weight:700; color:#3F4B53;">{{ t.contents }}</p>
+            <ul role="list" style="list-style:none; margin:0; padding:0; display:grid; gap:2px;">
+              <sc-for list="{{ toc }}" as="s" hint-placeholder-count="10">
+                <li><a href="{{ s.href }}" aria-current="{{ s.aria }}" style="display:flex; align-items:center; min-height:44px; padding:6px 12px; border-radius:10px; background:{{ s.bg }}; font-size:16px; line-height:1.3; font-weight:{{ s.weight }}; color:{{ s.ink }}; text-decoration:none;" style-hover="color:#175458;">{{ s.title }}</a></li>
+              </sc-for>
+            </ul>
+          </nav>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="learn" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: this.readLang(), vw: window.innerWidth, active: 'l1', claims: null, tocOpen: false };
+  NUMS = { l1: ['burden-cases', 'burden-deaths'], l3: ['gap-missed'], l4: ['drivers-attributable', 'who-men', 'who-children'], l5: ['test-sites', 'test-couriers', 'test-xray-yakap'], l6: ['tx-success', 'tx-ltfu', 'tx-free'], l7: ['tx-dr', 'tx-dr-success'], l8: ['prev-tpt', 'prev-bcg'], l9: ['cost-catastrophic'] };
+  TOC = [
+    ['l1', 'What is TB?', 'Ano ang TB?'], ['l2', 'How it spreads', 'Paano ito kumakalat'], ['l3', 'Signs and symptoms', 'Mga senyales at sintomas'],
+    ['l4', "Who's at higher risk", 'Sino ang mas nanganganib'], ['l5', "Getting tested — it's free", 'Magpasuri — libre ito'], ['l6', 'Treatment', 'Gamutan'],
+    ['l7', 'Drug-resistant TB', 'Drug-resistant TB'], ['l8', 'Preventing TB', 'Pag-iwas sa TB'], ['l9', 'Living with TB', 'Pamumuhay nang may TB'],
+    ['l10', 'Myths and facts', 'Mga maling akala at ang totoo']
+  ];
+  S = {
+    S1: ['WHO Global Tuberculosis Report 2025', 'https://www.who.int/teams/global-tuberculosis-programme/tb-reports/global-tuberculosis-report-2025'],
+    S2: ['WHO: Tuberculosis', 'https://who.int/tb'],
+    S5: ['DOH Administrative Order 2020-0056', 'https://law.upd.edu.ph/wp-content/uploads/2021/04/DOH-Administrative-Order-No-2020-0056.pdf'],
+    S6: ['Active case finding in the Philippines (PMC)', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6719270'],
+    S7: ['SunStar, 2025', 'https://www.sunstar.com.ph/manila/close-to-200000-tb-cases-recorded-in-2025'],
+    S9: ['Manila Bulletin, 13 July 2026', 'https://mb.com.ph/2026/07/13/many-filipinos-still-mistake-tb-for-an-ordinary-cough-expert-says'],
+    S10: ['Daily Tribune, 5 April 2026', 'https://tribune.net.ph/amp/story/2026/04/05/tb-remains-a-major-health-threat'],
+    S11: ['DZRH, March 2026', 'https://dzrh.com.ph/post/more-contagious-than-covid-doh-explains-why-tb-cases-spiked-to-102000-in-metro-manila-post-lockdown'],
+    S12: ['WHO Philippines and DOH, 12 November 2025', 'https://www.who.int/philippines/news/detail/12-11-2025-who--doh-target-12m-filipinos-to-be-screened-for-tuberculosis-by-2026--philippines-aims-to-double-budget-for-tb-services'],
+    S13: ['PhilHealth, 11 November 2024', 'https://www.philhealth.gov.ph/news/up/article/2024/news_6731aabf922b2.php'],
+    S15: ['DZRH, 23 March 2026', 'https://www.dzrh.com.ph/post/doh-guarantees-free-tb-meds-prioritizes-2027-budget-allocation'],
+    S16: ['Philstar/AFP, 14 November 2025', 'https://www.philstar.com/headlines/2025/11/14/2487103/philippines-has-3rd-highest-tb-cases-worldwide'],
+    S17: ['PLOS ONE, 2022: first national TB patient cost survey', 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8884492/'],
+    S18: ['Los Baños Times', 'https://lbtimes.ph/page/280/?Itemid=4'],
+    S19: ['Southeastern National TB Center', 'https://sntc.medicine.ufl.edu/Files/Products/Philippines.pdf']
+  };
+  SECT = {
+    l1: ['S2'], l2: ['S2', 'S7', 'S11'], l3: ['S2', 'S5', 'S6', 'S9'], l4: ['S2', 'S6', 'S10', 'S1'], l5: ['S11', 'S15', 'S13', 'S5', 'S12'],
+    l6: ['S12', 'S11', 'S13', 'S15'], l7: ['S1', 'S12'], l8: ['S1', 'S12', 'S2', 'S16'], l9: ['S11', 'S17'],
+    l10: ['S2', 'S18', 'S7', 'S11', 'S9', 'S1', 'S19', 'S5', 'S12', 'S15']
+  };
+  MYTHS = [
+    { en: ['TB is hereditary.', 'TB is caused by germs that spread through the air, not by genes. Families catch it from each other because they share the same air at home.'], fil: ['Namamana ang TB.', 'Mikrobyong kumakalat sa hangin ang sanhi ng TB, hindi ang lahi. Nagkakahawaan ang magkakapamilya dahil iisang hangin ang nilalanghap nila sa bahay.'] },
+    { en: ['You can catch TB from shared plates, glasses or utensils.', "TB doesn't spread through plates or utensils. It spreads through the air."], fil: ['Nakukuha ang TB sa paghiram ng plato, baso o kubyertos.', 'Hindi naipapasa ang TB sa plato o kubyertos. Sa hangin ito kumakalat.'] },
+    { en: ['Shaking hands with or touching someone with TB will infect you.', "Touch doesn't spread TB."], fil: ['Mahahawa ka kapag nakipagkamay o humawak sa taong may TB.', 'Hindi naipapasa ang TB sa paghawak.'] },
+    { en: ['Letting sweat dry on your back causes TB.', 'Sweat has nothing to do with TB. Only TB germs cause TB.'], fil: ['Nagkaka-TB kapag natuyuan ng pawis ang likod.', 'Walang kinalaman ang pawis sa TB. Mikrobyo ng TB lang ang sanhi nito.'] },
+    { en: ['Only poor people get TB.', "TB doesn't discriminate. It's found in every part of society."], fil: ['Mahihirap lang ang nagkaka-TB.', 'Walang pinipili ang TB. Matatagpuan ito sa lahat ng sektor ng lipunan.'] },
+    { en: ["Children can't get TB.", 'They can. WHO estimates that about 73,000 Filipino children under 15 fell ill with TB in 2024.'], fil: ['Hindi nagkaka-TB ang mga bata.', 'Nagkakaroon. Tantiya ng WHO, mga 73,000 batang Pilipino na wala pang 15 taong gulang ang nagka-TB noong 2024.'] },
+    { en: ['A long cough is just a cough; cough syrup will fix it.', 'A cough that lasts 2 weeks or more needs a TB test, not just cough medicine.'], fil: ["Ubo lang 'yan; gagaling din sa gamot sa ubo.", 'Ang ubong tumatagal nang dalawang linggo o higit pa ay kailangang ipasuri para sa TB, hindi lang basta gamutin ng gamot sa ubo.'] },
+    { en: ['Once you feel better, you can stop the medicines.', 'Finish the full course. Stopping early can bring TB back stronger and resistant to medicines.'], fil: ['Kapag maganda na ang pakiramdam, puwede nang itigil ang gamot.', 'Tapusin ang buong gamutan. Kapag itinigil nang maaga, maaaring bumalik ang TB nang mas malala at hindi na tablan ng gamot.'] },
+    { en: ["TB can't be cured, and treatment is expensive.", 'TB is curable, and testing and medicines are free at public health centers and TB-DOTS centers.'], fil: ['Hindi na gumagaling ang TB, at mahal ang gamutan.', 'Nagagamot ang TB, at libre ang pagsusuri at gamot sa mga pampublikong health center at TB-DOTS center.'] }
+  ];
+
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  componentDidMount() {
+    fetch('data/claims.json').then(r => r.json()).then(c => this.setState({ claims: c }), () => {});
+    document.documentElement.lang = this.state.lang;
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 80); };
+    this.onS = () => { if (document.hidden) return this.spy(); if (this.sr) return; this.sr = requestAnimationFrame(() => { this.sr = 0; this.spy(); }); };
+    window.addEventListener('resize', this.onR);
+    window.addEventListener('scroll', this.onS, { passive: true });
+    this.spy();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); window.removeEventListener('scroll', this.onS); }
+  spy() {
+    let cur = 'l1';
+    this.TOC.forEach(([id]) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < window.innerHeight * 0.4) cur = id; });
+    if (cur !== this.state.active) this.setState({ active: cur });
+  }
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    let a = null;
+    document.querySelectorAll('[data-anchor]').forEach(el => { const t = el.getBoundingClientRect().top; if (t <= window.innerHeight * 0.35) a = { el, t }; });
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l }, () => { if (a) requestAnimationFrame(() => window.scrollBy(0, a.el.getBoundingClientRect().top - a.t)); });
+  };
+  reduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  nums(lang) {
+    const c = this.state.claims, out = {};
+    Object.keys(this.NUMS).forEach(k => {
+      const items = c ? this.NUMS[k].map(id => c.claims.find(x => x.id === id)).filter(Boolean) : [];
+      out[k] = { has: items.length > 0, items: items.map((x, i) => ({
+        text: x[lang] || x.en, kind: x.kind, more: 'Data.dc.html#claim-' + x.id, sep: i ? '1px solid #E3E6E8' : '0',
+        src: (x.sources || []).map((sid, j, arr) => { const S = c.sources[sid] || { title: sid, url: '#' }; return { name: S.title, url: S.url, sep: j < arr.length - 1 ? '; ' : '' }; })
+      })) };
+    });
+    return out;
+  }
+  renderVals() {
+    const { lang, vw, active } = this.state, en = lang === 'en', wide = vw >= 1080, stack = vw < 720;
+    const src = {};
+    Object.keys(this.SECT).forEach(k => { const ids = this.SECT[k]; src[k] = ids.map((id, i) => ({ name: this.S[id][0], url: this.S[id][1], sep: i < ids.length - 1 ? '; ' : '' })); });
+    return {
+      en, fil: !en, lang, setLang: this.setLang, wide, narrow: !wide,
+      t: en ? { contents: 'Contents', sources: 'Sources:', myth: 'Myth', fact: 'Fact', byNumbers: 'By the numbers', more: 'More in the data', top: 'Back to top' } : { contents: 'Nilalaman', sources: 'Pinagmulan:', myth: 'Maling akala', fact: 'Ang totoo', byNumbers: 'Sa mga numero', more: 'Higit pa sa datos', top: 'Bumalik sa itaas' },
+      nums: this.nums(lang), onToc: e => this.setState({ tocOpen: !!(e && e.currentTarget && e.currentTarget.open) }), tocRot: this.state.tocOpen ? '90deg' : '0deg',
+      toTop: e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: this.reduced() ? 'auto' : 'smooth' }); const m = document.getElementById('main'); if (m) m.focus({ preventScroll: true }); },
+      L: {
+        cols: wide ? 'minmax(0,44rem) 250px' : 'minmax(0,1fr)', gap: wide ? 'clamp(48px,7vw,112px)' : '0px',
+        thead: stack ? 'none' : 'table-header-group', tr: stack ? 'block' : 'table-row', td: stack ? 'block' : 'table-cell',
+        cellLabel: stack ? 'block' : 'none', head: stack ? 'none' : 'grid', mcols: stack ? 'minmax(0,1fr)' : 'minmax(0,5fr) minmax(0,7fr)', mythPad: stack ? '18px 0 6px' : '18px 24px 18px 0', factPad: stack ? '6px 0 18px' : '18px 0'
+      },
+      toc: this.TOC.map(([id, e, f]) => ({ href: '#' + id, title: en ? e : f, aria: active === id ? 'location' : 'false', bg: active === id ? 'rgba(30,107,112,0.14)' : 'transparent', ink: active === id ? '#175458' : '#14212B', weight: active === id ? 700 : 400 })),
+      src,
+      myths: this.MYTHS.map((m, i) => ({ myth: m[lang][0], fact: m[lang][1], sep: i ? '1px solid #E3E6E8' : '0' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

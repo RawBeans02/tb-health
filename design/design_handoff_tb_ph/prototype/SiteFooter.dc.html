@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<footer data-noprint="" style="border-top:1px solid #E3E6E8; color:#14212B; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="max-width:1280px; margin:0 auto; padding:clamp(40px,6vw,72px) clamp(16px,5vw,64px) 32px; display:grid; gap:32px;">
+    <div style="display:grid; gap:12px; max-width:40rem;">
+      <p style="margin:0; font-size:19px; line-height:1.5; text-wrap:pretty;">{{ t.safety }}</p>
+      <p style="margin:0; font-size:19px; font-weight:700; line-height:1.4;">{{ t.emLead }} <a href="tel:911" style="color:#C42032; text-decoration-thickness:2px; text-underline-offset:4px;" style-hover="color:#14212B;">{{ t.emCall }}</a></p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:20px 48px; align-items:center; justify-content:space-between;">
+      <nav aria-label="{{ t.nav }}">
+        <ul style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:0 22px;">
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="7">
+            <li style="display:{{ it.display }};"><a href="{{ it.href }}" aria-current="{{ it.aria }}" style="display:inline-flex; align-items:center; min-height:44px; font-size:16px; font-weight:{{ it.weight }}; color:#14212B; text-decoration-color:#9AA3A8; text-underline-offset:4px;" style-hover="color:#175458;">{{ it.label }}</a></li>
+          </sc-for>
+        </ul>
+      </nav>
+      <div role="group" aria-label="Language / Wika" style="display:flex; flex:none; border:1.5px solid #14212B; border-radius:6px; overflow:hidden;">
+        <button type="button" lang="en" aria-pressed="{{ isEn }}" onClick="{{ toEn }}" style="min-height:44px; padding:0 12px; border:0; background:{{ enBg }}; color:{{ enFg }}; font-size:15px; font-weight:700; cursor:pointer;">English</button>
+        <button type="button" lang="fil" aria-pressed="{{ isFil }}" onClick="{{ toFil }}" style="min-height:44px; padding:0 12px; border:0; border-left:1.5px solid #14212B; background:{{ filBg }}; color:{{ filFg }}; font-size:15px; font-weight:700; cursor:pointer;">Filipino</button>
+      </div>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:12px 32px; justify-content:space-between; align-items:baseline; border-top:1px solid #E3E6E8; padding-top:20px;">
+      <p style="margin:0; font-size:15px; line-height:1.45; color:#56626A; max-width:44rem;">{{ t.credit }}</p>
+      <p style="margin:0; font-family:Newsreader,Georgia,serif; font-weight:600; font-size:19px; line-height:1.2;"><span style="color:#C42032;">{{ brandA }}</span>{{ brandB }}</p>
+    </div>
+  </div>
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="height:calc(92px + env(safe-area-inset-bottom));"></div></sc-if>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:340},&quot;brand&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;TB PH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;fil&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en'|'fil'&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;check&quot;,&quot;learn&quot;,&quot;data&quot;,&quot;about&quot;,&quot;install&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onLang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(lang: 'en'|'fil') =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', vw: typeof window !== 'undefined' ? window.innerWidth : 1280, standalone: false };
+  componentDidMount() {
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 60); };
+    window.addEventListener('resize', this.onR);
+    const h = document.documentElement;
+    this.env = () => this.setState({ standalone: h.getAttribute('data-standalone') === 'true' });
+    if (window.MutationObserver) { this.mo = new MutationObserver(this.env); this.mo.observe(h, { attributes: true, attributeFilter: ['data-standalone'] }); }
+    this.env();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); if (this.mo) this.mo.disconnect(); }
+  nav = [
+    { k: 'home', href: 'Home.dc.html', en: 'Find TB care', fil: 'Hanapin ang gamutan' },
+    { k: 'check', href: 'Check.dc.html', en: 'Check symptoms', fil: 'Suriin ang sintomas' },
+    { k: 'learn', href: 'Learn.dc.html', en: 'Learn about TB', fil: 'Alamin ang TB' },
+    { k: 'data', href: 'Data.dc.html', en: 'The data', fil: 'Ang datos' },
+    { k: 'a11y', href: 'About.dc.html#accessibility', en: 'Accessibility', fil: 'Accessibility' },
+    { k: 'install', href: 'Install.dc.html', en: 'Install the app', fil: 'I-install ang app' },
+    { k: 'about', href: 'About.dc.html', en: 'About', fil: 'Tungkol sa amin' }
+  ];
+  copy = {
+    en: {
+      safety: "This site gives general information. It is not a diagnosis. If you've had a cough for 2 weeks or more, get tested — it's free at public health centers.",
+      emLead: 'Emergency?', emCall: 'Call 911.',
+      credit: 'Data: WHO Global Tuberculosis Report 2025, DOH, PhilHealth. Last updated 30 October 2026.',
+      nav: 'More pages'
+    },
+    fil: {
+      safety: 'Pangkalahatang impormasyon lamang ang nasa site na ito; hindi ito diyagnosis. Kung dalawang linggo ka nang inuubo o higit pa, magpasuri — libre ito sa mga pampublikong health center.',
+      emLead: 'Emergency?', emCall: 'Tumawag sa 911.',
+      credit: 'Datos: WHO Global Tuberculosis Report 2025, DOH, PhilHealth. Huling update: 30 Oktubre 2026.',
+      nav: 'Iba pang pahina'
+    }
+  };
+  pick(l) { if (this.props.onLang) this.props.onLang(l); else this.setState({ lang: l }); }
+  renderVals() {
+    const lang = (this.props.lang || this.state.lang) === 'fil' ? 'fil' : 'en';
+    const cur = this.props.current || '', brand = this.props.brand || 'TB PH', sa = this.state.standalone;
+    return {
+      t: this.copy[lang], brandA: brand.split(' ')[0], brandB: brand.replace(/^\S+/, ''), narrow: this.state.vw < (lang === 'fil' ? 1180 : 1000),
+      items: this.nav.map(n => ({ href: n.href, label: n[lang], aria: n.k === cur ? 'page' : 'false', weight: n.k === cur ? 700 : 400, display: n.k === 'install' && sa ? 'none' : 'list-item' })),
+      isEn: lang === 'en', isFil: lang === 'fil',
+      enBg: lang === 'en' ? '#14212B' : 'transparent', enFg: lang === 'en' ? '#F2F0EA' : '#14212B',
+      filBg: lang === 'fil' ? '#14212B' : 'transparent', filFg: lang === 'fil' ? '#F2F0EA' : '#14212B',
+      toEn: () => this.pick('en'), toFil: () => this.pick('fil')
+    };
+  }
+}
+</script>
+</body>
+</html>

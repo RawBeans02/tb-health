@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>About — TB PH</title>
+  <meta name="description" content="Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol{margin:0}button{font:inherit;color:inherit}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="about" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(40px,7vw,88px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="max-width:760px; display:grid; gap:40px;">
+        <section id="mission" data-anchor="" style="display:grid; gap:12px;">
+          <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+            <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032;">About</h1>
+            <p style="font-size:19px; line-height:1.5; color:#3F4B53; max-width:34em; text-wrap:pretty;">TB PH is a TB awareness project by [group name], a team of researchers and data scientists, working with partner hospitals that care for people with TB. We turn public TB data into clear information so more Filipinos get tested early and finish treatment.</p>
+          </sc-if>
+          <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+            <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032;">Tungkol sa amin</h1>
+            <p style="font-size:19px; line-height:1.5; color:#3F4B53; max-width:34em; text-wrap:pretty;">Ang TB PH ay proyekto para sa kamalayan sa TB ng [pangalan ng grupo], isang pangkat ng mga mananaliksik at data scientist, katuwang ang mga ospital na nag-aalaga sa mga taong may TB. Ginagawa naming malinaw na impormasyon ang pampublikong datos tungkol sa TB, para mas maraming Pilipino ang magpasuri nang maaga at tumapos ng gamutan.</p>
+          </sc-if>
+        </section>
+
+        <section id="partners" data-anchor="" aria-labelledby="partners-h" style="display:grid; gap:12px;">
+          <h2 id="partners-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.partners }}</h2>
+          <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;"><li style="padding:14px 18px; font-size:18px; line-height:1.5; color:#3F4B53;">{{ t.partnersRow }}</li></ul>
+        </section>
+
+        <section id="review" data-anchor="" aria-labelledby="review-h" style="display:grid; gap:12px;">
+          <h2 id="review-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.review }}</h2>
+          <div style="border-radius:18px; background:#FFFFFF; padding:16px 18px; display:grid; gap:12px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Health content reviewed by [name, credentials, hospital] on [date].</p></sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Sinuri ang nilalamang pangkalusugan ni [pangalan, kredensiyal, ospital] noong [petsa].</p></sc-if>
+          </div>
+        </section>
+
+        <section id="disclaimer" data-anchor="" aria-labelledby="disclaimer-h" style="display:grid; gap:12px;">
+          <h2 id="disclaimer-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.disclaimer }}</h2>
+          <div style="border-radius:18px; background:#FFFFFF; padding:16px 18px; display:grid; gap:12px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">This website provides general health information and does not replace a consultation with a doctor or health worker. The symptom checker does not diagnose TB. Only a medical test can. In an emergency, call 911.</p></sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Pangkalahatang impormasyong pangkalusugan ang ibinibigay ng website na ito at hindi ito kapalit ng konsultasyon sa doktor o health worker. Hindi nagbibigay ng diyagnosis ang symptom checker; pagsusuring medikal lang ang makapagsasabi kung may TB. Sa emergency, tumawag sa 911.</p></sc-if>
+          </div>
+        </section>
+
+        <section id="privacy" data-anchor="" aria-labelledby="privacy-h" style="display:grid; gap:12px;">
+          <h2 id="privacy-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.privacy }}</h2>
+          <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}"><ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;"><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; font-size:18px; line-height:1.5; text-wrap:pretty;">There are no accounts, and we don't collect personal information. The symptom checker runs entirely in your browser. Your answers are never saved or sent anywhere.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">We use your location only to sort places by distance. It stays on your device.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">The app saves its pages and data on your phone so it works offline. There is no tracking and no analytics.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">Three outside services are involved: Google Fonts supplies the lettering, OpenStreetMap supplies map tiles only if you open the map, and directions open in Google Maps (or Sakay.ph if you choose it).</p></li></ul></sc-if>
+          <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}"><ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;"><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; font-size:18px; line-height:1.5; text-wrap:pretty;">Walang account, at hindi kami kumukuha ng personal na impormasyon. Tumatakbo lamang sa iyong browser ang symptom checker. Hindi kailanman sine-save o ipinapadala kahit saan ang iyong mga sagot.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">Ginagamit lang namin ang lokasyon mo para ayusin ang mga lugar ayon sa layo. Nananatili ito sa iyong device.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">Sine-save ng app ang mga pahina at datos nito sa phone mo para gumana ito kahit offline. Walang tracking at walang analytics.</p></li><li style="padding-left:18px;"><p style="padding:14px 18px 14px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.5; text-wrap:pretty;">May tatlong panlabas na serbisyo: ang Google Fonts para sa mga titik, ang OpenStreetMap para sa mapa (kapag binuksan mo lang ito), at ang Google Maps (o Sakay.ph kung ito ang pipiliin mo) para sa direksiyon.</p></li></ul></sc-if>
+        </section>
+
+        <section id="updates" data-anchor="" aria-labelledby="updates-h" style="display:grid; gap:12px;">
+          <h2 id="updates-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.updates }}</h2>
+          <div style="border-radius:18px; background:#FFFFFF; padding:16px 18px; display:grid; gap:12px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Data last updated 30 October 2026. WHO publishes new TB estimates once a year; the next Global Tuberculosis Report is expected in late 2026. PhilHealth updates its TB-DOTS list regularly, and we refresh ours every month.</p></sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Huling update ng datos: 30 Oktubre 2026. Isang beses sa isang taon naglalabas ng bagong tantiya sa TB ang WHO; inaasahan ang susunod na Global Tuberculosis Report sa huling bahagi ng 2026. Regular na ina-update ng PhilHealth ang listahan nito ng TB-DOTS, at buwan-buwan naming nire-refresh ang sa amin.</p></sc-if>
+          </div>
+        </section>
+
+        <sc-if value="{{ showApp }}" hint-placeholder-val="{{ true }}">
+          <section id="app" data-anchor="" aria-labelledby="app-h" style="display:grid; gap:12px;">
+            <h2 id="app-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.appH }}</h2>
+            <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <li style="padding:14px 18px; font-size:18px; line-height:1.55; text-wrap:pretty;">{{ t.appText }}</li>
+              <li><a href="Install.dc.html" style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; padding:0 18px; border-top:1px solid #E3E6E8; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:#F6F8F8; color:#14212B;"><span>{{ t.appLink }}</span><span aria-hidden="true" style="font-size:26px; line-height:1; color:#8A949A;">›</span></a></li>
+            </ul>
+          </section>
+        </sc-if>
+
+        <section id="accessibility" data-anchor="" aria-labelledby="accessibility-h" style="display:grid; gap:12px;">
+          <h2 id="accessibility-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.a11y }}</h2>
+          <div style="border-radius:18px; background:#FFFFFF; padding:16px 18px; display:grid; gap:12px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA. The site works with a keyboard and screen readers, uses large text and strong contrast, and every chart has a table version. Known limitation: the optional map works best with a mouse or touch, so the same places are always listed as text. If something doesn't work for you, tell us at [email].</p></sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}"><p style="font-size:18px; line-height:1.55; max-width:34em; text-wrap:pretty;">Layunin naming maabot ang Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Gumagana ang site gamit ang keyboard at screen reader, malalaki ang titik at malinaw ang kulay, at may talaan ang bawat chart. Limitasyon: pinakamainam gamitin ang mapa gamit ang mouse o touch, kaya laging nakalista rin bilang teksto ang parehong mga lugar. Kung may hindi gumagana para sa iyo, sabihin sa amin sa [email].</p></sc-if>
+          </div>
+        </section>
+
+        <section id="numbers" data-anchor="" aria-labelledby="numbers-h" style="display:grid; gap:12px;">
+          <h2 id="numbers-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.numbers }}</h2>
+          <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+            <sc-for list="{{ numbers }}" as="n" hint-placeholder-count="5">
+              <li style="padding-left:18px;">
+                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:2px 16px; padding:12px 18px 12px 0; border-top:{{ n.sep }};">
+                  <div style="flex:1 1 15em; min-width:0; display:grid; gap:2px;">
+                    <p style="font-size:18px; font-weight:700; line-height:1.35; overflow-wrap:anywhere;">{{ n.who }}</p>
+                    <p style="font-size:16px; line-height:1.45; color:{{ n.noteInk }};">{{ n.note }}</p>
+                  </div>
+                  <sc-if value="{{ n.hasTel }}" hint-placeholder-val="{{ true }}"><a href="{{ n.tel }}" aria-label="{{ n.aria }}" style="display:inline-flex; align-items:center; min-height:44px; color:#175458; font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ n.number }}</a></sc-if>
+                </div>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+
+        <section id="contact" data-anchor="" aria-labelledby="contact-h" style="display:grid; gap:12px;">
+          <h2 id="contact-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; text-wrap:balance;">{{ t.contact }}</h2>
+          <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;"><li style="padding:14px 18px; font-size:18px; line-height:1.5;">[email]</li></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="about" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: this.readLang(), standalone: false };
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    const h = document.documentElement;
+    this.env = () => this.setState({ standalone: h.getAttribute('data-standalone') === 'true' });
+    if (window.MutationObserver) { this.mo = new MutationObserver(this.env); this.mo.observe(h, { attributes: true, attributeFilter: ['data-standalone'] }); }
+    this.env();
+  }
+  componentWillUnmount() { if (this.mo) this.mo.disconnect(); }
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    let a = null;
+    document.querySelectorAll('[data-anchor]').forEach(el => { const t = el.getBoundingClientRect().top; if (t <= window.innerHeight * 0.35) a = { el, t }; });
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l }, () => { if (a) requestAnimationFrame(() => window.scrollBy(0, a.el.getBoundingClientRect().top - a.t)); });
+  };
+  renderVals() {
+    const en = this.state.lang === 'en';
+    const t = en
+      ? { partners: 'Our partners', partnersRow: 'Partner hospitals (names and logos to come)', review: 'Medical review', disclaimer: 'Disclaimer', privacy: 'Privacy', updates: 'Data and updates', contact: 'Contact', numbers: 'Helpful numbers', a11y: 'Accessibility', appH: 'Use TB PH like an app', appText: 'Add TB PH to your home screen. It opens full screen, and once it has been opened, the planner, the symptom check and Learn still work without a signal.', appLink: 'How to install' }
+      : { partners: 'Mga katuwang namin', partnersRow: 'Mga katuwang na ospital (darating ang mga pangalan at logo)', review: 'Medical review', disclaimer: 'Paalala', privacy: 'Privacy', updates: 'Datos at mga update', contact: 'Makipag-ugnayan', numbers: 'Mga numerong makatutulong', a11y: 'Accessibility', appH: 'Gamitin ang TB PH na parang app', appText: 'Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner, ang symptom check at ang Alamin kahit walang signal.', appLink: 'Paano i-install' };
+    const fromList = en ? 'From the PhilHealth TB-DOTS list' : 'Mula sa listahan ng PhilHealth ng TB-DOTS';
+    const numbers = [
+      { who: en ? 'Emergency (police, fire, medical)' : 'Emergency (pulis, bumbero, medikal)', number: '911', tel: 'tel:911', note: en ? 'National emergency hotline' : 'Pambansang emergency hotline' },
+      { who: en ? 'DOH hotline' : 'Hotline ng DOH', number: '1555', tel: 'tel:1555', note: en ? '[VERIFY] Confirm before launch' : '[VERIFY] Kumpirmahin bago ilunsad', flag: true },
+      { who: 'Lung Center of the Philippines, TB DOTS', number: '8924-6101 loc. 1856–1857', tel: 'tel:+63289246101', note: fromList },
+      { who: 'Philippine Tuberculosis Society, Quezon Institute', number: '8356-5857 loc. 125', tel: 'tel:+63283565857', note: fromList },
+      { who: en ? 'Your local health center' : 'Ang inyong lokal na health center', number: '', tel: '', note: en ? 'Usually the fastest first stop' : 'Kadalasang pinakamabilis na unang puntahan' }
+    ].map((n, i) => Object.assign({}, n, { hasTel: !!n.tel, sep: i ? '1px solid #E3E6E8' : '0', noteInk: n.flag ? '#C42032' : '#56626A', aria: (en ? 'Call ' : 'Tumawag sa ') + n.who + ', ' + n.number }));
+    return { en, fil: !en, lang: this.state.lang, setLang: this.setLang, t, numbers, showApp: !this.state.standalone };
+  }
+}
+</script>
+</body>
+</html>

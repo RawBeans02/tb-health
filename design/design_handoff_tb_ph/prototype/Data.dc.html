@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The data — TB PH</title>
+  <meta name="description" content="TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:88px}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol,figure{margin:0}button,select{font:inherit;color:inherit}summary{list-style:none}summary::-webkit-details-marker{display:none}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="data" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;"><defs>
+    <pattern id="dhatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#FFFFFF"></rect><line x1="0" y1="0" x2="0" y2="6" stroke="#7A8C97" stroke-width="3"></line></pattern>
+    <pattern id="dh-teal" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#FFFFFF"></rect><line x1="0" y1="0" x2="0" y2="6" stroke="#1E6B70" stroke-width="3"></line></pattern>
+    <pattern id="dh-ink" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#FFFFFF"></rect><line x1="0" y1="0" x2="0" y2="6" stroke="#14212B" stroke-width="3"></line></pattern>
+    <pattern id="dh-dot" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#FFFFFF"></rect><line x1="0" y1="0" x2="0" y2="6" stroke="#7A8C97" stroke-width="3"></line></pattern>
+  </defs></svg>
+
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <dc-import name="DotStory" lang="{{ lang }}" preview-beat="{{ previewBeat }}" reduced-motion="{{ reducedMotion }}" missed-layout="{{ missedLayout }}" hint-size="100%,1400px"></dc-import>
+    <div id="charts" style="max-width:1120px; margin:0 auto; padding:0 clamp(16px,4vw,64px); padding-top:clamp(40px,6vw,72px); padding-bottom:clamp(48px,7vw,80px); display:grid; gap:20px;">
+      <div id="top" data-anchor="" tabindex="-1" style="max-width:1040px; display:grid; gap:20px; outline:none;">
+        <div style="display:grid; gap:12px;">
+        <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+          <h2 style="font-weight:700; font-size:clamp(1.75rem,1.5rem + 1vw,2.25rem); line-height:1.15; letter-spacing:-0.01em;">The data</h2>
+          <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">These are the numbers behind TB in the Philippines. Most come from the World Health Organization's Global Tuberculosis Report 2025, which covers 2024. Estimates carry uncertainty, so we show ranges where they matter.</p>
+        </sc-if>
+        <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+          <h2 style="font-weight:700; font-size:clamp(1.75rem,1.5rem + 1vw,2.25rem); line-height:1.15; letter-spacing:-0.01em;">Ang datos</h2>
+          <p style="font-size:18px; line-height:1.6; max-width:34em; text-wrap:pretty;">Ito ang mga numero sa likod ng TB sa Pilipinas. Karamihan ay galing sa Global Tuberculosis Report 2025 ng World Health Organization, na sumasaklaw sa 2024. May kaakibat na di-katiyakan ang mga tantiya, kaya ipinapakita namin ang saklaw kapag mahalaga.</p>
+        </sc-if>
+        </div>
+        <nav aria-labelledby="idx-h" style="display:grid; gap:10px;">
+          <h2 id="idx-h" style="font-size:17px; font-weight:700; color:#3F4B53;">{{ t.onPage }}</h2>
+          <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden; display:grid; grid-template-columns:{{ idxCols }};">
+            <sc-for list="{{ index }}" as="i" hint-placeholder-count="16"><li style="padding-left:16px;"><a href="{{ i.href }}" style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; padding:8px 16px 8px 0; border-top:{{ i.sep }}; font-size:17px; line-height:1.3; color:#14212B; text-decoration:none;" style-hover="color:#175458;"><span>{{ i.title }}</span><span aria-hidden="true" style="flex:none; font-size:24px; line-height:1; color:#8A949A;">›</span></a></li></sc-for>
+          </ul>
+        </nav>
+        <details id="methods" data-anchor="" onToggle="{{ onMethods }}" style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+          <summary style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:0 16px; font-size:18px; font-weight:700; cursor:pointer;"><span>{{ t.methods }}</span><span aria-hidden="true" style="font-size:26px; line-height:1; color:#8A949A; transform:rotate({{ methRot }}); transition:transform 160ms ease;">›</span></summary>
+          <div style="padding:4px 18px 16px; border-top:1px solid #E3E6E8; max-width:44rem;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <ul style="padding-left:1.2em; display:grid; gap:10px; font-size:17px; line-height:1.55;">
+                <li><i>Estimated</i> cases are WHO's model of how many people actually fell ill. <i>Notified</i> cases are those reported to DOH. The gap between them is the people who were missed.</li>
+                <li>WHO re-estimates the whole time series every year. When the 2026 report comes out, every series gets replaced, not just extended.</li>
+                <li>Monthly figures for 2025–26 are provisional and will change.</li>
+                <li>Risk-factor numbers overlap. A person can be both a smoker and diabetic, for example.</li>
+                <li>The 2016 prevalence survey screened adults with symptoms and chest X-rays and confirmed TB in the lab. It's the most recent survey with regional breakdowns.</li>
+                <li>Current regional case counts aren't published as open data. DOH reported over 102,000 cases in Metro Manila in March 2026.</li>
+              </ul>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <ul style="padding-left:1.2em; display:grid; gap:10px; font-size:17px; line-height:1.55;">
+                <li>Ang <i>tantiyang</i> kaso ay modelo ng WHO kung ilan talaga ang nagkasakit. Ang <i>naiulat</i> ay ang mga kasong iniulat sa DOH. Ang agwat ay ang mga hindi natagpuan.</li>
+                <li>Taon-taon, muling tinatantiya ng WHO ang buong serye. Kapag lumabas ang ulat ng 2026, papalitan ang lahat ng serye, hindi lang dadagdagan.</li>
+                <li>Pansamantala at maaaring magbago ang buwanang datos para sa 2025–26.</li>
+                <li>Nagsasapawan ang mga numero ng risk factor. Halimbawa, maaaring naninigarilyo at may diabetes ang isang tao.</li>
+                <li>Sa prevalence survey noong 2016, sinuri ang mga nasa hustong gulang sa pamamagitan ng tanong tungkol sa sintomas at chest X-ray, at kinumpirma sa laboratoryo ang TB. Ito ang pinakabagong survey na may hati ayon sa rehiyon.</li>
+                <li>Walang open data ng kasalukuyang bilang ng kaso ayon sa rehiyon. Iniulat ng DOH na higit 102,000 ang kaso sa Metro Manila noong Marso 2026.</li>
+              </ul>
+            </sc-if>
+          </div>
+        </details>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><p role="status" style="font-size:18px; color:#56626A;">{{ t.loading }}</p></sc-if>
+        <sc-if value="{{ failed }}" hint-placeholder-val="{{ false }}"><p role="alert" style="font-size:18px; font-weight:700;">{{ t.failed }}</p></sc-if>
+      </div>
+
+      <sc-for list="{{ charts }}" as="c" hint-placeholder-count="2">
+        <section id="{{ c.id }}" data-anchor="" aria-labelledby="{{ c.hid }}" style="max-width:1040px; display:grid; gap:16px; padding:clamp(18px,3vw,32px); border-radius:18px; background:#FFFFFF;">
+          <h2 id="{{ c.hid }}" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; max-width:26em; text-wrap:balance;">{{ c.title }}</h2>
+          <p style="max-width:40em; font-size:18px; line-height:1.5; text-wrap:pretty;">{{ c.takeaway }}</p>
+          <sc-if value="{{ c.hasToggle }}" hint-placeholder-val="{{ false }}">
+            <div role="group" aria-label="{{ c.toggleLabel }}" style="justify-self:start; display:flex; gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ c.toggle }}" as="o" hint-placeholder-count="2"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.pick }}" style="min-width:0; min-height:44px; padding:4px 14px; border:0; border-radius:10px; font-size:16px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer; background:{{ o.bg }}; color:{{ o.fg }};">{{ o.label }}</button></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ c.hasStats }}" hint-placeholder-val="{{ false }}">
+            <ul role="list" style="list-style:none; margin:0; padding:0; display:grid;">
+              <sc-for list="{{ c.stats }}" as="s" hint-placeholder-count="2">
+                <li style="display:grid; grid-template-columns:minmax(4.5em,auto) minmax(0,1fr); align-items:baseline; gap:4px 16px; padding:12px 0; border-top:1px solid #E3E6E8;">
+                  <span style="font-size:19px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;">{{ s.v }}</span>
+                  <span style="display:grid; gap:2px;"><span style="font-size:17px; line-height:1.4;">{{ s.l }}</span><span style="font-size:15px; line-height:1.4; color:#56626A;">{{ s.s }}</span></span>
+                </li>
+              </sc-for>
+            </ul>
+          </sc-if>
+          <sc-if value="{{ c.hasClaimRows }}" hint-placeholder-val="{{ false }}">
+            <ul role="list" style="list-style:none; margin:0; padding:0; display:grid;">
+              <sc-for list="{{ c.claimRows }}" as="r" hint-placeholder-count="3">
+                <li style="display:grid; gap:4px; padding:12px 0; border-top:1px solid #E3E6E8;">
+                  <p style="font-size:17px; line-height:1.5; text-wrap:pretty;">{{ r.text }}</p>
+                  <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ r.meta }} <sc-for list="{{ r.src }}" as="x" hint-placeholder-count="1"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+                </li>
+              </sc-for>
+            </ul>
+          </sc-if>
+          <sc-for list="{{ c.svgs }}" as="g" hint-placeholder-count="1">
+            <figure style="display:grid; gap:12px; min-width:0; padding-top:4px;">
+              <sc-if value="{{ g.hasTitle }}" hint-placeholder-val="{{ false }}"><h3 style="font-size:17px; font-weight:700; line-height:1.35;">{{ g.title }}</h3></sc-if>
+              <div style="position:relative; width:100%; max-width:{{ g.w }}px;">
+                <svg viewBox="{{ g.vb }}" role="img" aria-label="{{ g.alt }}" style="display:block; width:100%; height:auto; overflow:visible;">
+                  <sc-for list="{{ g.rects }}" as="r" hint-placeholder-count="0"><rect x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.fill }}" stroke="{{ r.stroke }}" stroke-width="{{ r.sw }}"></rect></sc-for>
+                  <sc-for list="{{ g.paths }}" as="p" hint-placeholder-count="0"><path d="{{ p.d }}" fill="{{ p.fill }}" fill-opacity="{{ p.fo }}" stroke="{{ p.stroke }}" stroke-width="{{ p.sw }}" stroke-dasharray="{{ p.dash }}" stroke-linejoin="round" stroke-linecap="round"></path></sc-for>
+                  <sc-for list="{{ g.circles }}" as="o" hint-placeholder-count="0"><circle cx="{{ o.x }}" cy="{{ o.y }}" r="{{ o.r }}" fill="{{ o.fill }}" stroke="{{ o.stroke }}" stroke-width="{{ o.sw }}"></circle></sc-for>
+                </svg>
+                <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; font-variant-numeric:tabular-nums;">
+                  <sc-for list="{{ g.texts }}" as="tx" hint-placeholder-count="0"><span style="position:absolute; left:{{ tx.px }}; top:{{ tx.py }}; transform:{{ tx.tf }}; font-size:{{ tx.fs }}px; font-weight:{{ tx.fw }}; color:{{ tx.fill }}; line-height:1.1; white-space:nowrap;">{{ tx.s }}</span></sc-for>
+                </div>
+              </div>
+            </figure>
+          </sc-for>
+          <sc-if value="{{ c.hasCaption }}" hint-placeholder-val="{{ false }}"><p style="font-size:16px; line-height:1.5; color:#3F4B53; max-width:46em; text-wrap:pretty;">{{ c.caption }}</p></sc-if>
+          <p style="font-size:15px; line-height:1.5; color:#56626A; max-width:46em; border-top:1px solid #E3E6E8; padding-top:12px;">{{ c.source }} <sc-for list="{{ c.srcLinks }}" as="x" hint-placeholder-count="0"><a href="{{ x.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ x.name }}</a>{{ x.sep }}</sc-for></p>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px;">
+            <button type="button" aria-expanded="{{ c.open }}" aria-controls="{{ c.tid }}" onClick="{{ c.toggleTable }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:0 18px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ c.tableLabel }}</button>
+            <sc-if value="{{ c.hasLink2 }}" hint-placeholder-val="{{ false }}"><a href="{{ c.link2.href }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 2px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ c.link2.label }}</a></sc-if>
+            <a href="#top" onClick="{{ toTop }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 2px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+          </div>
+          <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+            <div id="{{ c.tid }}" style="display:grid; gap:24px;">
+              <sc-for list="{{ c.tables }}" as="tb" hint-placeholder-count="1">
+                <div role="region" aria-label="{{ tb.caption }}" tabindex="0" style="overflow-x:auto;">
+                  <div role="table" aria-label="{{ tb.caption }}" style="min-width:{{ tb.minW }}; font-size:16px; line-height:1.4; font-variant-numeric:tabular-nums;">
+                    <p aria-hidden="true" style="font-size:16px; font-weight:700; padding-bottom:6px;">{{ tb.caption }}</p>
+                    <div role="row" style="display:grid; grid-template-columns:{{ tb.tmpl }}; gap:0 16px; border-bottom:2px solid #14212B;"><sc-for list="{{ tb.cols }}" as="h" hint-placeholder-count="2"><span role="columnheader" style="padding:8px 0; text-align:{{ h.al }}; font-size:15px; font-weight:700;">{{ h.s }}</span></sc-for></div>
+                    <sc-for list="{{ tb.rows }}" as="row" hint-placeholder-count="3"><div role="row" style="display:grid; grid-template-columns:{{ tb.tmpl }}; gap:0 16px; border-bottom:1px solid #E3E6E8;"><sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="2"><span role="cell" style="padding:8px 0; text-align:{{ cell.al }};">{{ cell.s }}</span></sc-for></div></sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </section>
+      </sc-for>
+
+      <sc-if value="{{ hasClaims }}" hint-placeholder-val="{{ false }}">
+        <section id="numbers" data-anchor="" aria-labelledby="numbers-h" style="max-width:1040px; display:grid; gap:16px; padding-top:20px;">
+          <h2 id="numbers-h" style="font-size:clamp(1.75rem,1.5rem + 1vw,2.25rem); font-weight:700; line-height:1.15; letter-spacing:-0.01em;">{{ t.inNumbers }}</h2>
+          <p style="font-size:18px; line-height:1.55; max-width:40em; text-wrap:pretty;">{{ t.inNumbersLead }}</p>
+          <sc-if value="{{ topicSeg }}" hint-placeholder-val="{{ true }}">
+            <div role="group" aria-label="{{ t.topic }}" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr)); gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ topicOpts }}" as="o" hint-placeholder-count="12"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.pick }}" style="min-width:0; min-height:44px; padding:4px 14px; border:0; border-radius:10px; font-size:16px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer; background:{{ o.bg }}; color:{{ o.fg }}; font-weight:{{ o.weight }};">{{ o.label }}</button></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ topicSelect }}" hint-placeholder-val="{{ false }}">
+            <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.topic }}</span>
+              <select value="{{ topic }}" onChange="{{ onTopic }}" style="width:100%; min-height:58px; padding:0 48px 0 16px; border:1.5px solid #7A858C; border-radius:16px; background-color:#FFFFFF; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2356626A%22 stroke-width=%222.4%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M6 9l6 6 6-6%22/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; -webkit-appearance:none; appearance:none; font-size:18px;">{{ topicOptions }}</select>
+            </label>
+          </sc-if>
+          <sc-for list="{{ claimGroups }}" as="gp" hint-placeholder-count="2">
+            <div style="display:grid; gap:10px; padding-top:8px;">
+              <h3 style="font-size:19px; font-weight:700; line-height:1.3;">{{ gp.title }}</h3>
+              <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                <sc-for list="{{ gp.items }}" as="x" hint-placeholder-count="3">
+                  <li id="{{ x.anchor }}" tabindex="-1" style="padding-left:16px; outline:none;">
+                    <div style="display:grid; gap:4px; padding:14px 16px 14px 0; border-top:{{ x.sep }};">
+                      <p style="font-size:18px; line-height:1.5; text-wrap:pretty;">{{ x.text }}</p>
+                      <p style="font-size:15px; line-height:1.5; color:#56626A;"><span style="font-weight:700; color:#3F4B53;">{{ x.kind }}</span>{{ x.year }} <sc-for list="{{ x.src }}" as="y" hint-placeholder-count="1"><a href="{{ y.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ y.name }}</a>{{ y.sep }}</sc-for></p>
+                    </div>
+                  </li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-for>
+          <a href="#top" onClick="{{ toTop }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:46px; padding:0 2px; color:#175458; font-size:16px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline; color:#14212B;">{{ t.top }}</a>
+        </section>
+      </sc-if>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="data" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;previewBeat&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;scroll&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;],&quot;default&quot;:&quot;scroll&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Dot story&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dot story&quot;},&quot;missedLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;scattered&quot;,&quot;grouped&quot;],&quot;default&quot;:&quot;scattered&quot;,&quot;tsType&quot;:&quot;'scattered'|'grouped'&quot;,&quot;section&quot;:&quot;Dot story&quot;}}">
+class Component extends DCLogic {
+  state = { lang: this.readLang(), vw: window.innerWidth, d: null, fac: null, open: {}, pyr: 'est', failed: false, claims: null, topic: 'all', methOpen: false };
+  C = { ink: '#14212B', muted: '#56626A', rule: '#E3E6E8', coral: '#C42032', coralDeep: '#C42032', teal: '#1E6B70', tealDeep: '#175458', dot: '#7A8C97', paper: '#FFFFFF', paper2: '#E3E6E8' };
+  TITLES = [
+    ['d1', 'TB is rising, not falling', 'Tumataas, hindi bumababa, ang TB'], ['d2', 'One in four is missed', 'Isa sa bawat apat ang hindi natutukoy'],
+    ['d3', 'COVID-19 knocked out TB detection', 'Pinatumba ng COVID-19 ang pagtukoy sa TB'], ['d4', 'Deaths', 'Mga namatay'],
+    ['d5', 'Who gets TB', 'Sino ang nagkaka-TB'], ['d6', 'What drives TB', 'Ano ang nagtutulak sa TB'],
+    ['d7', 'Treatment works when people finish', 'Gumagana ang gamutan kapag tinapos'], ['d8', "Drug-resistant TB: most cases aren't found", 'Drug-resistant TB: karamihan ay hindi natutukoy'],
+    ['d9', 'TB and HIV', 'TB at HIV'], ['d10', 'Protecting households', 'Pagprotekta sa sambahayan'],
+    ['d11', 'The Philippines and the world', 'Ang Pilipinas at ang mundo'], ['d12', 'The hidden cost of TB', 'Ang nakatagong gastos ng TB'],
+    ['d13', 'Where TB was found (2016 survey)', 'Saan natagpuan ang TB (survey noong 2016)'], ['d14', 'TB-DOTS clinics per region', 'TB-DOTS clinic bawat rehiyon'],
+    ['d15', 'Off track', 'Malayo pa sa target'],
+    ['d16', 'Testing has scaled up', 'Lumawak ang pagsusuri'], ['d17', 'Who pays for TB care', 'Sino ang nagbabayad para sa gamutan sa TB'],
+    ['d18', 'Protecting babies with BCG', 'Proteksiyon ng mga sanggol gamit ang BCG'], ['d19', 'The conditions TB feeds on', 'Ang mga kalagayang nagpapalala sa TB'],
+    ['d20', 'Regional snapshots', 'Mga sulyap mula sa mga rehiyon']
+  ];
+  REG = [['NCR', 'NCR & Rizal'], ['CAR', 'Cordillera (CAR)'], ['R1', 'Region I (Ilocos)'], ['R2', 'Region II (Cagayan Valley)'], ['R3', 'Region III (Central Luzon)'], ['R4A', 'Region IV-A (Calabarzon)'], ['R4B', 'MIMAROPA (Region IV-B)'], ['R5', 'Region V (Bicol)'], ['R6', 'Region VI (Western Visayas)'], ['R7', 'Region VII (Central Visayas)'], ['R8', 'Region VIII (Eastern Visayas)'], ['R9', 'Region IX (Zamboanga Peninsula)'], ['R10', 'Region X (Northern Mindanao)'], ['R11', 'Region XI (Davao)'], ['R12', 'Region XII (Soccsksargen)'], ['R13', 'Caraga (Region XIII)'], ['BARMM', 'BARMM']];
+
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 100); };
+    window.addEventListener('resize', this.onR);
+    fetch('data/claims.json').then(r => r.json()).then(c => this.setState({ claims: c }), () => {});
+    fetch('data/tb-ph-data.json').then(r => r.json()).then(d => { this.setState({ d }); setTimeout(() => this.loadFac(), 300); }).catch(() => this.setState({ failed: true }));
+  }
+  componentDidUpdate() {
+    if (this.hashDone || !this.state.d || !this.state.claims) return;
+    let h = ''; try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+    if (!h || h === 'top') { this.hashDone = true; return; }
+    const el = document.getElementById(h);
+    if (!el) return;
+    this.hashDone = true;
+    requestAnimationFrame(() => { window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 88 }); if (el.focus) el.focus({ preventScroll: true }); });
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); }
+  async loadFac() {
+    const get = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u); return r.json(); };
+    let j = null, sample = false;
+    try { j = await get('data/tb-dots-facilities.json'); } catch (e) { try { j = await get('data/tb-dots-facilities-SAMPLE.json'); sample = true; } catch (e2) { return; } }
+    const counts = {}, names = {};
+    (j.facilities || []).forEach(f => { counts[f.region_code] = (counts[f.region_code] || 0) + 1; names[f.region_code] = f.region; });
+    this.setState({ fac: { counts, names, sample, n: (j.facilities || []).length } });
+  }
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    let a = null;
+    document.querySelectorAll('[data-anchor]').forEach(el => { const t = el.getBoundingClientRect().top; if (t <= window.innerHeight * 0.35) a = { el, t }; });
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l }, () => { if (a) requestAnimationFrame(() => window.scrollBy(0, a.el.getBoundingClientRect().top - a.t)); });
+  };
+
+  fmt(n) { return Number(n).toLocaleString('en-US'); }
+  r1(n) { return Math.round(n * 10) / 10; }
+  G(w, h, alt) {
+    const r = n => this.r1(n), g = { rects: [], paths: [], circles: [], texts: [] };
+    return {
+      rect: (x, y, wd, ht, fill, stroke, sw) => g.rects.push({ x: r(x), y: r(y), w: r(Math.max(0, wd)), h: r(Math.max(0, ht)), fill: fill || 'none', stroke: stroke || 'none', sw: sw || 0 }),
+      path: (d, o) => g.paths.push({ d, fill: o.fill || 'none', fo: o.fo == null ? 1 : o.fo, stroke: o.stroke || 'none', sw: o.sw || 0, dash: o.dash || 'none' }),
+      line: (x1, y1, x2, y2, stroke, sw, dash) => g.paths.push({ d: 'M' + r(x1) + ' ' + r(y1) + 'L' + r(x2) + ' ' + r(y2), fill: 'none', fo: 1, stroke, sw: sw || 1, dash: dash || 'none' }),
+      dot: (x, y, rad, fill) => g.circles.push({ x: r(x), y: r(y), r: rad, fill, stroke: 'none', sw: 0 }),
+      text: (x, y, s, o) => {
+        o = o || {};
+        const tx = o.a === 'end' ? '-100%' : o.a === 'middle' ? '-50%' : '0', ty = o.b === 'auto' ? '-82%' : '-50%';
+        g.texts.push({ px: (x / w * 100).toFixed(3) + '%', py: (y / h * 100).toFixed(3) + '%', tf: 'translate(' + tx + ',' + ty + ')', s: String(s), fs: o.fs || 14, fw: o.fw || 400, fill: o.fill || '#14212B' });
+      },
+      done: (title) => ({ vb: '0 0 ' + Math.round(w) + ' ' + Math.round(h), w: Math.round(w), h: Math.round(h), alt, title: title || '', hasTitle: !!title, rects: g.rects, paths: g.paths, circles: g.circles, texts: g.texts })
+    };
+  }
+  pathOf(xs, ys) { return xs.map((x, i) => (i ? 'L' : 'M') + this.r1(x) + ' ' + this.r1(ys[i])).join(''); }
+
+  ts(o) {
+    const w = o.w, h = o.h || 300, th = o.th, fs = 15, L = 66, R = o.R || 170, T = 20, B = 38, n = o.years.length;
+    const x = i => L + i / (n - 1) * (w - L - R), y = v => T + (1 - v / o.yMax) * (h - T - B), idx = [...Array(n).keys()];
+    const S = this.G(w, h, o.alt);
+    o.ticks.forEach(v => { S.line(L, y(v), w - R + 12, y(v), v === 0 ? th.base : th.rule, 1); S.text(L - 10, y(v), o.tf(v), { a: 'end', fs: 14, fill: th.muted }); });
+    const area = (up, lo, color, fo) => S.path(this.pathOf(idx.map(x), up.map(y)) + idx.slice().reverse().map(i => 'L' + this.r1(x(i)) + ' ' + this.r1(y(lo[i]))).join('') + 'Z', { fill: color, fo });
+    if (o.band) area(o.band.hi, o.band.lo, o.band.color, 0.2);
+    if (o.gap) { area(o.gap.upper, o.gap.lower, o.gap.color, 0.16); const gi = o.gap.at; S.text(x(gi), (y(o.gap.upper[gi]) + y(o.gap.lower[gi])) / 2, o.gap.label, { a: 'middle', fs, fw: 700, fill: o.gap.ink }); }
+    o.years.forEach((yr, i) => { if (i === 0 || i === n - 1 || yr % 5 === 0) { S.line(x(i), h - B, x(i), h - B + 5, th.muted, 1); S.text(x(i), h - B + 20, yr, { a: 'middle', fs: 14, fill: th.muted }); } });
+    o.series.forEach(s => { S.path(this.pathOf(idx.map(x), s.vals.map(y)), { stroke: s.color, sw: 3 }); S.dot(x(n - 1), y(s.vals[n - 1]), 5, s.color); });
+    o.series.forEach(s => { const yy = y(s.vals[n - 1]) + (s.dy || 0); S.text(x(n - 1) + 14, yy - 9, s.label, { fs, fw: 700, fill: s.ink || th.ink }); S.text(x(n - 1) + 14, yy + 10, s.sub, { fs: 14, fill: s.ink || th.ink }); });
+    (o.notes || []).forEach(nt => { const xx = x(nt.i), yy = y(nt.v); S.dot(xx, yy, 4.5, nt.color || th.ink); S.text(xx, yy + (nt.below ? 22 : -18), nt.text, { a: 'middle', fs: 14, fw: 700, fill: th.ink }); });
+    return S.done(o.title);
+  }
+  rows(o) {
+    const th = o.th, fs = 14, rowH = 26, barH = 12, top = o.legend ? 34 : 4, L = 50, R = 78, n = o.years.length, h = top + n * rowH + 6;
+    const S = this.G(o.w, h, o.alt), x = v => L + v / o.max * (o.w - L - R);
+    if (o.legend) { let lx = 0; o.legend.forEach(it => { S.rect(lx, 8, 18, 12, it.fill, it.stroke, it.sw); S.text(lx + 26, 14, it.label, { fs, fill: th.ink }); lx += 26 + it.label.length * 7.6 + 22; }); }
+    o.years.forEach((yr, i) => {
+      const cy = top + i * rowH + rowH / 2;
+      S.text(0, cy, yr, { fs, fill: th.muted });
+      if (o.outer) S.rect(L, cy - barH / 2, x(o.outer[i]) - L, barH, 'none', th.ink, 1.25);
+      S.rect(L, cy - barH / 2, x(o.vals[i]) - L, barH, o.color);
+      let end = x(o.outer ? o.outer[i] : o.vals[i]);
+      if (o.lo) { const a = x(o.lo[i]), b = x(o.hi[i]); S.line(a, cy, b, cy, th.ink, 1.5); S.line(a, cy - 5, a, cy + 5, th.ink, 1.5); S.line(b, cy - 5, b, cy + 5, th.ink, 1.5); end = Math.max(end, b); }
+      S.text(end + 7, cy, o.valText(i), { fs, fw: 700, fill: th.ink });
+    });
+    S.line(L, top, L, top + n * rowH, th.base, 1);
+    return S.done(o.title);
+  }
+  hbars(o) {
+    const th = o.th, fs = 15, above = o.w < 560, L = above ? 0 : (o.labelW || 170), R = o.R || 96;
+    const rowH = above ? 52 : (o.rowH || 36), barH = 16, top = 6, n = o.rows.length, axisH = o.axis ? 30 : 0, h = top + n * rowH + axisH + 4;
+    const S = this.G(o.w, h, o.alt), x = v => L + v / o.max * (o.w - L - R);
+    if (o.axis) o.axis.forEach(v => { S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(x(v), top + n * rowH + 18, o.af ? o.af(v) : this.fmt(v), { a: 'middle', fs: 13, fill: th.muted }); });
+    o.rows.forEach((rw, i) => {
+      const y0 = top + i * rowH, by = above ? y0 + 26 : y0 + (rowH - barH) / 2, cy = by + barH / 2;
+      if (above) S.text(0, y0 + 11, rw.label, { fs: 15, fw: rw.bold ? 700 : 400, fill: th.ink });
+      else S.text(L - 12, cy, rw.label, { a: 'end', fs, fw: rw.bold ? 700 : 400, fill: th.ink });
+      S.rect(L, by, x(rw.v) - L, barH, rw.color || th.dot);
+      let end = x(rw.v);
+      if (rw.lo != null) { const a = x(rw.lo), b = x(rw.hi); S.line(a, cy, b, cy, th.ink, 1.5); S.line(a, cy - 6, a, cy + 6, th.ink, 1.5); S.line(b, cy - 6, b, cy + 6, th.ink, 1.5); end = Math.max(end, b); }
+      S.text(end + 8, cy, rw.text, { fs, fw: rw.bold ? 700 : 400, fill: th.ink });
+    });
+    if (o.ref) { const rx = x(o.ref.v); S.line(rx, top - 2, rx, top + n * rowH, th.ink, 1.5, '5 4'); }
+    S.line(L, top, L, top + n * rowH, th.base, 1);
+    return S.done(o.title);
+  }
+  pyramid(o) {
+    const th = o.th, small = o.w < 560, fs = small ? 13 : 15, mid = small ? 52 : 76, valW = small ? 50 : 68;
+    const cx = o.w / 2, bw = (o.w - mid) / 2 - valW, rowH = small ? 26 : 30, barH = rowH - 8, top = 32, n = o.groups.length, h = top + n * rowH + 4;
+    const S = this.G(o.w, h, o.alt);
+    S.text(cx - mid / 2 - 2, 12, o.men, { a: 'end', fs: 15, fw: 700, fill: th.ink });
+    S.text(cx + mid / 2 + 2, 12, o.women, { fs: 15, fw: 700, fill: th.ink });
+    o.groups.slice().reverse().forEach((g, i) => {
+      const y0 = top + i * rowH + 4, cy = y0 + barH / 2, wm = g.m / o.max * bw, wf = g.f / o.max * bw;
+      S.rect(cx - mid / 2 - wm, y0, wm, barH, th.ink);
+      S.rect(cx + mid / 2, y0, wf, barH, th.dot);
+      S.text(cx, cy, g.label, { a: 'middle', fs, fill: th.muted });
+      S.text(cx - mid / 2 - wm - 6, cy, this.fmt(g.m), { a: 'end', fs, fill: th.ink });
+      S.text(cx + mid / 2 + wf + 6, cy, this.fmt(g.f), { fs, fill: th.ink });
+    });
+    return S.done();
+  }
+  monthly(o) {
+    const th = o.th, small = o.w < 560, fs = small ? 13 : 14, L = 50, R = 6, top = 36, rowH = small ? 44 : 58, gapY = 14, n = o.rows.length, h = top + n * (rowH + gapY) + 16;
+    const S = this.G(o.w, h, o.alt), colW = (o.w - L - R) / 12, bw = Math.max(3, colW * 0.7);
+    S.rect(0, 6, 24, 14, 'url(#dhatch)', th.dot, 1); S.text(32, 13, o.provLabel, { fs, fill: th.ink });
+    o.rows.forEach((rw, i) => {
+      const y0 = top + i * (rowH + gapY), base = y0 + rowH;
+      S.text(0, base - 2, rw.year, { b: 'auto', fs, fill: th.muted });
+      S.line(L, base, o.w - R, base, th.rule, 1);
+      rw.vals.forEach((v, m) => {
+        if (v == null) return;
+        const bh = v / o.max * rowH, bx = L + m * colW + (colW - bw) / 2, isMin = rw.year === o.min.year && m === o.min.month;
+        S.rect(bx, base - bh, bw, bh, rw.prov ? 'url(#dhatch)' : (isMin ? th.coral : th.dot), rw.prov ? th.dot : 'none', rw.prov ? 1 : 0);
+        if (isMin) { S.line(bx + bw / 2, y0 + 12, bx + bw / 2, base - bh - 3, th.ink, 1.25); S.text(bx + bw / 2 + 6, y0 + 4, o.min.label, { fs, fw: 700, fill: th.ink }); }
+      });
+    });
+    [0, 3, 6, 9].forEach(m => S.text(L + m * colW + colW / 2, h - 2, o.months[m], { a: 'middle', b: 'auto', fs: 13, fill: th.muted }));
+    return S.done();
+  }
+  stack(o) {
+    const th = o.th, narrow = o.w < 420, barH = 46, top = 4, lineH = narrow ? 48 : 28, listTop = top + barH + 22, h = listTop + o.segs.length * lineH;
+    const S = this.G(o.w, h, o.alt);
+    let x = 0;
+    o.segs.forEach(s => { const sw = s.v / 100 * o.w; S.rect(x, top, sw, barH, s.color); x += sw; });
+    S.text(14, top + barH / 2, o.segs[0].v.toFixed(1) + '%', { fs: 18, fw: 700, fill: '#FFFFFF' });
+    o.segs.forEach((s, i) => { const yy = listTop + i * lineH + 10, val = s.v.toFixed(1) + '%' + (s.n != null ? ' (' + this.fmt(s.n) + ')' : ''); S.rect(0, yy - 7, 14, 14, s.color); if (narrow) { S.text(24, yy, s.label, { fs: 15, fill: th.ink }); S.text(24, yy + 20, val, { fs: 15, fw: 700, fill: th.ink }); } else S.text(24, yy, s.label + ': ' + val, { fs: 15, fill: th.ink }); });
+    return S.done(o.title);
+  }
+  bullets(o) {
+    const th = o.th, itemH = 112, h = o.items.length * itemH;
+    const S = this.G(o.w, h, o.alt);
+    o.items.forEach((it, k) => {
+      const y0 = k * itemH, by = y0 + 50, bh = 18, x = v => v / it.max * o.w;
+      S.text(0, y0 + 10, it.label, { fs: 16, fw: 700, fill: th.ink });
+      S.text(o.w, y0 + 10, it.now, { a: 'end', fs: 16, fw: 700, fill: th.ink });
+      S.rect(0, by, o.w, bh, '#E3E6E8');
+      S.rect(0, by, x(it.v), bh, th.coral);
+      it.marks.forEach(m => { const mx = x(m.v), tw = m.text.length * 8.2, x0 = mx + 6 + tw <= o.w ? mx + 6 : (mx - 6 - tw >= 0 ? mx - 6 - tw : 0); S.line(mx, by - 8, mx, by + bh + 8, th.ink, 2.5); S.text(x0, m.below ? by + bh + 20 : by - 16, m.text, { fs: 14, fw: 700, fill: th.ink }); });
+    });
+    return S.done();
+  }
+  tbl(caption, cols, rows) {
+    const n = cols.length;
+    return { caption, tmpl: 'minmax(9em,2fr)' + ' minmax(6.5em,1fr)'.repeat(Math.max(0, n - 1)), minW: (9 + 7.5 * (n - 1)) + 'em', cols: cols.map((s, i) => ({ s, al: i ? 'right' : 'left' })), rows: rows.map(r => ({ cells: r.map((s, i) => ({ s: s == null ? '—' : String(s), al: i ? 'right' : 'left' })) })) };
+  }
+
+  fstack(o) {
+    const th = o.th, fs = 14, rowH = 34, barH = 18, L0 = 52, R = 96, n = o.rows.length, top = o.legend.length * 24 + 10, h = top + n * rowH + 28;
+    const S = this.G(o.w, h, o.alt), x = v => L0 + v / o.max * (o.w - L0 - R);
+    o.legend.forEach((it, i) => { const yy = 10 + i * 24; S.rect(0, yy - 7, 16, 14, it.fill, it.stroke, it.sw); S.text(24, yy, it.label, { fs: 15, fill: th.ink }); });
+    o.axis.forEach(v => { S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(x(v), top + n * rowH + 16, o.af(v), { a: 'middle', fs: 13, fill: th.muted }); });
+    o.rows.forEach((r, i) => {
+      const cy = top + i * rowH + rowH / 2; let x0 = L0;
+      S.text(0, cy, r.label, { fs, fill: th.muted });
+      r.segs.forEach(sg => { if (!sg.v) return; const wd = x(sg.v) - L0; S.rect(x0, cy - barH / 2, wd, barH, sg.fill, sg.stroke, sg.sw); x0 += wd; });
+      if (r.note) S.text(x0 + 8, cy, r.note, { fs, fw: 700, fill: th.ink });
+    });
+    S.line(L0, top, L0, top + n * rowH, th.base, 1);
+    return S.done(o.title);
+  }
+  build(d, lang, cw, wide) {
+    const en = lang === 'en', L = (e, f) => en ? e : f, C = this.C, fmt = n => this.fmt(n), pct = n => n.toFixed(1) + '%';
+    const light = { bg: 'transparent', ink: C.ink, muted: C.muted, rule: C.rule, base: C.ink, dot: C.dot, coral: C.coral, teal: C.teal, link: C.teal, dark: 'false' };
+    const film = light;
+    const T = Object.fromEntries(this.TITLES.map(([id, e, f]) => [id, en ? e : f]));
+    const S = {
+      who: L('Source: WHO Global Tuberculosis Report 2025 (published 12 November 2025). Data as of 2024.', 'Pinagmulan: WHO Global Tuberculosis Report 2025 (inilathala noong 12 Nobyembre 2025). Datos hanggang 2024.'),
+      whoDoh: L('Source: WHO Global Tuberculosis Report 2025; notifications reported by DOH to WHO. Data as of 2024.', 'Pinagmulan: WHO Global Tuberculosis Report 2025; mga kasong iniulat ng DOH sa WHO. Datos hanggang 2024.')
+    };
+    const bandCap = wide ? L("Shaded band: WHO's 95% uncertainty range.", 'May-kulay na bahagi: 95% saklaw ng di-katiyakan ng WHO.') : L("Lines on each bar: WHO's 95% uncertainty range.", 'Guhit sa bawat bar: 95% saklaw ng di-katiyakan ng WHO.');
+    const Y = L('Year', 'Taon'), out = [];
+
+    { const s = d.incidence_series.filter(r => r.year >= 2010), yrs = s.map(r => r.year), v = s.map(r => r.rate_per_100k), lo = s.map(r => r.rate_lo), hi = s.map(r => r.rate_hi), i15 = yrs.indexOf(2015);
+      const alt = L('TB incidence per 100,000 people, 2010 to 2024, with uncertainty range', 'Antas ng TB bawat 100,000 katao, 2010 hanggang 2024, may saklaw ng di-katiyakan');
+      out.push({ id: 'd1', th: light, takeaway: L('625 per 100,000 in 2024, up 14% since 2015. The band is WHO\'s uncertainty range.', '625 bawat 100,000 noong 2024, tumaas nang 14% mula 2015. Ang may-kulay na bahagi ay saklaw ng di-katiyakan ng WHO.'), caption: bandCap, source: S.who,
+        svgs: [wide ? this.ts({ w: cw, years: yrs, th: light, yMax: 1100, ticks: [0, 250, 500, 750, 1000], tf: fmt, band: { lo, hi, color: C.coral }, series: [{ vals: v, color: C.coral, label: fmt(v[v.length - 1]), sub: L('per 100,000 in 2024', 'bawat 100,000 noong 2024') }], notes: [{ i: i15, v: v[i15], text: fmt(v[i15]) + L(' in 2015', ' noong 2015'), below: true }], alt })
+          : this.rows({ w: cw, years: yrs, vals: v, lo, hi, color: C.coral, max: 1100, th: light, valText: i => fmt(v[i]), alt })],
+        tables: [this.tbl(L('TB incidence per 100,000 people', 'Antas ng TB bawat 100,000 katao'), [Y, L('Rate', 'Antas'), L('Lower', 'Pinakamababa'), L('Upper', 'Pinakamataas')], s.map(r => [r.year, fmt(r.rate_per_100k), fmt(r.rate_lo), fmt(r.rate_hi)]))] }); }
+
+    { const g = d.detection_gap_series, yrs = g.map(r => r.year), est = g.map(r => r.estimated_new_cases), no = g.map(r => r.notified_new_and_relapse), i20 = yrs.indexOf(2020), last = g[g.length - 1];
+      const alt = L('Estimated and notified TB cases, 2010 to 2024', 'Tantiya at naiulat na kaso ng TB, 2010 hanggang 2024');
+      out.push({ id: 'd2', th: light, takeaway: L('544,948 of about 723,900 were notified in 2024 (75%), up from 32% in 2010. COVID-19 pulled it back down to 42% in 2020.', '544,948 sa mga 723,900 ang naiulat noong 2024 (75%), mula 32% noong 2010. Bumaba ito sa 42% noong 2020 dahil sa COVID-19.'),
+        caption: wide ? L("Shaded gap: people who fell ill but weren't notified.", 'May-kulay na agwat: mga nagkasakit pero hindi naiulat.') : L('Outlined bar: estimated cases. Filled bar: notified. The percentage is the share notified.', 'Bar na may balangkas: tantiyang kaso. Punong bar: naiulat. Ang porsiyento ay ang bahaging naiulat.'), source: S.whoDoh,
+        svgs: [wide ? this.ts({ w: cw, years: yrs, th: light, yMax: 800000, ticks: [0, 200000, 400000, 600000, 800000], tf: fmt, gap: { upper: est, lower: no, color: C.coral, at: 2, label: L('Missed', 'Hindi natukoy'), ink: C.coralDeep }, series: [{ vals: est, color: C.ink, label: L('Estimated', 'Tantiya'), sub: fmt(last.estimated_new_cases), dy: -6 }, { vals: no, color: C.teal, label: L('Notified', 'Naiulat'), sub: fmt(last.notified_new_and_relapse) + ' (' + pct(last.treatment_coverage_pct) + ')', ink: C.teal, dy: 6 }], notes: [{ i: i20, v: no[i20], text: pct(g[i20].treatment_coverage_pct) + ' (2020)', color: C.teal, below: true }], alt })
+          : this.rows({ w: cw, years: yrs, vals: no, outer: est, color: C.teal, max: 800000, th: light, valText: i => pct(g[i].treatment_coverage_pct), legend: [{ fill: C.teal, label: L('Notified', 'Naiulat') }, { fill: 'none', stroke: C.ink, sw: 1.25, label: L('Estimated', 'Tantiya') }], alt })],
+        tables: [this.tbl(L('Estimated and notified TB cases', 'Tantiya at naiulat na kaso ng TB'), [Y, L('Estimated', 'Tantiya'), L('Notified', 'Naiulat'), L('Share notified', 'Bahaging naiulat'), L('Not reached', 'Hindi naabot')], g.map(r => [r.year, fmt(r.estimated_new_cases), fmt(r.notified_new_and_relapse), pct(r.treatment_coverage_pct), fmt(r.not_reached)]))] }); }
+
+    { const m = d.notifications_monthly, years = [...new Set(m.map(r => r.year))];
+      const mo = L(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ['Ene', 'Peb', 'Mar', 'Abr', 'May', 'Hun', 'Hul', 'Ago', 'Set', 'Okt', 'Nob', 'Dis']);
+      const min = m.reduce((a, b) => b.notified < a.notified ? b : a);
+      const rowsM = years.map(y => { const vals = Array(12).fill(null); let prov = false; m.filter(r => r.year === y).forEach(r => { vals[r.month - 1] = r.notified; prov = prov || r.provisional; }); return { year: y, vals, prov }; });
+      const totals = d.notifications_monthly_annual_totals || {};
+      out.push({ id: 'd3', th: light, takeaway: L('Only 10,489 cases were notified in April 2020, the lowest month in this record. Notifications reached a record 575,770 in 2023.', '10,489 lang ang naiulat noong Abril 2020, ang pinakamababang buwan sa talaang ito. Umabot sa rekord na 575,770 ang naiulat noong 2023.'),
+        caption: L('One row per year, same scale. Hatched bars are provisional; January 2026 is likely incomplete.', 'Isang hanay bawat taon, parehong sukatan. Pansamantala ang mga bar na may guhit; malamang na kulang pa ang Enero 2026.'),
+        source: L('Source: WHO provisional monthly notifications, retrieved 23 October 2026. Figures for 2025–2026 are provisional.', 'Pinagmulan: Buwanang datos ng WHO (provisional), kinuha noong 23 Oktubre 2026. Pansamantala ang datos ng 2025–2026.'),
+        svgs: [this.monthly({ w: Math.min(cw, 860), rows: rowsM, max: 60000, th: light, months: mo, provLabel: L('Provisional', 'Pansamantala'), min: { year: min.year, month: min.month - 1, label: fmt(min.notified) + ' (' + mo[min.month - 1] + ' ' + min.year + ')' }, alt: L('Monthly TB notifications, January 2020 to January 2026', 'Buwanang naiulat na kaso ng TB, Enero 2020 hanggang Enero 2026') })],
+        tables: [this.tbl(L('Monthly TB notifications (new and relapse)', 'Buwanang naiulat na kaso ng TB (bago at relapse)'), [Y].concat(mo, [L('Monthly sum', 'Kabuuan ng buwan')]), rowsM.map(r => [r.year + (r.prov ? L(' (provisional)', ' (pansamantala)') : '')].concat(r.vals.map(v => v == null ? null : fmt(v)), [totals[r.year] != null ? fmt(totals[r.year]) : null])))] }); }
+
+    { const s = d.deaths_series.filter(r => r.year >= 2010), yrs = s.map(r => r.year), v = s.map(r => r.deaths_total), lo = s.map(r => r.deaths_lo), hi = s.map(r => r.deaths_hi), i15 = yrs.indexOf(2015);
+      const alt = L('Estimated TB deaths, 2010 to 2024, with uncertainty range', 'Tinatayang namatay sa TB, 2010 hanggang 2024, may saklaw ng di-katiyakan');
+      out.push({ id: 'd4', th: film, takeaway: L('About 37,400 deaths in 2024 (range 32,800–42,400), 25% more than in 2015.', 'Mga 37,400 ang namatay noong 2024 (saklaw: 32,800–42,400), 25% na mas marami kaysa noong 2015.'), caption: bandCap, source: S.who,
+        svgs: [wide ? this.ts({ w: cw, years: yrs, th: film, yMax: 50000, ticks: [0, 10000, 20000, 30000, 40000, 50000], tf: fmt, band: { lo, hi, color: C.coral }, series: [{ vals: v, color: C.coral, label: fmt(v[v.length - 1]), sub: L('deaths in 2024', 'namatay noong 2024') }], notes: [{ i: i15, v: v[i15], text: fmt(v[i15]) + L(' in 2015', ' noong 2015'), color: C.paper, below: true }], alt })
+          : this.rows({ w: cw, years: yrs, vals: v, lo, hi, color: C.coral, max: 50000, th: film, valText: i => fmt(v[i]), alt })],
+        tables: [this.tbl(L('Estimated TB deaths', 'Tinatayang namatay sa TB'), [Y, L('Deaths', 'Namatay'), L('Lower', 'Pinakamababa'), L('Upper', 'Pinakamataas'), L('Per 100,000', 'Bawat 100,000')], s.map(r => [r.year, fmt(r.deaths_total), fmt(r.deaths_lo), fmt(r.deaths_hi), r.death_rate_per_100k.toFixed(1)]))] }); }
+
+    { const lab = a => a.replace('65plus', '65+').replace('-', '–');
+      const est = d.incidence_by_age_sex_2024.map(r => ({ label: lab(r.age_group), m: r.men, f: r.women })), not = d.notifications_by_age_sex_2024.map(r => ({ label: lab(r.age_group), m: r.men, f: r.women }));
+      const isEst = this.state.pyr === 'est';
+      const pick = k => () => this.setState({ pyr: k });
+      out.push({ id: 'd5', th: light, takeaway: L('Nearly 2 in 3 people who fall ill are men (64%). Working-age adults are hit hardest, and about 73,000 children under 15 fell ill.', 'Halos 2 sa bawat 3 nagkakasakit ay lalaki (64%). Pinakatinatamaan ang mga nasa edad ng pagtatrabaho, at mga 73,000 batang wala pang 15 ang nagkasakit.'),
+        caption: L("Estimated: WHO's model of everyone who fell ill. Notified: cases reported to DOH, in slightly different age groups.", 'Tantiya: modelo ng WHO ng lahat ng nagkasakit. Naiulat: mga kasong iniulat sa DOH, sa bahagyang ibang pangkat ng edad.'), source: S.whoDoh,
+        toggleLabel: L('Show estimated or notified cases', 'Ipakita ang tantiya o naiulat na kaso'),
+        toggle: [['est', L('Estimated', 'Tantiya')], ['not', L('Notified', 'Naiulat')]].map(([k, label], i) => { const on = this.state.pyr === k; return { label, on, pick: pick(k), bg: on ? C.ink : 'transparent', fg: on ? C.paper : C.ink, sep: i ? '1.5px solid #14212B' : '0' }; }),
+        svgs: [this.pyramid({ w: Math.min(cw, 760), groups: isEst ? est : not, max: 80000, th: light, men: L('Men', 'Lalaki'), women: L('Women', 'Babae'), alt: L('Population pyramid of TB cases by age and sex, 2024', 'Pyramid ng kaso ng TB ayon sa edad at kasarian, 2024') })],
+        tables: [this.tbl(L('Estimated cases by age and sex, 2024', 'Tantiyang kaso ayon sa edad at kasarian, 2024'), [L('Age', 'Edad'), L('Men', 'Lalaki'), L('Women', 'Babae')], est.map(r => [r.label, fmt(r.m), fmt(r.f)])), this.tbl(L('Notified cases by age and sex, 2024', 'Naiulat na kaso ayon sa edad at kasarian, 2024'), [L('Age', 'Edad'), L('Men', 'Lalaki'), L('Women', 'Babae')], not.map(r => [r.label, fmt(r.m), fmt(r.f)]))] }); }
+
+    { const names = { alcohol: L('Alcohol use disorders', 'Labis na pag-inom ng alak'), smoking: L('Smoking', 'Paninigarilyo'), undernutrition: L('Undernutrition', 'Kakulangan sa nutrisyon'), diabetes: L('Diabetes', 'Diabetes'), hiv: L('HIV infection', 'HIV') };
+      const rf = d.risk_factor_attributable_cases_2024, scope = s => s === 'a' ? L('All ages', 'Lahat ng edad') : s;
+      out.push({ id: 'd6', th: light, takeaway: L('Alcohol use, smoking, undernutrition and diabetes each account for tens of thousands of cases. They overlap, and the ranges are wide.', 'Tig-sampu-sampung libong kaso ang kaugnay ng alak, paninigarilyo, kakulangan sa nutrisyon at diabetes. Nagsasapawan ang mga ito at malawak ang saklaw.'),
+        caption: L("Lines: WHO's 95% uncertainty range. The factors overlap, so the bars don't add up to a total.", 'Guhit: 95% saklaw ng di-katiyakan ng WHO. Nagsasapawan ang mga ito, kaya hindi sila dapat pagsamahin.'), source: S.who,
+        svgs: [this.hbars({ w: cw, th: light, max: 200000, labelW: 200, axis: [0, 50000, 100000, 150000, 200000], rows: rf.map(r => ({ label: names[r.key] || r.risk_factor, v: r.cases, lo: r.lo, hi: r.hi, color: C.dot, text: fmt(r.cases) })), alt: L('TB cases linked to risk factors, 2024, with uncertainty ranges', 'Mga kaso ng TB na may kaugnayan sa risk factor, 2024') })],
+        tables: [this.tbl(L('TB cases attributable to risk factors, 2024', 'Mga kaso ng TB na may kaugnayan sa risk factor, 2024'), [L('Risk factor', 'Risk factor'), L('Estimated cases', 'Tantiyang kaso'), L('Lower', 'Pinakamababa'), L('Upper', 'Pinakamataas'), L('Ages', 'Edad')], rf.map(r => [names[r.key] || r.risk_factor, fmt(r.cases), fmt(r.lo), fmt(r.hi), scope(r.age_scope)]))] }); }
+
+    { const o = d.treatment_outcomes, c = o.new_and_relapse_2023, tr = o.success_trend, yrs = tr.map(r => r.cohort_year), v = tr.map(r => r.success_pct);
+      const segs = [{ v: c.success_pct, n: c.success, color: C.teal, label: L('Cured or completed', 'Gumaling o natapos') }, { v: c.lost_to_follow_up_pct, n: c.lost_to_follow_up, color: C.coral, label: L('Stopped before finishing', 'Huminto bago matapos') }, { v: c.not_evaluated_pct, n: c.not_evaluated, color: C.dot, label: L('Not evaluated', 'Hindi nasuri') }, { v: c.died_pct, n: c.died, color: C.ink, label: L('Died', 'Namatay') }, { v: c.failed_pct, n: c.failed, color: '#56626A', label: L('Treatment failed', 'Hindi tumalab ang gamutan') }];
+      const t2 = L('Treatment success, by year treatment started', 'Tagumpay ng gamutan, ayon sa taon ng pagsisimula');
+      out.push({ id: 'd7', th: light, takeaway: L('84% of people who started treatment in 2023 were cured or completed it; 10.5% stopped before finishing.', '84% ng nagsimula ng gamutan noong 2023 ang gumaling o nakatapos; 10.5% ang huminto bago matapos.'),
+        source: L('Source: WHO Global Tuberculosis Report 2025. Outcomes for new and relapse cases that started treatment in 2012–2023.', 'Pinagmulan: WHO Global Tuberculosis Report 2025. Resulta ng gamutan ng bago at relapse na kaso na nagsimula noong 2012–2023.'),
+        svgs: [this.stack({ w: Math.min(cw, 760), segs, th: light, title: L('People who started treatment in 2023', 'Mga nagsimula ng gamutan noong 2023') + ' (' + fmt(c.cohort) + ')', alt: L('Treatment outcomes for the 2023 cohort', 'Resulta ng gamutan ng mga nagsimula noong 2023') }),
+          wide ? this.ts({ w: cw, h: 260, years: yrs, th: light, yMax: 100, ticks: [0, 25, 50, 75, 100], tf: v => v + '%', series: [{ vals: v, color: C.teal, label: pct(v[v.length - 1]), sub: L('started in 2023', 'nagsimula noong 2023'), ink: C.teal }], title: t2, alt: t2 })
+            : this.rows({ w: cw, years: yrs, vals: v, color: C.teal, max: 100, th: light, valText: i => pct(v[i]), title: t2, alt: t2 })],
+        tables: [this.tbl(L('Outcomes, started treatment in 2023', 'Resulta, nagsimula ng gamutan noong 2023'), [L('Outcome', 'Resulta'), L('Share', 'Bahagi'), L('People', 'Katao')], segs.map(s => [s.label, pct(s.v), fmt(s.n)])), this.tbl(t2, [L('Year started', 'Taon ng pagsisimula'), L('Success', 'Tagumpay'), L('People', 'Katao')], tr.map(r => [r.cohort_year, pct(r.success_pct), fmt(r.cohort)]))] }); }
+
+    { const x = d.drug_resistant_tb;
+      const rowsD = [{ label: L('Estimated cases', 'Tantiyang kaso'), v: x.estimated_rr_mdr_cases, lo: x.lo, hi: x.hi, color: C.dot, text: fmt(x.estimated_rr_mdr_cases) }, { label: L('Confirmed by a lab', 'Nakumpirma ng laboratoryo'), v: x.lab_confirmed_rr, color: C.teal, text: fmt(x.lab_confirmed_rr) + ' (' + pct(x.pct_detected_of_estimated) + ')' }, { label: L('Started treatment', 'Nagsimula ng gamutan'), v: x.enrolled_on_treatment, color: C.tealDeep, text: fmt(x.enrolled_on_treatment) }];
+      out.push({ id: 'd8', th: light, takeaway: L("About 27,900 estimated cases, 7,549 confirmed (27%) and 6,631 started treatment. The Philippines has 7.1% of the world's DR-TB, third highest.", 'Mga 27,900 ang tantiyang kaso, 7,549 ang nakumpirma (27%) at 6,631 ang nagsimula ng gamutan. Nasa Pilipinas ang 7.1% ng DR-TB sa mundo, pangatlo sa pinakamataas.'),
+        caption: L("Line on the estimate: WHO's 95% uncertainty range.", 'Guhit sa tantiya: 95% saklaw ng di-katiyakan ng WHO.'), source: S.who,
+        svgs: [this.hbars({ w: cw, th: light, max: 45000, labelW: 210, rows: rowsD, alt: L('Drug-resistant TB, 2024: estimated, confirmed and treated', 'Drug-resistant TB, 2024: tantiya, nakumpirma at nagamot') })],
+        tables: [this.tbl(L('Drug-resistant TB (rifampicin-resistant or MDR), 2024', 'Drug-resistant TB (rifampicin-resistant o MDR), 2024'), [L('Indicator', 'Sukatan'), L('Value', 'Halaga')], [[L('Estimated cases', 'Tantiyang kaso'), fmt(x.estimated_rr_mdr_cases) + ' (' + fmt(x.lo) + '–' + fmt(x.hi) + ')'], [L('Share among new cases', 'Bahagi sa bagong kaso'), pct(x.pct_among_new)], [L('Share among previously treated', 'Bahagi sa dating nagamot'), pct(x.pct_among_previously_treated)], [L('Confirmed by a lab', 'Nakumpirma ng laboratoryo'), fmt(x.lab_confirmed_rr)], [L('Confirmed as share of estimated', 'Bahagi ng nakumpirma sa tantiya'), pct(x.pct_detected_of_estimated)], [L('Started treatment', 'Nagsimula ng gamutan'), fmt(x.enrolled_on_treatment)], [L('Share of world DR-TB', 'Bahagi sa DR-TB ng mundo'), pct(x.share_of_global_pct) + ' (#' + x.global_rank + ')']]), this.tbl(L('Lab-confirmed drug-resistant TB by year', 'Nakumpirmang drug-resistant TB bawat taon'), [Y, L('Confirmed', 'Nakumpirma')], x.confirmed_series.map(r => [r.year, fmt(r.lab_confirmed)]))] }); }
+
+    { const h = d.tb_hiv, people = L(' people', ' katao');
+      out.push({ id: 'd9', th: light, takeaway: L('67% of people notified with TB knew their HIV status; 2,762 were HIV-positive and 99% of them were on ART.', '67% ng mga naiulat na may TB ang alam ang kanilang HIV status; 2,762 ang HIV-positive at 99% sa kanila ang naka-ART.'), source: S.who,
+        stats: [{ v: pct(h.pct_tested), l: L('of people notified with TB knew their HIV status', 'ng mga naiulat na may TB ang alam ang kanilang HIV status'), s: fmt(h.notified_tested_for_hiv) + people, color: C.teal }, { v: fmt(h.hiv_positive), l: L('were HIV-positive', 'ang HIV-positive'), s: '', color: C.ink }, { v: pct(h.pct_on_art), l: L('of them were on antiretroviral therapy (ART)', 'sa kanila ang naka-antiretroviral therapy (ART)'), s: fmt(h.on_art) + people, color: C.teal }],
+        tables: [this.tbl(L('TB and HIV, 2024', 'TB at HIV, 2024'), [L('Indicator', 'Sukatan'), L('Value', 'Halaga')], [[L('Estimated TB cases among people with HIV', 'Tantiyang kaso ng TB sa mga may HIV'), fmt(h.estimated_hiv_positive_tb)], [L('Notified TB patients with a known HIV status', 'Naiulat na may TB na alam ang HIV status'), fmt(h.notified_tested_for_hiv) + ' (' + pct(h.pct_tested) + ')'], [L('HIV-positive TB patients', 'HIV-positive na may TB'), fmt(h.hiv_positive)], [L('On antiretroviral therapy', 'Naka-ART'), fmt(h.on_art) + ' (' + pct(h.pct_on_art) + ')'], [L('TB deaths among people with HIV (estimated)', 'Namatay sa TB na may HIV (tantiya)'), fmt(h.deaths_hiv_positive)]])] }); }
+
+    { const t = d.contacts_and_tpt_2024, ser = t.tpt_series.filter(r => r.year >= 2019), yrs = ser.map(r => r.year), v = ser.map(r => r.contacts_started_tpt);
+      const t2 = L('Contacts who started preventive treatment, by year', 'Mga kasama sa bahay na nagsimula ng preventive treatment, bawat taon');
+      out.push({ id: 'd10', th: light, takeaway: L('165,430 household contacts were found, 125,060 screened, 3,220 found to have TB, and 77,195 started preventive treatment.', '165,430 kasama sa bahay ang natukoy, 125,060 ang na-screen, 3,220 ang natuklasang may TB, at 77,195 ang nagsimula ng preventive treatment.'), source: S.who,
+        svgs: [this.hbars({ w: cw, th: light, max: 180000, labelW: 250, title: L('Household contacts of confirmed cases, 2024', 'Mga kasama sa bahay ng nakumpirmang kaso, 2024'), rows: [{ label: L('Household contacts found', 'Natukoy na kasama sa bahay'), v: t.household_contacts_identified, color: C.dot, text: fmt(t.household_contacts_identified) }, { label: L('Screened', 'Na-screen'), v: t.contacts_screened, color: C.teal, text: fmt(t.contacts_screened) }, { label: L('Found to have TB', 'Natuklasang may TB'), v: t.tb_found_among_contacts, color: C.coral, text: fmt(t.tb_found_among_contacts) }, { label: L('Started preventive treatment', 'Nagsimula ng preventive treatment'), v: t.contacts_started_tpt, color: C.teal, text: fmt(t.contacts_started_tpt) }], alt: L('Household contacts found, screened, found with TB and started on preventive treatment, 2024', 'Mga kasama sa bahay, 2024') }),
+          wide ? this.ts({ w: cw, h: 260, years: yrs, th: light, yMax: 80000, ticks: [0, 20000, 40000, 60000, 80000], tf: fmt, series: [{ vals: v, color: C.teal, label: fmt(v[v.length - 1]), sub: L('in 2024', 'noong 2024'), ink: C.teal }], title: t2, alt: t2 })
+            : this.rows({ w: cw, years: yrs, vals: v, color: C.teal, max: 80000, th: light, valText: i => fmt(v[i]), title: t2, alt: t2 })],
+        tables: [this.tbl(L('Household contacts and preventive treatment, 2024', 'Mga kasama sa bahay at preventive treatment, 2024'), [L('Step', 'Hakbang'), L('People', 'Katao')], [[L('Household contacts of confirmed cases', 'Kasama sa bahay ng nakumpirmang kaso'), fmt(t.household_contacts_identified)], [L('Screened', 'Na-screen'), fmt(t.contacts_screened)], [L('Found to have TB', 'Natuklasang may TB'), fmt(t.tb_found_among_contacts)], [L('Started preventive treatment', 'Nagsimula ng preventive treatment'), fmt(t.contacts_started_tpt)], [L('…of whom children under 5', '…kung saan wala pang 5 taong gulang'), fmt(t.children_under5_started_tpt)], [L('With short rifamycin-based regimens', 'Gamit ang maikling rifamycin-based na gamutan'), fmt(t.short_rifamycin_regimens)]]), this.tbl(t2, [Y, L('Started TPT', 'Nagsimula ng TPT')], t.tpt_series.map(r => [r.year, fmt(r.contacts_started_tpt)]))] }); }
+
+    { const g = d.global_comparison, ph = n => n === 'Philippines' ? L('Philippines', 'Pilipinas') : n;
+      const reg = { 'Africa': L('Africa', 'Aprika'), 'South-East Asia': L('South-East Asia', 'Timog-Silangang Asya'), 'Western Pacific': L('Western Pacific', 'Kanlurang Pasipiko'), 'Eastern Mediterranean': L('Eastern Mediterranean', 'Silangang Mediterranean'), 'Americas': L('Americas', 'Amerika'), 'Europe': L('Europe', 'Europa') };
+      const t1 = L('Most TB cases, 2024', 'Pinakamaraming kaso ng TB, 2024'), t2 = L('TB rate per 100,000 people, Southeast Asia, 2024', 'Antas ng TB bawat 100,000 katao, Timog-Silangang Asya, 2024'), t3 = L('TB rate per 100,000 people, WHO regions, 2024', 'Antas ng TB bawat 100,000 katao, mga rehiyon ng WHO, 2024');
+      const phRate = d.headline_2024.incidence_rate_per_100k;
+      const regRows = g.who_region_rates.map(r => ({ label: reg[r.who_region] || r.who_region, v: r.rate_per_100k, color: C.dot, text: fmt(r.rate_per_100k) })).concat([{ label: L('World', 'Mundo'), v: g.global_2024.rate_per_100k, color: C.ink, text: fmt(g.global_2024.rate_per_100k), bold: true }, { label: L('Philippines', 'Pilipinas'), v: phRate, color: C.coral, text: fmt(phRate), bold: true }]);
+      out.push({ id: 'd11', th: light, takeaway: L('Third in number of cases (6.8% of the world). Our rate of 625 is almost 5 times the global rate of 131.', 'Pangatlo sa dami ng kaso (6.8% ng mundo). Halos 5 beses ng pandaigdigang antas na 131 ang antas natin na 625.'), source: S.who,
+        svgs: [this.hbars({ w: cw, th: light, max: 2800000, labelW: 150, R: 150, title: t1, rows: g.top10_by_cases.map(r => ({ label: ph(r.country), v: r.cases, color: r.iso3 === 'PHL' ? C.coral : C.dot, bold: r.iso3 === 'PHL', text: fmt(r.cases) + ' (' + pct(r.share_of_global_pct) + ')' })), alt: t1 }),
+          this.hbars({ w: cw, th: light, max: 700, labelW: 150, R: 60, title: t2, rows: g.southeast_asia_rates.map(r => ({ label: ph(r.country), v: r.rate_per_100k, color: r.iso3 === 'PHL' ? C.coral : C.dot, bold: r.iso3 === 'PHL', text: fmt(r.rate_per_100k) })), alt: t2 }),
+          this.hbars({ w: cw, th: light, max: 700, labelW: 200, R: 60, title: t3, rows: regRows, alt: t3 })],
+        tables: [this.tbl(t1, [L('Country', 'Bansa'), L('Estimated cases', 'Tantiyang kaso'), L('Share of world', 'Bahagi sa mundo')], g.top10_by_cases.map(r => [ph(r.country), fmt(r.cases), pct(r.share_of_global_pct)])), this.tbl(t2, [L('Country', 'Bansa'), L('Rate per 100,000', 'Antas bawat 100,000'), L('Deaths per 100,000', 'Namatay bawat 100,000')], g.southeast_asia_rates.map(r => [ph(r.country), fmt(r.rate_per_100k), r.death_rate_per_100k.toFixed(1)])), this.tbl(t3, [L('Region', 'Rehiyon'), L('Rate per 100,000', 'Antas bawat 100,000')], regRows.map(r => [r.label, r.text]))] }); }
+
+    { const p = d.patient_costs;
+      out.push({ id: 'd12', th: light, takeaway: L('42% of TB-affected households faced catastrophic costs; 90% for drug-resistant TB (2016–17 survey).', '42% ng mga sambahayang may TB ang nakaranas ng catastrophic na gastos; 90% sa drug-resistant TB (survey noong 2016–17).'),
+        caption: L('Catastrophic costs: total TB costs — medical, non-medical and lost income, net of assistance — above 20% of yearly household income.', 'Catastrophic na gastos: kabuuang gastos sa TB — medikal, hindi medikal at nawalang kita, bawas ang tulong — na lampas sa 20% ng taunang kita ng sambahayan.'),
+        source: L('Source: First national TB patient cost survey, 2016–2017 (PLOS ONE, 2022).', 'Pinagmulan: Unang pambansang survey ng gastos ng mga pasyente ng TB, 2016–2017 (PLOS ONE, 2022).'),
+        stats: [{ v: pct(p.catastrophic_cost_pct_all), l: L('of TB-affected households faced catastrophic costs', 'ng mga sambahayang may TB ang nakaranas ng catastrophic na gastos'), s: '95% CI ' + p.ci[0].toFixed(1) + '–' + p.ci[1].toFixed(1) + '%', color: C.coral }, { v: pct(p.catastrophic_cost_pct_drtb), l: L('of households affected by drug-resistant TB', 'ng mga sambahayang may drug-resistant TB'), s: '', color: C.coral }],
+        tables: [this.tbl(L('Households facing catastrophic costs', 'Mga sambahayang nakaranas ng catastrophic na gastos'), [L('Group', 'Pangkat'), L('Share', 'Bahagi')], [[L('All TB-affected households', 'Lahat ng sambahayang may TB'), pct(p.catastrophic_cost_pct_all) + ' (95% CI ' + p.ci[0].toFixed(1) + '–' + p.ci[1].toFixed(1) + '%)'], [L('Drug-resistant TB', 'Drug-resistant TB'), pct(p.catastrophic_cost_pct_drtb)]])] }); }
+
+    { const s = d.prevalence_survey_2016, areaName = { 'NCR, Region III and Region IV-A': L('NCR, Region III and Region IV-A', 'NCR, Region III at Region IV-A'), 'Rest of Luzon': L('Rest of Luzon', 'Iba pang bahagi ng Luzon'), 'Visayas': 'Visayas', 'Mindanao': 'Mindanao' };
+      const top = Math.max(...s.by_area.map(a => a.per_100k));
+      const t1 = L('By area, adults 15 and older', 'Ayon sa lugar, 15 taong gulang pataas'), t2 = L('By sex', 'Ayon sa kasarian');
+      const all = L('All adults', 'Lahat ng nasa hustong gulang');
+      out.push({ id: 'd13', th: light, takeaway: L("Adults in NCR, Region III and Region IV-A had the highest prevalence (1,358 per 100,000). Men's prevalence was nearly 3 times women's.", 'Pinakamataas ang prevalence sa mga nasa hustong gulang sa NCR, Region III at Region IV-A (1,358 bawat 100,000). Halos 3 beses ng sa babae ang prevalence ng lalaki.'),
+        caption: L('Lab-confirmed lung TB per 100,000 adults. Lines: 95% confidence intervals. Dashed line: all adults, ' + fmt(s.overall.per_100k) + ' per 100,000.', 'Lung TB na nakumpirma sa laboratoryo bawat 100,000 nasa hustong gulang. Guhit: 95% confidence interval. Putol-putol na guhit: lahat ng nasa hustong gulang, ' + fmt(s.overall.per_100k) + ' bawat 100,000.'),
+        source: L('Source: 2016 National TB Prevalence Survey, via the WHO global TB database.', 'Pinagmulan: 2016 National TB Prevalence Survey, mula sa WHO global TB database.'),
+        svgs: [this.hbars({ w: cw, th: light, max: 2000, labelW: 260, R: 64, title: t1, ref: { v: s.overall.per_100k }, rows: s.by_area.map(a => ({ label: areaName[a.area] || a.area, v: a.per_100k, lo: a.lo, hi: a.hi, color: a.per_100k === top ? C.coral : C.dot, bold: a.per_100k === top, text: fmt(a.per_100k) })), alt: t1 }),
+          this.hbars({ w: cw, th: light, max: 2000, labelW: 260, R: 64, title: t2, ref: { v: s.overall.per_100k }, rows: [{ label: L('Men', 'Lalaki'), v: s.men.per_100k, lo: s.men.lo, hi: s.men.hi, color: C.ink, text: fmt(s.men.per_100k) }, { label: L('Women', 'Babae'), v: s.women.per_100k, lo: s.women.lo, hi: s.women.hi, color: C.dot, text: fmt(s.women.per_100k) }], alt: t2 })],
+        tables: [this.tbl(L('Prevalence of lab-confirmed lung TB per 100,000 adults, 2016', 'Prevalence ng lung TB bawat 100,000 nasa hustong gulang, 2016'), [L('Group', 'Pangkat'), L('Prevalence', 'Prevalence'), L('Lower', 'Pinakamababa'), L('Upper', 'Pinakamataas')], [[all, fmt(s.overall.per_100k), fmt(s.overall.lo), fmt(s.overall.hi)], [L('Men', 'Lalaki'), fmt(s.men.per_100k), fmt(s.men.lo), fmt(s.men.hi)], [L('Women', 'Babae'), fmt(s.women.per_100k), fmt(s.women.lo), fmt(s.women.hi)]].concat(s.by_age.map(a => [L('Age ', 'Edad ') + a.age_group.replace('65plus', '65+').replace('-', '–'), fmt(a.per_100k), fmt(a.lo), fmt(a.hi)]), s.by_area.map(a => [areaName[a.area] || a.area, fmt(a.per_100k), fmt(a.lo), fmt(a.hi)])))] }); }
+
+    { const f = this.state.fac, t1 = L('Accredited TB-DOTS clinics per region', 'Accredited na TB-DOTS clinic bawat rehiyon');
+      let svgs = [], caption = L('Loading the facility list…', 'Kinukuha ang listahan ng mga pasilidad…'), tables = [];
+      if (f) {
+        const regs = this.REG.map(([code, name]) => ({ code, name: f.names[code] || name, n: f.counts[code] || 0 }));
+        Object.keys(f.counts).forEach(code => { if (!regs.find(r => r.code === code)) regs.push({ code, name: f.names[code] || code, n: f.counts[code] }); });
+        const has = regs.filter(r => r.n).sort((a, b) => b.n - a.n), none = regs.filter(r => !r.n);
+        const max = Math.max(10, Math.ceil(has.reduce((m, r) => Math.max(m, r.n), 0) / 10) * 10);
+        svgs = has.length ? [this.hbars({ w: cw, th: light, max, labelW: 240, R: 56, rows: has.map(r => ({ label: r.name, v: r.n, color: C.teal, text: fmt(r.n) })), alt: t1 })] : [];
+        caption = (f.sample ? L('Sample list: ' + f.n + ' clinics from ' + has.length + ' regions, until the full PhilHealth list is loaded. ', 'Halimbawang listahan: ' + f.n + ' clinic mula sa ' + has.length + ' rehiyon, habang wala pa ang buong listahan ng PhilHealth. ') : '') + (none.length ? L('No data yet: ', 'Wala pang datos: ') + none.map(r => r.name).join('; ') + '.' : '');
+        tables = [this.tbl(t1, [L('Region', 'Rehiyon'), L('Clinics', 'Clinic')], has.map(r => [r.name, fmt(r.n)]).concat(none.map(r => [r.name, L('No data yet', 'Wala pang datos')])))];
+      }
+      out.push({ id: 'd14', th: light, takeaway: L('Computed from the PhilHealth list.', 'Kinuwenta mula sa listahan ng PhilHealth.'), caption, svgs, tables,
+        source: L('Source: PhilHealth list of accredited TB-DOTS clinics, update of 30 September 2026. The National TB Program runs more than 3,300 TB-DOTS facilities; this list covers only the accredited ones.', 'Pinagmulan: Listahan ng PhilHealth ng mga accredited na TB-DOTS clinic, update noong 30 Setyembre 2026. Mahigit 3,300 ang TB-DOTS facility ng National TB Program; ang mga accredited lang ang nasa listahang ito.') }); }
+
+    { const m = d.end_tb_milestones;
+      out.push({ id: 'd15', th: light, takeaway: L('The 2025 milestone was 275 per 100,000 and about 7,500 deaths; in 2024 it was 625 and 37,404. DOH aims for 300 per 100,000 by 2030.', 'Ang target sa 2025 ay 275 bawat 100,000 at mga 7,500 na namatay; noong 2024, 625 at 37,404 ito. Layunin ng DOH ang 300 bawat 100,000 pagsapit ng 2030.'),
+        source: L('Sources: WHO End TB Strategy milestones and Global Tuberculosis Report 2025 (2024 data); DOH 2030 target as reported by Philstar, 28 March 2025.', 'Pinagmulan: Mga milestone ng WHO End TB Strategy at Global Tuberculosis Report 2025 (datos ng 2024); target ng DOH sa 2030 ayon sa Philstar, 28 Marso 2025.'),
+        svgs: [this.bullets({ w: Math.min(cw, 860), th: light, alt: L('Targets compared with 2024 values', 'Mga target kumpara sa datos ng 2024'), items: [{ label: L('TB rate per 100,000', 'Antas ng TB bawat 100,000'), now: L('2024: ', '2024: ') + fmt(m.actual_2024_incidence_rate), v: m.actual_2024_incidence_rate, max: 700, marks: [{ v: m.milestone_2025_incidence_rate_target, text: L('2025 milestone: ', 'Target sa 2025: ') + fmt(m.milestone_2025_incidence_rate_target) }, { v: 300, text: L('DOH target for 2030: 300', 'Target ng DOH sa 2030: 300'), below: true }] }, { label: L('TB deaths', 'Namatay sa TB'), now: L('2024: ', '2024: ') + fmt(m.actual_2024_deaths), v: m.actual_2024_deaths, max: 40000, marks: [{ v: m.milestone_2025_deaths_target, text: L('2025 milestone: ', 'Target sa 2025: ') + fmt(m.milestone_2025_deaths_target) }] }] })],
+        tables: [this.tbl(L('Targets and where the Philippines is', 'Mga target at kalagayan ng Pilipinas'), [L('Target', 'Target'), L('Goal', 'Layunin'), L('Philippines now', 'Pilipinas ngayon')], [[L('End TB 2025 milestone: incidence rate (−50% vs 2015)', 'End TB 2025 milestone: antas ng TB (−50% kumpara sa 2015)'), fmt(m.milestone_2025_incidence_rate_target) + L(' per 100,000', ' bawat 100,000'), fmt(m.actual_2024_incidence_rate) + ' (2024)'], [L('End TB 2025 milestone: deaths (−75% vs 2015)', 'End TB 2025 milestone: namatay (−75% kumpara sa 2015)'), fmt(m.milestone_2025_deaths_target), fmt(m.actual_2024_deaths) + ' (2024)'], [L('DOH target incidence rate by 2030', 'Target ng DOH sa antas ng TB pagsapit ng 2030'), L('300 per 100,000', '300 bawat 100,000'), fmt(m.actual_2024_incidence_rate) + ' (2024)']])] }); }
+
+    const CL = this.state.claims;
+    if (CL) {
+      const cl = id => { const x = CL.claims.find(k => k.id === id); return x ? (x[lang] || x.en) : ''; };
+      const srcL = ids => { const u = Array.from(new Set(ids)); return u.map((sid, j) => { const s0 = CL.sources[sid] || { title: sid, url: '#' }; return { name: s0.title, url: s0.url, sep: j < u.length - 1 ? '; ' : '' }; }); };
+      const srcOf = ids => srcL([].concat.apply([], ids.map(id => (CL.claims.find(k => k.id === id) || { sources: [] }).sources)));
+      const one = ids => srcOf(ids).length > 1 ? L('Sources:', 'Pinagmulan:') : L('Source:', 'Pinagmulan:');
+
+      { const dn = d.diagnostics_network;
+        if (dn) {
+          const sites = dn.series.filter(r => r.year >= 2020 && r.rapid_molecular_test_sites != null);
+          const tests = dn.series.filter(r => r.year >= 2021 && r.rapid_tests_performed != null);
+          const ty = tests.map(r => r.year), tv = tests.map(r => r.rapid_tests_performed), last = tests[tests.length - 1];
+          const alt1 = L('Sites using rapid molecular TB tests, 2020 to 2024', 'Mga site na gumagamit ng mabilis na molecular TB test, 2020 hanggang 2024');
+          const alt2 = L('Rapid TB tests done each year, 2021 to 2024', 'Bilang ng mabilis na TB test bawat taon, 2021 hanggang 2024');
+          const t2 = L('Rapid TB tests done each year', 'Mabilis na TB test bawat taon'), ids = ['test-sites', 'test-volume'];
+          out.push({ id: 'd16', th: light, takeaway: cl('test-sites') + ' ' + cl('test-volume'),
+            caption: L('Positivity: ' + fmt(last.rapid_tests_positive) + ' of ' + fmt(last.rapid_tests_performed) + ' rapid tests in ' + last.year + ' found TB (' + dn.rapid_test_positivity_pct + '%).', 'Positivity: ' + fmt(last.rapid_tests_positive) + ' sa ' + fmt(last.rapid_tests_performed) + ' na mabilis na test noong ' + last.year + ' ang nakakita ng TB (' + dn.rapid_test_positivity_pct + '%).'),
+            source: one(ids), srcLinks: srcOf(ids),
+            svgs: [
+              this.hbars({ w: Math.min(cw, 860), th: light, max: 1200, labelW: 64, R: 64, axis: [0, 400, 800, 1200], rows: sites.map(r => ({ label: String(r.year), v: r.rapid_molecular_test_sites, color: C.teal, text: fmt(r.rapid_molecular_test_sites) })), alt: alt1, title: L('Sites using rapid molecular tests', 'Mga site na may mabilis na molecular test') }),
+              wide ? this.ts({ w: cw, h: 260, years: ty, th: light, yMax: 1400000, ticks: [0, 500000, 1000000], tf: fmt, series: [{ vals: tv, color: C.teal, label: fmt(tv[tv.length - 1]), sub: L('rapid tests in ' + ty[ty.length - 1], 'mabilis na test noong ' + ty[ty.length - 1]) }], alt: alt2, title: t2 })
+                   : this.rows({ w: cw, years: ty, vals: tv, color: C.teal, max: 1400000, th: light, valText: i => fmt(tv[i]), alt: alt2, title: t2 })
+            ],
+            tables: [
+              this.tbl(alt1, [Y, L('Sites', 'Site')], sites.map(r => [r.year, fmt(r.rapid_molecular_test_sites)])),
+              this.tbl(alt2, [Y, L('Rapid tests done', 'Mabilis na test'), L('Found TB', 'Nakakita ng TB')], tests.map(r => [r.year, fmt(r.rapid_tests_performed), r.rapid_tests_positive == null ? null : fmt(r.rapid_tests_positive)]))
+            ] });
+        } }
+
+      { const fin = d.financing;
+        if (fin) {
+          const fy = fin.series.filter(r => r.year >= 2019 && r.year <= 2025);
+          const keys = [['domestic', L('Government', 'Pamahalaan'), C.teal, 'url(#dh-teal)'], ['global_fund', 'Global Fund', C.ink, 'url(#dh-ink)'], ['usaid', 'USAID', C.dot, 'url(#dh-dot)']];
+          const exp = r => r.received_usd == null, val = (r, k) => exp(r) ? r['available_' + k + '_usd'] : r['received_' + k + '_usd'];
+          const alt = L('TB program funding received by source, 2019 to 2024, and funding expected for 2025', 'Pondong natanggap ng TB program ayon sa pinagmulan, 2019 hanggang 2024, at pondong inaasahan para sa 2025');
+          const ids = ['fund-2024', 'fund-2025', 'fund-cuts', 'fund-budget'];
+          out.push({ id: 'd17', th: light, takeaway: cl('fund-2024') + ' ' + cl('fund-2025'), caption: cl('fund-cuts') + ' ' + cl('fund-budget'), source: one(ids), srcLinks: srcOf(ids),
+            svgs: [this.fstack({ w: Math.min(cw, 860), th: light, max: 180000000, axis: [0, 50000000, 100000000, 150000000], af: v => 'US$' + (v / 1000000) + 'M',
+              legend: keys.map(k => ({ label: k[1], fill: k[2] })).concat([{ label: L('2025: expected, not received', '2025: inaasahan, hindi pa natanggap'), fill: 'url(#dhatch)', stroke: C.dot, sw: 1.5 }]),
+              rows: fy.map(r => ({ label: String(r.year), segs: keys.map(k => ({ v: val(r, k[0]) || 0, fill: exp(r) ? k[3] : k[2], stroke: exp(r) ? k[2] : 'none', sw: exp(r) ? 1.5 : 0 })), note: exp(r) ? L('expected', 'inaasahan') : '' })), alt })],
+            tables: [this.tbl(alt, [Y, L('Government', 'Pamahalaan'), 'Global Fund', 'USAID', L('Total', 'Kabuuan')], fy.map(r => [exp(r) ? r.year + L(' (expected)', ' (inaasahan)') : r.year].concat(keys.map(k => { const v = val(r, k[0]); return v == null ? null : 'US$' + fmt(v); })).concat([exp(r) ? (r.available_usd == null ? null : 'US$' + fmt(r.available_usd)) : 'US$' + fmt(r.received_usd)])))] });
+        } }
+
+      { const bc = d.bcg_coverage;
+        if (bc) {
+          const s0 = bc.series.filter(r => r.year >= 2015), by = s0.map(r => r.year), bv = s0.map(r => r.coverage_pct), i21 = by.indexOf(2021);
+          const alt = L('BCG vaccine coverage among babies, 2015 to 2024', 'Saklaw ng BCG vaccine sa mga sanggol, 2015 hanggang 2024');
+          out.push({ id: 'd18', th: light, takeaway: cl('prev-bcg'), source: one(['prev-bcg']), srcLinks: srcOf(['prev-bcg']),
+            svgs: [wide ? this.ts({ w: cw, h: 260, years: by, th: light, yMax: 100, ticks: [0, 25, 50, 75, 100], tf: v => v + '%', series: [{ vals: bv, color: C.teal, label: bv[bv.length - 1] + '%', sub: L('of babies in ' + by[by.length - 1], 'ng mga sanggol noong ' + by[by.length - 1]) }], notes: i21 >= 0 ? [{ i: i21, v: bv[i21], text: '2021: ' + bv[i21] + '%' }] : [], alt })
+                   : this.rows({ w: cw, years: by, vals: bv, color: C.teal, max: 100, th: light, valText: i => bv[i] + '%' + (by[i] === 2021 ? L(' (dip)', ' (pagbaba)') : ''), alt })],
+            tables: [this.tbl(alt, [Y, L('Coverage', 'Saklaw')], s0.map(r => [r.year, r.coverage_pct + '%']))] });
+        } }
+
+      { const sc = d.sdg_context;
+        if (sc) {
+          const get = k => sc.indicators.find(r => r.key === k);
+          const defs = [['urban_slum_pct', L('Urban population living in slums', 'Mga taga-lungsod na nakatira sa slum'), '%'], ['smoking_pct_15plus', L('Smoking, age 15 and over', 'Naninigarilyo, edad 15 pataas'), '%'], ['adult_undernutrition_pct', L('Undernutrition, adults', 'Kulang sa nutrisyon, nasa hustong gulang'), '%'], ['diabetes_pct_18plus', L('Diabetes, adults', 'Diabetes, nasa hustong gulang'), '%'], ['alcohol_use_disorders_pct_15plus', L('Alcohol use disorders, age 15 and over', 'Alcohol use disorder, edad 15 pataas'), '%'], ['uhc_service_coverage_index', L('Essential health service coverage (UHC index, out of 100)', 'Saklaw ng mahahalagang serbisyong pangkalusugan (UHC index, sa 100)'), '']];
+          const rs = defs.map(([k, label, unit]) => { const r = get(k); if (!r) return null; const sex = k === 'smoking_pct_15plus' && r.by_sex ? L(': men ' + r.by_sex.m + '%, women ' + r.by_sex.f + '%', ': lalaki ' + r.by_sex.m + '%, babae ' + r.by_sex.f + '%') : ''; return { v: r.value + unit, l: label + sex, s: r.year + '. ' + r.source, r, label }; }).filter(Boolean);
+          const ids = ['drivers-slums', 'drivers-smoking', 'drivers-nutrition', 'drivers-uhc'];
+          out.push({ id: 'd19', th: light, takeaway: cl('drivers-slums'), stats: rs.map(x => ({ v: x.v, l: x.l, s: x.s })), source: one(ids), srcLinks: srcOf(ids),
+            tables: [this.tbl(L('Conditions linked to TB', 'Mga kalagayang kaugnay ng TB'), [L('Indicator', 'Indicator'), L('Value', 'Halaga'), Y, L('Source', 'Pinagmulan')], rs.map(x => [x.label, x.v, x.r.year, x.r.source]))] });
+        } }
+
+      { const reg = CL.claims.filter(x => x.topic === 'regional');
+        if (reg.length) {
+          out.push({ id: 'd20', th: light, takeaway: L('What DOH offices, a national survey and news reports say about TB in some places.', 'Ang sinasabi ng mga tanggapan ng DOH, isang pambansang survey at mga balita tungkol sa TB sa ilang lugar.'),
+            claimRows: reg.map(x => ({ text: x[lang] || x.en, meta: L('Period: ', 'Panahon: ') + x.year + '. ' + x.kind + '.', src: srcL(x.sources) })),
+            caption: L("These come from different years and sources, so they can't be compared with each other.", "Galing ang mga ito sa iba't ibang taon at pinagmulan, kaya hindi sila maihahambing sa isa't isa."),
+            source: one(reg.map(x => x.id)), srcLinks: srcOf(reg.map(x => x.id)), link2: { href: '#d13', label: L('See the 2016 survey', 'Tingnan ang survey noong 2016') },
+            tables: [this.tbl(L('Regional snapshots', 'Mga sulyap mula sa mga rehiyon'), [L('Snapshot', 'Sulyap'), L('Period', 'Panahon'), L('Source', 'Pinagmulan')], reg.map(x => [x[lang] || x.en, x.year, (x.sources || []).map(s => (CL.sources[s] || { title: s }).title).join('; ')]))] });
+        } }
+    }
+
+    return out.map(c => {
+      const th = c.th, open = !!this.state.open[c.id], dark = th.dark === 'true';
+      return Object.assign({ svgs: [], stats: [], toggle: [], caption: '', srcLinks: [], claimRows: [], link2: null }, c, {
+        hasClaimRows: !!(c.claimRows && c.claimRows.length), hasLink2: !!c.link2,
+        title: T[c.id], hid: c.id + '-h', tid: c.id + '-t', dark: th.dark, bg: th.bg, ink: th.ink, muted: th.muted, rule: th.rule, link: th.link,
+        pad: dark ? '72px 0 64px' : '0 0 56px', border: dark ? '0' : '1px solid #D9D5CB', padTop: dark ? '0px' : '48px',
+        hasCaption: !!c.caption, hasStats: !!(c.stats && c.stats.length), hasToggle: !!(c.toggle && c.toggle.length),
+        open, tableLabel: open ? L('Hide table', 'Itago ang talaan') : L('View as table', 'Ipakita bilang talaan'),
+        toggleTable: () => this.setState(s => ({ open: { ...s.open, [c.id]: !s.open[c.id] } }))
+      });
+    });
+  }
+
+  TOPICS = [['all', 'All', 'Lahat'], ['burden', 'How many fall ill', 'Ilan ang nagkakasakit'], ['detection', 'Finding cases', 'Pagtukoy ng kaso'], ['who', 'Who gets TB', 'Sino ang nagkaka-TB'], ['drivers', 'What drives TB', 'Ano ang nagtutulak sa TB'], ['testing', 'Testing', 'Pagsusuri'], ['treatment', 'Treatment', 'Gamutan'], ['prevention', 'Prevention', 'Pag-iwas'], ['cost', 'Costs to families', 'Gastos ng pamilya'], ['funding', 'Funding', 'Pondo'], ['targets', 'Targets', 'Mga target'], ['regional', 'Regions', 'Mga rehiyon']];
+  claimVals(lang, vw) {
+    const CL = this.state.claims, en = lang === 'en', topic = this.state.topic;
+    if (!CL) return { hasClaims: false, claimGroups: [], topicOpts: [], topicOptions: [], topicSeg: vw >= 720, topicSelect: vw < 720, topic, onTopic: () => {} };
+    const pick = k => () => this.setState({ topic: k });
+    const groups = this.TOPICS.slice(1).filter(([k]) => topic === 'all' || topic === k).map(([k, e, f]) => {
+      const items = CL.claims.filter(x => x.topic === k);
+      return { title: en ? e : f, items: items.map((x, i) => ({ anchor: 'claim-' + x.id, text: x[lang] || x.en, kind: x.kind, year: ', ' + x.year + '.', sep: i ? '1px solid #E3E6E8' : '0',
+        src: (x.sources || []).map((sid, j, arr) => { const s0 = CL.sources[sid] || { title: sid, url: '#' }; return { name: s0.title, url: s0.url, sep: j < arr.length - 1 ? '; ' : '' }; }) })) };
+    }).filter(g => g.items.length);
+    return {
+      hasClaims: true, claimGroups: groups, topic, topicSeg: vw >= 720, topicSelect: vw < 720,
+      topicOpts: this.TOPICS.map(([k, e, f]) => ({ label: en ? e : f, on: topic === k, pick: pick(k), bg: topic === k ? '#14212B' : 'transparent', fg: topic === k ? '#FFFFFF' : '#14212B', weight: topic === k ? 700 : 400 })),
+      topicOptions: this.TOPICS.map(([k, e, f]) => React.createElement('option', { key: k, value: k }, en ? e : f)),
+      onTopic: e => this.setState({ topic: e.target.value })
+    };
+  }
+  renderVals() {
+    const { lang, vw, d, failed } = this.state, en = lang === 'en';
+    const gut = Math.min(64, Math.max(16, vw * 0.04)), pad = Math.min(32, Math.max(18, vw * 0.03));
+    const cw = Math.max(240, Math.min(1040, Math.min(1120, vw) - 2 * gut) - 2 * pad), wide = cw >= 640;
+    let charts = [];
+    if (d) { try { charts = this.build(d, lang, cw, wide); } catch (e) { console.error('TB PH chart build failed', e); } }
+    return {
+      en, fil: !en, lang, setLang: this.setLang, charts, previewBeat: this.props.previewBeat || 'scroll', reducedMotion: !!this.props.reducedMotion, missedLayout: this.props.missedLayout || 'scattered', loading: !d && !failed, failed,
+      ...this.claimVals(lang, vw),
+      idxCols: vw >= 900 ? 'repeat(2,minmax(0,1fr))' : 'minmax(0,1fr)',
+      index: this.TITLES.concat([['numbers', 'TB in numbers', 'Ang TB sa mga numero']]).map(([id, e, f], i) => ({ href: '#' + id, title: en ? e : f, sep: i >= (vw >= 900 ? 2 : 1) ? '1px solid #E3E6E8' : '0' })),
+      onMethods: e => this.setState({ methOpen: !!(e && e.currentTarget && e.currentTarget.open) }), methRot: this.state.methOpen ? '90deg' : '0deg',
+      toTop: e => { e.preventDefault(); const el = document.getElementById('top'); if (!el) return; const rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: rm ? 'auto' : 'smooth' }); el.focus({ preventScroll: true }); },
+      t: en ? { onPage: 'On this page', top: 'Back to top', inNumbers: 'TB in numbers', inNumbersLead: 'Every number on this site, with its source. Estimates and provisional figures say so.', topic: 'Topic', methods: 'Methods and caveats', loading: 'Loading the data…', failed: 'The data could not be loaded. Check your connection and reload the page.' } : { onPage: 'Sa pahinang ito', top: 'Bumalik sa itaas', inNumbers: 'Ang TB sa mga numero', inNumbersLead: 'Lahat ng numero sa site na ito, kasama ang pinagmulan. Nakasaad kung tantiya o pansamantala ang datos.', topic: 'Paksa', methods: 'Mga paraan at paalala', loading: 'Kinukuha ang datos…', failed: 'Hindi makuha ang datos. Tingnan ang inyong koneksiyon at i-reload ang pahina.' }
+    };
+  }
+}
+</script>
+</body>
+</html>

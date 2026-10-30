@@ -3,9 +3,18 @@
 A side project for the owner's (Rovince's) nonprofit internship on TB (tuberculosis) health. The Jr. Builder builds it. It is **not** KitaMo.
 
 ## Sources of truth
-- `design/`: the Claude Design export. Build the screens it shows; read it before choosing a stack or writing UI.
-- `docs/`: the brief and decisions from the owner's Claude chat.
-- If the design and the brief disagree, ask the owner. Don't guess.
+- `design/design_handoff_tb_ph/README.md`: the build spec (screens, tokens, behavior, open items). Read it first, before choosing a stack or writing UI.
+- `design/design_handoff_tb_ph/prototype/`: HTML design references to recreate pixel-accurately. They are not production code: port `tbph-core.js`, never `support.js`.
+- `design/design_handoff_tb_ph/reference/content-and-data-pack.md`: the canonical EN/FIL copy and chart specs. `ultimate-build-source-of-truth.md` is the checklist the build is audited against.
+- `docs/`: decisions made with the owner during the build.
+- If the spec and the prototype disagree, the README wins. If something is still unclear, ask the owner. Don't guess.
+
+## Medical content
+- Health copy comes verbatim from the content pack. Don't write or reword medical advice, symptom-check questions or results.
+- Leave `[VERIFY]` items and the pending clinical review (Check, Learn L6) marked as open; don't resolve them yourself.
+
+## External services
+- Ask the owner before running the `pipeline/` scripts that download from PhilHealth or geocode addresses (Nominatim or Google), and before adding any third-party service, analytics or API key. The site is static and frontend-only by design.
 
 ## Keep it separate from KitaMo
 - Don't read, write or run anything in `~/Documents/KitaMo-ph`. Don't reuse KitaMo code, keys or Supabase projects.

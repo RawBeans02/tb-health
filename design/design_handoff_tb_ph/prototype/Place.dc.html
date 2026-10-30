@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Place — TB PH</title>
+  <meta name="description" content="Services, hours, phone and directions for a TB-DOTS center in the Philippines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <script src="tbph-core.js"></script>
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol,dl,dd{margin:0}button{font:inherit;color:inherit}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(16px,3vw,32px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="max-width:760px; display:grid; gap:28px;">
+        <a href="{{ backHref }}" style="justify-self:start; display:inline-flex; align-items:center; gap:6px; min-height:44px; margin-left:-2px; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="color:#14212B; text-decoration:underline;"><span aria-hidden="true" style="font-size:26px; line-height:1; margin-top:-3px;">‹</span><span>{{ backLabel }}</span></a>
+
+        <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}"><p role="status" style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; font-size:17px; line-height:1.5; font-weight:700;"><span aria-hidden="true" style="width:22px; height:22px; margin-top:1px; border-radius:50%; background:#14212B; color:#FFFFFF; display:grid; place-items:center; font-size:14px; font-weight:700;">i</span><span>{{ t.offline }}</span></p></sc-if>
+
+        <sc-if value="{{ hasStop }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:12px; max-width:420px;">
+            <p style="font-size:17px; font-weight:700; color:#175458;">{{ stopLabel }}</p>
+            <div aria-hidden="true" style="position:relative; display:grid; grid-template-columns:repeat(3,minmax(0,1fr));">
+              <span style="position:absolute; left:16.667%; right:16.667%; top:10px; height:6px; border-radius:3px; background:#DADDE0;"></span>
+              <span style="position:absolute; left:16.667%; top:10px; height:6px; border-radius:3px; background:#1E6B70; width:{{ lineFill }};"></span>
+              <sc-for list="{{ strip }}" as="s" hint-placeholder-count="3">
+                <span style="position:relative; display:grid; justify-items:center; gap:8px; text-align:center;">
+                  <span style="width:26px; height:26px; border-radius:50%; border:3px solid #1E6B70; background:{{ s.fill }}; color:{{ s.num }}; display:grid; place-items:center; font-size:13px; font-weight:700; box-shadow:{{ s.halo }};">{{ s.n }}</span>
+                  <span style="font-size:15px; line-height:1.25; font-weight:{{ s.weight }};">{{ s.label }}</span>
+                </span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:12px;">
+            <h1 style="font-weight:700; font-size:clamp(2rem,1.6rem + 1.6vw,2.625rem); line-height:1.1; letter-spacing:-0.02em; color:#C42032; text-wrap:balance; overflow-wrap:anywhere;">{{ p.name }}</h1>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;">
+              <sc-if value="{{ p.hasDist }}" hint-placeholder-val="{{ false }}"><span style="font-size:17px; font-weight:700; color:#3F4B53; font-variant-numeric:tabular-nums;">{{ p.dist }}</span></sc-if>
+              <span style="display:inline-flex; align-items:center; min-height:30px; padding:2px 10px; border:1.5px solid {{ p.badgeLine }}; border-radius:8px; color:{{ p.badgeInk }}; font-size:15px; font-weight:700; line-height:1.25;">{{ p.badge }}</span>
+            </div>
+            <p style="font-size:18px; line-height:1.45; text-wrap:pretty;">{{ p.address }}</p>
+          </div>
+
+          <div style="display:grid; gap:12px;">
+            <a href="{{ p.commute }}" target="_blank" rel="noopener" aria-label="{{ p.commuteAria }}" style="display:flex; align-items:center; justify-content:center; width:100%; max-width:560px; min-height:58px; padding:0 24px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">{{ t2.commute }}</a>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+              <a href="{{ p.walk }}" target="_blank" rel="noopener" aria-label="{{ p.walkAria }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t2.walk }}</a>
+              <a href="{{ p.drive }}" target="_blank" rel="noopener" aria-label="{{ p.driveAria }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t2.drive }}</a>
+              <button type="button" onClick="{{ sakay }}" style="display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap; white-space:normal; text-align:center;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t2.sakay }}</button>
+            </div>
+            <sc-if value="{{ p.hasTel }}" hint-placeholder-val="{{ true }}">
+              <a href="{{ p.tel }}" aria-label="{{ p.callAria }}" style="justify-self:start; display:inline-flex; align-items:center; min-height:48px; padding:0 2px; color:#175458; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px;" style-hover="color:#14212B;">{{ t2.call }}</a>
+            </sc-if>
+            <p role="status" style="font-size:17px; font-weight:700; color:#175458; overflow-wrap:anywhere;">{{ copiedMsg }}</p>
+          </div>
+
+          <section aria-labelledby="svc-h" style="display:grid; gap:12px;">
+            <h2 id="svc-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em;">{{ t.services }}</h2>
+            <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <sc-for list="{{ p.services }}" as="s" hint-placeholder-count="3">
+                <li style="padding-left:16px;">
+                  <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; min-height:56px; padding:12px 16px 12px 0; border-top:{{ s.sep }};">
+                    <span style="font-size:18px; font-weight:700; line-height:1.3;">{{ s.name }}</span>
+                    <span style="display:inline-flex; align-items:center; gap:7px; min-height:30px; padding:2px 10px; border:{{ s.chip.border }}; background:{{ s.chip.bg }}; color:{{ s.chip.fg }}; border-radius:8px; font-size:15px; font-weight:700; line-height:1.25;"><span aria-hidden="true" style="display:{{ s.chip.ring }}; flex:none; width:11px; height:11px; border-radius:50%; border:{{ s.chip.ringBorder }};"></span>{{ s.chip.mark }} {{ s.chip.label }}</span>
+                  </div>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+
+          <section aria-labelledby="det-h" style="display:grid; gap:12px;">
+            <h2 id="det-h" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em;">{{ t.details }}</h2>
+            <dl style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <sc-for list="{{ p.details }}" as="d" hint-placeholder-count="4">
+                <div style="padding-left:16px;">
+                  <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 16px; min-height:56px; padding:14px 16px 14px 0; border-top:{{ d.sep }};">
+                    <dt style="font-size:16px; font-weight:700; color:#3F4B53;">{{ d.k }}</dt>
+                    <dd style="font-size:18px; line-height:1.4; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; text-align:left;">{{ d.v }}</dd>
+                  </div>
+                </div>
+              </sc-for>
+            </dl>
+          </section>
+
+          <div style="display:grid; gap:8px; font-size:15px; line-height:1.5; color:#56626A; max-width:48em;">
+            <p>{{ t2.rule }}</p>
+            <sc-if value="{{ isSample }}" hint-placeholder-val="{{ false }}"><p>{{ t2.approxPins }}</p></sc-if>
+            <p>{{ t2.dataNote }}</p>
+          </div>
+
+          <sc-if value="{{ showInstall }}" hint-placeholder-val="{{ false }}">
+            <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <li><a href="Install.dc.html" style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:12px 16px; color:#14212B; font-size:17px; line-height:1.4; text-decoration:none;" style-hover="background:#F6F8F8;"><span>{{ t.install }}</span><span aria-hidden="true" style="flex:none; font-size:26px; line-height:1; color:#8A949A;">›</span></a></li>
+            </ul>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ missing }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:20px;">
+            <h1 style="font-weight:700; font-size:clamp(2rem,1.6rem + 1.6vw,2.625rem); line-height:1.1; letter-spacing:-0.02em; color:#C42032; text-wrap:balance;">{{ t.missing }}</h1>
+            <a href="Places.dc.html" style="justify-self:start; display:inline-flex; align-items:center; min-height:58px; padding:0 28px; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#FFFFFF;">{{ t.seeAll }}</a>
+          </div>
+        </sc-if>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><p role="status" style="font-size:18px; color:#56626A;">{{ t.loading }}</p></sc-if>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;placeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+class Component extends DCLogic {
+  state = { lang: this.readLang(), fac: null, facErr: false, gps: null, copied: false, core: !!window.TBPH, online: true, standalone: false };
+  T = {
+    en: { back: 'Find TB care', missing: "This place isn't on the list.", seeAll: 'See more places', loading: 'Loading the list of centers…', services: 'Services', details: 'Details', hoursLabel: 'Hours', phoneLabel: 'Phone', region: 'Region', accr: 'Accreditation until', noHours: 'Not listed. Call first.', offline: "You're offline. Showing the saved details for this center.", install: 'Save TB PH to your home screen for next time.' },
+    fil: { back: 'Hanapin ang gamutan', missing: 'Wala sa listahan ang lugar na ito.', seeAll: 'Tingnan ang iba pang lugar', loading: 'Kinukuha ang listahan ng mga center…', services: 'Mga serbisyo', details: 'Mga detalye', hoursLabel: 'Oras', phoneLabel: 'Telepono', region: 'Rehiyon', accr: 'Accredited hanggang', noHours: 'Walang nakalista. Tumawag muna.', offline: 'Wala kang koneksiyon. Ipinapakita ang naka-save na detalye ng center na ito.', install: 'I-save ang TB PH sa home screen mo para sa susunod.' }
+  };
+  MONTHS = { en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], fil: ['Enero', 'Pebrero', 'Marso', 'Abril', 'Mayo', 'Hunyo', 'Hulyo', 'Agosto', 'Setyembre', 'Oktubre', 'Nobyembre', 'Disyembre'] };
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  core() {
+    if (window.TBPH) return Promise.resolve(window.TBPH);
+    return new Promise(res => { const h = () => { window.removeEventListener('tbph-core-ready', h); res(window.TBPH); }; window.addEventListener('tbph-core-ready', h); });
+  }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    const h = document.documentElement;
+    this.env = () => this.setState({ online: h.getAttribute('data-online') !== 'false', standalone: h.getAttribute('data-standalone') === 'true' });
+    if (window.MutationObserver) { this.mo = new MutationObserver(this.env); this.mo.observe(h, { attributes: true, attributeFilter: ['data-online', 'data-standalone'] }); }
+    this.env();
+    let p; try { p = new URLSearchParams(location.search); } catch (e) { p = new URLSearchParams(''); }
+    this.q = { id: p.get('id') || this.props.placeId || '', stop: parseInt(p.get('stop') || '', 10), need: p.get('need') || '', near: p.get('near') || '', loc: p.get('loc') === 'gps' };
+    this.core().then(T => { this.setState({ core: true }); if (this.q.loc) T.locate().then(g => this.setState({ gps: g }), () => {}); return T.facilities(); })
+      .then(fac => this.setState({ fac }), () => this.setState({ facErr: true }));
+  }
+  componentWillUnmount() { clearTimeout(this.ct); if (this.mo) this.mo.disconnect(); }
+  componentDidUpdate() {
+    const p = this.place();
+    if (p) { const title = p.name + ' — TB PH'; if (document.title !== title) document.title = title; }
+  }
+  place() {
+    const { fac } = this.state;
+    if (!fac || !this.q) return null;
+    return fac.byId.get(this.q.id) || (this.q.id ? null : fac.list[0]);
+  }
+  fmtDate(s, lang) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    if (!m) return s || '';
+    return parseInt(m[3], 10) + ' ' + this.MONTHS[lang][parseInt(m[2], 10) - 1] + ' ' + m[1];
+  }
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l });
+  };
+  sakay(p) {
+    window.TBPH.sakay(p).then(r => {
+      this.setState({ copied: r && r.ok ? 'ok' : 'fail' });
+      clearTimeout(this.ct);
+      this.ct = setTimeout(() => this.setState({ copied: false }), 8000);
+    });
+  }
+  renderVals() {
+    const { lang, fac, facErr, gps, copied, online, standalone } = this.state, T = window.TBPH, t = this.T[lang], S = T ? T.STR[lang] : null, q = this.q || {};
+    const p = this.place();
+    const fromRoute = !!(q.need || q.near || q.loc);
+    const hasStop = !!(S && q.stop >= 1 && q.stop <= 3);
+    const SEP = '1px solid #E3E6E8';
+    let view = {};
+    if (p && S) {
+      let origin = null;
+      if (gps) origin = gps;
+      else if (q.near) { const g = T.matchPlace(q.near, fac.gaz); if (g) origin = g; }
+      const d = origin && p.lat != null ? T.km(origin, p) : null;
+      const details = [{ k: t.hoursLabel, v: p.hours || t.noHours }];
+      if (p.phone) details.push({ k: t.phoneLabel, v: p.phone });
+      details.push({ k: t.region, v: p.region || p.code });
+      if (p.accr) details.push({ k: t.accr, v: this.fmtDate(p.accr, lang) });
+      view = {
+        name: p.name, address: p.address, badge: p.gov ? S.gov : S.priv, badgeLine: p.gov ? '#1E6B70' : '#56626A', badgeInk: p.gov ? '#175458' : '#14212B',
+        hasDist: d != null, dist: T.dist(d, p.precise && !!gps, lang),
+        commute: T.dirUrl(p, 'transit'), walk: T.dirUrl(p, 'walking'), drive: T.dirUrl(p, 'driving'),
+        commuteAria: S.commute + ': ' + p.name, walkAria: S.walk + ': ' + p.name, driveAria: S.drive + ': ' + p.name, callAria: S.call + ': ' + p.name + ', ' + p.first,
+        hasTel: !!p.tel, tel: p.tel,
+        services: T.STOPS.filter(k => p.svc[k] !== 'no').map((k, i) => ({ name: S.svc[k], chip: T.chip(p.svc[k], lang), sep: i ? SEP : '0' })),
+        details: details.map((x, i) => Object.assign(x, { sep: i ? SEP : '0' }))
+      };
+      if (view.services.length) view.services.forEach(s => { if (s.chip.fg === '#F2F0EA') s.chip.fg = '#FFFFFF'; });
+    }
+    return {
+      lang, setLang: this.setLang, t, t2: S || {},
+      backHref: fromRoute && T ? T.href('Home.dc.html', { need: q.need, near: q.near, loc: q.loc ? 'gps' : '' }) : 'Home.dc.html', backLabel: fromRoute && S ? S.backRoute : t.back,
+      offline: !online,
+      hasStop, stopLabel: hasStop ? S.stopOf(q.stop, 3) : '', lineFill: hasStop ? ((q.stop - 1) * 33.333) + '%' : '0%',
+      strip: S ? T.STOPS.map((k, i) => { const n = i + 1, done = hasStop && n <= q.stop, cur = n === q.stop; return { n, label: S.svc[k], fill: done ? '#1E6B70' : '#FFFFFF', num: done ? '#FFFFFF' : '#175458', weight: cur ? 700 : 400, halo: cur ? '0 0 0 3px #F1F3F4, 0 0 0 5px #1E6B70' : 'none' }; }) : [],
+      ready: !!(p && S), missing: !!(fac && !p) || facErr, loading: !fac && !facErr,
+      p: view, isSample: !!(fac && fac.sample),
+      sakay: () => p && this.sakay(p),
+      copiedMsg: copied === 'ok' && S ? S.copied : copied === 'fail' && S && p ? S.copyFail + ' ' + p.name + ', ' + p.address : '',
+      showInstall: !standalone
+    };
+  }
+}
+</script>
+</body>
+</html>

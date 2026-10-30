@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Find TB care near you — TB PH</title>
+  <meta name="description" content="Search PhilHealth-accredited TB-DOTS clinics by city, service, region and type. Testing and TB medicines are free at public health centers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <script src="tbph-core.js"></script>
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol{margin:0}button,input,select{font:inherit;color:inherit}input::placeholder{color:#56626A}.leaflet-container{font:inherit}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+  <main id="main" tabindex="-1" aria-hidden="{{ mainHidden }}" style="flex:1; outline:none;">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(16px,3vw,32px) clamp(16px,4vw,64px) clamp(48px,7vw,80px); display:grid; gap:24px;">
+      <section id="intro" data-anchor="" style="display:grid; gap:12px; max-width:760px;">
+        <sc-if value="{{ fromRoute }}" hint-placeholder-val="{{ false }}">
+          <a href="{{ backHref }}" style="justify-self:start; display:inline-flex; align-items:center; gap:6px; min-height:44px; margin-left:-2px; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="color:#14212B; text-decoration:underline;"><span aria-hidden="true" style="font-size:26px; line-height:1; margin-top:-3px;">‹</span><span>{{ t2.backRoute }}</span></a>
+        </sc-if>
+        <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; text-wrap:balance;">{{ t.h1 }}</h1>
+        <p style="font-size:18px; line-height:1.5; color:#3F4B53; max-width:40em; text-wrap:pretty;">{{ t.intro }}</p>
+        <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}"><p role="status" style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; font-size:17px; line-height:1.5; font-weight:700;"><span aria-hidden="true" style="width:22px; height:22px; margin-top:1px; border-radius:50%; background:#14212B; color:#FFFFFF; display:grid; place-items:center; font-size:14px; font-weight:700;">i</span><span>{{ t.offline }}</span></p></sc-if>
+      </section>
+
+      <div style="display:grid; grid-template-columns:{{ L.cols }}; gap:{{ L.gap }}; align-items:start;">
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+          <aside aria-labelledby="flt-h" style="position:sticky; top:88px; min-width:0; display:grid; gap:18px; padding:20px; border-radius:18px; background:#FFFFFF;">
+            <h2 id="flt-h" style="font-size:20px; font-weight:700; line-height:1.3;">{{ t.filters }}</h2>
+            
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.search }}</span><input type="search" value="{{ q }}" onChange="{{ onQ }}" autocomplete="off" style="width:100%; min-height:58px; padding:0 16px; border:1.5px solid #7A858C; border-radius:16px; background:#FFFFFF; color:#14212B; font-size:19px;"></label>
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.region }}</span><select value="{{ region }}" onChange="{{ onRegion }}" style="width:100%; min-height:58px; padding:0 48px 0 16px; border:1.5px solid #7A858C; border-radius:16px; background-color:#FFFFFF; background-image:url('data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356626A' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; -webkit-appearance:none; appearance:none; color:#14212B; font-size:18px;">{{ regionOptions }}</select></label>
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.prov }}</span><select value="{{ prov }}" onChange="{{ onProv }}" style="width:100%; min-height:58px; padding:0 48px 0 16px; border:1.5px solid #7A858C; border-radius:16px; background-color:#FFFFFF; background-image:url('data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356626A' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; -webkit-appearance:none; appearance:none; color:#14212B; font-size:18px;">{{ provOptions }}</select></label>
+              <div style="display:grid; gap:8px;"><span id="{{ typeId }}" style="font-size:17px; font-weight:700;">{{ t.type }}</span><div role="group" aria-label="{{ t.type }}" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ typeOpts }}" as="s" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="min-width:0; min-height:44px; padding:4px 10px; border:0; border-radius:10px; background:{{ s.bg }}; color:{{ s.fg }}; font-size:16px; font-weight:{{ s.weight }}; line-height:1.15; text-align:center; overflow-wrap:anywhere; cursor:pointer;">{{ s.label }}</button>
+              </sc-for>
+            </div></div>
+              <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clear }}" style="justify-self:start; min-height:44px; padding:0 2px; border:0; background:none; color:#175458; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px; cursor:pointer;">{{ t.clear }}</button></sc-if>
+          </aside>
+        </sc-if>
+
+        <div id="results" data-anchor="" style="min-width:0; display:grid; gap:20px;">
+          <div role="search" style="display:grid; gap:16px;">
+            <div style="display:grid; gap:10px;">
+              <label for="near" style="font-size:17px; font-weight:700;">{{ t3.fromLabel }}</label>
+              <div style="position:relative;">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#56626A" stroke-width="2.2" stroke-linecap="round" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); pointer-events:none;"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+                <input id="near" type="text" value="{{ from }}" onChange="{{ onFrom }}" placeholder="{{ t3.fromPh }}" list="tbph-places" autocomplete="off" style="width:100%; min-height:58px; padding:0 16px 0 48px; border:1.5px solid #7A858C; border-radius:16px; background:#FFFFFF; color:#14212B; font-size:19px;">
+              </div>
+              <datalist id="tbph-places">{{ placeOptions }}</datalist>
+              <button type="button" onClick="{{ useLoc }}" aria-busy="{{ locating }}" disabled="{{ locating }}" style="justify-self:start; display:inline-flex; align-items:center; gap:12px; min-height:48px; padding:0 20px 0 16px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; cursor:pointer; opacity:{{ locOpacity }};" style-hover="background:rgba(30,107,112,0.22);">
+                <span aria-hidden="true" style="flex:none; width:12px; height:12px; border-radius:50%; background:#C42032; box-shadow:0 0 0 3px #FFFFFF;"></span><span>{{ t3.useLoc }}</span>
+              </button>
+              <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}"><p role="status" style="font-size:17px; font-weight:700;">{{ t3.denied }}</p></sc-if>
+            </div>
+            <div style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.service }}</span><div role="group" aria-label="{{ t.service }}" style="display:grid; grid-template-columns:{{ L.segCols }}; gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ svcOpts }}" as="s" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="min-width:0; min-height:44px; padding:4px 10px; border:0; border-radius:10px; background:{{ s.bg }}; color:{{ s.fg }}; font-size:16px; font-weight:{{ s.weight }}; line-height:1.15; text-align:center; overflow-wrap:anywhere; cursor:pointer;">{{ s.label }}</button>
+              </sc-for>
+            </div></div>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 16px;">
+            <h2 aria-live="polite" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.01em; font-variant-numeric:tabular-nums;">{{ countLabel }}</h2>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+              <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+                <button type="button" ref="{{ fltBtnRef }}" onClick="{{ openSheet }}" aria-haspopup="dialog" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M7 12h10M10 17h4"></path></svg><span>{{ filtersLabel }}</span></button>
+              </sc-if>
+              <div style="min-width:180px;"><div role="group" aria-label="{{ t.view }}" style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ viewOpts }}" as="s" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="min-width:0; min-height:44px; padding:4px 10px; border:0; border-radius:10px; background:{{ s.bg }}; color:{{ s.fg }}; font-size:16px; font-weight:{{ s.weight }}; line-height:1.15; text-align:center; overflow-wrap:anywhere; cursor:pointer;">{{ s.label }}</button>
+              </sc-for>
+            </div></div>
+            </div>
+          </div>
+
+          <sc-if value="{{ hasOrigin }}" hint-placeholder-val="{{ false }}">
+            <button type="button" role="switch" aria-checked="{{ sortDist }}" onClick="{{ toggleSort }}" style="justify-self:start; display:inline-flex; align-items:center; gap:12px; min-height:44px; padding:0; border:0; background:none; font-size:17px; font-weight:700; cursor:pointer;">
+              <span aria-hidden="true" style="position:relative; flex:none; width:51px; height:31px; border-radius:999px; background:{{ sw.track }}; border:1.5px solid {{ sw.edge }};"><span style="position:absolute; top:2px; left:{{ sw.x }}; width:24px; height:24px; border-radius:50%; background:{{ sw.knob }};"></span></span>
+              <span>{{ t.sortDist }}</span>
+            </button>
+          </sc-if>
+
+          <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><p role="status" style="font-size:18px; color:#56626A;">{{ t3.loading }}</p></sc-if>
+          <sc-if value="{{ facErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display:grid; gap:14px; justify-items:start;"><p style="font-size:18px; line-height:1.5;">{{ t3.failed }}</p><button type="button" onClick="{{ retry }}" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t3.retry }}</button></div></sc-if>
+          <sc-if value="{{ noXray }}" hint-placeholder-val="{{ false }}"><p style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; font-size:17px; line-height:1.5; font-weight:700;"><span aria-hidden="true" style="width:22px; height:22px; margin-top:1px; border-radius:50%; background:#14212B; color:#FFFFFF; display:grid; place-items:center; font-size:14px; font-weight:700;">i</span><span>{{ t2.noXray }}</span></p></sc-if>
+          <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:16px; justify-items:start; padding:18px; border-radius:18px; background:#FFFFFF;">
+              <p style="font-size:18px; line-height:1.5; max-width:32em;">{{ t.empty }}</p>
+              <button type="button" onClick="{{ clear }}" style="min-height:52px; padding:0 24px; border:0; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:18px; font-weight:700; cursor:pointer;" style-hover="background:#175458;">{{ t.clear }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isMap }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:10px;">
+              <div style="position:relative; border-radius:18px; overflow:hidden; background:#FFFFFF;">
+                <div ref="{{ mapRef }}" role="region" aria-label="{{ t.map }}" style="height:{{ mapH }}; width:100%;"></div>
+                <sc-if value="{{ mapMsg }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute; inset:0; display:grid; place-items:center; align-content:center; gap:14px; padding:20px; text-align:center; background:#FFFFFF;"><p style="font-size:18px; font-weight:700;">{{ mapMsgText }}</p><sc-if value="{{ mapErr }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ retryMap }}" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none; cursor:pointer;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t3.retry }}</button></sc-if></div></sc-if>
+              </div>
+              <sc-if value="{{ isSample }}" hint-placeholder-val="{{ false }}"><p style="font-size:15px; line-height:1.5; color:#56626A;">{{ t2.approxPins }}</p></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+            <ul role="list" style="list-style:none; margin:0; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <sc-for list="{{ rows }}" as="p" hint-placeholder-count="3">
+                <li style="display:grid; gap:8px; padding:14px 16px 16px; border-top:{{ p.sep }};">
+                  <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 14px;">
+                    <h3 style="font-size:19px; font-weight:700; line-height:1.3; overflow-wrap:anywhere;"><a href="{{ p.href }}" style="color:#14212B; text-decoration-color:#9AA3A8; text-underline-offset:4px;" style-hover="color:#1E6B70;">{{ p.name }}</a></h3>
+                    <sc-if value="{{ p.hasDist }}" hint-placeholder-val="{{ false }}"><span style="font-size:16px; font-weight:700; color:#3F4B53; font-variant-numeric:tabular-nums; white-space:nowrap;">{{ p.dist }}</span></sc-if>
+                  </div>
+                  <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="1">
+                      <span style="display:inline-flex; align-items:center; gap:7px; min-height:30px; padding:2px 10px; border:{{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; border-radius:8px; font-size:15px; font-weight:700; line-height:1.25;"><span aria-hidden="true" style="display:{{ c.ring }}; flex:none; width:11px; height:11px; border-radius:50%; border:{{ c.ringBorder }};"></span>{{ c.mark }} {{ c.text }}</span>
+                    </sc-for>
+                    <span style="display:inline-flex; align-items:center; min-height:30px; padding:2px 10px; border:1.5px solid {{ p.badgeLine }}; border-radius:8px; color:{{ p.badgeInk }}; font-size:15px; font-weight:700; line-height:1.25;">{{ p.badge }}</span>
+                  </div>
+                  <p style="font-size:17px; line-height:1.45;">{{ p.address }}</p>
+                  <p style="font-size:16px; line-height:1.4; color:#56626A;">{{ p.hours }}</p>
+                  <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; padding-top:4px;">
+                    <a href="{{ p.commute }}" target="_blank" rel="noopener" aria-label="{{ p.commuteAria }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 18px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t2.commute }}</a>
+                    <sc-if value="{{ p.hasTel }}" hint-placeholder-val="{{ true }}"><a href="{{ p.tel }}" aria-label="{{ p.callAria }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 4px; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline;">{{ t2.call }}</a></sc-if>
+                  </div>
+                </li>
+              </sc-for>
+              <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+                <li><button type="button" onClick="{{ more }}" style="display:flex; align-items:center; justify-content:center; width:100%; min-height:52px; padding:0 16px; border:0; border-top:1px solid #E3E6E8; background:none; color:#175458; font-size:17px; font-weight:700; cursor:pointer;" style-hover="background:#F6F8F8; color:#14212B;">{{ moreLabel }}</button></li>
+              </sc-if>
+            </ul>
+          </sc-if>
+
+          <div style="display:grid; gap:8px; font-size:15px; line-height:1.5; color:#56626A; max-width:48em;">
+            <p>{{ t2.rule }}</p>
+            <p>{{ t2.dataNote }}</p>
+            <sc-if value="{{ isSample }}" hint-placeholder-val="{{ false }}"><p>{{ sampleNote }}</p></sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:80;">
+      <div aria-hidden="true" onClick="{{ closeSheet }}" style="position:absolute; inset:0; background:rgba(20,33,43,0.32); opacity:{{ sheet.scrim }}; transition:{{ sheet.fade }};"></div>
+      <div ref="{{ sheetRef }}" role="dialog" aria-modal="true" aria-labelledby="sheet-h" onKeyDown="{{ sheetKey }}" style="position:absolute; left:0; right:0; bottom:0; max-height:88vh; display:flex; flex-direction:column; border-radius:24px 24px 0 0; background:#FFFFFF; transform:translateY({{ sheet.y }}); transition:{{ sheet.move }};">
+        <div onTouchStart="{{ dragStart }}" onTouchMove="{{ dragMove }}" onTouchEnd="{{ dragEnd }}" style="flex:none; padding:8px 16px 4px; touch-action:none;">
+          <span aria-hidden="true" style="display:block; width:40px; height:5px; margin:0 auto 6px; border-radius:3px; background:#C3C9CD;"></span>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px;">
+            <div style="display:grid; gap:0;">
+              <h2 id="sheet-h" ref="{{ sheetHeadRef }}" tabindex="-1" style="font-size:20px; font-weight:700; line-height:1.3; outline:none;">{{ t.filters }}</h2>
+              <p aria-live="polite" style="font-size:15px; color:#3F4B53; font-variant-numeric:tabular-nums;">{{ countLabel }}</p>
+            </div>
+            <button type="button" onClick="{{ closeSheet }}" style="min-height:44px; padding:0 4px 0 12px; border:0; background:none; color:#175458; font-size:18px; font-weight:700; cursor:pointer;">{{ t.done }}</button>
+          </div>
+        </div>
+        <div style="flex:1; overflow-y:auto; overscroll-behavior:contain; display:grid; gap:18px; align-content:start; padding:8px 16px calc(24px + env(safe-area-inset-bottom));">
+          
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.search }}</span><input type="search" value="{{ q }}" onChange="{{ onQ }}" autocomplete="off" style="width:100%; min-height:58px; padding:0 16px; border:1.5px solid #7A858C; border-radius:16px; background:#FFFFFF; color:#14212B; font-size:19px;"></label>
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.region }}</span><select value="{{ region }}" onChange="{{ onRegion }}" style="width:100%; min-height:58px; padding:0 48px 0 16px; border:1.5px solid #7A858C; border-radius:16px; background-color:#FFFFFF; background-image:url('data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356626A' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; -webkit-appearance:none; appearance:none; color:#14212B; font-size:18px;">{{ regionOptions }}</select></label>
+              <label style="display:grid; gap:8px;"><span style="font-size:17px; font-weight:700;">{{ t.prov }}</span><select value="{{ prov }}" onChange="{{ onProv }}" style="width:100%; min-height:58px; padding:0 48px 0 16px; border:1.5px solid #7A858C; border-radius:16px; background-color:#FFFFFF; background-image:url('data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2356626A' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 16px center; background-size:18px; -webkit-appearance:none; appearance:none; color:#14212B; font-size:18px;">{{ provOptions }}</select></label>
+              <div style="display:grid; gap:8px;"><span id="{{ typeId }}" style="font-size:17px; font-weight:700;">{{ t.type }}</span><div role="group" aria-label="{{ t.type }}" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; padding:3px; border:1.5px solid #7A858C; border-radius:14px; background:#FFFFFF;">
+              <sc-for list="{{ typeOpts }}" as="s" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="min-width:0; min-height:44px; padding:4px 10px; border:0; border-radius:10px; background:{{ s.bg }}; color:{{ s.fg }}; font-size:16px; font-weight:{{ s.weight }}; line-height:1.15; text-align:center; overflow-wrap:anywhere; cursor:pointer;">{{ s.label }}</button>
+              </sc-for>
+            </div></div>
+              <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clear }}" style="justify-self:start; min-height:44px; padding:0 2px; border:0; background:none; color:#175458; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px; cursor:pointer;">{{ t.clear }}</button></sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: this.readLang(), vw: window.innerWidth, vh: window.innerHeight, fac: null, facErr: false, q: '', svc: '', region: '', prov: '', sector: '', from: '', gps: null, locating: false, denied: false, sortDist: true, view: 'list', limit: 20, mapState: 'idle', core: !!window.TBPH, online: true, sheet: false, sheetIn: false, dragY: 0 };
+  sheetRef = React.createRef(); sheetHeadRef = React.createRef(); fltBtnRef = React.createRef();
+  mapRef = React.createRef();
+  T = {
+    en: { h1: 'Find TB care near you', intro: 'TB testing and treatment are free at public health centers and TB-DOTS centers. This list shows TB-DOTS clinics accredited by PhilHealth (update of 30 September 2026). Your barangay health station or rural health unit can help too. Call ahead to confirm their hours.', search: 'Search by city, municipality or facility name', service: 'Service', svc: { xray: 'Chest X-ray', test: 'TB test', meds: 'Free medicines' }, region: 'Region', prov: 'Province or city', type: 'Type', all: 'All', allRegions: 'All regions', allProv: 'All provinces and cities', gov: 'Government', priv: 'Private', sortDist: 'Sort by distance', filters: 'Filters', done: 'Done', offline: "You're offline. Showing the saved list of centers.", view: 'View', list: 'List', map: 'Map', count: n => n === 1 ? '1 center' : n.toLocaleString('en-US') + ' centers', empty: 'No centers match your search. Try a nearby city, or clear the filters.', clear: 'Clear filters', more: n => 'Show more centers (' + n.toLocaleString('en-US') + ' left)', mapLoading: 'Loading map…', mapError: 'The map could not be loaded. Check your connection and try again.', sample: (n, r) => 'Sample list: ' + n + ' of about 2,100 accredited centers, from ' + r + ' regions. The full list replaces it before launch.' },
+    fil: { h1: 'Hanapin ang gamutan malapit sa iyo', intro: 'Libre ang pagsusuri at gamutan sa TB sa mga pampublikong health center at TB-DOTS center. Makikita rito ang mga TB-DOTS clinic na accredited ng PhilHealth (update noong 30 Setyembre 2026). Makatutulong din ang inyong barangay health station o rural health unit. Tumawag muna para kumpirmahin ang kanilang oras.', search: 'Maghanap ayon sa lungsod, bayan o pangalan ng pasilidad', service: 'Serbisyo', svc: { xray: 'Chest X-ray', test: 'TB test', meds: 'Libreng gamot' }, region: 'Rehiyon', prov: 'Probinsiya o lungsod', type: 'Uri', all: 'Lahat', allRegions: 'Lahat ng rehiyon', allProv: 'Lahat ng probinsiya at lungsod', gov: 'Pampubliko', priv: 'Pribado', sortDist: 'Ayusin ayon sa layo', filters: 'Mga filter', done: 'Tapos na', offline: 'Wala kang koneksiyon. Ipinapakita ang naka-save na listahan ng mga center.', view: 'Ipakita', list: 'Listahan', map: 'Mapa', count: n => n.toLocaleString('en-US') + ' na center', empty: 'Walang tumugma sa hinanap mo. Subukan ang kalapit na lungsod, o i-clear ang mga filter.', clear: 'I-clear ang mga filter', more: n => 'Ipakita pa ang ibang center (' + n.toLocaleString('en-US') + ' pa)', mapLoading: 'Kinukuha ang mapa…', mapError: 'Hindi ma-load ang mapa. Tingnan ang inyong koneksiyon at subukang muli.', sample: (n, r) => 'Halimbawang listahan: ' + n + ' sa mga 2,100 accredited na center, mula sa ' + r + ' rehiyon. Papalitan ito ng buong listahan bago ilunsad.' }
+  };
+  U = {
+    en: { fromLabel: 'Where are you?', fromPh: 'Barangay, city or landmark', useLoc: 'Use my location', denied: 'No problem. Type your barangay or city instead.', loading: 'Loading the list of centers…', failed: 'The list could not be loaded. Check your connection and try again.', retry: 'Try again' },
+    fil: { fromLabel: 'Nasaan ka?', fromPh: 'Barangay, lungsod o palatandaan', useLoc: 'Gamitin ang aking lokasyon', denied: 'Walang problema. I-type na lang ang inyong barangay o lungsod.', loading: 'Kinukuha ang listahan ng mga center…', failed: 'Hindi makuha ang listahan. Tingnan ang inyong koneksiyon at subukang muli.', retry: 'Subukang muli' }
+  };
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  core() {
+    if (window.TBPH) return Promise.resolve(window.TBPH);
+    return new Promise(res => { const h = () => { window.removeEventListener('tbph-core-ready', h); res(window.TBPH); }; window.addEventListener('tbph-core-ready', h); });
+  }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth, vh: window.innerHeight }), 100); };
+    window.addEventListener('resize', this.onR);
+    const h = document.documentElement;
+    this.env = () => this.setState({ online: h.getAttribute('data-online') !== 'false' });
+    if (window.MutationObserver) { this.mo = new MutationObserver(this.env); this.mo.observe(h, { attributes: true, attributeFilter: ['data-online'] }); }
+    this.env();
+    let p; try { p = new URLSearchParams(location.search); } catch (e) { p = new URLSearchParams(''); }
+    const svc = p.get('svc');
+    this.q0 = { need: p.get('need') || '', near: p.get('near') || '', loc: p.get('loc') === 'gps' };
+    this.setState({ svc: ['xray', 'test', 'meds'].includes(svc) ? svc : '', from: this.q0.near });
+    this.load();
+  }
+  load() {
+    this.setState({ facErr: false });
+    this.core().then(T => { this.setState({ core: true }); if (this.q0 && this.q0.loc) this.useLoc(); return T.facilities(); }).then(fac => this.setState({ fac }), () => this.setState({ facErr: true }));
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); if (this.mo) this.mo.disconnect(); clearTimeout(this.st); document.body.style.overflow = ''; if (this.map) { this.map.remove(); this.map = null; } }
+  componentDidUpdate() { this.syncMap(); }
+  reduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  openSheet = () => {
+    document.body.style.overflow = 'hidden';
+    this.setState({ sheet: true, sheetIn: this.reduced(), dragY: 0 }, () => {
+      requestAnimationFrame(() => { this.setState({ sheetIn: true }); if (this.sheetHeadRef.current) this.sheetHeadRef.current.focus(); });
+    });
+  };
+  closeSheet = () => {
+    if (!this.state.sheet) return;
+    const done = () => { document.body.style.overflow = ''; this.setState({ sheet: false, dragY: 0 }, () => { if (this.fltBtnRef.current) this.fltBtnRef.current.focus(); }); };
+    if (this.reduced()) return done();
+    this.setState({ sheetIn: false, dragY: 0 }); clearTimeout(this.st); this.st = setTimeout(done, 220);
+  };
+  sheetKey = (e) => {
+    if (e.key === 'Escape') { e.stopPropagation(); this.closeSheet(); return; }
+    if (e.key !== 'Tab' || !this.sheetRef.current) return;
+    const f = Array.from(this.sheetRef.current.querySelectorAll('button, input, select, a[href], [tabindex="-1"]')).filter(el => !el.disabled && el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  dragStart = (e) => { this.y0 = e.touches[0].clientY; };
+  dragMove = (e) => { if (this.y0 == null) return; const d = Math.max(0, e.touches[0].clientY - this.y0); this.setState({ dragY: d }); };
+  dragEnd = () => { const d = this.state.dragY; this.y0 = null; if (d > 90) this.closeSheet(); else this.setState({ dragY: 0 }); };
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    const T = window.TBPH, patch = { lang: l };
+    if (T && this.state.from === T.STR[this.state.lang].myLoc) patch.from = T.STR[l].myLoc;
+    this.setState(patch);
+  };
+  useLoc = () => {
+    const T = window.TBPH;
+    if (!T) return;
+    this.setState({ locating: true, denied: false });
+    T.locate().then(g => this.setState({ gps: g, from: T.STR[this.state.lang].myLoc, locating: false, sortDist: true }), () => this.setState({ locating: false, denied: true, gps: null }));
+  };
+  originPt() {
+    const T = window.TBPH, { fac, from, gps } = this.state, txt = (from || '').trim();
+    if (!T || !fac) return null;
+    if (gps && (!txt || txt === T.STR.en.myLoc || txt === T.STR.fil.myLoc)) return { lat: gps.lat, lng: gps.lng, gps: true };
+    if (!txt) return null;
+    const g = T.matchPlace(txt, fac.gaz);
+    return g ? { lat: g.lat, lng: g.lng, label: g.label } : null;
+  }
+  filtered() {
+    const T = window.TBPH, { fac, q, svc, region, prov, sector, sortDist } = this.state;
+    if (!T || !fac) return { rows: [], noXray: false, origin: null, total: 0 };
+    const toks = T.norm(q).split(' ').filter(Boolean);
+    const base = fac.list.filter(p => (!region || p.code === region) && (!prov || p.prov === prov) && (!sector || (sector === 'gov') === p.gov) && toks.every(t => p.key.indexOf(t) >= 0));
+    let list = svc ? base.filter(p => T.offers(p, svc)) : base, noXray = false;
+    if (svc === 'xray' && !list.length && base.length) { noXray = true; list = base; }
+    const o = this.originPt();
+    const rows = list.map(p => ({ p, d: o && p.lat != null ? T.km(o, p) : null }));
+    if (o && sortDist) rows.sort((a, b) => (a.d == null) - (b.d == null) || a.d - b.d);
+    return { rows, noXray, origin: o };
+  }
+  ensureLeaflet() {
+    if (window.L && window.L.map) return Promise.resolve(window.L);
+    if (!this.lp) {
+      this.lp = new Promise((res, rej) => {
+        const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
+        const s = document.createElement('script'); s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; s.async = true;
+        s.onload = () => (window.L ? res(window.L) : rej(new Error('Leaflet missing'))); s.onerror = rej; document.head.appendChild(s);
+      });
+      this.lp.catch(() => { this.lp = null; });
+    }
+    return this.lp;
+  }
+  syncMap() {
+    if (this.state.view !== 'map') { if (this.map) { this.map.remove(); this.map = null; this.mapEl = null; this.sig = ''; } return; }
+    const el = this.mapRef.current;
+    if (!el) return;
+    if (!(window.L && window.L.map)) {
+      if (this.state.mapState === 'idle') { this.setState({ mapState: 'loading' }); this.ensureLeaflet().then(() => this.setState({ mapState: 'ready' }), () => this.setState({ mapState: 'error' })); }
+      return;
+    }
+    const L = window.L, T = window.TBPH;
+    if (this.map && this.mapEl !== el) { this.map.remove(); this.map = null; }
+    if (!this.map) {
+      this.map = L.map(el, { scrollWheelZoom: false });
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(this.map);
+      this.layer = L.layerGroup().addTo(this.map); this.mapEl = el; this.sig = '';
+      if (this.state.mapState !== 'ready') this.setState({ mapState: 'ready' });
+    }
+    const { rows, origin } = this.filtered(), lang = this.state.lang;
+    const sig = rows.map(r => r.p.id).join(',') + '|' + (origin ? origin.lat + ',' + origin.lng : '') + '|' + lang;
+    if (sig === this.sig) return;
+    this.sig = sig; this.layer.clearLayers();
+    const pts = [];
+    rows.slice(0, 800).forEach(r => {
+      const p = r.p;
+      if (p.lat == null) return;
+      const box = document.createElement('div'), a = document.createElement('a'), ad = document.createElement('div');
+      a.href = T.href('Place.dc.html', { id: p.id, near: origin && !origin.gps ? origin.label : '', loc: origin && origin.gps ? 'gps' : '' });
+      a.textContent = p.name; a.style.cssText = 'font-weight:700;font-size:15px;color:#175458';
+      ad.textContent = p.address; ad.style.cssText = 'margin-top:4px;font-size:14px;color:#14212B';
+      box.appendChild(a); box.appendChild(ad);
+      L.circleMarker([p.lat, p.lng], { radius: 9, color: '#FFFFFF', weight: 2, fillColor: '#1E6B70', fillOpacity: 0.9 }).bindPopup(box).addTo(this.layer);
+      pts.push([p.lat, p.lng]);
+    });
+    if (origin) { L.circleMarker([origin.lat, origin.lng], { radius: 10, color: '#FFFFFF', weight: 3, fillColor: '#C42032', fillOpacity: 1 }).addTo(this.layer); pts.push([origin.lat, origin.lng]); }
+    if (pts.length) this.map.fitBounds(pts, { padding: [36, 36], maxZoom: 13 }); else this.map.setView([12.88, 121.77], 5);
+    setTimeout(() => { if (this.map) this.map.invalidateSize(); }, 60);
+  }
+  renderVals() {
+    const { lang, vw, vh, fac, facErr, q, svc, region, prov, sector, from, locating, denied, sortDist, view, limit, mapState } = this.state;
+    const T = window.TBPH, t = this.T[lang], t3 = this.U[lang], S = T ? T.STR[lang] : null, wide = vw >= 1080, en = lang === 'en';
+    const q0 = this.q0 || {};
+    const { rows, noXray, origin } = this.filtered();
+    const shown = rows.slice(0, limit);
+    const pill = (on) => ({ bg: on ? '#14212B' : 'transparent', fg: on ? '#FFFFFF' : '#14212B', weight: on ? 700 : 400 });
+    const svcOpts = [['', t.all], ['xray', t.svc.xray], ['test', t.svc.test], ['meds', t.svc.meds]].map(([k, label]) => Object.assign({ label, on: svc === k, pick: () => this.setState({ svc: k, limit: 20 }) }, pill(svc === k)));
+    const typeOpts = [['', t.all], ['gov', t.gov], ['priv', t.priv]].map(([k, label]) => Object.assign({ label, on: sector === k, pick: () => this.setState({ sector: k, limit: 20 }) }, pill(sector === k)));
+    const viewOpts = [['list', t.list], ['map', t.map]].map(([k, label]) => Object.assign({ label, on: view === k, pick: () => this.setState({ view: k }) }, pill(view === k)));
+    const regs = fac ? [...new Map(fac.list.map(p => [p.code, p.region || p.code])).entries()].sort((a, b) => a[1].localeCompare(b[1])) : [];
+    const regionOptions = [React.createElement('option', { key: '', value: '' }, t.allRegions)].concat(regs.map(([c, n]) => React.createElement('option', { key: c, value: c }, n)));
+    const provs = fac ? [...new Set(fac.list.filter(p => !region || p.code === region).map(p => p.prov).filter(Boolean))].sort((a, b) => a.localeCompare(b)) : [];
+    const provOptions = [React.createElement('option', { key: '', value: '' }, t.allProv)].concat(provs.map(p => React.createElement('option', { key: p, value: p }, p)));
+    const link = { near: origin && !origin.gps ? origin.label : '', loc: origin && origin.gps ? 'gps' : '', need: q0.need };
+    const list = S ? shown.map((x, j) => {
+      const p = x.p, keys = svc ? [svc] : T.STOPS.filter(k => p.svc[k] !== 'no');
+      return {
+        name: p.name, href: T.href('Place.dc.html', Object.assign({ id: p.id }, link)),
+        hasDist: x.d != null, dist: T.dist(x.d, p.precise && !!(origin && origin.gps), lang), address: p.address, hours: p.hours ? S.hours(p.hours) : S.noHours,
+        badge: p.gov ? S.gov : S.priv, badgeLine: p.gov ? '#1E6B70' : '#56626A', badgeInk: p.gov ? '#175458' : '#14212B',
+        chips: keys.map(k => { const c = T.chip(p.svc[k], lang); return Object.assign({}, c, { fg: c.fg === '#F2F0EA' ? '#FFFFFF' : c.fg, text: (svc ? '' : S.svc[k] + ': ') + c.label }); }), sep: j ? '1px solid #E3E6E8' : '0',
+        hasTel: !!p.tel, tel: p.tel, commute: T.dirUrl(p, 'transit'),
+        callAria: S.call + ': ' + p.name + ', ' + p.first, commuteAria: S.commute + ': ' + p.name
+      };
+    }) : [];
+    const ready = !!(fac && S);
+    const nFilters = [q.trim(), region, prov, sector].filter(Boolean).length;
+    const sheetOpen = this.state.sheet && !wide, sIn = this.state.sheetIn, red = this.reduced(), dy = this.state.dragY;
+    return {
+      lang, setLang: this.setLang, t, t2: S || {}, t3,
+      wide, narrow: !wide, L: Object.assign(wide ? { cols: 'minmax(0,320px) minmax(0,1fr)', gap: '40px' } : { cols: 'minmax(0,1fr)', gap: '24px' }, { segCols: vw < 440 ? 'repeat(2,minmax(0,1fr))' : 'repeat(4,minmax(0,1fr))' }),
+      offline: !this.state.online, typeId: wide ? 'type-l-panel' : 'type-l-sheet',
+      anyFilter: nFilters > 0, filtersLabel: nFilters ? t.filters + ' (' + nFilters + ')' : t.filters,
+      openSheet: this.openSheet, closeSheet: this.closeSheet, sheetKey: this.sheetKey, sheetRef: this.sheetRef, sheetHeadRef: this.sheetHeadRef, fltBtnRef: this.fltBtnRef,
+      dragStart: this.dragStart, dragMove: this.dragMove, dragEnd: this.dragEnd, sheetOpen, mainHidden: sheetOpen ? 'true' : 'false',
+      sheet: { y: sIn ? dy + 'px' : '100%', scrim: sIn ? 1 : 0, move: red || dy ? 'none' : 'transform 240ms cubic-bezier(.3,.7,.2,1)', fade: red ? 'none' : 'opacity 200ms ease' },
+      locOpacity: locating ? 0.6 : 1,
+      sw: sortDist ? { track: '#1E6B70', edge: '#1E6B70', knob: '#FFFFFF', x: '22px' } : { track: '#FFFFFF', edge: '#7A858C', knob: '#7A858C', x: '2px' },
+      fromRoute: !!(q0.need || q0.near || q0.loc), backHref: T ? T.href('Home.dc.html', { need: q0.need, near: q0.near, loc: q0.loc ? 'gps' : '' }) : 'Home.dc.html',
+      from, onFrom: e => this.setState({ from: e.target.value, limit: 20 }), useLoc: this.useLoc, locating, denied,
+      placeOptions: fac ? fac.gaz.map(g => React.createElement('option', { key: g.label + g.kind, value: g.label })) : [],
+      q, onQ: e => this.setState({ q: e.target.value, limit: 20 }), svcOpts, typeOpts, viewOpts,
+      region, prov, regionOptions, provOptions,
+      onRegion: e => this.setState({ region: e.target.value, prov: '', limit: 20 }), onProv: e => this.setState({ prov: e.target.value, limit: 20 }),
+      hasOrigin: !!origin, sortDist, toggleSort: () => this.setState(s => ({ sortDist: !s.sortDist })),
+      countLabel: ready ? t.count(rows.length) : '', loading: !fac && !facErr, facErr, retry: () => this.load(),
+      noXray: ready && noXray, empty: ready && rows.length === 0,
+      clear: () => this.setState({ q: '', svc: '', region: '', prov: '', sector: '', limit: 20 }),
+      showList: view === 'list' && list.length > 0, isMap: view === 'map', mapErr: mapState === 'error', retryMap: () => this.setState({ mapState: 'idle' }), mapRef: this.mapRef, mapH: Math.round(Math.max(360, Math.min(640, vh * 0.62))) + 'px',
+      mapMsg: view === 'map' && (mapState === 'loading' || mapState === 'error' || mapState === 'idle'), mapMsgText: mapState === 'error' ? t.mapError : t.mapLoading,
+      rows: list, hasMore: rows.length > shown.length, moreLabel: t.more(rows.length - shown.length), more: () => this.setState({ limit: limit + 20 }),
+      isSample: !!(fac && fac.sample), sampleNote: fac ? t.sample(fac.list.length, fac.regions) : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

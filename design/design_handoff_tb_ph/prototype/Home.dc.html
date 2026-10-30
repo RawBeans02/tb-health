@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F1F3F4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TB PH">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<script src="pwa.js" defer></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TB PH — Find your way to TB care</title>
+  <meta name="description" content="Find a chest X-ray, a TB test and free TB medicines near you in the Philippines, step by step. Testing and treatment are free at public health centers.">
+  <meta property="og:title" content="TB PH — Find your way to TB care">
+  <meta property="og:description" content="Chest X-ray, TB test and free medicines — near you, step by step.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,600&display=swap">
+  <script src="tbph-core.js"></script>
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F1F3F4;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#175458;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}[data-choice]:focus-within{outline:3px solid #14212B;outline-offset:-3px}h1,h2,h3,h4,p,ul,ol,fieldset{margin:0}button,input{font:inherit;color:inherit}input::placeholder{color:#56626A}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F1F3F4; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <section id="planner" data-anchor="" style="position:relative; isolation:isolate; overflow:hidden; margin-top:-65px; padding-top:65px;">
+      <div aria-hidden="true" style="position:absolute; inset:0; z-index:-1; background:#DCE6E5;">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; inset:0; width:100%; height:100%; display:block;">
+          <path d="M-5 30 L105 21 M-5 63 L105 76 M14 -5 L20 105 M57 -5 L51 105 M92 -5 L88 105" fill="none" stroke="#FFFFFF" stroke-width="7" opacity="0.85" vector-effect="non-scaling-stroke"></path>
+          <path d="M80 -10 L80 20 L30 40 L30 68 L74 86 L74 110" fill="none" stroke="#FFFFFF" stroke-width="42" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+          <path d="M80 -10 L80 20 L30 40 L30 68 L74 86 L74 110" fill="none" stroke="#1E6B70" stroke-width="24" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+        </svg>
+        <span style="position:absolute; left:80%; top:9%; width:30px; height:30px; transform:translate(-50%,-50%); border-radius:50%; background:#C42032; box-shadow:0 0 0 7px #FFFFFF;"></span>
+        <span style="position:absolute; left:80%; top:20%; width:clamp(48px,6vw,80px); height:clamp(48px,6vw,80px); transform:translate(-50%,-50%); border-radius:50%; background:#1E6B70; box-shadow:0 0 0 8px #FFFFFF;"></span>
+        <span style="position:absolute; left:30%; top:54%; width:clamp(48px,6vw,80px); height:clamp(48px,6vw,80px); transform:translate(-50%,-50%); border-radius:50%; background:#1E6B70; box-shadow:0 0 0 8px #FFFFFF;"></span>
+        <span style="position:absolute; left:74%; top:86%; width:clamp(48px,6vw,80px); height:clamp(48px,6vw,80px); transform:translate(-50%,-50%); border-radius:50%; background:#1E6B70; box-shadow:0 0 0 8px #FFFFFF;"></span>
+      </div>
+
+      <div style="max-width:1120px; margin:0 auto; padding:max(84px, calc(132px - 5vw)) clamp(12px,4vw,64px) clamp(28px,5vw,80px);">
+        <form onSubmit="{{ onSubmit }}" style="max-width:560px; display:grid; gap:22px; padding:clamp(20px,4vw,30px); border-radius:30px; background:{{ g.sheet }}; backdrop-filter:{{ g.blur }}; -webkit-backdrop-filter:{{ g.blur }}; border:1px solid {{ g.edge }}; box-shadow:inset 0 1px 0 rgba(255,255,255,0.85), 0 20px 50px rgba(20,33,43,0.16);">
+          <div style="display:grid; gap:10px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; text-wrap:balance;">Find your way to TB care.</h1>
+              <p style="font-size:19px; line-height:1.4; text-wrap:pretty;">Chest X-ray, TB test and free medicines — near you, step by step.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h1 style="font-weight:700; font-size:clamp(2.125rem,1.7rem + 1.8vw,2.875rem); line-height:1.06; letter-spacing:-0.02em; color:#C42032; text-wrap:balance;">Hanapin ang daan papunta sa gamutan sa TB.</h1>
+              <p style="font-size:19px; line-height:1.4; text-wrap:pretty;">Chest X-ray, TB test at libreng gamot — malapit sa iyo, hakbang-hakbang.</p>
+            </sc-if>
+          </div>
+
+          <div style="display:grid; gap:10px;">
+            <label for="from" style="font-size:17px; font-weight:700;">{{ t.fromLabel }}</label>
+            <div style="position:relative;">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#56626A" stroke-width="2.2" stroke-linecap="round" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); pointer-events:none;"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>
+              <input id="from" ref="{{ fromRef }}" type="text" value="{{ from }}" onChange="{{ onFrom }}" placeholder="{{ t.fromPh }}" list="tbph-places" autocomplete="off" aria-describedby="from-msg from-note" aria-invalid="{{ fromInvalid }}" style="width:100%; min-height:58px; padding:0 16px 0 48px; border:1.5px solid {{ fromBorder }}; border-radius:16px; background:#FFFFFF; color:#14212B; font-size:19px;">
+            </div>
+            <datalist id="tbph-places">{{ placeOptions }}</datalist>
+            <button type="button" onClick="{{ useLoc }}" aria-busy="{{ locating }}" disabled="{{ locating }}" style="justify-self:start; display:inline-flex; align-items:center; gap:12px; min-height:48px; padding:0 20px 0 16px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; white-space:nowrap; cursor:pointer; opacity:{{ locOpacity }};" style-hover="background:rgba(30,107,112,0.22);">
+              <span aria-hidden="true" style="flex:none; width:12px; height:12px; border-radius:50%; background:#C42032; box-shadow:0 0 0 3px #FFFFFF;"></span>
+              <span>{{ t.useLoc }}</span>
+            </button>
+            <p id="from-msg" role="{{ msgRole }}" style="display:{{ msgDisplay }}; font-size:17px; line-height:1.45; font-weight:700; color:{{ msgColor }};">{{ msgText }}</p>
+            <p id="from-note" style="font-size:16px; line-height:1.45; color:#3F4B53;">{{ t.locNote }}</p>
+          </div>
+
+          <fieldset style="border:0; padding:0; min-width:0;">
+            <legend style="padding:0; margin-bottom:10px; font-size:17px; font-weight:700;">{{ t.need }}</legend>
+            <div style="border-radius:18px; background:#FFFFFF; overflow:hidden;">
+              <label data-choice="" style="position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); cursor:pointer;">
+                <input type="radio" name="need" value="all" checked="{{ all.on }}" onChange="{{ all.pick }}" style="position:absolute; left:28px; top:50%; width:1px; height:1px; margin:0; opacity:0;">
+                <span aria-hidden="true" style="display:flex; align-items:center; justify-content:center;">
+                  <span style="display:flex; align-items:center;">
+                    <span style="width:8px; height:8px; border-radius:50%; background:{{ all.mark }};"></span>
+                    <span style="width:6px; height:3px; background:{{ all.mark }};"></span>
+                    <span style="width:8px; height:8px; border-radius:50%; background:{{ all.mark }};"></span>
+                    <span style="width:6px; height:3px; background:{{ all.mark }};"></span>
+                    <span style="width:8px; height:8px; border-radius:50%; background:{{ all.mark }};"></span>
+                  </span>
+                </span>
+                <span style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:10px 16px 10px 0; font-size:18px; line-height:1.3; font-weight:{{ all.weight }};">
+                  <span>{{ t.optAll }}</span>
+                  <span aria-hidden="true" style="flex:none; color:#1E6B70; font-size:20px; font-weight:700;">{{ all.check }}</span>
+                </span>
+              </label>
+              <sc-for list="{{ stopOpts }}" as="o" hint-placeholder-count="3">
+                <label data-choice="" style="position:relative; display:grid; grid-template-columns:56px minmax(0,1fr); cursor:pointer;">
+                  <input type="radio" name="need" value="{{ o.k }}" checked="{{ o.on }}" onChange="{{ o.pick }}" style="position:absolute; left:28px; top:50%; width:1px; height:1px; margin:0; opacity:0;">
+                  <span aria-hidden="true" style="display:flex; align-items:center; justify-content:center;"><span style="width:30px; height:30px; border-radius:50%; border:2px solid {{ o.ring }}; background:{{ o.fill }}; color:{{ o.num }}; display:grid; place-items:center; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums;">{{ o.n }}</span></span>
+                  <span style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:56px; padding:10px 16px 10px 0; border-top:1px solid #E3E6E8; font-size:18px; line-height:1.3; font-weight:{{ o.weight }};">
+                    <span>{{ o.label }}</span>
+                    <span aria-hidden="true" style="flex:none; color:#1E6B70; font-size:20px; font-weight:700;">{{ o.check }}</span>
+                  </span>
+                </label>
+              </sc-for>
+            </div>
+          </fieldset>
+
+          <div style="display:grid; gap:6px;">
+            <button type="submit" style="width:100%; min-height:58px; padding:0 24px; border:0; border-radius:999px; background:#1E6B70; color:#FFFFFF; font-size:20px; font-weight:700; cursor:pointer;" style-hover="background:#175458;">{{ t.go }}</button>
+            <a href="Check.dc.html" style="justify-self:center; display:inline-flex; align-items:center; min-height:48px; padding:0 8px; color:#175458; font-size:18px; font-weight:700; text-decoration:none; text-align:center;" style-hover="text-decoration:underline; color:#14212B;">{{ t.optNotSure }}</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <sc-if value="{{ showArea }}" hint-placeholder-val="{{ false }}">
+      <div id="route" data-anchor="" style="max-width:1120px; width:100%; margin:0 auto; padding:clamp(32px,5vw,56px) clamp(16px,4vw,64px) 8px;">
+        <div style="max-width:760px;">
+          <sc-if value="{{ showLoading }}" hint-placeholder-val="{{ false }}">
+            <p role="status" style="font-size:18px; color:#56626A;">{{ t.loading }}</p>
+          </sc-if>
+          <sc-if value="{{ facErr }}" hint-placeholder-val="{{ false }}">
+            <div role="alert" style="display:grid; gap:14px; justify-items:start;">
+              <p style="font-size:18px; line-height:1.5;">{{ t.failed }}</p>
+              <button type="button" onClick="{{ retry }}" style="min-height:48px; padding:0 20px; border:0; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; cursor:pointer;">{{ t.retry }}</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showNoMatch }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid; gap:12px;">
+              <h2 ref="{{ headRef }}" tabindex="-1" style="font-size:clamp(1.375rem,1.25rem + 0.6vw,1.75rem); font-weight:700; line-height:1.25; outline:none;">{{ t.noMatch }}</h2>
+              <p style="font-size:18px; line-height:1.5;">{{ t.noLoc }}</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showRoute }}" hint-placeholder-val="{{ false }}">
+            <section aria-labelledby="route-h" style="display:grid; gap:24px;">
+              <h2 id="route-h" ref="{{ headRef }}" tabindex="-1" style="font-size:clamp(1.5rem,1.3rem + 0.9vw,1.875rem); font-weight:700; line-height:1.2; letter-spacing:-0.01em; outline:none; text-wrap:pretty; max-width:28em;">{{ rt.heading }}</h2>
+              <ol role="list" style="list-style:none; padding:0;">
+                <li style="position:relative; display:grid; grid-template-columns:40px minmax(0,1fr); gap:0 14px; padding-bottom:28px;">
+                  <span aria-hidden="true" style="position:absolute; left:17px; top:14px; bottom:-16px; width:6px; border-radius:3px; background:#DADDE0;"></span>
+                  <span aria-hidden="true" style="position:absolute; left:17px; top:14px; bottom:-16px; width:6px; border-radius:3px; background:#1E6B70; transform-origin:top; transform:scaleY({{ rt.start.scale }}); transition:{{ rt.start.trans }};"></span>
+                  <span aria-hidden="true" style="position:relative; z-index:2; justify-self:center; margin-top:5px; width:18px; height:18px; border-radius:50%; background:#C42032; box-shadow:0 0 0 4px #F1F3F4, 0 0 0 6px #C42032;"></span>
+                  <p style="font-size:18px; font-weight:700; line-height:1.4; overflow-wrap:anywhere;">{{ rt.origin }}</p>
+                </li>
+                <sc-for list="{{ rt.stops }}" as="s" hint-placeholder-count="3">
+                  <li style="position:relative; display:grid; grid-template-columns:40px minmax(0,1fr); gap:0 14px; padding-bottom:36px;">
+                    <span aria-hidden="true" style="position:absolute; left:17px; top:18px; bottom:-16px; width:6px; border-radius:3px; background:#DADDE0;"></span>
+                    <span aria-hidden="true" style="position:absolute; left:17px; top:18px; bottom:-16px; width:6px; border-radius:3px; background:#1E6B70; transform-origin:top; transform:scaleY({{ s.scale }}); transition:{{ s.trans }};"></span>
+                    <span aria-hidden="true" style="position:relative; z-index:2; justify-self:center; width:36px; height:36px; border-radius:50%; border:3px solid #1E6B70; background:{{ s.mFill }}; color:{{ s.mNum }}; display:grid; place-items:center; font-size:16px; font-weight:700; transition:{{ s.mTrans }};">{{ s.n }}</span>
+                    <div style="min-width:0; display:grid; gap:12px; padding-top:4px;">
+                      <sc-if value="{{ s.showTitle }}" hint-placeholder-val="{{ true }}">
+                        <h3 style="font-size:clamp(1.25rem,1.15rem + 0.4vw,1.4375rem); font-weight:700; line-height:1.25;"><span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;">{{ s.n }}. </span>{{ s.title }}</h3>
+                      </sc-if>
+                      <p style="font-size:17px; line-height:1.55; color:#3F4B53; max-width:36em; text-wrap:pretty;">{{ s.text }}</p>
+                      <sc-if value="{{ s.hasNote }}" hint-placeholder-val="{{ false }}">
+                        <p style="display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; font-size:17px; line-height:1.5; font-weight:700; max-width:36em;"><span aria-hidden="true" style="width:22px; height:22px; margin-top:1px; border-radius:50%; background:#14212B; color:#FFFFFF; display:grid; place-items:center; font-size:14px; font-weight:700;">i</span><span>{{ s.note }}</span></p>
+                      </sc-if>
+                      <ul role="list" style="list-style:none; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                        <sc-for list="{{ s.items }}" as="p" hint-placeholder-count="3">
+                          <li style="display:grid; gap:8px; padding:14px 16px 16px; border-top:{{ p.sep }};">
+                            <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 14px;">
+                              <h4 style="font-size:19px; font-weight:700; line-height:1.3;"><a href="{{ p.href }}" style="color:#14212B; text-decoration-color:#9AA3A8; text-underline-offset:4px;" style-hover="color:#1E6B70;">{{ p.name }}</a></h4>
+                              <sc-if value="{{ p.hasDist }}" hint-placeholder-val="{{ true }}"><span style="font-size:16px; font-weight:700; color:#3F4B53; font-variant-numeric:tabular-nums; white-space:nowrap;">{{ p.dist }}</span></sc-if>
+                            </div>
+                            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                              <span style="display:inline-flex; align-items:center; gap:7px; min-height:30px; padding:2px 10px; border:{{ p.chip.border }}; background:{{ p.chip.bg }}; color:{{ p.chip.fg }}; border-radius:8px; font-size:15px; font-weight:700; line-height:1.25;"><span aria-hidden="true" style="display:{{ p.chip.ring }}; flex:none; width:11px; height:11px; border-radius:50%; border:{{ p.chip.ringBorder }};"></span>{{ p.chip.mark }} {{ p.chip.label }}</span>
+                              <span style="display:inline-flex; align-items:center; min-height:30px; padding:2px 10px; border:1.5px solid {{ p.badgeLine }}; border-radius:8px; color:{{ p.badgeInk }}; font-size:15px; font-weight:700; line-height:1.25;">{{ p.badge }}</span>
+                            </div>
+                            <p style="font-size:17px; line-height:1.45;">{{ p.address }}</p>
+                            <p style="font-size:16px; line-height:1.4; color:#56626A;">{{ p.hours }}</p>
+                            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px; padding-top:4px;">
+                              <a href="{{ p.commute }}" target="_blank" rel="noopener" aria-label="{{ p.commuteAria }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 18px; border-radius:999px; background:rgba(30,107,112,0.13); color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:rgba(30,107,112,0.22); color:#14212B;">{{ t2.commute }}</a>
+                              <sc-if value="{{ p.hasTel }}" hint-placeholder-val="{{ true }}"><a href="{{ p.tel }}" aria-label="{{ p.callAria }}" style="display:inline-flex; align-items:center; min-height:46px; padding:0 4px; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="text-decoration:underline;">{{ t2.call }}</a></sc-if>
+                            </div>
+                          </li>
+                        </sc-for>
+                        <li><a href="{{ s.more }}" style="display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; padding:0 16px; border-top:1px solid #E3E6E8; color:#175458; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:#F6F8F8; color:#14212B;"><span>{{ t2.seeMore }}</span><span aria-hidden="true" style="font-size:26px; line-height:1; color:#8A949A;">›</span></a></li>
+                      </ul>
+                    </div>
+                  </li>
+                </sc-for>
+                <li style="display:grid; grid-template-columns:40px minmax(0,1fr); gap:0 14px;">
+                  <span aria-hidden="true" style="position:relative; z-index:2; justify-self:center; margin-top:3px; width:26px; height:26px; border-radius:50%; border:7px solid #1E6B70; background:#F1F3F4;"></span>
+                  <div style="display:grid; gap:12px;">
+                    <h3 style="font-size:20px; font-weight:700; line-height:1.3;">{{ t.bringTitle }}</h3>
+                    <ul role="list" style="list-style:none; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+                      <sc-for list="{{ bring }}" as="b" hint-placeholder-count="5"><li style="padding:13px 16px; border-top:{{ b.sep }}; font-size:17px; line-height:1.45;">{{ b.text }}</li></sc-for>
+                    </ul>
+                  </div>
+                </li>
+              </ol>
+              <div style="display:grid; gap:8px; padding-left:54px; font-size:15px; line-height:1.5; color:#56626A; max-width:48em;">
+                <p>{{ t2.rule }}</p>
+                <sc-if value="{{ isSample }}" hint-placeholder-val="{{ false }}"><p>{{ t2.approxPins }}</p></sc-if>
+                <p>{{ t2.dataNote }}</p>
+                <p>{{ t.sources }} <sc-for list="{{ sources }}" as="s" hint-placeholder-count="7"><a href="{{ s.url }}" style="color:#56626A;" style-hover="color:#14212B;">{{ s.name }}</a>{{ s.sep }}</sc-for></p>
+              </div>
+            </section>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <section aria-label="{{ t.reassureLabel }}" style="max-width:1120px; width:100%; margin:0 auto; padding:clamp(28px,4vw,44px) clamp(16px,4vw,64px) clamp(48px,7vw,80px);">
+      <div style="max-width:760px; display:grid; gap:12px;">
+        <ul role="list" style="list-style:none; padding:0; border-radius:18px; background:#FFFFFF; overflow:hidden;">
+          <sc-for list="{{ reassure }}" as="r" hint-placeholder-count="3"><li style="padding:15px 18px; border-top:{{ r.sep }}; font-size:18px; line-height:1.4; text-wrap:pretty;">{{ r.text }}</li></sc-for>
+        </ul>
+        <p style="padding:0 18px; font-size:16px; line-height:1.5; color:#3F4B53;">{{ t.teaser }} <a href="Data.dc.html" style="font-weight:700;">{{ t.teaserLink }}</a></p>
+      </div>
+    </section>
+  </main>
+
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="home" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;demo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;live&quot;,&quot;empty&quot;,&quot;located&quot;,&quot;far&quot;],&quot;default&quot;:&quot;live&quot;,&quot;tsType&quot;:&quot;'live'|'empty'|'located'|'far'&quot;,&quot;section&quot;:&quot;Review states&quot;}}">
+class Component extends DCLogic {
+  state = { lang: this.readLang(), fac: null, facErr: false, from: '', gps: null, locating: false, msg: '', need: 'all', res: null, drawn: true, core: !!window.TBPH, glass: false };
+  fromRef = React.createRef();
+  headRef = React.createRef();
+  T = {
+    en: {
+      fromLabel: 'Where are you?', fromPh: 'Barangay, city or landmark', useLoc: 'Use my location',
+      locNote: 'We use your location only to sort places by distance. It stays on your device.',
+      need: 'I need', optAll: 'The whole route (X-ray, test, medicines)', optNotSure: 'Not sure yet? Check my symptoms', go: 'Show me where to go',
+      noLoc: 'Type your barangay or city, or use your location.', denied: 'No problem. Type your barangay or city instead.',
+      routeOf: 'Your TB care route: 3 stops.', nearest: d => 'The nearest is ' + d + ' away.',
+      reassure: ['Testing and TB medicines are free at public health centers.', 'A cough that lasts 2 weeks deserves a test.', 'TB is curable when you finish treatment.'], reassureLabel: 'Good to know',
+      teaser: 'In 2024, about 724,000 Filipinos fell ill with TB.', teaserLink: 'See the data.',
+      bringTitle: 'What to bring', bring: ['A valid ID', 'Your PhilHealth ID or number, if you have one', 'Your TB check summary', 'Any old chest X-ray results', 'A face mask'],
+      noMatch: 'No centers match your search.', loading: 'Loading the list of centers…', sources: 'Sources:',
+      failed: 'The list could not be loaded. Check your connection and try again.', retry: 'Try again'
+    },
+    fil: {
+      fromLabel: 'Nasaan ka?', fromPh: 'Barangay, lungsod o palatandaan', useLoc: 'Gamitin ang aking lokasyon',
+      locNote: 'Ginagamit lang namin ang lokasyon mo para ayusin ang mga lugar ayon sa layo. Nananatili ito sa iyong device.',
+      need: 'Kailangan ko ng', optAll: 'Buong daan (X-ray, test, gamot)', optNotSure: 'Hindi pa sigurado? Suriin ang aking sintomas', go: 'Ipakita kung saan pupunta',
+      noLoc: 'I-type ang inyong barangay o lungsod, o gamitin ang iyong lokasyon.', denied: 'Walang problema. I-type na lang ang inyong barangay o lungsod.',
+      routeOf: 'Ang iyong daan sa gamutan sa TB: 3 hintuan.', nearest: d => 'Ang pinakamalapit ay ' + d + ' ang layo.',
+      reassure: ['Libre ang pagsusuri at gamot sa TB sa mga pampublikong health center.', 'Ang ubong umabot na nang dalawang linggo ay dapat ipasuri.', 'Nagagamot ang TB kapag tinapos ang gamutan.'], reassureLabel: 'Mabuting malaman',
+      teaser: 'Noong 2024, tinatayang 724,000 Pilipino ang nagkasakit ng TB.', teaserLink: 'Tingnan ang datos.',
+      bringTitle: 'Ano ang dadalhin', bring: ['Valid ID', 'PhilHealth ID o numero, kung mayroon', 'Ang buod ng iyong TB check', 'Mga lumang resulta ng chest X-ray', 'Face mask'],
+      noMatch: 'Walang tumugma sa hinanap mo.', loading: 'Kinukuha ang listahan ng mga center…', sources: 'Pinagmulan:',
+      failed: 'Hindi makuha ang listahan. Tingnan ang inyong koneksiyon at subukang muli.', retry: 'Subukang muli'
+    }
+  };
+  SRC = [
+    ['GMA News: PhilHealth YAKAP', 'https://www.gmanetwork.com/news/topstories/nation/978959/philhealth-yakap-s-services-75-free-medicines-who-can-avail-and-how/story'],
+    ['SunStar, 2025', 'https://www.sunstar.com.ph/manila/close-to-200000-tb-cases-recorded-in-2025'],
+    ['WHO Philippines and DOH, 12 November 2025', 'https://www.who.int/philippines/news/detail/12-11-2025-who--doh-target-12m-filipinos-to-be-screened-for-tuberculosis-by-2026--philippines-aims-to-double-budget-for-tb-services'],
+    ['Cepheid, 21 March 2025', 'https://prod-content.cepheid.com/en-CA/insights/insight-hub/community-and-global-health/2025/03/finding-missing-tuberculosis-tb-cases-philippines-need-for-speed.html'],
+    ['Devex: TB diagnostics in the Philippines', 'https://devex.shorthandstories.com/connecting-the-dots-optimizing-tb-diagnostics-in-the-philippines'],
+    ['DOH Administrative Order 2020-0056', 'https://law.upd.edu.ph/wp-content/uploads/2021/04/DOH-Administrative-Order-No-2020-0056.pdf'],
+    ['DZRH, March 2026', 'https://dzrh.com.ph/post/more-contagious-than-covid-doh-explains-why-tb-cases-spiked-to-102000-in-metro-manila-post-lockdown']
+  ];
+  DEMO = { located: 'Quezon City', far: { lat: 18.565, lng: 120.79 } };
+
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  reduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  core() {
+    if (window.TBPH) return Promise.resolve(window.TBPH);
+    return new Promise(res => { const h = () => { window.removeEventListener('tbph-core-ready', h); res(window.TBPH); }; window.addEventListener('tbph-core-ready', h); });
+  }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    const mq = q => !!(window.matchMedia && window.matchMedia(q).matches);
+    const ok = !!(window.CSS && CSS.supports && (CSS.supports('backdrop-filter', 'blur(2px)') || CSS.supports('-webkit-backdrop-filter', 'blur(2px)')));
+    this.setState({ glass: ok && !mq('(prefers-reduced-transparency: reduce)') && !mq('(prefers-contrast: more)') });
+    let p; try { p = new URLSearchParams(location.search); } catch (e) { p = new URLSearchParams(''); }
+    const need = p.get('need');
+    if (['all', 'xray', 'test', 'meds'].includes(need)) this.setState({ need });
+    this.init = { near: p.get('near') || '', gps: p.get('loc') === 'gps' };
+    this.load();
+  }
+  load() {
+    this.setState({ facErr: false });
+    this.core().then(T => { this.setState({ core: true }); return T.facilities(); }).then(fac => this.setState({ fac }, () => this.afterLoad()), () => this.setState({ facErr: true, res: null }));
+  }
+  componentWillUnmount() { clearTimeout(this.dt); }
+  componentDidUpdate() {
+    if (this.state.fac && this.lastDemo !== undefined && this.lastDemo !== (this.props.demo || 'live')) this.applyDemo();
+  }
+  afterLoad() {
+    const demo = this.props.demo || 'live';
+    if (demo !== 'live') return this.applyDemo();
+    this.lastDemo = demo;
+    if (this.init.near) this.setState({ from: this.init.near }, () => this.run(true, true));
+    else if (this.init.gps) this.useLoc();
+    else if (this.pending) { this.pending = false; this.run(true, true); }
+  }
+  applyDemo() {
+    const demo = this.props.demo || 'live', S = window.TBPH.STR[this.state.lang];
+    this.lastDemo = demo;
+    if (demo === 'located') this.setState({ from: this.DEMO.located, gps: null, msg: '', need: 'all' }, () => this.run(false, true));
+    else if (demo === 'far') this.setState({ gps: this.DEMO.far, from: S.myLoc, msg: '', need: 'all' }, () => this.run(false, true));
+    else this.setState({ from: '', gps: null, res: null, msg: '' });
+  }
+
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    let a = null;
+    document.querySelectorAll('[data-anchor]').forEach(el => { const t = el.getBoundingClientRect().top; if (t <= window.innerHeight * 0.35) a = { el, t }; });
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    const T = window.TBPH, patch = { lang: l };
+    if (T && this.state.from === T.STR[this.state.lang].myLoc) patch.from = T.STR[l].myLoc;
+    this.setState(patch, () => { if (a) requestAnimationFrame(() => window.scrollBy(0, a.el.getBoundingClientRect().top - a.t)); });
+  };
+
+  origin() {
+    const T = window.TBPH, { from, gps, fac } = this.state, txt = from.trim();
+    const isMy = txt === T.STR.en.myLoc || txt === T.STR.fil.myLoc;
+    if (gps && (isMy || !txt)) return { lat: gps.lat, lng: gps.lng, gps: true };
+    if (!txt || isMy) return null;
+    const g = T.matchPlace(txt, fac.gaz);
+    return g ? { lat: g.lat, lng: g.lng, prov: g.prov, label: g.label } : { text: txt, label: txt };
+  }
+  run(focus, redraw) {
+    const T = window.TBPH;
+    if (!T || !this.state.fac) { this.pending = true; if (!this.state.facErr) this.setState({ res: { loading: true } }); return; }
+    const o = this.origin();
+    if (!o) { this.setState({ msg: 'none', res: null }); if (this.fromRef.current) this.fromRef.current.focus(); return; }
+    const need = this.state.need, keys = need === 'all' ? T.STOPS : [need];
+    const r = T.route(this.state.fac.list, o, keys);
+    const animate = redraw && !this.reduced();
+    this.setState({ res: { o, r, need }, msg: '', drawn: !animate }, () => {
+      if (focus) this.focusResults();
+      if (animate) {
+        if (this.headRef.current) void this.headRef.current.offsetHeight;
+        clearTimeout(this.dt);
+        this.dt = setTimeout(() => this.setState({ drawn: true }), 40);
+      }
+    });
+    T.setParams({ need, near: o.gps ? '' : o.label, loc: o.gps ? 'gps' : '' });
+  }
+  focusResults() {
+    const el = this.headRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top;
+    if (top < 70 || top > window.innerHeight * 0.6) window.scrollTo({ top: Math.max(0, top + window.scrollY - 90), behavior: this.reduced() ? 'auto' : 'smooth' });
+    el.focus({ preventScroll: true });
+  }
+  pickNeed(k) { this.setState({ need: k }, () => { if (this.state.res && this.state.res.r) this.run(false, false); }); }
+  useLoc = () => {
+    const T = window.TBPH;
+    if (!T) return;
+    this.setState({ locating: true, msg: '' });
+    T.locate().then(
+      p => this.setState({ gps: p, from: T.STR[this.state.lang].myLoc, locating: false }, () => this.run(true, true)),
+      () => this.setState({ locating: false, msg: 'denied', gps: null }, () => { if (this.fromRef.current) this.fromRef.current.focus(); })
+    );
+  };
+
+  renderVals() {
+    const { lang, fac, facErr, from, locating, msg, need, res, drawn, glass } = this.state;
+    const T = window.TBPH, en = lang === 'en', t = this.T[lang], S = T ? T.STR[lang] : null, red = this.reduced();
+    const svcNames = S ? S.svc : { xray: 'Chest X-ray', test: 'TB test (sputum)', meds: 'Free TB medicines' };
+    const SEP = '1px solid #E3E6E8';
+    const allOn = need === 'all';
+    const stopOpts = ['xray', 'test', 'meds'].map((k, i) => {
+      const on = need === k, inc = allOn || on;
+      return { k, n: i + 1, label: svcNames[k], on, pick: () => this.pickNeed(k), ring: inc ? '#1E6B70' : '#7A858C', fill: inc ? '#1E6B70' : '#FFFFFF', num: inc ? '#FFFFFF' : '#14212B', weight: on ? 700 : 400, check: on ? '✓' : '' };
+    });
+    const all = { on: allOn, pick: () => this.pickNeed('all'), mark: allOn ? '#1E6B70' : '#7A858C', weight: allOn ? 700 : 400, check: allOn ? '✓' : '' };
+    const seg = i => ({ scale: drawn ? 1 : 0, trans: red ? 'none' : 'transform 520ms cubic-bezier(.3,.6,.2,1) ' + (i * 430) + 'ms' });
+
+    let rt = { stops: [], start: seg(0), heading: '', origin: '' }, showRoute = false, showNoMatch = false;
+    if (res && res.r && T && S) {
+      const o = res.o, r = res.r, single = res.need !== 'all';
+      if (r.empty) showNoMatch = true;
+      else {
+        showRoute = true;
+        const base = { need: res.need, near: o.gps ? '' : o.label, loc: o.gps ? 'gps' : '' };
+        let near = null;
+        r.stops.forEach(s => s.items.forEach(x => { if (x.d != null && (!near || x.d < near.d)) near = x; }));
+        const row = (x, k, n, j) => {
+          const p = x.p;
+          return {
+            name: p.name, href: T.href('Place.dc.html', Object.assign({ id: p.id, stop: single ? '' : n }, base)), sep: j ? SEP : '0',
+            hasDist: x.d != null, dist: T.dist(x.d, p.precise && !!o.gps, lang), address: p.address, hours: p.hours ? S.hours(p.hours) : S.noHours,
+            badge: p.gov ? S.gov : S.priv, badgeLine: p.gov ? '#1E6B70' : '#56626A', badgeInk: p.gov ? '#175458' : '#14212B', chip: T.chip(p.svc[k], lang),
+            hasTel: !!p.tel, tel: p.tel, commute: T.dirUrl(p, 'transit'),
+            callAria: S.call + ': ' + p.name + ', ' + p.first, commuteAria: S.commute + ': ' + p.name
+          };
+        };
+        rt = {
+          start: seg(0), origin: o.gps ? S.myLoc : o.label,
+          heading: single ? S.stopTitle[res.need] : t.routeOf + (near ? ' ' + t.nearest(T.dist(near.d, near.p.precise && !!o.gps, lang)) : ''),
+          stops: r.stops.map((s, i) => {
+            const n = T.STOPS.indexOf(s.k) + 1, sg = seg(i + 1), dl = (i + 1) * 430 - 80;
+            return {
+              n, title: S.stopTitle[s.k], showTitle: !single, text: S.stopText[s.k],
+              hasNote: s.mode !== 'ok', note: s.mode === 'far' ? S.far : s.mode === 'noXray' ? S.noXray : '',
+              items: s.items.map((x, j) => row(x, s.k, n, j)), more: T.href('Places.dc.html', Object.assign({ svc: s.k }, base)),
+              scale: sg.scale, trans: sg.trans,
+              mFill: drawn ? '#1E6B70' : '#FFFFFF', mNum: drawn ? '#FFFFFF' : '#175458',
+              mTrans: red ? 'none' : 'background-color 260ms ease ' + dl + 'ms, color 260ms ease ' + dl + 'ms'
+            };
+          })
+        };
+      }
+    }
+    const msgText = msg === 'none' ? t.noLoc : msg === 'denied' ? t.denied : '';
+    const showLoading = !!(res && res.loading);
+    return {
+      en, fil: !en, lang, setLang: this.setLang, t, t2: S || {},
+      g: glass ? { sheet: 'rgba(255,255,255,0.64)', blur: 'blur(28px) saturate(1.5)', edge: 'rgba(255,255,255,0.75)' } : { sheet: '#FFFFFF', blur: 'none', edge: '#DADDE0' },
+      from, fromRef: this.fromRef, headRef: this.headRef,
+      onFrom: e => this.setState({ from: e.target.value, msg: '' }),
+      onSubmit: e => { e.preventDefault(); this.run(true, true); },
+      useLoc: this.useLoc, locating, locOpacity: locating ? 0.6 : 1,
+      fromInvalid: msg === 'none' ? 'true' : 'false', fromBorder: msg === 'none' ? '#C42032' : '#7A858C',
+      msgText, msgDisplay: msgText ? 'block' : 'none', msgRole: msg === 'none' ? 'alert' : 'status', msgColor: msg === 'none' ? '#C42032' : '#14212B',
+      placeOptions: fac ? fac.gaz.map(g => React.createElement('option', { key: g.label + g.kind, value: g.label })) : [],
+      all, stopOpts,
+      showArea: showRoute || showNoMatch || showLoading || facErr,
+      showRoute, showNoMatch, showLoading, facErr, retry: () => this.load(), rt,
+      bring: t.bring.map((text, i) => ({ text, sep: i ? SEP : '0' })), reassure: t.reassure.map((text, i) => ({ text, sep: i ? SEP : '0' })),
+      isSample: !!(fac && fac.sample),
+      sources: this.SRC.map((s, i) => ({ name: s[0], url: s[1], sep: i < this.SRC.length - 1 ? '; ' : '' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
