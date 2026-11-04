@@ -275,3 +275,12 @@ test('the estimated or notified toggle has its own name (audit B35)', async ({ p
     await expect(page.locator('#d5 [role="group"]')).toHaveAccessibleName(name);
   }
 });
+
+test("a wide table's scroller keeps sideways swipes to itself (audit B38)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/data');
+  await page.locator('#d1').scrollIntoViewIfNeeded();
+  await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+  await page.locator('#d1 button[aria-expanded]').click();
+  await expect(page.locator('#d1 .dtable-scroll').first()).toHaveCSS('overscroll-behavior-x', 'contain');
+});

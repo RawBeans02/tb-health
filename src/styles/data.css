@@ -280,6 +280,8 @@
 
 .dtable-scroll {
   overflow-x: auto;
+  /* A sideways swipe at the table's edge stays in the table (no browser back, audit B38). */
+  overscroll-behavior-x: contain;
 }
 
 .dtable {
