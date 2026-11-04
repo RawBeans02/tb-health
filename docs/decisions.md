@@ -107,6 +107,12 @@ Q7 (host and domain), Q8 (full clinic list), Q11 (WHO 2026 report), Q12 (lapsed 
 ### Q13. No-X-ray rule (asked ahead of step 3)
 - **README:293's rule:** the referral note shows only when no confirmed X-ray site exists at all, not when none is within 10 km.
 
+### Search quirks kept from the prototype (asked during step 4)
+- **Fix all three.** None needs new copy:
+  - common abbreviations find their place, e.g. "QC" finds Quezon City. A short abbreviation list is kept as data, and each entry is listed for the owner;
+  - two letters match only the start of a word ("ab" no longer matches Malabon, Cabanatuan or Tabuk);
+  - a typed city is placed at the centre of its clinics' pins, worked out from our own data, not at its first clinic's pin (which made the nearest clinic read "about 1 km").
+
 ## 30 October 2026 (owner, via the Account Admin)
 
 ### Q1. Node
