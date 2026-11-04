@@ -1,0 +1,48 @@
+# Build and test (PLAN D22). Manual only: it runs on GitHub's machines, on the owner's Actions
+# minutes, when started from the Actions tab. No deploy, no secrets, no external link checks.
+name: CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install from the lockfile
+        run: npm ci
+      # Sends the dependency list to the npm registry to look up advisories.
+      - name: Dependency audit (shipped dependencies)
+        run: npm audit --omit=dev
+      - name: Type check
+        run: npm run check
+      - name: Unit tests
+        run: npm test
+      - name: Build (with check-links, budgets and the service worker)
+        run: npm run build
+      - name: Browsers for Playwright
+        run: npx playwright install --with-deps chromium webkit
+      - name: End-to-end, Chromium
+        run: npx playwright test --project=chromium
+      - name: End-to-end, WebKit
+        run: npx playwright test --project=webkit
+      - name: End-to-end, service worker
+        run: npx playwright test --project=pwa
+      - name: Build without Check and smoke-test it (Q9)
+        run: npm run test:no-check
+      - name: Keep the Playwright report when something fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

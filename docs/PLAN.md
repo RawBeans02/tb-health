@@ -296,7 +296,7 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
   - Install at `/install`;
   - page-specific specs win over the general frame spec (e.g. Learn H2 size);
   - the global button sizes apply (e.g. Learn L5 buttons 58/46px).
-- **D22** CI: a GitHub Actions file (build + tests) with a manual trigger only. It runs on GitHub's machines and your Actions minutes, and only when you start it. There's no external link checking without your OK, since it calls other sites.
+- **D22** CI: a GitHub Actions file (build + tests) with a manual trigger only. It runs on GitHub's machines and your Actions minutes, and only when you start it. There's no external link checking without your OK, since it calls other sites. *Built at step 13 (audit B27):* `.github/workflows/ci.yml`, workflow_dispatch only: `npm ci` from the lockfile, `npm audit --omit=dev` (it sends the dependency list to the npm registry), type check, unit tests, the build, Playwright in Chromium, WebKit and the service-worker project, and the Check-off build with its smoke test. Its first run, and the audit result, are step 14 evidence.
 - **D23** Settled by the spec or reducing third parties:
   - self-hosted fonts (README:89);
   - Leaflet bundled from npm instead of unpkg;
