@@ -8,10 +8,11 @@ export const care = {
   svc_xray: ui('Chest X-ray', 'Chest X-ray', core),
   svc_test: ui('TB test (sputum)', 'TB test (plema)', core),
   svc_meds: ui('Free TB medicines', 'Libreng gamot sa TB', core),
-  stopTitle_xray: ui('Get a chest X-ray', 'Magpa-chest X-ray', core),
-  stopTitle_test: ui('Give a sputum sample for a TB test', 'Magbigay ng plema para sa TB test', core),
-  stopTitle_meds: ui('Start free TB medicines', 'Simulan ang libreng gamot sa TB', core),
-  // Q3: the stop explanations ship flagged [REVIEW], with Learn L6, for the clinical review.
+  stopTitle_xray: ui('Get a chest X-ray', 'Magpa-chest X-ray', core, ['REVIEW']),
+  stopTitle_test: ui('Give a sputum sample for a TB test', 'Magbigay ng plema para sa TB test', core, ['REVIEW']),
+  stopTitle_meds: ui('Start free TB medicines', 'Simulan ang libreng gamot sa TB', core, ['REVIEW']),
+  // Q3: the stop titles (above) and explanations ship flagged [REVIEW], with Learn L6, for
+  // the clinical review (B23: the Q3 quote "Get a chest X-ray…" is a title).
   stopText_xray: ui(
     'An X-ray shows whether your lungs need a closer look. PhilHealth members registered at a YAKAP clinic (formerly Konsulta) can get it covered. DOH also runs free X-ray screening in communities. Ask about fees anywhere else.',
     'Ipinapakita ng X-ray kung kailangang suriing mabuti ang iyong baga. Sakop ito para sa mga miyembro ng PhilHealth na rehistrado sa isang YAKAP clinic (dating Konsulta). Nagsasagawa rin ang DOH ng libreng X-ray screening sa mga komunidad. Sa ibang lugar, itanong muna ang bayad.',
