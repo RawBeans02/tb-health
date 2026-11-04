@@ -36,6 +36,7 @@
   --tb-red-on-film: #F0646C;
   --teal-on-film: #6FB5B9;
   --paper-2: #E8E4DA;
+  --on-film: #FFFFFF;         /* text on Film (urgent screen) */
 
   /* v3 colors still used in places the README names (toggle text, solid-fallback edges) */
   --paper: #F2F0EA;

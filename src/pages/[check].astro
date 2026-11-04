@@ -1,0 +1,11 @@
+---
+// /check, built only when the site launches with Check (TBPH_CHECK, Q9). A dynamic route
+// so the switch can leave the page out of the build entirely.
+import { TBPH_CHECK } from 'astro:env/server';
+import Check from '../views/Check.astro';
+
+export function getStaticPaths() {
+  return TBPH_CHECK ? [{ params: { check: 'check' } }] : [];
+}
+---
+<Check lang="en" />

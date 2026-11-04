@@ -733,3 +733,23 @@ html[data-online='false'] .offline-line {
   left: 0;
   opacity: 0;
 }
+
+/* The quiet "Save TB PH to your home screen" row (Place, Check). */
+.install-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 12px 16px;
+  color: var(--ink);
+  font-size: var(--text-17);
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.install-row:hover {
+  background: var(--row-hover);
+  color: var(--ink);
+}
+

@@ -47,6 +47,23 @@ export const meta = {
     note: 'FIL: a verbatim pack sentence (Places intro), not a translation of the English description.',
   },
 
+  checkTitle: {
+    en: 'Check symptoms — TB PH',
+    fil: 'Suriin ang sintomas — TB PH',
+    origin: 'ui',
+    src: ['proto:Check.dc.html', 'derived'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the Filipino nav label (pack :19), then the brand, as in the English title.',
+  },
+  checkDescription: {
+    en: 'Answer a few questions to see whether you should get tested for TB. About 2 minutes. Your answers stay on your device.',
+    fil: 'Sagutin ang ilang tanong para malaman kung dapat kang magpasuri para sa TB. Mga 2 minuto lang ito. Mananatili lang sa iyong device ang mga sagot mo.',
+    origin: 'ui',
+    src: ['proto:Check.dc.html', 'derived'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: three verbatim pack sentences, from pack :197 and :198, matching the English sentence by sentence.',
+  },
+
   notFoundTitle: {
     en: 'Page not found — TB PH',
     fil: 'Hindi namin mahanap ang pahinang iyon — TB PH',

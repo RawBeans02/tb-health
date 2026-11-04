@@ -274,24 +274,6 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   text-align: left;
 }
 
-.install-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 56px;
-  padding: 12px 16px;
-  color: var(--ink);
-  font-size: var(--text-17);
-  line-height: 1.4;
-  text-decoration: none;
-}
-
-.install-row:hover {
-  background: var(--row-hover);
-  color: var(--ink);
-}
-
 .place-missing {
   display: grid;
   gap: 20px;

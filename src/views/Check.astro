@@ -1,0 +1,22 @@
+---
+// Check symptoms (PLAN §5 step 7). The island owns <main> and switches language in place,
+// so it carries both languages' strings. Not built at all when TBPH_CHECK=false (Q9).
+import CheckFlow from '../islands/CheckFlow.tsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { check } from '../content/check.ts';
+import { meta } from '../content/meta.ts';
+import { pick } from '../content/types.ts';
+import type { Lang } from '../lib/i18n.ts';
+import '../styles/check.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+<BaseLayout lang={lang} title={meta.checkTitle} description={meta.checkDescription} current="check" inPlace>
+  <main id="main" tabindex="-1" class="check-main">
+    <CheckFlow client:load lang={lang} strings={{ en: pick(check, 'en'), fil: pick(check, 'fil') }} />
+  </main>
+</BaseLayout>
