@@ -55,6 +55,11 @@ export default function Planner(props: Props) {
   const fromRef = useRef<HTMLInputElement>(null);
   const headRef = useRef<HTMLHeadingElement>(null);
   const focusNext = useRef(false);
+  // After "Try again" (audit B8): the loading line, then the field (or the route, when a
+  // submit was waiting), or "Try again" again if it fails.
+  const statusRef = useRef<HTMLParagraphElement>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
+  const retrying = useRef(false);
   const initial = useRef<ReturnType<typeof readHomeParams> | null>(null);
   const myLocation = useMemo(() => [props.strings.en.myLoc, props.strings.fil.myLoc], [props.strings]);
 
@@ -95,6 +100,17 @@ export default function Planner(props: Props) {
       run({ focus: true, animate: true });
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!retrying.current) return;
+    if (load === 'loading') {
+      statusRef.current?.focus();
+      return;
+    }
+    retrying.current = false;
+    if (load === 'error') retryRef.current?.focus();
+    else if (!waiting) fromRef.current?.focus(); // a waiting submit focuses its route instead
+  }, [load]);
 
   // While a location fix is held, the language switches in place so the fix isn't lost.
   useEffect(() => {
@@ -295,7 +311,7 @@ export default function Planner(props: Props) {
         <div id="route" class="results" data-anchor>
           <div class="results-inner">
             {loading && (
-              <p class="results-status" role="status">
+              <p ref={statusRef} class="results-status" role="status" tabIndex={-1}>
                 {t.loading}
               </p>
             )}
@@ -303,10 +319,12 @@ export default function Planner(props: Props) {
               <div class="results-error" role="alert">
                 <p>{t.failed}</p>
                 <button
+                  ref={retryRef}
                   type="button"
                   class="btn btn--soft btn--md"
                   onClick={() => {
                     setRetried(true);
+                    retrying.current = true;
                     fetchList();
                   }}
                 >

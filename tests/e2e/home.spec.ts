@@ -232,6 +232,8 @@ test.describe('facility list errors (Q6)', () => {
     await page.getByRole('button', { name: 'Try again' }).click();
     await expect(page.locator('#tbph-places option').first()).toBeAttached();
     await expect(alert).toHaveCount(0);
+    // Focus isn't dropped when "Try again" goes: it lands on the field (B8).
+    await expect(field(page)).toBeFocused();
     // The URL's place doesn't overwrite what the reader typed, and nothing asks for location.
     await expect(field(page)).toHaveValue('Baguio');
     expect(await locationRequests(page)).toBe(0);

@@ -193,6 +193,7 @@ test.describe('map', () => {
       await page.unroute('**/_astro/leaflet*.js');
       await page.locator('.map-status').getByRole('button', { name: 'Try again' }).click();
       await expect(page.locator('.leaflet-container')).toBeVisible();
+      await expect(page.locator('.leaflet-container')).toBeFocused(); // B8
     });
   });
 });
@@ -253,5 +254,31 @@ test.describe('map markers (audit B7)', () => {
     // Canvas markers: no per-marker SVG paths.
     await expect(page.locator('.leaflet-overlay-pane canvas')).toHaveCount(1);
     await expect(page.locator('.leaflet-popup')).toHaveCount(0);
+  });
+});
+
+test.describe('focus after updates (audit B8)', () => {
+  test('"Show more" moves focus to the first new row, every time', async ({ page }) => {
+    await ready(page);
+    for (let shown = 20; shown < 93; shown += 20) {
+      await expect(rows(page)).toHaveCount(shown);
+      await page.getByRole('button', { name: /^Show more centers/ }).click();
+      await expect(rows(page).nth(shown).locator('a').first()).toBeFocused();
+    }
+    await expect(rows(page)).toHaveCount(93);
+  });
+
+  test.describe(() => {
+    test.use({ expectedErrors: [/status of 503/] });
+
+    test('"Try again" on the list lands on the count', async ({ page }) => {
+      await page.route('**/data/facilities.json', (route) => route.fulfill({ status: 503, body: '' }));
+      await page.goto('/places');
+      await expect(page.locator('.results-error')).toBeVisible();
+      await page.unroute('**/data/facilities.json');
+      await page.locator('.results-error').getByRole('button', { name: 'Try again' }).click();
+      await expect(count(page)).toHaveText('93 centers');
+      await expect(count(page)).toBeFocused();
+    });
   });
 });

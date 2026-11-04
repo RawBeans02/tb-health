@@ -60,6 +60,16 @@ export default function Places(props: Props) {
   const mapRef = useRef<PlacesMap | null>(null);
   const mapLoading = useRef(false);
   const initial = useRef<URLSearchParams | null>(null);
+  // Focus that would be lost when a control unmounts (audit B8): the first row "Show more"
+  // added, and the loading line, then the result, after "Try again".
+  const listRef = useRef<HTMLUListElement>(null);
+  const countRef = useRef<HTMLHeadingElement>(null);
+  const statusRef = useRef<HTMLParagraphElement>(null);
+  const mapStatusRef = useRef<HTMLParagraphElement>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
+  const mapRetryRef = useRef<HTMLButtonElement>(null);
+  const firstNewRow = useRef<number | null>(null);
+  const retrying = useRef<'' | 'list' | 'map'>('');
   const myLocation = useMemo(() => [props.strings.en.myLoc, props.strings.fil.myLoc], [props.strings]);
 
   function fetchList() {
@@ -146,6 +156,30 @@ export default function Places(props: Props) {
       },
     );
   });
+  useEffect(() => {
+    if (firstNewRow.current === null) return;
+    listRef.current?.children[firstNewRow.current]?.querySelector<HTMLElement>('a')?.focus();
+    firstNewRow.current = null;
+  }, [limit]);
+
+  useEffect(() => {
+    if (retrying.current !== 'list') return;
+    if (load === 'loading') statusRef.current?.focus();
+    else {
+      retrying.current = '';
+      (load === 'ready' ? countRef.current : retryRef.current)?.focus();
+    }
+  }, [load]);
+
+  useEffect(() => {
+    if (retrying.current !== 'map') return;
+    if (mapState === 'loading') mapStatusRef.current?.focus();
+    else {
+      retrying.current = '';
+      (mapState === 'ready' ? mapEl.current : mapRetryRef.current)?.focus();
+    }
+  }, [mapState]);
+
   useEffect(() => {
     if (view === 'map') return;
     mapRef.current?.destroy();
@@ -281,7 +315,7 @@ export default function Places(props: Props) {
             </div>
 
             <div class="places-toolbar">
-              <h2 class="h2 tabular" aria-live="polite">
+              <h2 ref={countRef} class="h2 tabular" aria-live="polite" tabIndex={-1}>
                 {countLabel}
               </h2>
               <div class="places-tools">
@@ -308,14 +342,22 @@ export default function Places(props: Props) {
             {point && <Switch checked={byDistance} label={t.sortDist} onChange={setByDistance} />}
 
             {load === 'loading' && (
-              <p class="results-status" role="status">
+              <p ref={statusRef} class="results-status" role="status" tabIndex={-1}>
                 {t.loading}
               </p>
             )}
             {load === 'error' && (
               <div class="results-error" role="alert">
                 <p>{t.failed}</p>
-                <button type="button" class="btn btn--soft btn--md" onClick={fetchList}>
+                <button
+                  ref={retryRef}
+                  type="button"
+                  class="btn btn--soft btn--md"
+                  onClick={() => {
+                    retrying.current = 'list';
+                    fetchList();
+                  }}
+                >
                   {t.retry}
                 </button>
               </div>
@@ -336,9 +378,19 @@ export default function Places(props: Props) {
                   <div ref={mapEl} class="map" role="region" aria-label={t.map} />
                   {mapState !== 'ready' && (
                     <div class="map-status" role="status">
-                      <p>{mapState === 'error' ? t.mapError : t.mapLoading}</p>
+                      <p ref={mapStatusRef} tabIndex={-1}>
+                        {mapState === 'error' ? t.mapError : t.mapLoading}
+                      </p>
                       {mapState === 'error' && (
-                        <button type="button" class="btn btn--soft btn--md" onClick={() => setMapState('loading')}>
+                        <button
+                          ref={mapRetryRef}
+                          type="button"
+                          class="btn btn--soft btn--md"
+                          onClick={() => {
+                            retrying.current = 'map';
+                            setMapState('loading');
+                          }}
+                        >
                           {t.retry}
                         </button>
                       )}
@@ -350,7 +402,7 @@ export default function Places(props: Props) {
             )}
 
             {view === 'list' && shown.length > 0 && (
-              <ul class="group" role="list">
+              <ul ref={listRef} class="group" role="list">
                 {shown.map(({ p, d }) => {
                   const keys = filters.svc ? [filters.svc] : SERVICES.filter((k) => p.svc[k] !== 'no');
                   return (
@@ -367,7 +419,14 @@ export default function Places(props: Props) {
                 })}
                 {rows.length > shown.length && (
                   <li class="link-row-item">
-                    <button type="button" class="link-row link-row--button" onClick={() => setLimit(limit + PAGE)}>
+                    <button
+                      type="button"
+                      class="link-row link-row--button"
+                      onClick={() => {
+                        firstNewRow.current = limit;
+                        setLimit(limit + PAGE);
+                      }}
+                    >
                       {fill(t.more, { n: number(rows.length - shown.length) })}
                     </button>
                   </li>
