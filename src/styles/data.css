@@ -465,8 +465,9 @@
 
 .story-legend {
   position: absolute;
-  left: 20px;
-  right: 20px;
+  /* Clear of a notch or Dynamic Island in landscape (B49). */
+  left: max(20px, env(safe-area-inset-left));
+  right: max(20px, env(safe-area-inset-right));
   bottom: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -518,7 +519,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 28px var(--story-pad) 40px;
+  padding: 28px max(var(--story-pad), env(safe-area-inset-right)) 40px max(var(--story-pad), env(safe-area-inset-left));
 }
 
 @media (min-width: 60em) {
@@ -532,7 +533,7 @@
   }
 
   .story-legend {
-    left: 32px;
+    left: max(32px, env(safe-area-inset-left));
     bottom: 28px;
   }
 
@@ -543,7 +544,7 @@
   .story-step {
     min-height: 90vh;
     justify-content: center;
-    padding: 48px 40px 48px max(var(--story-pad), calc((100vw - 1280px) / 2 + var(--story-pad)));
+    padding: 48px max(40px, env(safe-area-inset-right)) 48px max(var(--story-pad), calc((100vw - 1280px) / 2 + var(--story-pad)), env(safe-area-inset-left));
   }
 }
 
