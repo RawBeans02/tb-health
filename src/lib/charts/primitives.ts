@@ -16,6 +16,19 @@ export interface Chart {
   paths: { d: string; fill: string; fo: number; stroke: string; sw: number; dash: string }[];
   circles: { x: number; y: number; r: number; fill: string }[];
   texts: { x: number; y: number; anchor: 'start' | 'middle' | 'end'; baseline: 'central' | 'alphabetic'; s: string; fs: number; fw: number; fill: string }[];
+  /** The side gutters a time series used (not drawn; for tests). */
+  pad?: { left: number; right: number };
+}
+
+/**
+ * About how wide `text` is in Atkinson Hyperlegible Next at `fs` px, from character classes
+ * measured in the browser (digits 0.62em, commas and stops 0.25em). It errs wide on letters,
+ * so a chart that uses it to make room for a label leaves enough (audit B39).
+ */
+export function textWidth(text: string, fs: number, bold = false): number {
+  let em = 0;
+  for (const ch of text) em += /\d/.test(ch) ? 0.62 : ch === ' ' ? 0.27 : /[.,:;'’|!()]/.test(ch) ? 0.25 : /[A-Z]/.test(ch) ? 0.7 : /[a-z]/.test(ch) ? 0.56 : 0.6;
+  return em * fs * (bold ? 1.06 : 1);
 }
 
 export interface Table {
@@ -64,7 +77,15 @@ export function G(w: number, h: number, alt: string) {
 export function pathOf(xs: number[], ys: number[]): string { return xs.map((x: any, i: number) => (i ? 'L' : 'M') + r1(x) + ' ' + r1(ys[i])).join(''); }
 
 export function ts(o: Opts): Chart {
-  const w = o.w, h = o.h || 300, th = o.th, fs = 15, L = 66, R = o.R || 170, T = 20, B = 38, n = o.years.length;
+  const w = o.w, h = o.h || 300, th = o.th, fs = 15, T = 20, B = 38, n = o.years.length;
+  // The prototype's gutters (66, 170), widened only for a label that wouldn't fit them: the
+  // end labels on the right (Filipino, mostly) or a wide tick label on the left (B39).
+  const ends = o.series.flatMap((s: any) => [textWidth(String(s.label ?? ''), fs, true), textWidth(String(s.sub ?? ''), 14)]);
+  const ticks = o.ticks.map((v: any) => textWidth(String(o.tf(v)), 14));
+  // Room needed: the label and its 14px (right) or 10px (left) gap. Widened only when that
+  // beats the prototype's gutter by more than 1px, so labels that fit keep its geometry.
+  const baseR = o.R || 170, needR = Math.ceil(Math.max(0, ...ends)) + 14, needL = Math.ceil(Math.max(0, ...ticks)) + 10;
+  const R = needR > baseR + 1 ? needR : baseR, L = needL > 67 ? needL : 66;
   const x = (i: number) => L + i / (n - 1) * (w - L - R), y = (v: number) => T + (1 - v / o.yMax) * (h - T - B), idx = [...Array(n).keys()];
   const S = G(w, h, o.alt);
   o.ticks.forEach((v: any) => { S.line(L, y(v), w - R + 12, y(v), v === 0 ? th.base : th.rule, 1); S.text(L - 10, y(v), o.tf(v), { a: 'end', fs: 14, fill: th.muted }); });
@@ -75,7 +96,7 @@ export function ts(o: Opts): Chart {
   o.series.forEach((s: any) => { S.path(pathOf(idx.map(x), s.vals.map(y)), { stroke: s.color, sw: 3 }); S.dot(x(n - 1), y(s.vals[n - 1]), 5, s.color); });
   o.series.forEach((s: any) => { const yy = y(s.vals[n - 1]) + (s.dy || 0); S.text(x(n - 1) + 14, yy - 9, s.label, { fs, fw: 700, fill: s.ink || th.ink }); S.text(x(n - 1) + 14, yy + 10, s.sub, { fs: 14, fill: s.ink || th.ink }); });
   (o.notes || []).forEach((nt: any) => { const xx = x(nt.i), yy = y(nt.v); S.dot(xx, yy, 4.5, nt.color || th.ink); S.text(xx, yy + (nt.below ? 22 : -18), nt.text, { a: 'middle', fs: 14, fw: 700, fill: th.ink }); });
-  return S.done(o.title);
+  return { ...S.done(o.title), pad: { left: L, right: R } };
 }
 export function rows(o: Opts): Chart {
   const th = o.th, fs = 14, rowH = 26, barH = 12, top = o.legend ? 34 : 4, L = 50, R = 78, n = o.years.length, h = top + n * rowH + 6;

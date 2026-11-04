@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { charts } from '../../src/content/charts.ts';
 import { pick } from '../../src/content/types.ts';
 import { buildPanels, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
+import { textWidth } from '../../src/lib/charts/primitives.ts';
 
 const data = JSON.parse(readFileSync('data/tb-ph-data.json', 'utf8'));
 const claims = JSON.parse(readFileSync('data/claims.json', 'utf8'));
@@ -69,6 +70,38 @@ describe('hatch patterns (audit B21)', () => {
         const used = new Set([...JSON.stringify(buildPanels(data, lang, w, wide, state(), pick(charts, lang))).matchAll(/url\(#([\w-]+)\)/g)].map((m) => m[1]));
         expect(used.size).toBeGreaterThan(0);
         for (const id of used) expect(HATCHES, `#${id}`).toHaveProperty(id);
+      }
+    }
+  });
+});
+
+describe('room for chart labels (audit B39)', () => {
+  // Where a text's ink ends, by the same estimate the charts use to make room.
+  const extent = (t: { x: number; anchor: string; s: string; fs: number; fw: number }) => {
+    const width = textWidth(t.s, t.fs, t.fw >= 700);
+    return t.anchor === 'end' ? [t.x - width, t.x] : t.anchor === 'middle' ? [t.x - width / 2, t.x + width / 2] : [t.x, t.x + width];
+  };
+  const series = (lang: 'en' | 'fil', w: number) => buildPanels(data, lang, w, true, state(), pick(charts, lang)).flatMap((p) => (p.svgs ?? []).filter((c) => c.pad).map((c) => ({ id: p.id, c })));
+
+  it("keeps the prototype's gutters in English, except d16's wide axis label", () => {
+    for (const w of [928, 640]) {
+      for (const { id, c } of series('en', w)) {
+        expect(c.pad!.right, `${id} right`).toBe(170);
+        if (id !== 'd16') expect(c.pad!.left, `${id} left`).toBe(66);
+      }
+    }
+  });
+
+  it('ends every time-series label inside its chart, in English and Filipino', () => {
+    for (const lang of ['en', 'fil'] as const) {
+      for (const w of [928, 640]) {
+        for (const { id, c } of series(lang, w)) {
+          for (const t of c.texts) {
+            const [from, to] = extent(t);
+            expect(from, `${lang} ${w} ${id} "${t.s}"`).toBeGreaterThanOrEqual(0);
+            expect(to, `${lang} ${w} ${id} "${t.s}"`).toBeLessThanOrEqual(c.w);
+          }
+        }
       }
     }
   });
