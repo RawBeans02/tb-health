@@ -11,6 +11,7 @@ import InPlaceLanguage from '../components/InPlaceLanguage.astro';
 import type { Str } from '../content/types.ts';
 import { pagePath, toLang, type Lang } from '../lib/i18n.ts';
 import { CANVAS } from '../lib/manifest.ts';
+import { headLinks } from '../lib/site.ts';
 import prepaint from '../scripts/prepaint.js?raw';
 import type { Features, NavKey } from '../lib/nav.ts';
 import '../styles/tokens.css';
@@ -43,7 +44,8 @@ const indexed = !notFound && !standIn;
 const features: Features = { check: TBPH_CHECK };
 const site = Astro.site!; // SITE_URL, or the placeholder until Q7 (launch-check flags it)
 const path = canonicalPath ?? toLang(pagePath(Astro.url.pathname), 'en');
-const canonical = new URL(toLang(path, lang), site).href;
+const links = headLinks(path, lang, site);
+const canonical = links.canonical;
 const togglePath = notFound ? '/' : path;
 // Astro hashes the scripts it bundles, not is:inline ones.
 Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(prepaint).digest('base64')}`);
@@ -59,9 +61,9 @@ const shareDescription = shareText?.[lang] || descriptionText;
     {descriptionText && <meta name="description" content={descriptionText} />}
     {!indexed && <meta name="robots" content="noindex" />}
     {indexed && <link rel="canonical" href={canonical} />}
-    {indexed && <link rel="alternate" hreflang="en" href={new URL(path, site).href} />}
-    {indexed && <link rel="alternate" hreflang="fil" href={new URL(toLang(path, 'fil'), site).href} />}
-    {indexed && <link rel="alternate" hreflang="x-default" href={new URL(path, site).href} />}
+    {indexed && <link rel="alternate" hreflang="en" href={links.en} />}
+    {indexed && <link rel="alternate" hreflang="fil" href={links.fil} />}
+    {indexed && <link rel="alternate" hreflang="x-default" href={links.xDefault} />}
     {/* Share previews (Open Graph), from the page's own title and text. The in-place language
         switch doesn't update them: a link shared after it is the other page's address, and
         previews read that page's HTML. */}

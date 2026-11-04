@@ -1,7 +1,7 @@
 // The site's address and what search engines get (PLAN §5 step 12). The host and domain are
 // the owner's to pick (Q7), so the origin comes from SITE_URL at build time; canonical,
 // hreflang, Open Graph, the sitemap and robots.txt all follow it.
-import { LANGS, ROUTES, href } from './i18n.ts';
+import { LANGS, ROUTES, href, toLang, type Lang } from './i18n.ts';
 import type { Features } from './nav.ts';
 
 /** Until Q7 is answered. launch-check flags it, and a production build refuses it. */
@@ -37,4 +37,13 @@ export function sitemapXml(site: string, paths: readonly string[]): string {
 
 export function robotsTxt(site: string): string {
   return `User-agent: *\nAllow: /\n\nSitemap: ${new URL('/sitemap.xml', site).href}\n`;
+}
+
+/**
+ * A page's canonical and hreflang URLs. `path` is the English path of the page to name: its
+ * own, or an alias's current id (Q6), so /place/{old} and /fil/place/{old} name the current id.
+ */
+export function headLinks(path: string, lang: Lang, site: string | URL) {
+  const url = (p: string) => new URL(p, site).href;
+  return { canonical: url(toLang(path, lang)), en: url(path), fil: url(toLang(path, 'fil')), xDefault: url(path) };
 }

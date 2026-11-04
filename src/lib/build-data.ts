@@ -12,7 +12,11 @@ export function readFacilities(): FacilitiesFile {
 
 /** Every place page to build: one per id, plus one per old id kept by an alias (Q6). */
 export function placePaths() {
-  const file = readFacilities();
+  return placePathsFor(readFacilities());
+}
+
+/** placePaths for a given file (tests pass one with aliases). */
+export function placePathsFor(file: FacilitiesFile) {
   const byId = new Map(file.facilities.map((row) => [row.id, row]));
   const pages = file.facilities.map((row) => ({ params: { id: row.id }, props: { row, canonicalId: row.id } }));
   for (const [from, to] of Object.entries(file.aliases)) {

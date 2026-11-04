@@ -1,7 +1,10 @@
 // Step 12: the site's origin, sitemap, robots.txt and response headers (PLAN §5).
 import { describe, expect, it } from 'vitest';
 import { headersFile } from '../../src/lib/headers.ts';
-import { PLACEHOLDER_SITE, robotsTxt, siteOrigin, sitemapPaths, sitemapXml } from '../../src/lib/site.ts';
+import { placePathsFor } from '../../src/lib/build-data.ts';
+import type { FacilitiesFile } from '../../src/lib/core/data.ts';
+import type { FacilityRow } from '../../src/lib/core/facility.ts';
+import { headLinks, PLACEHOLDER_SITE, robotsTxt, siteOrigin, sitemapPaths, sitemapXml } from '../../src/lib/site.ts';
 
 describe('siteOrigin', () => {
   it('is SITE_URL as a bare origin, or the placeholder', () => {
@@ -72,5 +75,31 @@ describe('headersFile', () => {
   it('marks every build but production noindex', () => {
     expect(headersFile(false)).toContain('  X-Robots-Tag: noindex\n');
     expect(headersFile(true)).not.toContain('X-Robots-Tag');
+  });
+});
+
+describe('alias place pages (audit B41)', () => {
+  // Synthetic rows: only the ids matter here.
+  const row = (id: string) => ({ id }) as unknown as FacilityRow;
+  const file = { meta: {}, aliases: { 'old-name-city': 'new-name-city', 'gone-place': 'no-such-id' }, facilities: [row('new-name-city'), row('other-place')] } as unknown as FacilitiesFile;
+
+  it('builds an alias page for an old id whose target exists, naming the current id', () => {
+    const pages = placePathsFor(file);
+    expect(pages.map((p) => p.params.id)).toEqual(['new-name-city', 'other-place', 'old-name-city']);
+    const alias = pages.find((p) => p.params.id === 'old-name-city')!;
+    expect(alias.props.canonicalId).toBe('new-name-city');
+    expect(alias.props.row.id).toBe('new-name-city');
+  });
+
+  it("gives /place/{old} and /fil/place/{old} the current id's canonical and hreflang", () => {
+    const site = 'https://tbph.example.org';
+    const current = `/place/${placePathsFor(file).find((p) => p.params.id === 'old-name-city')!.props.canonicalId}`;
+    expect(headLinks(current, 'en', site)).toEqual({
+      canonical: `${site}/place/new-name-city`,
+      en: `${site}/place/new-name-city`,
+      fil: `${site}/fil/place/new-name-city`,
+      xDefault: `${site}/place/new-name-city`,
+    });
+    expect(headLinks(current, 'fil', site).canonical).toBe(`${site}/fil/place/new-name-city`);
   });
 });

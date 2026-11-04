@@ -2,7 +2,8 @@
 // Crawls dist/ after every build (PLAN §4.2) and fails it when:
 //   - a Filipino page links to an English page, or the reverse. Language links and
 //     hreflang alternates (elements carrying hreflang) are the only exceptions;
-//   - an internal link points at a page or file that wasn't built.
+//   - an internal link points at a page or file that wasn't built;
+//   - a canonical or hreflang link points at a page that wasn't built, or off the site (B41).
 // Pages from later steps are in PENDING: links to them only warn until they exist.
 // A build without Check (TBPH_CHECK=false, Q9) must not build or link to /check at all.
 //
@@ -54,6 +55,10 @@ if (!existsSync(dist)) {
 const errors = [];
 const pending = new Map();
 let links = 0;
+let headLinks = 0;
+// The site's origin, read from the home page's canonical (SITE_URL, Q7).
+const homeCanonical = existsSync(join(dist, 'index.html')) ? /<link rel="canonical" href="([^"]+)"/.exec(readFileSync(join(dist, 'index.html'), 'utf8'))?.[1] : undefined;
+const site = homeCanonical ? new URL(homeCanonical).origin : null;
 
 for (const file of htmlFiles(dist)) {
   const html = readFileSync(file, 'utf8');
@@ -62,6 +67,16 @@ for (const file of htmlFiles(dist)) {
   if (pageLang !== 'en' && pageLang !== 'fil') {
     errors.push(`${page}: <html lang> is ${JSON.stringify(pageLang)}`);
     continue;
+  }
+  // Head links: canonical and hreflang alternates name built pages on the site's origin.
+  for (const [tag] of html.matchAll(/<link\s[^>]*>/g)) {
+    const attrs = attributes(tag.slice(5, -1));
+    if (attrs.rel !== 'canonical' && attrs.rel !== 'alternate') continue;
+    headLinks += 1;
+    const url = new URL(decode(attrs.href ?? ''), 'https://site.invalid');
+    if (url.origin !== site) errors.push(`${page}: ${attrs.rel} ${attrs.href} is not on the site's origin (${site})`);
+    else if (url.search || url.hash) errors.push(`${page}: ${attrs.rel} ${attrs.href} carries a query or hash`);
+    else if (!builtFile(url.pathname)) errors.push(`${page}: ${attrs.rel} ${attrs.href} wasn't built`);
   }
   for (const [tag] of html.matchAll(/<a\s[^>]*>/g)) {
     const attrs = attributes(tag.slice(2, -1));
@@ -97,4 +112,4 @@ if (errors.length) {
   console.error(`check-links: ${errors.length} problem(s).`);
   process.exit(1);
 }
-console.log(`check-links: ${links} internal links checked, languages match.`);
+console.log(`check-links: ${links} internal links and ${headLinks} canonical and hreflang links checked, languages match.`);
