@@ -243,17 +243,25 @@ test.describe('map layers (audit B4)', () => {
 });
 
 test.describe('map markers (audit B7)', () => {
+  // Any build: on the 2,100-row synthetic one (npm run build:synthetic) this is what proves
+  // the old 800-marker cap is gone. Draw and filter times are recorded as annotations.
   test('every located center gets one, with its popup built on demand', async ({ page }) => {
-    await ready(page);
-    const located = await page.evaluate(async () => {
-      const file = await (await fetch('/data/facilities.json')).json();
-      return file.facilities.filter((r: { lat: unknown }) => typeof r.lat === 'number').length;
-    });
+    await page.route('https://tile.openstreetmap.org/**', (route) => route.fulfill({ status: 200, contentType: 'image/png', body: PNG_1X1 }));
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/places');
+    const file = await page.evaluate(async () => (await (await fetch('/data/facilities.json')).json()) as { facilities: { lat: unknown; svc_chest_xray?: string }[] });
+    const located = file.facilities.filter((r) => typeof r.lat === 'number').length;
+    await expect(count(page)).toHaveText(`${located.toLocaleString('en-US')} centers`);
+    let t = Date.now();
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
     await expect(page.locator('.map')).toHaveAttribute('data-markers', String(located));
-    // Canvas markers: no per-marker SVG paths.
-    await expect(page.locator('.leaflet-overlay-pane canvas')).toHaveCount(1);
+    test.info().annotations.push({ type: 'timing', description: `${located} markers drawn ${Date.now() - t} ms after Map` });
+    await expect(page.locator('.leaflet-overlay-pane canvas')).toHaveCount(1); // canvas, not one path per marker
     await expect(page.locator('.leaflet-popup')).toHaveCount(0);
+    t = Date.now();
+    await page.locator('#panel-q').fill('Bangued');
+    await expect(page.locator('.map')).not.toHaveAttribute('data-markers', String(located));
+    test.info().annotations.push({ type: 'timing', description: `filter redrawn ${Date.now() - t} ms after the tap (${await page.locator('.map').getAttribute('data-markers')} markers)` });
   });
 });
 
@@ -299,6 +307,21 @@ test.describe('location (audit B9)', () => {
 });
 
 test.describe('map motion (audit B12)', () => {
+  test('quick narrowing then broadening: the map ends showing every marker', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
+    // A narrow search, then cleared at once, three times over.
+    for (let i = 0; i < 3; i++) {
+      await page.locator('#panel-q').fill('Bangued');
+      await page.locator('#panel-q').fill('');
+    }
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
+    await page.waitForTimeout(800); // anything still moving settles
+    await expect(page.locator('.map')).toHaveAttribute('data-fit', 'true');
+  });
+
   test('with reduced motion: no fade or zoom animation, and refits land at once', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await ready(page);
@@ -383,13 +406,26 @@ test.describe('sheet drag (audit B30)', () => {
     await context.close();
   });
 
-  test('a second finger causes no jump', async ({ browser }) => {
-    const { context, page, touch, sheet, at } = await openSheet(browser);
-    await touch('touchStart', [{ ...at, id: 1 }]);
-    await touch('touchStart', [{ ...at, id: 1 }, { x: at.x, y: at.y + 300, id: 2 }]);
-    await touch('touchMove', [{ x: at.x, y: at.y + 30, id: 1 }, { x: at.x, y: at.y + 300, id: 2 }]);
-    await expect(sheet).toHaveAttribute('style', /translateY\(30px\)/);
-    await touch('touchEnd', []);
+  test('a second finger on the grab strip causes no jump', async ({ browser }) => {
+    const { context, page, sheet, at } = await openSheet(browser);
+    // Touch events dispatched on the strip itself: Chrome's touch emulation never fires a
+    // touchstart for a second finger, so the identifier guard is only reachable this way.
+    await page.evaluate(({ x, y }) => {
+      const grab = document.querySelector('.sheet-grab')!;
+      const finger = (id: number, cx: number, cy: number) => new Touch({ identifier: id, target: grab, clientX: cx, clientY: cy });
+      const fire = (type: string, touches: Touch[], changed: Touch[]) =>
+        grab.dispatchEvent(new TouchEvent(type, { touches, targetTouches: touches, changedTouches: changed, bubbles: true, cancelable: true }));
+      const one = finger(1, x, y);
+      fire('touchstart', [one], [one]);
+      const moved = finger(1, x, y + 30);
+      fire('touchmove', [moved], [moved]);
+      const two = finger(2, x + 60, y); // the second finger, on the strip
+      fire('touchstart', [moved, two], [two]);
+      const further = finger(1, x, y + 40);
+      fire('touchmove', [further, two], [further]);
+    }, at);
+    // The sheet follows the first finger to 40px, not 10px from a restart at the second touch.
+    await expect(sheet).toHaveAttribute('style', /translateY\(40px\)/);
     await expect(page.locator('.sheet.is-shown')).toBeVisible();
     await context.close();
   });

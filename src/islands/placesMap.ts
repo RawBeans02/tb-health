@@ -102,6 +102,12 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
   }).addTo(map);
   const layer = L.layerGroup().addTo(map);
   let signature = '';
+  // Whether the view holds every marker once it settles (tests read it: canvas markers
+  // aren't elements, and a refit cut short would leave some out, B12).
+  let shown: Leaflet.LatLngTuple[] = [];
+  map.on('moveend', () => {
+    el.dataset.fit = String(!shown.length || map.getBounds().contains(L.latLngBounds(shown)));
+  });
 
   return {
     show(rows, origin, placeHref, lang) {
@@ -128,8 +134,8 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
         L.circleMarker([p.lat, p.lng], { radius: 9, color: MARKER.stroke, weight: 2, fillColor: MARKER.fill, fillOpacity: 0.9 }).bindPopup(popup).addTo(layer);
         points.push([p.lat, p.lng]);
       }
-      // How many centers are on the map (tests read it: canvas markers aren't elements).
-      el.dataset.markers = String(points.length);
+      shown = points;
+      const centers = points.length;
       if (origin) {
         L.circleMarker([origin.lat, origin.lng], { radius: 10, color: MARKER.stroke, weight: 3, fillColor: MARKER.you, fillOpacity: 1 }).addTo(layer);
         points.push([origin.lat, origin.lng]);
@@ -137,6 +143,8 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
       // Instant: a refit while the last one animates could stop short of the new markers.
       if (points.length) map.fitBounds(points, { padding: [36, 36], maxZoom: 13, animate: false });
       else map.setView(PH_CENTRE, 5, { animate: false });
+      // How many centers are on the map, once it has been fitted to them (tests read it).
+      el.dataset.markers = String(centers);
       setTimeout(() => map.invalidateSize(), 60);
     },
     destroy() {
