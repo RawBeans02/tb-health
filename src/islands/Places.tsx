@@ -293,6 +293,7 @@ export default function Places(props: Props) {
             <div role="search" class="places-search">
               <LocationField
                 id="near"
+                enter="done"
                 label={t.fromLabel}
                 placeholder={t.fromPh}
                 value={from}

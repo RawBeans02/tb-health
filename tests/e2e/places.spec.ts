@@ -360,7 +360,8 @@ test.describe('sheet drag (audit B30)', () => {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     const page = await context.newPage();
     const cdp = await context.newCDPSession(page);
-    const touch = (type: string, points: { x: number; y: number; id: number }[]) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+    const touch = (type: 'touchStart' | 'touchMove' | 'touchEnd' | 'touchCancel', points: { x: number; y: number; id: number }[]) =>
+      cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
     await page.goto('/places');
     await expect(page.locator('.places-toolbar h2')).toHaveText('93 centers');
     await page.getByRole('button', { name: 'Filters', exact: true }).click();
@@ -401,5 +402,24 @@ test.describe('sheet drag (audit B30)', () => {
     await expect(page.locator('.sheet.is-shown')).toHaveCount(0, { timeout: 100 });
     await expect(page.locator('.sheet[style*="translateY"]')).toHaveCount(0, { timeout: 100 });
     await context.close();
+  });
+});
+
+test.describe('place field keyboard (audit B31)', () => {
+  test('no autocorrect or spellcheck; Enter is "done" on Places and closes the keyboard', async ({ page }) => {
+    await ready(page);
+    const near = page.locator('#near');
+    await expect(near).toHaveAttribute('autocorrect', 'off');
+    await expect(near).toHaveAttribute('spellcheck', 'false');
+    await expect(near).toHaveAttribute('enterkeyhint', 'done');
+    await near.fill('Baguio');
+    await near.press('Enter');
+    await expect(near).not.toBeFocused();
+  });
+
+  test('Enter is "go" on Home', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#from')).toHaveAttribute('enterkeyhint', 'go');
+    await expect(page.locator('#from')).toHaveAttribute('autocorrect', 'off');
   });
 });

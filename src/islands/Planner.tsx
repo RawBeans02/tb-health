@@ -268,6 +268,7 @@ export default function Planner(props: Props) {
 
             <LocationField
               id="from"
+              enter="go"
               label={t.fromLabel}
               placeholder={t.fromPh}
               value={from}

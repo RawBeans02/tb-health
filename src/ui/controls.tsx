@@ -73,6 +73,9 @@ export function LocationField(props: {
   message?: { text: string; error: boolean } | null;
   /** Home's note, which also describes the field. */
   note?: string;
+  /** The Enter key: 'go' submits Home's form; 'done' (Places, which filters as you type)
+      closes the keyboard (audit B31). */
+  enter: 'go' | 'done';
 }) {
   const msgId = `${props.id}-msg`;
   const noteId = `${props.id}-note`;
@@ -95,6 +98,12 @@ export function LocationField(props: {
           placeholder={props.placeholder}
           list="tbph-places"
           autocomplete="off"
+          autocorrect="off"
+          spellcheck={false}
+          enterkeyhint={props.enter}
+          onKeyDown={(e) => {
+            if (props.enter === 'done' && e.key === 'Enter' && !e.isComposing) e.currentTarget.blur();
+          }}
           aria-describedby={props.note ? `${msgId} ${noteId}` : msgId}
           aria-invalid={props.note ? (props.invalid ? 'true' : 'false') : undefined}
         />
