@@ -1,0 +1,32 @@
+---
+// The offline page (PLAN §5 step 11): the service worker serves it, in the page's language,
+// at the address of a page that isn't saved yet. Laid out as the 404 page.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { chrome } from '../content/chrome.ts';
+import { meta } from '../content/meta.ts';
+import { offline } from '../content/offline.ts';
+import { pick } from '../content/types.ts';
+import { href, type Lang } from '../lib/i18n.ts';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(offline, lang);
+---
+<BaseLayout lang={lang} title={meta.offlineTitle} standIn>
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <div class="notice">
+        <div class="notice-head">
+          <h1 class="h1">{t.h1}</h1>
+          <p class="lede">{t.lead}</p>
+        </div>
+        <div class="notice-actions">
+          <a class="btn btn--primary" href={href('home', lang)}>{chrome.nav_home[lang]}</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Browser tests run against a built dist/ (run `npm run build` first), served the way the
-// host serves it. On the 8 GB Mac run one project per guarded job (PLAN §5):
+// host serves it. On the 8 GB Mac run one project per guarded job (PLAN §5): chromium,
+// webkit, and pwa (the service worker's own project, step 11):
 //   GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && npm run test:e2e -- --project=chromium'
 const port = 4322;
 
@@ -14,7 +15,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: `http://127.0.0.1:${port}`,
-    // The service worker gets its own project in step 11; elsewhere it would serve stale pages.
+    // The service worker has its own project (pwa); elsewhere it would serve saved pages.
     serviceWorkers: 'block',
     // Never the machine's real location: a fixed synthetic point, and no permission
     // unless a test grants it.
@@ -25,8 +26,9 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: /pwa\.spec\.ts/ },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: /pwa\.spec\.ts/ },
+    { name: 'pwa', use: { ...devices['Desktop Chrome'], serviceWorkers: 'allow' }, testMatch: /pwa\.spec\.ts/ },
   ],
   webServer: {
     command: `node scripts/serve-dist.mjs --port ${port}`,

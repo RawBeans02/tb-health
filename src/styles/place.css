@@ -264,3 +264,14 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   gap: 20px;
   justify-items: start;
 }
+
+/* The offline shell while it reads the saved list, or when it can't (PlaceShell) */
+.place-shell-status {
+  font-size: var(--text-18);
+  color: var(--muted);
+}
+
+.place-missing button {
+  border: 0;
+  cursor: pointer;
+}

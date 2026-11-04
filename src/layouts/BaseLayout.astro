@@ -10,6 +10,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import InPlaceLanguage from '../components/InPlaceLanguage.astro';
 import type { Str } from '../content/types.ts';
 import { pagePath, toLang, type Lang } from '../lib/i18n.ts';
+import { CANVAS } from '../lib/manifest.ts';
 import prepaint from '../scripts/prepaint.js?raw';
 import type { Features, NavKey } from '../lib/nav.ts';
 import '../styles/tokens.css';
@@ -25,13 +26,18 @@ interface Props {
   current?: NavKey | '';
   /** 404 pages: noindex, no canonical or alternates, language links to the homes. */
   notFound?: boolean;
+  /** The offline page and the place shell, which the service worker serves at other pages'
+      addresses: noindex, no canonical or alternates (scripts/lang.ts points the language
+      links at the real address's twin). */
+  standIn?: boolean;
   /** Check, Places, Home: the language can switch without a navigation (PLAN §4.2). */
   inPlace?: boolean;
   /** English path to name as canonical when it isn't this page's (an alias of a place, Q6). */
   canonicalPath?: string;
 }
 
-const { lang, title, description, current = '', notFound = false, inPlace = false, canonicalPath } = Astro.props;
+const { lang, title, description, current = '', notFound = false, standIn = false, inPlace = false, canonicalPath } = Astro.props;
+const indexed = !notFound && !standIn;
 const features: Features = { check: TBPH_CHECK };
 const site = Astro.site!; // placeholder domain until Q7 (launch-check flags it)
 const path = canonicalPath ?? toLang(pagePath(Astro.url.pathname), 'en');
@@ -47,13 +53,14 @@ const descriptionText = description?.[lang] || undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title[lang]}</title>
     {descriptionText && <meta name="description" content={descriptionText} />}
-    {notFound && <meta name="robots" content="noindex" />}
-    {!notFound && <link rel="canonical" href={new URL(toLang(path, lang), site).href} />}
-    {!notFound && <link rel="alternate" hreflang="en" href={new URL(path, site).href} />}
-    {!notFound && <link rel="alternate" hreflang="fil" href={new URL(toLang(path, 'fil'), site).href} />}
-    {!notFound && <link rel="alternate" hreflang="x-default" href={new URL(path, site).href} />}
-    {/* Canvas. A meta tag can't read a CSS token; dark mode (V2) adds a prefers-color-scheme: dark twin. */}
-    <meta name="theme-color" content="#F1F3F4" />
+    {!indexed && <meta name="robots" content="noindex" />}
+    {indexed && <link rel="canonical" href={new URL(toLang(path, lang), site).href} />}
+    {indexed && <link rel="alternate" hreflang="en" href={new URL(path, site).href} />}
+    {indexed && <link rel="alternate" hreflang="fil" href={new URL(toLang(path, 'fil'), site).href} />}
+    {indexed && <link rel="alternate" hreflang="x-default" href={new URL(path, site).href} />}
+    {/* The canvas token. A meta tag can't read CSS; dark mode (V2) adds a prefers-color-scheme: dark twin. */}
+    <meta name="theme-color" content={CANVAS} />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="TB PH" />

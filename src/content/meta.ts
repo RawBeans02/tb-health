@@ -73,6 +73,15 @@ export const meta = {
     note: 'FIL: the Filipino H1 (404.dc.html) without its full stop, then the brand, as in the English title.',
   },
 
+  offlineTitle: {
+    en: 'Offline — TB PH',
+    fil: 'Wala kang koneksiyon — TB PH',
+    origin: 'ui',
+    src: ['proto:sw.js', 'derived'],
+    flags: ['FIL-REVIEW'],
+    note: "FIL: the Filipino first sentence of the prototype's offline page (sw.js) without its full stop, then the brand, as in the English title.",
+  },
+
   // Filipino descriptions the owner supplies later (Q3). Listed now so launch-check shows them.
   aboutDescription: ownerFil('Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.', 'About.dc.html'),
   dataDescription: ownerFil('TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.', 'Data.dc.html'),

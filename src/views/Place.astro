@@ -10,8 +10,8 @@ import { place as placeStrings } from '../content/place.ts';
 import { pick, type Str } from '../content/types.ts';
 import { readFacilities } from '../lib/build-data.ts';
 import { prepare, type FacilityRow } from '../lib/core/facility.ts';
-import { formatDate } from '../lib/dates.ts';
 import type { Lang } from '../lib/i18n.ts';
+import { placeDetails } from '../lib/place-details.ts';
 import '../styles/place.css';
 
 interface Props {
@@ -25,12 +25,7 @@ const p = prepare(row);
 const t = { ...pick(care, lang), ...pick(placeStrings, lang), nav_home: chrome.nav_home[lang] };
 // The facility's name, as Place.dc.html titles the page.
 const title: Str = { en: `${p.name} — TB PH`, fil: `${p.name} — TB PH`, origin: 'ui', src: ['derived', 'derived'] };
-const details = [
-  { label: t.hoursLabel, value: p.hours || t.hoursNotListed },
-  ...(p.phone ? [{ label: t.phoneLabel, value: p.phone }] : []),
-  { label: t.regionLabel, value: p.region || p.code },
-  ...(/^\d{4}-\d{2}-\d{2}$/.test(p.accr) ? [{ label: t.accrLabel, value: formatDate(p.accr, lang) }] : []),
-];
+const details = placeDetails(p, t, lang);
 ---
 <BaseLayout lang={lang} title={title} description={meta.placeDescription} current="home" canonicalPath={`/place/${canonicalId}`}>
   <main id="main" tabindex="-1">

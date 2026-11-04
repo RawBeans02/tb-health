@@ -19,7 +19,7 @@ interface Props {
   place: Place;
   lang: Lang;
   t: PlaceStrings;
-  /** Hours, phone, region, accreditation date: formatted at build time. */
+  /** Hours, phone, region, accreditation date (placeDetails): at build time, or by the offline shell. */
   details: readonly { label: string; value: string }[];
   sample: boolean;
 }

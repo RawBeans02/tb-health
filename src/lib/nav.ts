@@ -1,4 +1,4 @@
-// One route list for the header nav, the phone tab bar, the footer and (step 11) the
+// One route list for the header nav, the phone tab bar, the footer and the
 // manifest shortcuts, so the Q9 build switch can leave Check out of all of them at once.
 import { href, type Lang } from './i18n.ts';
 

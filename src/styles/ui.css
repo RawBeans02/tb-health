@@ -49,6 +49,24 @@
   gap: 8px;
   max-width: 48em;
 }
+
+/* A one-message page: 404 and offline. */
+.notice {
+  max-width: var(--reading);
+  display: grid;
+  gap: 28px;
+}
+
+.notice-head {
+  display: grid;
+  gap: 12px;
+}
+
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 /* Buttons are capsules. One solid (primary) per screen; soft for the rest. */
 .btn {
   display: inline-flex;

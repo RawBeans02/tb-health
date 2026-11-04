@@ -1,0 +1,11 @@
+{
+  // The service worker runs in a worker, not a page: its own program, with the WebWorker
+  // types instead of the DOM's (the two can't share one).
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src/sw.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "lib": ["ESNext", "WebWorker"],
+    "types": []
+  }
+}
