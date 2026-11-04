@@ -40,6 +40,19 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
   - Stable place ids derived from the normalised name + city + province, with a suffix on collisions and an alias map so old links keep working. `prepare-data` reports which ids changed between refreshes.
   - One prerendered page per place and language.
 
+### Q5. OpenStreetMap tiles and the privacy text (asked ahead of steps 5 and 10)
+- **Use the public OpenStreetMap tile server** for the optional Places map, as specced. Add `tile.openstreetmap.org` to the CSP's `img-src` (and nothing else) when the map is built.
+- **The owner writes the new EN/FIL About privacy rows** (self-hosted fonts, map tiles, the host). The builder writes none: they're `owner` strings that block in `launch-check` until supplied.
+
+### Q9. Launching without Check (asked ahead of step 7)
+- **Yes: the site may go live without `/check`** if the clinical review isn't done by launch. Check is still built in full. One build-time switch leaves it out of the nav, the phone tab bar, the manifest shortcuts and the sitemap; the tab bar then shows the remaining tabs.
+
+### Q10. Check question titles (asked ahead of step 7)
+- **TB red, as specced** in the README (not Ink as AUDIT-v6 suggests).
+
+### Q13. No-X-ray rule (asked ahead of step 3)
+- **README:293's rule:** the referral note shows only when no confirmed X-ray site exists at all, not when none is within 10 km.
+
 ## 30 October 2026 (owner, via the Account Admin)
 
 ### Q1. Node
