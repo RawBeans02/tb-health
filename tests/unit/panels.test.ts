@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { charts } from '../../src/content/charts.ts';
 import { pick } from '../../src/content/types.ts';
 import { buildPanels, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
-import { textWidth } from '../../src/lib/charts/primitives.ts';
+import { textWidth, wrapText } from '../../src/lib/charts/primitives.ts';
 
 const data = JSON.parse(readFileSync('data/tb-ph-data.json', 'utf8'));
 const claims = JSON.parse(readFileSync('data/claims.json', 'utf8'));
@@ -104,5 +104,42 @@ describe('room for chart labels (audit B39)', () => {
         }
       }
     }
+  });
+});
+
+describe('chart labels on a phone (audit B50)', () => {
+  const narrow = (lang: 'en' | 'fil', w: number) => buildPanels(data, lang, w, false, state(), pick(charts, lang));
+
+  it('wraps only what would not fit', () => {
+    expect(wrapText('Short label', 15, 300)).toEqual(['Short label']);
+    const lines = wrapText('2025: inaasahan, hindi pa natatanggap ang lahat', 15, 200);
+    expect(lines.length).toBeGreaterThan(1);
+    for (const line of lines) expect(textWidth(line, 15)).toBeLessThanOrEqual(200);
+  });
+
+  it('keeps every axis label on narrow bar charts inside the chart (d6, d16, d17)', () => {
+    for (const lang of ['en', 'fil'] as const) {
+      for (const w of [290, 360]) {
+        for (const p of narrow(lang, w).filter((p) => ['d6', 'd16', 'd17'].includes(p.id))) {
+          for (const c of p.svgs ?? []) {
+            for (const t of c.texts.filter((t) => t.fs === 13)) {
+              const width = textWidth(t.s, t.fs);
+              const from = t.anchor === 'middle' ? t.x - width / 2 : t.anchor === 'end' ? t.x - width : t.x;
+              expect(from, `${lang} ${w} ${p.id} "${t.s}"`).toBeGreaterThanOrEqual(0);
+              expect(from + width, `${lang} ${w} ${p.id} "${t.s}"`).toBeLessThanOrEqual(c.w + 0.5);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("wraps d17's Filipino legend on a phone, and keeps the English one on one line per item", () => {
+    const legendLines = (lang: 'en' | 'fil', w: number) => {
+      const c = buildPanels(data, lang, w, w >= 640, state(), pick(charts, lang)).find((p) => p.id === 'd17')!.svgs![0];
+      return c.texts.filter((t) => t.x === 24).length;
+    };
+    expect(legendLines('en', 928)).toBe(4);
+    expect(legendLines('fil', 290)).toBeGreaterThan(4);
   });
 });

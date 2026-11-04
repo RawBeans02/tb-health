@@ -3,6 +3,7 @@
 // default font size is set through the DevTools protocol.
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+import { outsideProblems, svgTextOutside } from './probes.ts';
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'sets the default font size through CDP');
 
@@ -13,34 +14,10 @@ async function defaultFontSize(page: Page, px: number) {
   await cdp.send('Page.setFontSizes', { fontSizes: { standard: px } });
 }
 
-/** Sideways scroll, content off the screen, and text wider than its own box. */
-function overflow(page: Page) {
-  return page.evaluate(() => {
-    const w = innerWidth;
-    const out: string[] = [];
-    const scroll = document.documentElement.scrollWidth - w;
-    if (scroll > 0) out.push(`page scrolls sideways by ${scroll}px`);
-    for (const el of document.querySelectorAll<HTMLElement>('main *, .site-header *, .tab-bar *')) {
-      if (el.closest('svg') || el.closest('.visually-hidden') || el.closest('.leaflet-container')) continue;
-      const r = el.getBoundingClientRect();
-      if (r.width <= 2 || r.height <= 2) continue;
-      const cs = getComputedStyle(el);
-      if (cs.visibility === 'hidden' || cs.display === 'none') continue;
-      let scroller = false;
-      for (let p: HTMLElement | null = el; p && p !== document.body; p = p.parentElement) {
-        const o = getComputedStyle(p).overflowX;
-        if (o === 'auto' || o === 'scroll' || (p !== el && (o === 'hidden' || o === 'clip'))) scroller = true;
-      }
-      if (scroller) continue;
-      const name = `${el.localName}.${[...el.classList].join('.')} "${(el.textContent ?? '').trim().slice(0, 24)}"`;
-      if (r.right > w + 1.5 || r.left < -1.5) out.push(`${name} off the screen (${Math.round(r.left)}..${Math.round(r.right)})`);
-      // Text wider than its own box. (Containers are left out: a child's designed bleed, such
-      // as Check's Next bar, widens their scroll width without overflowing anything.)
-      const ownText = [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? '').trim());
-      if (ownText && cs.display !== 'inline' && el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) out.push(`${name} overflows its box by ${el.scrollWidth - el.clientWidth}px`);
-    }
-    return out;
-  });
+/** Sideways scroll, content off the screen or cut off by a clipping box, text wider than its box, and chart labels outside their chart (B50). */
+async function overflow(page: Page) {
+  const scroll = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+  return [...(scroll > 0 ? [`page scrolls sideways by ${scroll}px`] : []), ...(await outsideProblems(page)), ...(await svgTextOutside(page))];
 }
 
 test.describe('larger default text', () => {

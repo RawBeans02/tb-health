@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+import { outsideProblems, svgTextOutside } from './probes.ts';
 
 const facilities = (JSON.parse(readFileSync('public/data/facilities.json', 'utf8')) as { facilities: { id: string; name: string }[] }).facilities;
 // The sample's Bangued page, or the first place when a synthetic fixture replaced the sample.
@@ -30,23 +31,6 @@ function probe(page: Page) {
     };
     const describe = (el: Element) => `${el.localName}.${[...el.classList].join('.')} "${(el.textContent ?? '').trim().slice(0, 30)}"`;
 
-    // Off the side of the screen, unless inside something that scrolls or clips sideways.
-    const off: string[] = [];
-    for (const el of document.querySelectorAll('main *')) {
-      if (!visible(el) || (el.closest('svg') && el.localName !== 'svg')) continue;
-      let p = el.parentElement;
-      let clipped = false;
-      while (p && p !== document.body) {
-        if (['auto', 'hidden', 'scroll', 'clip'].includes(getComputedStyle(p).overflowX)) {
-          clipped = true;
-          break;
-        }
-        p = p.parentElement;
-      }
-      const r = el.getBoundingClientRect();
-      if (!clipped && (r.right > w + 1.5 || r.left < -1.5)) off.push(`${describe(el)} ${Math.round(r.left)}..${Math.round(r.right)}`);
-    }
-
     // Template leftovers: {{x}} or a {name} placeholder that was never filled.
     const holes: string[] = [];
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -70,7 +54,7 @@ function probe(page: Page) {
       if (size < 14) tiny.push(`${describe(el)} ${size}px`);
     }
 
-    return { sideways: document.documentElement.scrollWidth - w, off, holes, h1: document.querySelectorAll('h1').length, small, tiny };
+    return { sideways: document.documentElement.scrollWidth - w, holes, h1: document.querySelectorAll('h1').length, small, tiny };
   });
 }
 
@@ -95,7 +79,8 @@ test.describe('qa-harness matrix', () => {
         await page.goto(path, { waitUntil: 'networkidle' });
         const r = await probe(page);
         expect(r.sideways, 'sideways scroll').toBeLessThanOrEqual(0);
-        expect(r.off, 'off the screen').toEqual([]);
+        expect(await outsideProblems(page, 'main *'), 'off the screen or cut off').toEqual([]);
+        expect(await svgTextOutside(page), 'chart labels outside their chart').toEqual([]);
         expect(r.holes, 'template leftovers').toEqual([]);
         expect(r.h1, 'one H1').toBe(1);
         expect(r.small, 'targets under 44px').toEqual([]);

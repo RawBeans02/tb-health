@@ -76,6 +76,29 @@ export function G(w: number, h: number, alt: string) {
 
 export function pathOf(xs: number[], ys: number[]): string { return xs.map((x: any, i: number) => (i ? 'L' : 'M') + r1(x) + ' ' + r1(ys[i])).join(''); }
 
+/** An axis label centred on its gridline, or held at the chart's edge where centring would cut it off (B50). */
+function axisAnchor(x: number, text: string, fs: number, w: number): { x: number; a: 'middle' | undefined | 'end' } {
+  const half = textWidth(text, fs) / 2;
+  if (x - half < 0) return { x: Math.max(0, x - half), a: undefined };
+  if (x + half > w) return { x: Math.min(w, x + half), a: 'end' };
+  return { x, a: 'middle' };
+}
+
+/** Words on as many lines as `max` px needs (by textWidth); one line when they fit. */
+export function wrapText(text: string, fs: number, max: number): string[] {
+  if (textWidth(text, fs) <= max) return [text];
+  const lines: string[] = [];
+  let line = '';
+  for (const word of text.split(' ')) {
+    const next = line ? `${line} ${word}` : word;
+    if (line && textWidth(next, fs) > max) {
+      lines.push(line);
+      line = word;
+    } else line = next;
+  }
+  return [...lines, line];
+}
+
 export function ts(o: Opts): Chart {
   const w = o.w, h = o.h || 300, th = o.th, fs = 15, T = 20, B = 38, n = o.years.length;
   // The prototype's gutters (66, 170), widened only for a label that wouldn't fit them: the
@@ -118,7 +141,7 @@ export function hbars(o: Opts): Chart {
   const th = o.th, fs = 15, above = o.w < 560, L = above ? 0 : (o.labelW || 170), R = o.R || 96;
   const rowH = above ? 52 : (o.rowH || 36), barH = 16, top = 6, n = o.rows.length, axisH = o.axis ? 30 : 0, h = top + n * rowH + axisH + 4;
   const S = G(o.w, h, o.alt), x = (v: number) => L + v / o.max * (o.w - L - R);
-  if (o.axis) o.axis.forEach((v: any) => { S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(x(v), top + n * rowH + 18, o.af ? o.af(v) : fmt(v), { a: 'middle', fs: 13, fill: th.muted }); });
+  if (o.axis) o.axis.forEach((v: any) => { const label = o.af ? o.af(v) : fmt(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(at.x, top + n * rowH + 18, label, { a: at.a, fs: 13, fill: th.muted }); });
   o.rows.forEach((rw: any, i: number) => {
     const y0 = top + i * rowH, by = above ? y0 + 26 : y0 + (rowH - barH) / 2, cy = by + barH / 2;
     if (above) S.text(0, y0 + 11, rw.label, { fs: 15, fw: rw.bold ? 700 : 400, fill: th.ink });
@@ -195,10 +218,19 @@ export function tbl(caption: string, cols: string[], rows: (string | number | nu
 }
 
 export function fstack(o: Opts): Chart {
-  const th = o.th, fs = 14, rowH = 34, barH = 18, L0 = 52, R = 96, n = o.rows.length, top = o.legend.length * 24 + 10, h = top + n * rowH + 28;
+  // Legend labels wrap only when they'd run past the chart (Filipino on a phone, B50); each
+  // extra line adds 18px above the bars.
+  const legend = o.legend.map((it: any) => ({ ...it, lines: wrapText(it.label, 15, o.w - 24) }));
+  const legendH = legend.reduce((sum: number, it: any) => sum + 24 + (it.lines.length - 1) * 18, 0);
+  const th = o.th, fs = 14, rowH = 34, barH = 18, L0 = 52, R = 96, n = o.rows.length, top = legendH + 10, h = top + n * rowH + 28;
   const S = G(o.w, h, o.alt), x = (v: number) => L0 + v / o.max * (o.w - L0 - R);
-  o.legend.forEach((it: any, i: number) => { const yy = 10 + i * 24; S.rect(0, yy - 7, 16, 14, it.fill, it.stroke, it.sw); S.text(24, yy, it.label, { fs: 15, fill: th.ink }); });
-  o.axis.forEach((v: any) => { S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(x(v), top + n * rowH + 16, o.af(v), { a: 'middle', fs: 13, fill: th.muted }); });
+  let yy = 10;
+  legend.forEach((it: any) => {
+    S.rect(0, yy - 7, 16, 14, it.fill, it.stroke, it.sw);
+    it.lines.forEach((line: string, k: number) => S.text(24, yy + k * 18, line, { fs: 15, fill: th.ink }));
+    yy += 24 + (it.lines.length - 1) * 18;
+  });
+  o.axis.forEach((v: any) => { const label = o.af(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(at.x, top + n * rowH + 16, label, { a: at.a, fs: 13, fill: th.muted }); });
   o.rows.forEach((r: any, i: number) => {
     const cy = top + i * rowH + rowH / 2; let x0 = L0;
     S.text(0, cy, r.label, { fs, fill: th.muted });
