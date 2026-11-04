@@ -3,8 +3,13 @@
 // rewords any of it; the owner decides. Reads the copy dictionaries, the prepared data
 // and the last build in dist/.
 //
-//   node scripts/launch-check.mjs            report only
-//   node scripts/launch-check.mjs --release  also exits 1 while anything blocking is open
+//   node scripts/launch-check.mjs                      report only
+//   node scripts/launch-check.mjs --release            the production gate: exits 1 while anything
+//                                                      blocking is open (PLAN §5 step 14)
+//   node scripts/launch-check.mjs --release --accept=sample,review
+//                                                      the owner's explicit override: those blocking
+//                                                      items are printed as accepted for this release
+// Each blocking item has a key, shown in brackets, for --accept.
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -49,22 +54,32 @@ function readJson(p) {
 const blocking = [];
 const decide = [...KNOWN];
 const queues = [];
+const block = (key, text) => blocking.push({ key, text });
 
 // Copy
 const all = await strings();
 const ownerMissing = all.filter((s) => (s.src[0] === 'owner' && !s.en) || (s.src[1] === 'owner' && !s.fil));
-if (ownerMissing.length) blocking.push(`Strings the owner supplies, not in yet (${ownerMissing.length}): ${ownerMissing.map((s) => s.id).join(', ')}.`);
+if (ownerMissing.length) block('owner-strings', `Strings the owner supplies, not in yet (${ownerMissing.length}): ${ownerMissing.map((s) => s.id).join(', ')}.`);
+
+// Which dictionaries this build ships: without Check (Q9), Check's own strings don't.
+const home = existsSync(path('dist/index.html')) ? readFileSync(path('dist/index.html'), 'utf8') : null;
+const checkBuilt = !!home && /href="\/check"/.test(/<nav class="site-nav"[\s\S]*?<\/nav>/.exec(home)?.[0] ?? '');
+
+// Flagged copy blocks a release: [REVIEW] waits on the clinical review, [VERIFY] on a check,
+// PLACEHOLDER on the owner. (Check's own [REVIEW] strings come under check-review below.)
+const FLAG_KEYS = { REVIEW: 'review', VERIFY: 'verify', PLACEHOLDER: 'placeholders' };
+const FLAG_WHY = { REVIEW: 'wait on the clinical review', VERIFY: 'need checking', PLACEHOLDER: 'stand in for owner content' };
 for (const flag of ['REVIEW', 'VERIFY', 'PLACEHOLDER']) {
-  const flagged = all.filter((s) => s.flags?.includes(flag));
+  const flagged = all.filter((s) => s.flags?.includes(flag) && !(flag === 'REVIEW' && s.id.startsWith('check.')));
   if (!flagged.length) continue;
-  // Long lists (Check's questions and results) are summed per dictionary.
+  // Long lists are summed per dictionary.
   const byDict = new Map();
   for (const s of flagged) {
     const dict = s.id.split('.')[0];
     byDict.set(dict, [...(byDict.get(dict) ?? []), s.id]);
   }
   const parts = [...byDict].map(([dict, ids]) => (ids.length > 6 ? `${dict}: ${ids.length} strings` : ids.join(', ')));
-  decide.push(`[${flag}] ${parts.join('; ')}.`);
+  block(FLAG_KEYS[flag], `[${flag}] strings that ${FLAG_WHY[flag]}: ${parts.join('; ')}.`);
 }
 const filReview = all.filter((s) => s.flags?.includes('FIL-REVIEW'));
 queues.push(`Filipino review: ${filReview.length} strings not from the pack (D10).`);
@@ -78,11 +93,11 @@ queues.push(`Copy overrides for the owner to confirm: ${overrides.length} string
 // Data
 const facilities = readJson('public/data/facilities.json');
 if (!facilities) {
-  blocking.push('No prepared facility list (run npm run build).');
+  block('no-data', 'No prepared facility list (run npm run build).');
 } else {
   const { meta, facilities: rows } = facilities;
-  if (meta.synthetic) blocking.push(`Facility list is SYNTHETIC (${meta.count} fake rows). Rebuild with real data.`);
-  else if (meta.sample) blocking.push(`Facility list is the ${meta.count}-row SAMPLE: the full list needs the pipeline run or a file from the owner (Q8).`);
+  if (meta.synthetic) block('synthetic', `Facility list is SYNTHETIC (${meta.count} fake rows). Rebuild with real data.`);
+  else if (meta.sample) block('sample', `Facility list is the ${meta.count}-row SAMPLE: the full list needs the pipeline run or a file from the owner (Q8).`);
   const lapsed = rows.filter((r) => r.accreditation_expiry && r.accreditation_expiry < today).length;
   const yearEnd = `${today.slice(0, 4)}-12-31`;
   const lapsing = rows.filter((r) => r.accreditation_expiry && r.accreditation_expiry >= today && r.accreditation_expiry <= yearEnd).length;
@@ -92,22 +107,34 @@ if (!facilities) {
 }
 
 // Last build
-const home = existsSync(path('dist/index.html')) ? readFileSync(path('dist/index.html'), 'utf8') : null;
 if (!home) {
-  blocking.push('No build in dist/ (run npm run build).');
+  block('no-build', 'No build in dist/ (run npm run build).');
 } else {
   const canonical = /<link rel="canonical" href="([^"]+)"/.exec(home)?.[1] ?? '';
   if (!canonical || /\.example\b/.test(new URL(canonical).hostname)) {
-    blocking.push(`Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks host and domain (Q7).`);
+    block('domain', `Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks host and domain (Q7).`);
   }
-  const headerNav = /<nav class="site-nav"[\s\S]*?<\/nav>/.exec(home)?.[0] ?? '';
-  if (/href="\/check"/.test(headerNav)) {
-    blocking.push('Check is in the nav, but its clinical review is pending: finish the review, or build with TBPH_CHECK=false (Q9). Learn L6 [REVIEW] too.');
+  if (checkBuilt) {
+    block('check-review', 'Check is in the build, but its clinical review is pending: finish the review, or build with TBPH_CHECK=false (Q9).');
   } else {
-    decide.push('Check is left out of this build (TBPH_CHECK=false, Q9). Learn L6 [REVIEW] still needs the clinical review.');
-    blocking.push(`Without Check, these strings still mention it; the owner rewords or drops them (Q9): ${CHECK_MENTIONS.join(', ')}.`);
+    decide.push('Check is left out of this build (TBPH_CHECK=false, Q9).');
+    block('check-mentions', `Without Check, these strings still mention it; the owner rewords or drops them (Q9): ${CHECK_MENTIONS.join(', ')}.`);
   }
+  const headers = existsSync(path('dist/_headers')) ? readFileSync(path('dist/_headers'), 'utf8') : '';
+  if (/X-Robots-Tag: noindex/.test(headers)) block('not-production', 'This build is marked noindex: build the release with TBPH_PRODUCTION=true and SITE_URL.');
 }
+
+// The owner's explicit override for this release: --accept=key,key.
+const acceptArg = process.argv.find((a) => a.startsWith('--accept='));
+const accepted = new Set(acceptArg ? acceptArg.slice('--accept='.length).split(',').filter(Boolean) : []);
+const keys = new Set(blocking.map((b) => b.key));
+const unknown = [...accepted].filter((k) => !keys.has(k));
+if (unknown.length) {
+  console.error(`launch-check: --accept names ${unknown.join(', ')}, which ${unknown.length > 1 ? "aren't" : "isn't"} open; open keys: ${[...keys].join(', ') || 'none'}.`);
+  process.exit(2);
+}
+const open = blocking.filter((b) => !accepted.has(b.key));
+const overridden = blocking.filter((b) => accepted.has(b.key));
 
 const section = (title, items) => {
   if (!items.length) return;
@@ -115,11 +142,15 @@ const section = (title, items) => {
   for (const item of items) console.log(`  - ${item}`);
 };
 console.log('launch-check: what is still open before launch (PLAN §4.3). The build resolves none of it.');
-section('Blocking', blocking);
+section('Blocking', open.map((b) => `[${b.key}] ${b.text}`));
+section('Blocking, accepted by the owner for this release (--accept)', overridden.map((b) => `[${b.key}] ${b.text}`));
 section('For the owner to decide or check', decide);
 section('Review queues', queues);
 
-if (process.argv.includes('--release') && blocking.length) {
-  console.error(`\nlaunch-check: ${blocking.length} blocking item(s) open; not ready to release.`);
-  process.exit(1);
+if (process.argv.includes('--release')) {
+  if (open.length) {
+    console.error(`\nlaunch-check: ${open.length} blocking item(s) open; not ready to release. The owner can accept one explicitly with --accept=<key>.`);
+    process.exit(1);
+  }
+  console.log(`\nlaunch-check: ready to release${overridden.length ? `, with ${overridden.length} item(s) accepted by the owner` : ''}.`);
 }
