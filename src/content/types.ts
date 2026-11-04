@@ -22,11 +22,11 @@ export type Origin =
  *   pack:N    line N of design/…/reference/content-and-data-pack.md
  *   readme:N  line N of design/…/README.md
  *   proto:F   prototype file F
- *   decision:N  line N of docs/decisions.md (the owner's wording, quoted there)
+ *   decision:ID  decision ID in docs/decisions.md ("### V4. …"), which quotes the owner's wording
  *   derived   built mechanically from other strings, as the note says (checked by hand)
  *   owner     not supplied yet
  */
-export type Ref = `pack:${number}` | `readme:${number}` | `proto:${string}` | `decision:${number}` | 'derived' | 'owner';
+export type Ref = `pack:${number}` | `readme:${number}` | `proto:${string}` | `decision:${string}` | 'derived' | 'owner';
 
 export interface Str {
   en: string;

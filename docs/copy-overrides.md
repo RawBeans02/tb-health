@@ -41,8 +41,8 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 
 ## The owner's own wording (`decision` strings)
 
-Strings whose wording the owner gave in `docs/decisions.md`; the parity test checks them against the line quoted there.
+Strings whose wording the owner gave in `docs/decisions.md`; the parity test finds each one, in quotes, in the decision it names (by id, such as V4, not by line).
 
 ### `about.n1555_note`: the DOH hotline note (step 10, V4)
 - **Prototype:** "[VERIFY] Confirm before launch" / "[VERIFY] Kumpirmahin bago ilunsad", in TB red.
-- **Ships (V4, decisions.md :38–39, the v7 wording):** "Press 2 for the National Patient Navigation and Referral Center." / "Pindutin ang 2 para sa National Patient Navigation and Referral Center.", in the muted note colour, since it is no longer a `[VERIFY]`.
+- **Ships (V4 in decisions.md, the v7 wording):** "Press 2 for the National Patient Navigation and Referral Center." / "Pindutin ang 2 para sa National Patient Navigation and Referral Center.", in the muted note colour, since it is no longer a `[VERIFY]`.

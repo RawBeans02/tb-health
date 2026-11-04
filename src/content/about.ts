@@ -84,7 +84,7 @@ export const about = {
     en: 'Press 2 for the National Patient Navigation and Referral Center.',
     fil: 'Pindutin ang 2 para sa National Patient Navigation and Referral Center.',
     origin: 'decision',
-    src: ['decision:38', 'decision:39'],
+    src: ['decision:V4', 'decision:V4'],
     note: "V4: the owner verified 1555 and gave this wording (v7), replacing the prototype's \"[VERIFY] Confirm before launch\".",
   },
   lcp_who: ui('Lung Center of the Philippines, TB DOTS', 'Lung Center of the Philippines, TB DOTS', file),

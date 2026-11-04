@@ -10,7 +10,10 @@ import { LANGS } from '../../src/lib/i18n.ts';
 const design = 'design/design_handoff_tb_ph';
 const packLines = readFileSync(`${design}/reference/content-and-data-pack.md`, 'utf8').split('\n');
 const readmeLines = readFileSync(`${design}/README.md`, 'utf8').split('\n');
-const decisionLines = readFileSync('docs/decisions.md', 'utf8').split('\n');
+// The owner's decisions by id ("### V4. …" up to the next heading). Found by id, not line:
+// the lead adds new batches at the top of the file.
+const decisions = readFileSync('docs/decisions.md', 'utf8').split(/^(?=#)/m);
+const decision = (id: string) => decisions.find((section) => section.startsWith(`### ${id}. `));
 const overridesDoc = readFileSync('docs/copy-overrides.md', 'utf8');
 
 // Prototype strings sit in JS literals or markup; undo the escaping before comparing.
@@ -66,7 +69,13 @@ describe('copy dictionaries', () => {
             return;
           }
           const [kind, where] = ref.split(/:(.*)/);
-          const lines = { pack: packLines, readme: readmeLines, decision: decisionLines }[kind];
+          if (kind === 'decision') {
+            // The owner's wording appears in quotes in that decision.
+            expect(decision(where), `${ref} not found`).toBeDefined();
+            expect(decision(where)).toContain(`"${text}"`);
+            return;
+          }
+          const lines = { pack: packLines, readme: readmeLines }[kind];
           const source = lines ? lines[Number(where) - 1] : prototype(where);
           expect(source, `${ref} not found`).toBeDefined();
           if (/\{(?!date\})\w+\}/.test(text)) {
