@@ -11,12 +11,13 @@ import type { Status } from '../lib/core/facility.ts';
  */
 export function Chip({ status, label, prefix }: { status: Status; label: string; prefix?: string }) {
   const kind = status === 'yes' ? 'yes' : status === 'referral' ? 'referral' : 'unknown';
-  // Same text run as the prototype: ring (not for "yes"), then "✓ label" or " label".
+  // One text run after the ring, as in the prototype, so a long chip wraps under itself:
+  // ring + " TB test (sputum): Collects…", or "Chest X-ray: ✓ Offers this" (README order).
+  const lead = prefix ? `${prefix} ` : '';
   return (
     <span class={`chip chip--${kind}`}>
-      {prefix && <span>{prefix}</span>}
       {kind !== 'yes' && <span class="chip-ring" aria-hidden="true" />}
-      {`${kind === 'yes' ? '✓' : ''} ${label}`}
+      {kind === 'yes' ? `${lead}✓ ${label}` : ` ${lead}${label}`}
     </span>
   );
 }
