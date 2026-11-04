@@ -262,7 +262,8 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await page.waitForTimeout(300);
     // A tap on the visible header link (Playwright's click would first scroll it into view).
     await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
-    await expect(page).toHaveURL(/\/fil\/data$/);
+    // The address keeps the hash (Q2a), put back without the jump to it.
+    await expect(page).toHaveURL(/\/fil\/data#d5$/);
     await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
     await expect.poll(async () => Math.abs((await page.locator('#d14').boundingBox())!.y - 120)).toBeLessThanOrEqual(2);
     await page.waitForTimeout(500); // and it stays there once the charts have settled

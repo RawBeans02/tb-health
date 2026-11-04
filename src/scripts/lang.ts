@@ -43,8 +43,9 @@ function onActivate(event: MouseEvent): void {
     return;
   }
   // With the reader's place saved, the twin opens without the hash: the browser's own jump to
-  // it (say #d5, from "On this page") would otherwise beat the saved place (B45).
-  if (saveAnchor(toLang(location.pathname, lang))) link.setAttribute('href', toLang(location.pathname, lang) + location.search);
+  // it (say #d5, from "On this page") would otherwise beat the saved place (B45). The twin
+  // puts the hash back in its address once the place is restored (restoreAnchor).
+  if (saveAnchor(toLang(location.pathname, lang), location.hash)) link.setAttribute('href', toLang(location.pathname, lang) + location.search);
 }
 
 document.addEventListener('click', onActivate);

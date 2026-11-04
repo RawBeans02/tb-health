@@ -1,6 +1,8 @@
 // Keeps the reader's place across a language switch (README:283): the last [data-anchor]
 // element whose top is above 35% of the viewport, and where it sat. A navigation carries
-// it in sessionStorage for one page load, then deletes it (PLAN §4.5).
+// it in sessionStorage for one page load, then deletes it (PLAN §4.5). The address's hash
+// travels with it: the twin link leaves it off, so the browser's own jump to it can't beat
+// the saved place (B45), and the twin puts it back in its address without scrolling (Q2a).
 
 const KEY = 'tbph-anchor';
 
@@ -28,11 +30,11 @@ export function keepAnchor(anchor: Anchor | null): void {
 }
 
 /** Before navigating to `path` in the other language. True when a place was saved. */
-export function saveAnchor(path: string): boolean {
+export function saveAnchor(path: string, hash = ''): boolean {
   const anchor = findAnchor();
   if (!anchor) return false;
   try {
-    sessionStorage.setItem(KEY, JSON.stringify({ path, ...anchor }));
+    sessionStorage.setItem(KEY, JSON.stringify({ path, hash, ...anchor }));
     return true;
   } catch {
     return false; // storage blocked: the switch still works, from the top of the page
@@ -65,10 +67,11 @@ export function restoreAnchor(): void {
   }
   if (!saved) return;
   try {
-    const { path, id, top } = JSON.parse(saved) as Record<string, unknown>;
+    const { path, hash, id, top } = JSON.parse(saved) as Record<string, unknown>;
     if (path === location.pathname && typeof id === 'string' && typeof top === 'number') {
       restored = { id, top };
       keepAnchor(restored);
+      if (typeof hash === 'string' && hash.startsWith('#') && !location.hash) history.replaceState(history.state, '', location.pathname + location.search + hash);
       for (const type of ['wheel', 'touchstart', 'keydown', 'mousedown']) addEventListener(type, () => (restored = null), { once: true, passive: true });
     }
   } catch {
