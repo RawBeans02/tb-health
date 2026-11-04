@@ -42,7 +42,9 @@ function onActivate(event: MouseEvent): void {
     document.dispatchEvent(new CustomEvent('tbph:lang-request', { detail: { lang } }));
     return;
   }
-  saveAnchor(toLang(location.pathname, lang));
+  // With the reader's place saved, the twin opens without the hash: the browser's own jump to
+  // it (say #d5, from "On this page") would otherwise beat the saved place (B45).
+  if (saveAnchor(toLang(location.pathname, lang))) link.setAttribute('href', toLang(location.pathname, lang) + location.search);
 }
 
 document.addEventListener('click', onActivate);

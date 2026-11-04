@@ -3,6 +3,7 @@
 // or to a chart, the numbers or the methods. The charts are laid out again at the phone's
 // width once they hydrate, which moves everything below them: the link is applied again
 // then, unless the reader has started scrolling (audit B6).
+import { hasRestoredAnchor } from '../lib/anchor.ts';
 
 document.addEventListener('click', (event) => {
   const link = event.target instanceof Element ? event.target.closest('[data-to-top]') : null;
@@ -29,6 +30,7 @@ for (const b of buttons) b.addEventListener('click', () => showTopic(b.dataset.t
 select?.addEventListener('change', () => showTopic(select.value));
 
 function toHash() {
+  if (hasRestoredAnchor()) return; // a language switch put the reader back where they were (B45)
   // Ids are lowercase words and dashes; anything else (#%) is ignored, never decoded (B37).
   const id = /^#([a-z0-9-]+)$/.exec(location.hash)?.[1];
   const target = id ? document.getElementById(id) : null;

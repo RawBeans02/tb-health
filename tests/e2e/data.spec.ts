@@ -244,6 +244,21 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await expect(page.locator('#claim-burden-deaths')).toBeFocused();
   });
 
+  test('a switch after reading on from an "On this page" link keeps the reader where they are (B45)', async ({ page }) => {
+    await page.goto('/data');
+    await page.locator('.data-index a[href="#d5"]').click();
+    await inView(page, '#d5');
+    await page.locator('#d14').evaluate((el) => scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' }));
+    await page.waitForTimeout(300);
+    // A tap on the visible header link (Playwright's click would first scroll it into view).
+    await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
+    await expect(page).toHaveURL(/\/fil\/data$/);
+    await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+    await expect.poll(async () => Math.abs((await page.locator('#d14').boundingBox())!.y - 120)).toBeLessThanOrEqual(2);
+    await page.waitForTimeout(500); // and it stays there once the charts have settled
+    expect(Math.abs((await page.locator('#d14').boundingBox())!.y - 120)).toBeLessThanOrEqual(2);
+  });
+
   test('a language switch keeps the section', async ({ page }) => {
     await page.goto('/data#d16');
     await inView(page, '#d16');

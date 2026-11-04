@@ -27,14 +27,15 @@ export function keepAnchor(anchor: Anchor | null): void {
   window.scrollBy({ top: el.getBoundingClientRect().top - anchor.top, behavior: 'instant' });
 }
 
-/** Before navigating to `path` in the other language. */
-export function saveAnchor(path: string): void {
+/** Before navigating to `path` in the other language. True when a place was saved. */
+export function saveAnchor(path: string): boolean {
   const anchor = findAnchor();
-  if (!anchor) return;
+  if (!anchor) return false;
   try {
     sessionStorage.setItem(KEY, JSON.stringify({ path, ...anchor }));
+    return true;
   } catch {
-    // Storage blocked: the switch still works, from the top of the page.
+    return false; // storage blocked: the switch still works, from the top of the page
   }
 }
 
