@@ -315,3 +315,39 @@ test.describe('map motion (audit B12)', () => {
     await expect(page.locator('.leaflet-zoom-anim, .leaflet-pan-anim')).toHaveCount(0);
   });
 });
+
+test.describe('system Back (audit B15)', () => {
+  test('a CloseWatcher lives only while the sheet is open, and Back closes it keeping the filters', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'CloseWatcher is Chromium only');
+    await page.addInitScript(() => {
+      const Native = (window as unknown as { CloseWatcher: new () => { destroy(): void; requestClose(): void } }).CloseWatcher;
+      const live = new Set<{ destroy(): void; requestClose(): void }>();
+      (window as unknown as { watchers: typeof live }).watchers = live;
+      (window as unknown as { CloseWatcher: unknown }).CloseWatcher = class extends Native {
+        constructor() {
+          super();
+          live.add(this);
+        }
+        destroy() {
+          live.delete(this);
+          super.destroy();
+        }
+      };
+    });
+    await page.setViewportSize({ width: 390, height: 800 });
+    await ready(page);
+    const live = () => page.evaluate(() => (window as unknown as { watchers: Set<unknown> }).watchers.size);
+    expect(await live()).toBe(0);
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Filters' });
+    await expect(dialog).toBeVisible();
+    await expect.poll(live).toBe(1); // created by the sheet's open effect, after paint
+    await dialog.getByRole('combobox', { name: 'Region' }).selectOption({ index: 1 });
+    // What the system Back does to a CloseWatcher.
+    await page.evaluate(() => [...(window as unknown as { watchers: Set<{ requestClose(): void }> }).watchers][0].requestClose());
+    await expect(dialog).toHaveCount(0);
+    await expect.poll(live).toBe(0);
+    await expect(page).toHaveURL(/\/places/);
+    await expect(page.getByRole('button', { name: /^Filters/ })).toContainText('1');
+  });
+});

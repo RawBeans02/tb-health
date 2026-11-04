@@ -209,12 +209,24 @@ export function BottomSheet(props: {
       setShown(true);
       head.current?.focus();
     });
+    // One close however it's asked for: Escape and a CloseWatcher can both fire for one key.
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      props.onClose();
+    };
     // Escape anywhere: Safari doesn't move focus to a button it clicks, so focus can be on <body>.
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') props.onClose();
+      if (event.key === 'Escape') close();
     };
     document.addEventListener('keydown', onEscape);
+    // The system Back gesture (Android) closes it too, where the browser has CloseWatcher (B15).
+    const Watcher = (window as unknown as { CloseWatcher?: new () => { onclose: (() => void) | null; destroy(): void } }).CloseWatcher;
+    const watcher = Watcher ? new Watcher() : null;
+    if (watcher) watcher.onclose = close;
     return () => {
+      watcher?.destroy();
       document.removeEventListener('keydown', onEscape);
       cancelAnimationFrame(id);
       document.body.style.overflow = overflow;
