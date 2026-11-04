@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { formatDate, LAST_UPDATED } from '../../src/lib/dates.ts';
 import { href, langOf, pagePath, toLang } from '../../src/lib/i18n.ts';
@@ -76,6 +77,8 @@ describe('formatDate', () => {
   });
 
   it('takes "last updated" from the newest data file', () => {
-    expect(LAST_UPDATED).toBe('2026-10-30');
+    const dates = ['data/tb-ph-data.json', 'data/claims.json'].map((file) => JSON.parse(readFileSync(file, 'utf8')).meta.generated as string);
+    expect(LAST_UPDATED).toBe(dates.sort().at(-1));
+    expect(LAST_UPDATED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });

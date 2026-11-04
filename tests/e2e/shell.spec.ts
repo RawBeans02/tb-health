@@ -119,7 +119,7 @@ test.describe('footer', () => {
     const footer = page.locator('.site-footer');
     await expect(footer.locator('.site-footer-emergency a')).toHaveAttribute('href', 'tel:911');
     await expect(footer).toContainText('Emergency? Tumawag sa 911.');
-    await expect(footer).toContainText('Huling update: 30 Oktubre 2026.');
+    await expect(footer).toContainText(/Datos: WHO Global Tuberculosis Report 2025, DOH, PhilHealth\. Huling update: \d{1,2} \p{L}+ \d{4}\./u);
     await expect(footer.locator('nav a')).toHaveText(['Hanapin ang gamutan', 'Suriin ang sintomas', 'Alamin ang TB', 'Ang datos', 'Accessibility', 'I-install ang app', 'Tungkol sa amin']);
     await expect(footer.locator('nav a', { hasText: 'Accessibility' })).toHaveAttribute('href', '/fil/about#accessibility');
   });

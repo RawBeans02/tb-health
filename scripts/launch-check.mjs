@@ -16,8 +16,7 @@ const today = new Date().toISOString().slice(0, 10);
 // Open items no string or data file carries yet. Each moves to a dictionary flag (or
 // goes) when its page is built.
 const KNOWN = [
-  'Content conflicts (pack §11): 7,500 vs 7,000 deaths; 27,900 vs about 28,000 DR-TB; 14% vs 13.6%. Data takeaways wait on D5 (before step 9).',
-  'DOH hotline 1555 [VERIFY] (About, step 10) and Sakay.ph deep links [VERIFY] (Place, step 6).',
+  'Sakay.ph deep links [VERIFY] (Place, step 6). (DOH 1555 was verified by the owner, V4.)',
   'The name "TB PH" is a placeholder until stakeholders choose one (pack line 3).',
   'WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11).',
 ];

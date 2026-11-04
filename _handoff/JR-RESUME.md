@@ -28,21 +28,31 @@
   - Icons copied to `public/icons/`; BaseLayout with the prototype's head tags; a placeholder `/`.
   - `data/` copied from the handoff. `scripts/prepare-data.mjs` validates the data, writes the slimmed `public/data/facilities.json` and `src/generated/region-counts.json` (both git-ignored), with `--synthetic` for 2,100 fake rows. Place ids pass through unchanged as a **Q6 stub**. The gazetteer comes in step 3 with the ported core.
   - Vitest (9 tests for prepare-data), Playwright (Chromium + WebKit, service workers blocked, fixed synthetic geolocation without permission), `scripts/serve-dist.mjs` (slashless files, 308 for `/x/` and `/x.html`, nearest `404.html`).
+- **4 Nov 2026: step 2 (shell, languages, 404) built** on `build/02-shell` (cut from `build/01-scaffold` after `b05b89a`):
+  - `src/lib/i18n.ts` (`toLang`, `href`, `pagePath`), `src/lib/nav.ts` (one route list; `TBPH_CHECK=false` drops Check from nav, tab bar, footer, shortcuts, Q9), `src/lib/dates.ts` (footer date = newest data-file `generated`), `src/lib/anchor.ts`.
+  - `SiteHeader`, `SiteFooter`, `LangToggle` (two links, `aria-current`, Q2a), `src/styles/chrome.css` (CSS breakpoints keyed on `<html lang>`, glass fallbacks), `src/styles/ui.css` (frame, H1, buttons). Every colour is a token (dark mode, V2, drops into `tokens.css`).
+  - `src/scripts/prepaint.js`: first thing in `<body>` (after the CSP meta), hash added with `Astro.csp.insertScriptHash`; Q2b redirect + `data-standalone/online/platform`. `src/scripts/lang.ts` (toggle links), `src/scripts/inplace.ts` + `InPlaceLanguage.astro` (in-place switch for Home/Places/Check; island sets `html[data-lang-switch="inplace"]`, listens for `tbph:lang`).
+  - Dictionaries in `src/content/` (`types.ts` format: en, fil, origin, src refs, flags). Parity test `tests/unit/parity.test.ts`; `docs/copy-overrides.md`; `scripts/launch-check.mjs`; `scripts/check-links.mjs` runs after every build (its `PENDING` set lists pages from later steps: remove each as it lands).
+  - 404 and `/fil/404`; Home placeholders at `/` and `/fil`.
+  - Tests: 101 unit, 20 Playwright (Chromium 20 pass; WebKit 19 pass + 1 Chromium-only skip). `tests/e2e/fixtures.ts` fails any test on a CSP violation, console error or uncaught exception (`test.use({ expectedErrors })` for expected 404 notes).
+  - Visual check against `404.dc.html` at 320/390/1280 (EN) and 390/1280 (FIL): same H1, header, footer and page heights. Pairs in `visual-check/step2/` (git-ignored).
+- 4 Nov 2026: merged the lead's `lead/owner-batch-3` (V1–V5: v7 design, dark mode, no em dashes, 1555 verified, new claims). `claims.json`'s `meta.generated` is now 2026-11-04, so the footer reads "Last updated 4 November 2026".
 - Node 22.23.4 installed through nvm for this folder only and pinned in `.nvmrc` (owner said yes via the Account Admin session, 30 Oct 2026). nvm's default alias (`16`) and the Homebrew/global Node were left unchanged, because the KitaMo builders use them. Don't change them.
 
 ## Next
-1. **Steps 2 onward, back to back** (lead, 4 Nov 2026): each step on its own branch cut from the previous one, staged by path. At the end of each, send the lead a short report (commits, test results, guard peak line, deviations), then start the next one straight away without waiting for review. The lead messages if something needs fixing.
+1. **Steps back to back** (lead, 4 Nov 2026): each step on its own branch cut from the previous one, staged by path. At the end of each, send the lead a short report (commits, test results, guard peak line, deviations), then start the next one straight away. The lead messages if something needs fixing.
 2. Stop and ask the lead only for: a genuinely open question; anything needing new copy, a new service or a pipeline run; failing tests I can't fix; a big change to the plan.
-3. Step 4 (Home): send the lead how to run the owner demo (command, URL, states to try, what's stubbed), then carry on with step 5 without waiting.
-4. **Before step 12, ask the lead about Q7** (host and domain). Until then use the placeholder domain, flagged in `launch-check`.
-5. Step 2 notes: `npx playwright install chromium webkit` is approved; run it when step 2 first needs it. Log Q2a's toggle change in `docs/copy-overrides.md`. Astro puts the CSP `<meta>` after the font `<style>` blocks, and a meta CSP only covers what comes after it, so the pre-paint script goes after the CSP meta.
+3. **v7 (V1–V3):** when the lead imports `design/v7/` and messages, read `design/v7/HANDOFF.md` › "v7", then in my own commit update PLAN.md (D2 dark mode, D6 em dashes, D14 dot red `#F26A72`, §7.3 conflicts and 1555, the launch-check list, the QA matrix in light and dark, design/v7 as a reference) and tell the lead if v7 changes anything bigger. Then: drop `theme.css`'s dark values into `tokens.css` (plus a dark `theme-color` meta), apply v7's wording for changed strings (step 2 has: the footer safety line, the Home and 404 titles), point their parity refs at v7, and log them in `docs/copy-overrides.md`. Any other em dash: list for the lead, don't reword.
+4. Step 3 (planner logic port) on `build/03-core`, cut from `build/02-shell`. Place ids per Q6 replace the stub in `prepare-data.mjs`; gazetteer moves in here; no-X-ray rule per Q13; prototype bugs fixed per Q4.
+5. Step 4 (Home): send the lead how to run the owner demo (command, URL, states to try, what's stubbed), then carry on with step 5 without waiting.
+6. **Before step 12, ask the lead about Q7** (host and domain). Until then the placeholder `https://tb-ph.example` (`astro.config.mjs` `site`), flagged in `launch-check`.
 - Checkout: this checkout is mine and I own branch switching. The lead only edits `docs/decisions.md`, reviews with `git show`/`git diff`, and tells me before committing a decision by path on my current branch.
 - Git hygiene: stage commits by path (`git add <files>`), never `git add -A` or `git add .`, so the lead's files don't get swept in.
 
 ## How to run things
 - Every shell: `. ~/.nvm/nvm.sh && nvm use` (reads `.nvmrc`) before any node/npm command. Package manager is npm; leave the Homebrew pnpm alone.
 - Fresh checkout: `npm ci` (the bundled npm 10.9.9 is fine for that). **Adding or updating packages: `npx -y npm@11.21.1 install …`** (pinned, so installs repeat exactly), because npm 10's installer crashes on this tree (`reading 'edgesOut'`). Pin exact versions.
-- Scripts: `npm run build` (prepare-data + astro build), `npm run build:synthetic` (2,100 fake facilities, for scale only; rebuild normally afterwards), `npm run check` (astro check), `npm test` (Vitest), `npm run test:e2e -- --project=chromium` (Playwright against `dist/`, build first), `npm run serve` (dist/ on http://127.0.0.1:4322).
+- Scripts: `npm run build` (prepare-data + astro build + link crawl), `npm run launch-check`, `npm run build:synthetic` (2,100 fake facilities, for scale only; rebuild normally afterwards), `npm run check` (astro check), `npm test` (Vitest), `npm run test:e2e -- --project=chromium` (Playwright against `dist/`, build first), `npm run serve` (dist/ on http://127.0.0.1:4322).
 - Heavy jobs (check, build, tests, Playwright, Lighthouse), one guarded job each, one Playwright project per job: `GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && npm run <script>'`. Keep the guard's `peak … GB` line as evidence for each step.
 - View the prototype: `cd design/design_handoff_tb_ph/prototype && python3 -m http.server 8080` (it loads React and fonts from CDNs).
 
@@ -55,6 +65,7 @@
 
 ## Open questions
 - `docs/PLAN.md` §7.1. Q1–Q3 answered (Q2, Q3 on 4 Nov 2026, see `docs/decisions.md`). Open questions go through the TB Health lead, who asks the owner before the steps that need them:
-  - Before specific steps: Q4 URL privacy and location (incl. bare place links, Place distance), Q5 OSM tiles + who writes the privacy text, Q6 facility data and ids, Q7 host/account/domain/deploy model, Q9 launching without Check, Q10 Check question title colour.
-  - Before launch: Q8 full facility list (Nominatim, OSM credit), Q11 WHO 2026 refresh, Q12 lapsed accreditations, Q13 no-X-ray rule.
+  - Answered 4 Nov 2026: Q4, Q5, Q6, Q9, Q10, Q13, and V1–V5 (v7). See `docs/decisions.md`.
+  - Open: Q7 host/domain (ask the lead before step 12), Q8 full facility list, Q11 WHO 2026 refresh, Q12 lapsed accreditations (D24 applies), the owner's Filipino descriptions (Q3) and About privacy rows (Q5).
+  - Asked the lead (step 2 report): with `TBPH_CHECK=false`, should the /check page itself and in-content links to it (the 404's "Check symptoms" button, later Learn/Home) also go? The decision lists only nav, tab bar, shortcuts and sitemap, so they stay for now.
 - The owner supplies the Filipino descriptions for About, Data, Install, Learn and Place later (Q3). They are `owner` strings, blocking in `launch-check`; I write none.

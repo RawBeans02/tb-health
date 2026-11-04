@@ -3,7 +3,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { Str } from '../../src/content/types.ts';
-import { formatDate, LAST_UPDATED } from '../../src/lib/dates.ts';
 import { LANGS } from '../../src/lib/i18n.ts';
 
 const design = 'design/design_handoff_tb_ph';
@@ -19,6 +18,8 @@ const prototype = (file: string) =>
     .replace(/&#39;/g, "'")
     .replace(/&quot;/g, '"')
     .replace(/&amp;/g, '&');
+
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function isStr(value: unknown): value is Str {
   return !!value && typeof value === 'object' && 'en' in value && 'fil' in value && 'src' in value;
@@ -41,7 +42,7 @@ describe('copy dictionaries', () => {
     describe(id, () => {
       LANGS.forEach((lang, i) => {
         const ref = str.src[i];
-        const text = str[lang].replace('{date}', formatDate(LAST_UPDATED, lang));
+        const text = str[lang];
 
         it(`${lang} matches ${ref}`, () => {
           if (ref === 'owner') {
@@ -57,7 +58,9 @@ describe('copy dictionaries', () => {
           const source =
             kind === 'pack' ? packLines[Number(where) - 1] : kind === 'readme' ? readmeLines[Number(where) - 1] : prototype(where);
           expect(source, `${ref} not found`).toBeDefined();
-          expect(source).toContain(text);
+          // {date} follows the data files, so any "30 October 2026"-style date matches it.
+          const pattern = text.split('{date}').map(escape).join(String.raw`\d{1,2} \p{L}+ \d{4}`);
+          expect(source).toMatch(new RegExp(pattern, 'u'));
         });
       });
 

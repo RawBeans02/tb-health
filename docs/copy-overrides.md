@@ -21,7 +21,7 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 ### `chrome.credit`: the data date (step 2)
 - **Pack :35–36:** "… Last updated 23 October 2026." / "… Huling update: 23 Oktubre 2026."
 - **README:144 and the prototype footer (ships):** "… Last updated 30 October 2026." / "… Huling update: 30 Oktubre 2026."
-- The date isn't typed into the string: it is the newest `generated` date in `data/tb-ph-data.json` and `data/claims.json` (30 October 2026 today), so it follows the data.
+- The date isn't typed into the string: it is the newest `generated` date in `data/tb-ph-data.json` and `data/claims.json`, so it follows the data. The pack's 23 October and the README's 30 October were each the newest data-file date at the time; since the owner's new `claims.json` (V5, 4 November 2026) the footer reads 4 November 2026.
 
 ## Still to come (added with their steps)
 - Place actions: "Get directions" opening Google Maps vs the pack's "Commute directions"; "Call" / "Copy address" vs "Call before you go" / "Copy address for Sakay.ph" (steps 4–6).
