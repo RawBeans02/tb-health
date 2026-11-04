@@ -196,6 +196,7 @@ export function BottomSheet(props: {
   const sheet = useRef<HTMLDivElement>(null);
   const head = useRef<HTMLHeadingElement>(null);
   const startY = useRef<number | null>(null);
+  const touchId = useRef<number | null>(null); // the one finger the sheet follows (B30)
 
   // Open: lock scroll, make the rest inert, slide in, focus the heading.
   useEffect(() => {
@@ -214,7 +215,7 @@ export function BottomSheet(props: {
     const close = () => {
       if (closed) return;
       closed = true;
-      props.onClose();
+      dismiss();
     };
     // Escape anywhere: Safari doesn't move focus to a button it clicks, so focus can be on <body>.
     const onEscape = (event: KeyboardEvent) => {
@@ -265,9 +266,52 @@ export function BottomSheet(props: {
     }
   }
 
+  // Every close starts the slide-out at once, from wherever a drag left the sheet (B30).
+  function dismiss() {
+    startY.current = null;
+    touchId.current = null;
+    setDrag(0);
+    setShown(false);
+    props.onClose();
+  }
+
+  // The finger the sheet follows, if it's among these touches.
+  const ours = (list: TouchList) => [...list].find((t) => t.identifier === touchId.current);
+
+  function onTouchStart(event: TouchEvent) {
+    if (touchId.current !== null) return; // a second finger: ignored
+    const touch = event.changedTouches[0];
+    touchId.current = touch.identifier;
+    startY.current = touch.clientY;
+  }
+
+  function onTouchMove(event: TouchEvent) {
+    const touch = ours(event.touches);
+    if (touch && startY.current !== null) setDrag(Math.max(0, touch.clientY - startY.current));
+  }
+
+  function onTouchEnd(event: TouchEvent) {
+    if (!ours(event.changedTouches)) return;
+    if (drag > 90) {
+      dismiss();
+      return;
+    }
+    startY.current = null;
+    touchId.current = null;
+    setDrag(0);
+  }
+
+  // The system took the touch (a scroll, a gesture, a call): back to rest, never a close.
+  function onTouchCancel(event: TouchEvent) {
+    if (!ours(event.changedTouches)) return;
+    startY.current = null;
+    touchId.current = null;
+    setDrag(0);
+  }
+
   return (
     <div class="sheet-layer">
-      <div class={`sheet-scrim${shown ? ' is-shown' : ''}`} aria-hidden="true" onClick={props.onClose} />
+      <div class={`sheet-scrim${shown ? ' is-shown' : ''}`} aria-hidden="true" onClick={dismiss} />
       <div
         ref={sheet}
         class={`sheet${shown ? ' is-shown' : ''}${drag ? ' is-dragging' : ''}`}
@@ -278,16 +322,7 @@ export function BottomSheet(props: {
         // Follows the finger while dragging (CSSOM, which the CSP allows).
         style={drag ? { transform: `translateY(${drag}px)` } : undefined}
       >
-        <div
-          class="sheet-grab"
-          onTouchStart={(e) => (startY.current = e.touches[0].clientY)}
-          onTouchMove={(e) => startY.current !== null && setDrag(Math.max(0, e.touches[0].clientY - startY.current))}
-          onTouchEnd={() => {
-            startY.current = null;
-            if (drag > 90) props.onClose();
-            else setDrag(0);
-          }}
-        >
+        <div class="sheet-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onTouchCancel={onTouchCancel}>
           <span class="sheet-grabber" aria-hidden="true" />
           <div class="sheet-head">
             <div>
@@ -298,7 +333,7 @@ export function BottomSheet(props: {
                 {props.subtitle}
               </p>
             </div>
-            <button type="button" class="sheet-done" onClick={props.onClose}>
+            <button type="button" class="sheet-done" onClick={dismiss}>
               {props.doneLabel}
             </button>
           </div>

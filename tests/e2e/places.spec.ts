@@ -1,6 +1,6 @@
 // Step 5: Places (PLAN §5). Sample data; synthetic locations; map tiles served locally so
 // tests never contact OpenStreetMap.
-import type { Page } from '@playwright/test';
+import type { Browser, Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
 
 const PNG_1X1 = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
@@ -349,5 +349,57 @@ test.describe('system Back (audit B15)', () => {
     await expect.poll(live).toBe(0);
     await expect(page).toHaveURL(/\/places/);
     await expect(page.getByRole('button', { name: /^Filters/ })).toContainText('1');
+  });
+});
+
+test.describe('sheet drag (audit B30)', () => {
+  test.skip(({ browserName }) => browserName !== 'chromium', 'touch events through CDP');
+
+  /** A phone with the Filters sheet open; `touch` sends raw touch events; `at` is the grabber. */
+  async function openSheet(browser: Browser) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const page = await context.newPage();
+    const cdp = await context.newCDPSession(page);
+    const touch = (type: string, points: { x: number; y: number; id: number }[]) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+    await page.goto('/places');
+    await expect(page.locator('.places-toolbar h2')).toHaveText('93 centers');
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await expect(page.locator('.sheet.is-shown')).toBeVisible();
+    await page.waitForTimeout(300);
+    const g = (await page.locator('.sheet-grab').boundingBox())!;
+    return { context, page, touch, sheet: page.locator('.sheet'), at: { x: g.x + g.width / 2, y: g.y + 12 } };
+  }
+
+  test('a cancelled touch goes back to rest and never closes', async ({ browser }) => {
+    const { context, page, touch, sheet, at } = await openSheet(browser);
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    await touch('touchMove', [{ x: at.x, y: at.y + 50, id: 1 }]);
+    await expect(sheet).toHaveClass(/is-dragging/);
+    await touch('touchCancel', []);
+    await expect(sheet).not.toHaveClass(/is-dragging/);
+    expect(await sheet.getAttribute('style')).toBeFalsy();
+    await expect(page.locator('.sheet.is-shown')).toBeVisible();
+    await context.close();
+  });
+
+  test('a second finger causes no jump', async ({ browser }) => {
+    const { context, page, touch, sheet, at } = await openSheet(browser);
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    await touch('touchStart', [{ ...at, id: 1 }, { x: at.x, y: at.y + 300, id: 2 }]);
+    await touch('touchMove', [{ x: at.x, y: at.y + 30, id: 1 }, { x: at.x, y: at.y + 300, id: 2 }]);
+    await expect(sheet).toHaveAttribute('style', /translateY\(30px\)/);
+    await touch('touchEnd', []);
+    await expect(page.locator('.sheet.is-shown')).toBeVisible();
+    await context.close();
+  });
+
+  test('a release past 90px starts the slide-out at once', async ({ browser }) => {
+    const { context, page, touch, at } = await openSheet(browser);
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    await touch('touchMove', [{ x: at.x, y: at.y + 120, id: 1 }]);
+    await touch('touchEnd', []);
+    await expect(page.locator('.sheet.is-shown')).toHaveCount(0, { timeout: 100 });
+    await expect(page.locator('.sheet[style*="translateY"]')).toHaveCount(0, { timeout: 100 });
+    await context.close();
   });
 });
