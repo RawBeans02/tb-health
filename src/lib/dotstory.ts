@@ -239,3 +239,11 @@ export function beatAt(tops: readonly number[], line: number): number {
   });
   return b;
 }
+
+/**
+ * Whether the story is near the screen, from one IntersectionObserver callback: the newest
+ * entry wins, since a fast scroll can queue a leave and an enter together (audit B55).
+ */
+export function isNear(entries: readonly Pick<IntersectionObserverEntry, 'isIntersecting'>[]): boolean {
+  return entries.at(-1)!.isIntersecting;
+}

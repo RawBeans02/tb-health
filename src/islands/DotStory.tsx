@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { fill } from '../content/types.ts';
 import type { DotStageStrings } from '../content/dotstory.ts';
-import { beatAt, triggerLine, type StoryData } from '../lib/dotstory.ts';
+import { beatAt, isNear, triggerLine, type StoryData } from '../lib/dotstory.ts';
 import type { Lang } from '../lib/i18n.ts';
 import { DotStage } from './dotStage.ts';
 
@@ -49,8 +49,8 @@ export default function DotStory({ lang, d, tx }: Props) {
     let near = true;
     const story = box.closest<HTMLElement>('.story') ?? box;
     const presence = new IntersectionObserver(
-      ([entry]) => {
-        near = entry.isIntersecting;
+      (entries) => {
+        near = isNear(entries);
         if (near) check();
       },
       { rootMargin: '200px 0px' },

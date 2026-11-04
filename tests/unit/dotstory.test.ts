@@ -1,7 +1,7 @@
 // The dot story's numbers, layout and beats (DotStory.dc.html; pack §2; D14).
 import { describe, expect, it } from 'vitest';
 import stats from '../../data/tb-ph-data.json' with { type: 'json' };
-import { beatAt, computeLayout, ease, hexRgb, KIND, navRoom, overlays, progress, seedDots, storyData, target, triggerLine, type Palette } from '../../src/lib/dotstory.ts';
+import { beatAt, computeLayout, ease, hexRgb, isNear, KIND, navRoom, overlays, progress, seedDots, storyData, target, triggerLine, type Palette } from '../../src/lib/dotstory.ts';
 
 const d = storyData(stats);
 const P: Palette = { dot: hexRgb('#7A8C97'), red: hexRgb('#C42032'), ink: hexRgb('#14212B') };
@@ -136,6 +136,12 @@ describe('beats', () => {
     expect(beatAt([200, 900, 1700], 558)).toBe(0);
     expect(beatAt([-700, 400, 1200], 558)).toBe(1);
     expect(beatAt([-1600, -800, 100], 558)).toBe(2);
+  });
+
+  it('reads the newest presence entry when a fast scroll queues a leave and an enter (B55)', () => {
+    expect(isNear([{ isIntersecting: false }, { isIntersecting: true }])).toBe(true);
+    expect(isNear([{ isIntersecting: true }, { isIntersecting: false }])).toBe(false);
+    expect(isNear([{ isIntersecting: true }])).toBe(true);
   });
 });
 
