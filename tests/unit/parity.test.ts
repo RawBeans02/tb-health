@@ -1,6 +1,8 @@
 // Copy parity (PLAN §4.3): every string matches the source it names, word for word, so
 // medical and UI copy can't drift during the port.
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { Str } from '../../src/content/types.ts';
 import { LANGS } from '../../src/lib/i18n.ts';
@@ -25,16 +27,23 @@ function isStr(value: unknown): value is Str {
   return !!value && typeof value === 'object' && 'en' in value && 'fil' in value && 'src' in value;
 }
 
-const modules = import.meta.glob<Record<string, Record<string, unknown>>>(['../../src/content/*.ts', '!**/types.ts'], { eager: true });
+// Listed at run time: Vitest's module cache keeps a transformed import.meta.glob, which
+// silently left a new dictionary out of this test.
+const dictionaryFiles = readdirSync('src/content').filter((f) => f.endsWith('.ts') && f !== 'types.ts');
+const modules = await Promise.all(
+  dictionaryFiles.map((f) => import(/* @vite-ignore */ pathToFileURL(resolve('src/content', f)).href) as Promise<Record<string, Record<string, unknown>>>),
+);
 const entries: { id: string; str: Str }[] = [];
-for (const module of Object.values(modules)) {
+for (const module of modules) {
   for (const [dictName, dict] of Object.entries(module)) {
     for (const [key, str] of Object.entries(dict)) if (isStr(str)) entries.push({ id: `${dictName}.${key}`, str });
   }
 }
 
 describe('copy dictionaries', () => {
-  it('found the dictionaries', () => {
+  it('found every dictionary', () => {
+    expect(dictionaryFiles.length).toBeGreaterThanOrEqual(8);
+    expect(modules.every((m) => Object.keys(m).length > 0)).toBe(true);
     expect(entries.length).toBeGreaterThan(20);
   });
 

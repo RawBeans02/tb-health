@@ -27,6 +27,9 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 - **Pack :406–408 (Places card buttons):** "Call" / "Tumawag", "Get directions" / "Paano pumunta", "Copy address" / "Kopyahin ang address".
 - **README:193, :208, :217 and the prototype (ship):** "Call before you go" / "Tumawag bago pumunta" (a text link), "Commute directions" / "Paano mag-commute" (Google Maps transit directions in a new tab, with Walk and Drive beside it on the Place page), and "Copy address for Sakay.ph" / "Kopyahin ang address para sa Sakay.ph" (copies the address, then opens sakay.ph). The Sakay.ph link itself stays `[VERIFY]`.
 
+### `check.res_A_find`: "Plan my route to a test" (step 7, D11)
+- **Pack :321 and :328 (result A buttons):** "Find a TB-DOTS center" / "Hanapin ang TB-DOTS center".
+- **README:226 and the prototype (ship):** "Plan my route to a test" / "Planuhin ang daan papunta sa pagsusuri", the solid button on results A, B and C, leading to the planner with the whole route (`/?need=all`, or `/fil?need=all`).
+
 ## Still to come (added with their steps)
-- Check results A–C: "Plan my route to a test" (README) (step 7, D11).
 - Other 23 vs 30 October dates in page copy (steps 8–10).

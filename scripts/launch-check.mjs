@@ -53,7 +53,15 @@ if (ownerMissing.length) blocking.push(`Strings the owner supplies, not in yet (
 blocking.push('About privacy rows, EN and FIL, from the owner (Q5): self-hosted fonts, map tiles, the host. Listed as strings in step 10.');
 for (const flag of ['REVIEW', 'VERIFY', 'PLACEHOLDER']) {
   const flagged = all.filter((s) => s.flags?.includes(flag));
-  if (flagged.length) decide.push(`[${flag}] ${flagged.map((s) => s.id).join(', ')}.`);
+  if (!flagged.length) continue;
+  // Long lists (Check's questions and results) are summed per dictionary.
+  const byDict = new Map();
+  for (const s of flagged) {
+    const dict = s.id.split('.')[0];
+    byDict.set(dict, [...(byDict.get(dict) ?? []), s.id]);
+  }
+  const parts = [...byDict].map(([dict, ids]) => (ids.length > 6 ? `${dict}: ${ids.length} strings` : ids.join(', ')));
+  decide.push(`[${flag}] ${parts.join('; ')}.`);
 }
 const filReview = all.filter((s) => s.flags?.includes('FIL-REVIEW'));
 queues.push(`Filipino review: ${filReview.length} strings not from the pack (D10).`);
