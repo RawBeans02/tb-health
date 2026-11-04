@@ -65,7 +65,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Monetization experiments | N/A | Unchanged. |
 | A/B experiment integrity / conversion testing | N/A | Unchanged. |
 | Production-readiness review | Partial | This document; launch-check gate; owner decisions pending (owner-queue.md). |
-| Build-vs-buy / external dependency due diligence | Verified / Partial | Exact-pinned dependencies; Workbox runtime instead of workbox-build (fewer packages); Lighthouse through npx, not a dependency; `npm audit --omit=dev`: 0 vulnerabilities. Open: WHO and PhilHealth reuse terms (O12). |
+| Build-vs-buy / external dependency due diligence | Verified / Partial | Exact-pinned dependencies; Workbox runtime instead of workbox-build (fewer packages); Lighthouse through npx, not a dependency; `npm audit --omit=dev`: 0 vulnerabilities, Workbox included (it ships in `sw.js`, so it is a runtime dependency: B56). Open: WHO and PhilHealth reuse terms (O12). |
 
 ## Deliberate changes from the prototype (since step 11)
 
