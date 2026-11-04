@@ -97,6 +97,37 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - **Check routing:** the interim audit's two independent comparisons (215,197 combinations; 0 mismatches) plus the child-path unit tests (B43).
 - **Outside links:** `node scripts/outside-links.mjs`: 28 sources on 23 sites (page links and the islands' props, such as Home's route sources: B64), 558 directions links; not fetched (owner's OK needed). With `--fetch` it sends HEAD, then GET after any answer that isn't 2xx or 3xx, one request a second with a 15 s timeout and a plain project User-Agent, and reports redirects without following them.
 
+## launch-check report
+
+The whole report (`npm run launch-check`, B65) on the tip's normal build: the sample list, the placeholder domain, not production, Check in. A production build with the real address drops [domain] and [not-production]; a build without Check swaps [check-review] for [check-mentions] and leaves Check's strings out of every list.
+
+```
+launch-check: what is still open before launch (PLAN §4.3). The build resolves none of it.
+
+Blocking (7)
+  - [owner-strings] Strings the owner supplies, not in yet (6): about.privacyServices, meta.aboutDescription, meta.dataDescription, meta.installDescription, meta.learnDescription, meta.placeDescription.
+  - [review] [REVIEW] strings that wait on the clinical review: care.stopTitle_xray, care.stopTitle_test, care.stopTitle_meds, care.stopText_xray, care.stopText_test, care.stopText_meds; learn: 7 strings.
+  - [placeholders] [PLACEHOLDER] strings that stand in for owner content: about.lede, about.partnersRow, about.reviewText, about.a11yText, about.contactRow.
+  - [check-review] Check is in the build, but its clinical review is pending: 68 check strings still carry [REVIEW]; the reviewer placeholder is still in (check.foot). Record the review, or build with TBPH_CHECK=false (Q9).
+  - [sample] Facility list is the 93-row SAMPLE: the full list needs the pipeline run or a file from the owner (Q8).
+  - [domain] Domain is a placeholder (https://tb-ph.example): build with SITE_URL once the owner picks host and domain (Q7).
+  - [not-production] This build is marked noindex: build the release with TBPH_PRODUCTION=true and SITE_URL.
+
+For the owner to decide or check (7)
+  - Sakay.ph deep links [VERIFY] (Place, step 6). (DOH 1555 was verified by the owner, V4.)
+  - The name "TB PH" is a placeholder until stakeholders choose one (pack line 3).
+  - WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, datapage.method2.
+  - Reuse terms for the WHO and PhilHealth data (licence and attribution wording) are not recorded yet.
+  - Em dashes (V3), for the owner or the v7 wording: care.gov, care.priv, care.noHours, charts.d13_2, check.introBody, check.res_C_title, check.res_D_body, check.foot, check.cardTitle, chrome.safety, dotStory.b2, dotStory.b4_h2, home.lede, learn.l2_p1, learn.l5_h, learn.l5_ol2, learn.l6_p5, learn.l8_ul1, learn.l9_p2, meta.homeTitle, meta.placesTitle, meta.checkTitle, meta.notFoundTitle, meta.offlineTitle.
+  - Accreditations: 3 lapsed, 73 more end by 2026-12-31; shown as listed until Q12 (D24).
+  - Facility list dated 2026-09-30 (PhilHealth update); who runs the monthly refresh is open.
+
+Review queues (3)
+  - Filipino review: 405 strings not from the pack (D10).
+  - Filipino register pass: 250 pack strings, for one consistent register across pack and review copy.
+  - Copy overrides for the owner to confirm: 7 strings (docs/copy-overrides.md).
+```
+
 ## Runtime checks still needed
 
 The interim audit's list stands (device and deployed-host checks), with these changes:

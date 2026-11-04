@@ -8,12 +8,20 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
 
 ## Before launch: what only you can do
 
-1. **Answer the open questions** in `docs/owner-queue.md`, starting with Q7 (host and web address) and Q8 (the full clinic list: a pipeline run needs your OK).
-2. **The clinical review** of the symptom check, Learn L6 and the six route-stop strings. Or launch without the check: build with `TBPH_CHECK=false` (Q9), and reword or approve the six strings that still mention it.
-3. **Your wording**: the privacy row (Q5), the Filipino page descriptions (Q3), the placeholders (group name, partners, reviewer, contact), the link-preview alt text, and the accepted copy overrides and Filipino review.
-4. **Reuse terms** for the WHO data and the PhilHealth list (O12).
+`npm run launch-check` lists what's still open at any time, and its blocking items stop the release. This is the plan's full owner-only list (PLAN §5, step 14):
 
-`npm run launch-check` lists what's still open at any time.
+- [ ] **Open questions** in `docs/owner-queue.md`, starting with Q7 (host and web address) and Q8 (the full clinic list: a pipeline run needs your OK).
+- [ ] **The clinical review** of the symptom check, Learn L6 and the six route-stop strings, with the four cases in O11, and whether the saved or printed summary card should list risk factors such as HIV (sensitive health information under RA 10173). Or launch without the check: build with `TBPH_CHECK=false` (Q9), and reword or approve the strings that still mention it, which `launch-check` lists under [check-mentions].
+- [ ] **`[VERIFY]` items and placeholders:** the Sakay.ph deep links (none ship until someone confirms Sakay's link format); the group name, partners, medical reviewer and contact (`launch-check` lists them).
+- [ ] **Your wording:** the privacy row (Q5), the Filipino page descriptions (Q3), the link-preview alt text, and the copy overrides in `docs/copy-overrides.md`.
+- [ ] **The Filipino review** of the strings not from the pack, and one register across the site (D10, C7).
+- [ ] **The content conflicts and D5:** the conflicts are resolved (V5); D5's default stands (the Data takeaways stay the pack's text) unless you change it.
+- [ ] **Type sizes (D1):** keep the exact sizes the design specifies (recommended), or merge them into a smaller set, a one-file change.
+- [ ] **The clinic list's age:** lapsed accreditations (Q12; shown as listed meanwhile, D24), the list's date (`launch-check` shows it), and who runs the monthly refresh.
+- [ ] **Reuse terms** for the WHO data and the PhilHealth list (O12).
+- [ ] **Real-device installs** of the app on an iPhone and an Android phone.
+- [ ] **VoiceOver, TalkBack and a Safari keyboard pass** (see Device checks below).
+- [ ] **Search Console**, after launch (release step 5).
 
 ## Release
 
@@ -42,7 +50,7 @@ The release steps above are for Cloudflare Pages only. Another host needs this f
 
 ## Device checks
 
-The audit's runtime checks need a real iPhone and Android phone (and the installed app): landscape insets, the Filters sheet's Back gesture and swipe, long-press and stuck-hover, Save as image and Share, Enter in the place field with Safari's suggestions open, VoiceOver and TalkBack, and printing a check result. The list is under "Runtime checks still needed" in `docs/AUDIT-build.md` and the interim audit.
+The audit's runtime checks need a real iPhone and Android phone (and the installed app): landscape insets, the Filters sheet's Back gesture and swipe, long-press and stuck-hover, Save as image and Share, Enter in the place field with Safari's suggestions open, VoiceOver, TalkBack and a Safari keyboard pass, and printing a check result. The list is under "Runtime checks still needed" in `docs/AUDIT-build.md` and the interim audit.
 
 ## Keeping it current
 
