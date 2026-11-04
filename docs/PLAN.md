@@ -72,8 +72,10 @@ src/
   lib/core/               port of tbph-core.js: text, phone, facility, geo, route, links, data loading
   lib/check/              symptom-check logic: steps, evaluate, notes, card rows (pure functions)
   lib/charts/             SVG primitives + the 20 chart specs (pure functions of data, lang, width)
+  lib/dotstory.ts         dot story counts, seeded field, layout and beat targets (pure)
   lib/                    i18n (href helper, language switch), pwa (port of pwa.js), anchor (keep reading position)
-  islands/                Preact: Planner, Places, PlaceDetails, CheckFlow, DotStory, ChartPanel, TopicPicker, InstallSteps
+  islands/                Preact: Planner, Places, PlaceDetails, CheckFlow, DotStory (+ dotStage canvas), DataCharts, InstallSteps
+  scripts/                small page scripts: language switch, Learn scroll-spy, Data topic picker and back to top
   layouts/BaseLayout.astro  head tags, pre-paint script, skip link, header, footer
   pages/                  index, places, place/[id], place/404, check, learn, data, about, install, 404 + fil/ copies (thin wrappers)
   sw.ts                   service worker source (strategies from prototype sw.js)
