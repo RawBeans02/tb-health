@@ -28,7 +28,9 @@ const KNOWN = [
 ];
 
 // Strings that still mention the symptom check, which a build without Check (Q9) leaves in.
-const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription'];
+// home.bring3 ("Your TB check summary", on every route); notFound.lead (C8: "These" above a
+// single button once Check's goes). Listed for the owner, never reworded here (B48).
+const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'home.bring3', 'notFound.lead'];
 
 function isStr(value) {
   return value && typeof value === 'object' && 'en' in value && 'fil' in value && 'origin' in value && Array.isArray(value.src);
