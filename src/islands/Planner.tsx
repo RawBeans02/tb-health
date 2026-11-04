@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { care } from '../content/care.ts';
 import type { home } from '../content/home.ts';
 import { fill } from '../content/types.ts';
+import { hasRestoredAnchor, reapplyAnchor } from '../lib/anchor.ts';
 import { loadFacilities, type Dataset } from '../lib/core/data.ts';
 import { SERVICES, type Service } from '../lib/core/facility.ts';
 import { distanceLabel, type Point } from '../lib/core/geo.ts';
@@ -63,6 +64,7 @@ export default function Planner(props: Props) {
   const fromRef = useRef<HTMLInputElement>(null);
   const headRef = useRef<HTMLHeadingElement>(null);
   const focusNext = useRef(false);
+  const keepPlace = useRef(false); // a route restored after a language switch
   // After "Try again" (audit B8): the loading line, then the field (or the route, when a
   // submit was waiting), or "Try again" again if it fails.
   const statusRef = useRef<HTMLParagraphElement>(null);
@@ -98,7 +100,11 @@ export default function Planner(props: Props) {
       // Not over something the reader typed while a failed load waited for "Try again".
       if (near && !from.trim()) {
         setFrom(near.label);
-        run({ text: near.label, focus: true, animate: true });
+        // After a language switch the reader goes back to where they were in the route, and
+        // it isn't drawn in again (audit B17).
+        const switched = hasRestoredAnchor();
+        keepPlace.current = switched;
+        run({ text: near.label, focus: true, animate: !switched });
         return;
       }
       // ?loc=gps only shows "Use my location"; the browser asks when it's tapped (Q4).
@@ -142,7 +148,9 @@ export default function Planner(props: Props) {
   useEffect(() => {
     if (focusNext.current && headRef.current) {
       focusNext.current = false;
-      intoView(headRef.current);
+      if (keepPlace.current) reapplyAnchor();
+      else intoView(headRef.current);
+      keepPlace.current = false;
       headRef.current.focus({ preventScroll: true });
     }
     if (!drawn) {
@@ -424,7 +432,8 @@ function RouteView({ result, data, lang, t, sources, drawn, headRef }: RouteView
         {r.stops.map((stop, i) => {
           const n = SERVICES.indexOf(stop.k) + 1;
           return (
-            <li key={stop.k} class="route-step" data-i={String(i + 1)}>
+            // Each stop is a reading anchor, so a language switch returns to the same stop (B17).
+            <li key={stop.k} id={`stop-${stop.k}`} class="route-step" data-i={String(i + 1)} data-anchor>
               <span class="rail" aria-hidden="true" />
               <span class="rail-fill" aria-hidden="true" />
               <span class="stop-disc" aria-hidden="true">

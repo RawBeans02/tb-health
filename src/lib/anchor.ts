@@ -39,12 +39,18 @@ export function saveAnchor(path: string): void {
 }
 
 // This load's restored anchor, kept until the reader scrolls: content that lays itself out
-// again after load (Data's charts, audit B6) can apply it once more.
+// again after load (Data's charts, audit B6), or appears only then (Home's route, B17), can
+// apply it once more.
 let restored: Anchor | null = null;
 
 /** Applies this load's restored anchor again, if the reader hasn't scrolled since. */
 export function reapplyAnchor(): void {
   keepAnchor(restored);
+}
+
+/** Whether this load came from a language switch whose anchor is still waiting to be applied. */
+export function hasRestoredAnchor(): boolean {
+  return restored !== null;
 }
 
 /** On load: applies and deletes a saved anchor meant for this page. */

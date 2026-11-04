@@ -276,3 +276,25 @@ test.describe('look', () => {
     expect((await submit(page).boundingBox())?.height).toBe(58);
   });
 });
+
+test.describe('language switch from a typed-place route (audit B17)', () => {
+  test('keeps the reader at the same stop, without drawing the route in again', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await ready(page);
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    await expect(heading(page)).toBeFocused();
+    // Read down to stop 2.
+    const stop2 = page.locator('.stop-title').nth(1);
+    await stop2.evaluate((el) => scrollBy({ top: el.getBoundingClientRect().top - 200, behavior: 'instant' }));
+    await page.waitForTimeout(400);
+    const before = (await stop2.boundingBox())!.y;
+    // A tap on the visible header link (Playwright's click would first scroll it into view).
+    await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
+    await expect(page).toHaveURL(/\/fil\?/);
+    await expect(page.locator('.stop-title').nth(1)).toBeVisible();
+    await expect.poll(async () => Math.abs((await page.locator('.stop-title').nth(1).boundingBox())!.y - before)).toBeLessThan(40);
+    const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && (a.effect as KeyframeEffect | null)?.target instanceof Element && (a.effect as KeyframeEffect).target!.closest('.route')).length);
+    expect(running).toBe(0);
+  });
+});
