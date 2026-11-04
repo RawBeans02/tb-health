@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "node scripts/prepare-data.mjs && astro dev",
     "prepare-data": "node scripts/prepare-data.mjs",
-    "build": "node scripts/prepare-data.mjs && astro build && node scripts/build-sw.mjs && node scripts/check-links.mjs",
-    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && astro build && node scripts/build-sw.mjs && node scripts/check-links.mjs",
+    "build": "node scripts/prepare-data.mjs && astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-links.mjs",
+    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-links.mjs",
     "check": "astro check && tsc -p tsconfig.sw.json",
     "check-links": "node scripts/check-links.mjs",
     "launch-check": "node scripts/launch-check.mjs",

@@ -221,4 +221,14 @@ test.describe('404', () => {
     await page.waitForURL((url) => url.pathname === '/fil/no-such-page');
     await expect(page.locator('h1')).toHaveText('Hindi namin mahanap ang pahinang iyon.');
   });
+
+  test('an English 404 served at a /fil address stays put (a host with one root 404)', async ({ page }) => {
+    const english404 = await (await page.request.get('/no-such-page')).text();
+    await page.route('**/fil/no-such-page', (route) => route.fulfill({ status: 404, contentType: 'text/html', body: english404 }));
+    await page.goto('/');
+    await page.evaluate(() => localStorage.setItem('tbph-lang', 'fil'));
+    await page.goto('/fil/no-such-page');
+    await expect(page.locator('h1')).toHaveText("We can't find that page.");
+    expect(new URL(page.url()).pathname).toBe('/fil/no-such-page');
+  });
 });

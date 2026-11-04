@@ -4,10 +4,11 @@
 //   /places        → places.html          /fil → fil.html
 //   /places/ and /places.html → 308 to /places (query kept)
 //   unknown path   → nearest 404.html walking up (place/404.html, fil/404.html, 404.html), status 404
+//   dist/_headers  → applied to every response it matches, and never served itself
 //
 //   node scripts/serve-dist.mjs [--port 4322]
 
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { dirname, extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,10 +53,32 @@ function nearest404(urlPath) {
   }
 }
 
-function send(res, status, file) {
+// dist/_headers as Cloudflare Pages and Netlify read it: a path pattern (`*` matches
+// anything), then its headers indented below. Every matching rule applies. Read per request,
+// since a rebuild rewrites it while the server runs.
+function headersFor(urlPath) {
+  const file = join(root, '_headers');
+  if (!isFile(file)) return {};
+  const out = {};
+  let applies = false;
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    if (!line.trim() || line.trim().startsWith('#')) continue;
+    if (!/^\s/.test(line)) {
+      const pattern = line.trim().replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+      applies = new RegExp(`^${pattern}$`).test(urlPath);
+    } else if (applies) {
+      const colon = line.indexOf(':');
+      out[line.slice(0, colon).trim()] = line.slice(colon + 1).trim();
+    }
+  }
+  return out;
+}
+
+function send(res, status, file, urlPath) {
   res.writeHead(status, {
     'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
     'Cache-Control': 'no-store',
+    ...headersFor(urlPath),
   });
   createReadStream(file).pipe(res);
 }
@@ -80,17 +103,17 @@ const server = createServer((req, res) => {
     return;
   }
 
-  const base = inside(urlPath);
+  const base = urlPath === '/_headers' ? null : inside(urlPath);
   if (base) {
     const file = urlPath === '/' ? join(root, 'index.html') : isFile(`${base}.html`) ? `${base}.html` : isFile(base) ? base : null;
     if (file) {
-      send(res, 200, file);
+      send(res, 200, file, urlPath);
       return;
     }
   }
 
   const notFound = nearest404(urlPath);
-  if (notFound) send(res, 404, notFound);
+  if (notFound) send(res, 404, notFound, urlPath);
   else res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
 });
 

@@ -1,12 +1,14 @@
 // Pre-paint, first thing in <body> so the CSP meta covers it; BaseLayout adds its hash.
 // A reader whose saved choice is Filipino goes from any English page to its /fil twin,
-// keeping query and hash (Q2b). Then the attributes pages read: the route stop on a place
-// page, and the installed app and offline lines, as the prototype's pwa.js sets them.
+// keeping query and hash (Q2b). Never from an address already under /fil: a host with one
+// root 404 (GitHub Pages) serves the English 404 there, and the redirect would loop. Then
+// the attributes pages read: the route stop on a place page, and the installed app and
+// offline lines, as the prototype's pwa.js sets them.
 (function () {
   var d = document.documentElement;
   var l = location;
   try {
-    if (d.lang === 'en' && localStorage.getItem('tbph-lang') === 'fil') {
+    if (d.lang === 'en' && !/^\/fil(\/|$)/.test(l.pathname) && localStorage.getItem('tbph-lang') === 'fil') {
       d.style.visibility = 'hidden';
       l.replace('/fil' + (l.pathname === '/' ? '' : l.pathname) + l.search + l.hash);
       return;

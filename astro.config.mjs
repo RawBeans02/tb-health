@@ -1,14 +1,16 @@
 // @ts-check
 import { defineConfig, envField, fontProviders } from 'astro/config';
 import preact from '@astrojs/preact';
+import { siteOrigin } from './src/lib/site.ts';
 
 /** @param {string} pkg @param {string} file */
 const fontsource = (pkg, file) => `./node_modules/@fontsource/${pkg}/files/${file}`;
 
 export default defineConfig({
   output: 'static',
-  // Placeholder domain until the owner picks host and domain (Q7); launch-check flags it.
-  site: 'https://tb-ph.example',
+  // The origin canonical, hreflang, Open Graph, sitemap and robots use: SITE_URL at build
+  // time, else the placeholder until the owner picks host and domain (Q7; launch-check flags it).
+  site: siteOrigin(process.env.SITE_URL, process.env.TBPH_PRODUCTION === 'true'),
   // Slashless URLs served from flat files: /places -> places.html (PLAN §2).
   trailingSlash: 'never',
   build: { format: 'file' },

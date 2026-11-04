@@ -90,7 +90,7 @@ if (!home) {
 } else {
   const canonical = /<link rel="canonical" href="([^"]+)"/.exec(home)?.[1] ?? '';
   if (!canonical || /\.example\b/.test(new URL(canonical).hostname)) {
-    blocking.push(`Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): host and domain wait on Q7 (before step 12).`);
+    blocking.push(`Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks host and domain (Q7).`);
   }
   const headerNav = /<nav class="site-nav"[\s\S]*?<\/nav>/.exec(home)?.[0] ?? '';
   if (/href="\/check"/.test(headerNav)) {

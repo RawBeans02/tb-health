@@ -19,7 +19,7 @@ interface Props {
 const { lang } = Astro.props;
 const strings = { en: { ...pick(home, 'en'), ...pick(care, 'en') }, fil: { ...pick(home, 'fil'), ...pick(care, 'fil') } };
 ---
-<BaseLayout lang={lang} title={meta.homeTitle} description={meta.homeDescription} current="home" inPlace>
+<BaseLayout lang={lang} title={meta.homeTitle} description={meta.homeDescription} shareText={home.lede} current="home" inPlace>
   <main id="main" tabindex="-1">
     <Planner client:load lang={lang} strings={strings} sources={homeSources} withCheck={TBPH_CHECK} />
   </main>
