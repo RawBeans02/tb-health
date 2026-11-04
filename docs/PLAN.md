@@ -74,8 +74,9 @@ src/
   lib/charts/             SVG primitives + the 20 chart specs (pure functions of data, lang, width)
   lib/dotstory.ts         dot story counts, seeded field, layout and beat targets (pure)
   lib/                    i18n (href helper, language switch), pwa (port of pwa.js), anchor (keep reading position)
-  islands/                Preact: Planner, Places, PlaceDetails, CheckFlow, DotStory (+ dotStage canvas), DataCharts, InstallSteps
-  scripts/                small page scripts: language switch, Learn scroll-spy, Data topic picker and back to top
+  islands/                Preact: Planner, Places, PlaceDetails, CheckFlow, DotStory (+ dotStage canvas), DataCharts
+  scripts/                small page scripts: language switch, install prompt (pwa.ts), Learn scroll-spy, Data topic picker
+                          and back to top, Install's button and its inline platform order
   layouts/BaseLayout.astro  head tags, pre-paint script, skip link, header, footer
   pages/                  index, places, place/[id], place/404, check, learn, data, about, install, 404 + fil/ copies (thin wrappers)
   sw.ts                   service worker source (strategies from prototype sw.js)
