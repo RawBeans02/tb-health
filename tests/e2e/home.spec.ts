@@ -219,6 +219,22 @@ test.describe('location', () => {
 test.describe('facility list errors (Q6)', () => {
   test.use({ expectedErrors: [/status of 503/] });
 
+  test('a submit during a failed load is kept: focus goes to Try again, the route runs after it (B16)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route('**/data/facilities.json', (route) => route.fulfill({ status: 503, body: '' }));
+    await page.goto('/');
+    await expect(page.locator('.results-error')).toBeVisible();
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    const retry = page.getByRole('button', { name: 'Try again' });
+    await expect(retry).toBeFocused();
+    await expect(page.locator('.results-error')).toBeInViewport();
+    await page.unroute('**/data/facilities.json');
+    await retry.click();
+    await expect(heading(page)).toHaveText('Your TB care route: 3 stops. The nearest is about 1 km away.');
+    await expect(heading(page)).toBeFocused();
+  });
+
   test('a failed load shows "Try again", never the sample; retrying neither re-prompts nor loses the field', async ({ page }) => {
     await countLocationRequests(page);
     await page.route('**/data/facilities.json', (route) => route.fulfill({ status: 503, body: '' }));

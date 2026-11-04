@@ -38,6 +38,14 @@ type Load = 'loading' | 'ready' | 'error';
 
 const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** Scrolls `el` into view when it's above 70px or below 60% of the window (the prototype's rule). */
+function intoView(el: HTMLElement) {
+  const top = el.getBoundingClientRect().top;
+  if (top < 70 || top > innerHeight * 0.6) {
+    scrollTo({ top: Math.max(0, top + scrollY - 90), behavior: reducedMotion() ? 'instant' : 'smooth' });
+  }
+}
+
 export default function Planner(props: Props) {
   const [lang, setLang] = useState<Lang>(props.lang);
   const t = props.strings[lang];
@@ -134,12 +142,8 @@ export default function Planner(props: Props) {
   useEffect(() => {
     if (focusNext.current && headRef.current) {
       focusNext.current = false;
-      const el = headRef.current;
-      const top = el.getBoundingClientRect().top;
-      if (top < 70 || top > innerHeight * 0.6) {
-        scrollTo({ top: Math.max(0, top + scrollY - 90), behavior: reducedMotion() ? 'auto' : 'smooth' });
-      }
-      el.focus({ preventScroll: true });
+      intoView(headRef.current);
+      headRef.current.focus({ preventScroll: true });
     }
     if (!drawn) {
       // Two frames, so the undrawn state is painted before the transition starts.
@@ -158,10 +162,23 @@ export default function Planner(props: Props) {
     history.replaceState(history.state, '', location.pathname + (search ? `?${search}` : '') + location.hash);
   }
 
+  // A submit (or a location fix) before the list is there is kept and runs once it loads,
+  // as in the prototype; the loading line or the error comes into view, and on an error
+  // focus goes to "Try again" (audit B16).
+  const revealPending = useRef(false);
+  useEffect(() => {
+    if (!revealPending.current) return;
+    revealPending.current = false;
+    const box = document.querySelector<HTMLElement>('#route .results-error, #route .results-status');
+    if (box) intoView(box);
+    if (load === 'error') retryRef.current?.focus({ preventScroll: true });
+  });
+
   function run(options: { text?: string; fix?: Point | null; needOverride?: Need; focus: boolean; animate: boolean }) {
     const currentNeed = options.needOverride ?? need;
     if (!data) {
       setWaiting(true);
+      revealPending.current = options.focus;
       return;
     }
     const origin = resolveOrigin({ text: options.text ?? from, gps: options.fix === undefined ? gps : options.fix, myLocation }, data.gaz);
@@ -182,7 +199,6 @@ export default function Planner(props: Props) {
 
   function onSubmit(event: Event) {
     event.preventDefault();
-    if (load === 'error') return;
     run({ focus: true, animate: true });
   }
 
