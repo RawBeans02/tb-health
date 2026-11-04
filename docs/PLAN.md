@@ -46,7 +46,7 @@ Reference material, all read in full for this plan: README, the 13 prototype pag
 | Data | Statistics and claims **imported at build time**; facility list **fetched at runtime** from a slimmed JSON that the build prepares | See §4.4. |
 | Tests | **Vitest** (logic, chart builders, copy parity), **Playwright** with Chromium + WebKit, one worker (end-to-end, accessibility with `@axe-core/playwright`, a port of `qa-harness.html`), **Lighthouse** on the production build | All heavy runs go through `_handoff/lowmem-run.sh` with `GUARD_NO_DOCKER=1`, split into small guarded jobs (§5, "How checks run"). |
 | Tooling | **Node 22.23.4 LTS** pinned with `.nvmrc`, **npm** (ships with that Node) | Astro 7 and Vitest 5 need Node ≥ 22.23.4. It is installed through nvm for this folder only (owner said yes, 30 Oct 2026). nvm's default alias and the global/Homebrew Node are unchanged, because the KitaMo builders use them. npm 10.9.9, bundled with that Node, runs scripts and `npm ci`, but its installer crashes on this dependency tree (`Cannot read properties of null (reading 'edgesOut')`), so adding or updating packages uses `npx -y npm@11.21.1 install`, pinned so installs repeat exactly (step 1). The Homebrew pnpm on this Mac is 9.15.9 from March 2025, so it's left alone. Shells run `. ~/.nvm/nvm.sh && nvm use` before any npm command, including inside `lowmem-run.sh`. Astro's experimental parallel prerendering stays off, because it starts one worker per CPU core. |
-| Host | Any static host. Recommended: **Cloudflare Pages**, in a TB Health-only project the owner controls (**Q7**) | It serves real 404s from the nearest `404.html`, so `/fil/404.html` and `/place/404.html` work. Without a top-level `404.html` it would answer every unknown URL with the home page and a 200. It supports a `_headers` file (HSTS etc.) and Brotli, and has no bandwidth billing. GitHub Pages also works if no new vendor is wanted, but it can't set security headers and serves only one root 404 page. |
+| Host | Any static host. Recommended: **Cloudflare Pages**, in a TB Health-only project the owner controls (**Q7**) | It serves real 404s from the nearest `404.html`, so `/fil/404.html` and `/place/404.html` work. Without a top-level `404.html` it would answer every unknown URL with the home page and a 200. It supports a `_headers` file (HSTS etc.) and Brotli, and has no bandwidth billing. GitHub Pages also works if no new vendor is wanted, but it can't set security headers and serves only one root 404 page. *Built host-agnostic (step 12):* the origin is `SITE_URL` at build time, and `dist/_headers` uses the syntax Cloudflare Pages and Netlify both read, so picking either is a config change. **On GitHub Pages** (a custom domain or a user site at the root; a project sub-path isn't supported): `_headers` is ignored, so no HSTS from us ("Enforce HTTPS" still redirects), no `frame-ancestors`, Permissions-Policy, nosniff or noindex header; the CSP stays the `<meta>` tag it already is; only the root (English) `404.html` is served, so unknown `/fil/…` and `/place/…` addresses get the general English 404 (the saved-choice redirect skips `/fil` addresses, so it can't loop). No rebuild beyond setting `SITE_URL`. |
 
 **Alternatives considered**
 - *Next.js static export:* it ships the React runtime on every page and builds are heavier on the shared 8 GB Mac. It adds nothing a static site needs.
@@ -62,6 +62,7 @@ data/                     source data: tb-ph-data.json, claims.json, facility fi
 scripts/
   prepare-data.mjs        validate data, slim the facility list, derive ids, region counts and a small gazetteer (no network)
   build-sw.mjs            explicit precache list with content hashes and the budget check, then bundle src/sw.ts with it
+  build-headers.mjs       dist/_headers from src/lib/headers.ts (noindex unless TBPH_PRODUCTION=true)
   launch-check.mjs        lists everything still open before launch (see 4.3)
 src/
   styles/                 tokens.css (README tokens), global.css (focus, links, glass + fallbacks, print)
@@ -74,13 +75,14 @@ src/
   lib/charts/             SVG primitives + the 20 chart specs (pure functions of data, lang, width)
   lib/dotstory.ts         dot story counts, seeded field, layout and beat targets (pure)
   lib/                    i18n (href helper, language switch), anchor (keep reading position), manifest (web manifest),
-                          offline (what the service worker saves, stand-ins), place-details (Details rows, page and shell)
+                          offline (what the service worker saves, stand-ins), place-details (Details rows, page and shell),
+                          site (SITE_URL origin, sitemap, robots), headers (the _headers file)
   islands/                Preact: Planner, Places, PlaceDetails, PlaceShell, CheckFlow, DotStory (+ dotStage canvas), DataCharts
   scripts/                small page scripts: language switch, install prompt (pwa.ts), Learn scroll-spy, Data topic picker
                           and back to top, Install's button and its inline platform order
   layouts/BaseLayout.astro  head tags, pre-paint script, skip link, header, footer
   pages/                  index, places, place/[id], place/404, check, learn, data, about, install, 404, place (offline
-                          shell), offline + fil/ copies (thin wrappers); manifest.webmanifest.ts
+                          shell), offline + fil/ copies (thin wrappers); manifest.webmanifest.ts, sitemap.xml.ts, robots.txt.ts
   sw.ts                   service worker source (strategies from prototype sw.js); own tsconfig.sw.json (WebWorker types)
 tests/unit  tests/e2e  tests/fixtures (synthetic data only)
 docs/                     PLAN.md, copy-overrides.md, later AUDIT-build.md (decisions.md belongs to the TB Health lead)
@@ -163,8 +165,8 @@ pipeline/ (owner runs it, or approves a run)  →  data/*.json  →  scripts/pre
   - no Cache Storage key contains a query string (Workbox's own `__WB_REVISION__` content hash on precached files is the one exception: it carries nothing from a visit);
   - each page contacts only our origin plus the hosts the About text names.
 - **URL inputs** (`id`, `need`, `stop`, `near`, `svc`, hash ids) are whitelisted or length-capped and only ever rendered as text. Which route context travels in place links is part of Q4.
-- **Content Security Policy.** Astro's island hydration and our pre-paint script are inline scripts, so `script-src 'self'` alone would break every island. Astro 7's `security.csp` emits a `<meta>` CSP with hashes for them, and it is **on from step 1**, so every step is built and tested under the real policy. It allows scripts, styles, fonts and data from our own origin only. Images may also come from `tile.openstreetmap.org`, `data:` and `blob:` (map, save as image). The host adds what a meta tag can't set: HSTS and `frame-ancestors 'none'`, plus `Permissions-Policy: geolocation=(self), camera=(), microphone=()` and `X-Content-Type-Options: nosniff`. Non-production deploys also send `X-Robots-Tag: noindex`.
-- **`Referrer-Policy: strict-origin-when-cross-origin`** (the browser default). OSM's tile policy requires a Referer and says not to block it. Other sites (OSM, Google Maps, Sakay.ph) only ever see our origin, never a page address with its parameters.
+- **Content Security Policy.** Astro's island hydration and our pre-paint script are inline scripts, so `script-src 'self'` alone would break every island. Astro 7's `security.csp` emits a `<meta>` CSP with hashes for them, and it is **on from step 1**, so every step is built and tested under the real policy. It allows scripts, styles, fonts and data from our own origin only. Images may also come from `tile.openstreetmap.org`, `data:` and `blob:` (map, save as image). The host adds what a meta tag can't set: HSTS and `frame-ancestors 'none'`, plus `Permissions-Policy: geolocation=(self), camera=(), microphone=()` and `X-Content-Type-Options: nosniff`. Non-production deploys also send `X-Robots-Tag: noindex`. *Built (step 12):* `dist/_headers`, written after each build; HSTS is `max-age=31536000` without `includeSubDomains` until the domain is known (Q7); every build except `TBPH_PRODUCTION=true` carries the noindex, and a production build refuses the placeholder domain.
+- **`Referrer-Policy: strict-origin-when-cross-origin`** (the browser default, also stated in `_headers`). OSM's tile policy requires a Referer and says not to block it. Other sites (OSM, Google Maps, Sakay.ph) only ever see our origin, never a page address with its parameters.
 - **The About privacy rows must stay literally true.** Self-hosting fonts, bundling Leaflet and naming the host change what they should say, and new text is the owner's to approve (Q5).
 
 ### 4.6 Performance budgets (proposed, default D16)
