@@ -66,6 +66,8 @@ scripts/
   check-budgets.mjs       §4.6 budgets on every build (JS per page, Data page, facility JSON)
   lighthouse.mjs          Lighthouse (npx, pinned) on given pages, mobile, against the §4.6 budgets
   test-no-check.mjs       the Check-off build and its smoke project (Q9)
+  post-deploy-check.mjs   reads the live site back against dist/ (no cookies, identical HTML, headers, 404s)
+  outside-links.mjs       lists links to other sites; --fetch checks them (owner's OK only)
   launch-check.mjs        lists everything still open before launch (see 4.3)
 src/
   styles/                 tokens.css (README tokens), global.css (focus, links, glass + fallbacks, print)
@@ -88,7 +90,7 @@ src/
                           shell), offline + fil/ copies (thin wrappers); manifest.webmanifest.ts, sitemap.xml.ts, robots.txt.ts
   sw.ts                   service worker source (strategies from prototype sw.js); own tsconfig.sw.json (WebWorker types)
 tests/unit  tests/e2e  tests/fixtures (synthetic data only)
-docs/                     PLAN.md, copy-overrides.md, later AUDIT-build.md (decisions.md belongs to the TB Health lead)
+docs/                     PLAN.md, copy-overrides.md, AUDIT-build.md, HANDOVER.md (decisions.md, the audit and owner-queue.md belong to the TB Health lead)
 ```
 `design/` stays untouched as the reference. `support.js` and `qa-harness.html` are never ported; the harness checks become Playwright tests.
 
