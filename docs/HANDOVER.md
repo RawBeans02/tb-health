@@ -21,13 +21,16 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
    `SITE_URL=https://your.address TBPH_PRODUCTION=true npm run build`
    (A production build refuses the placeholder address. Add `TBPH_CHECK=false` to launch without the check.)
 2. **Run the gate:** `npm run launch-check -- --release`. It stops on anything still open. To launch with an item you have decided to accept (for example the sample list), name it: `npm run launch-check -- --release --accept=sample`. Accepted items are printed with the release, so the decision is on record.
-3. **Deploy `dist/`** to the host you chose (Q7). Use a project or site that belongs to TB Health only, never KitaMo's.
-   - **Cloudflare Pages** (recommended): `npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main` (after `npx wrangler@4.151.3 login` once). It reads `dist/_headers` as is.
-   - **Netlify:** `npx netlify-cli@27.14.0 deploy --dir=dist --prod` (after `npx netlify-cli@27.14.0 login`). Also reads `dist/_headers`.
-   - **GitHub Pages:** publish `dist/` to Pages. It ignores `_headers` (no HSTS from us, no frame-ancestors, Permissions-Policy or nosniff) and serves only the English root 404; see PLAN §3, Host.
-   Keep previews private or noindex: every build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`.
+3. **Deploy `dist/` to Cloudflare Pages**, the one release path set up (the recommended answer to Q7), in a project that belongs to TB Health only, never KitaMo's: `npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main` (after `npx wrangler@4.151.3 login` once). It uploads `dist/` as built, without rebuilding, and reads `dist/_headers` as is.
+   Keep previews private: a build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, but only a host that reads `_headers` sends it on.
 4. **Check the live site:** `npm run post-deploy-check -- https://your.address`. It reads every page back and compares it with `dist/`: identical HTML (no injected scripts), no cookies, the security and caching headers, and the 404s. Turn off any host feature it flags (analytics beacons, email obfuscation, script optimisers, bot challenges).
 5. **Search Console:** add the site, submit `https://your.address/sitemap.xml`, and check that Google sees the Filipino pages as `fil` alternates.
+
+## Other hosts (not set up)
+
+The release steps above are for Cloudflare Pages only. Another host needs this first:
+- **Netlify:** `netlify deploy` builds the project again unless given `--no-build`, and that build would have no `SITE_URL`, `TBPH_PRODUCTION` or `TBPH_CHECK`: a non-production site, and in a launch without Check, the unreviewed check back. It also needs 404 rules in a `netlify.toml`, most specific first: `/fil/place/*` to `/fil/place/404.html`, `/place/*` to `/place/404.html`, then `/fil/*` to `/fil/404.html`, each with status 404. It reads `_headers`.
+- **GitHub Pages:** it ignores `_headers`, so it can't send our security headers (HSTS, frame-ancestors, Permissions-Policy, nosniff) or the noindex, and it serves only the English root 404. `post-deploy-check` fails there by design. It also needs a `.nojekyll` file and a GitHub Actions deploy of `dist/`. See PLAN §3, Host.
 
 ## Pending first runs
 

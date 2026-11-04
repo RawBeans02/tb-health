@@ -6,7 +6,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 
 - **Project / Build:** TB PH
 - **Platform:** Web (static PWA, Astro 7 + Preact islands)
-- **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the planned host serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
+- **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the planned host (Cloudflare Pages, HANDOVER's one release path: B58) serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
 - **Branch / commit:** `build/14-release` (from `build/13-qa`). Steps 1–13 and the audit tasks are on the branches before it.
 - **Audit date:** 5 November 2026
 - **Auditor:** Jr. Builder (self-audit, with evidence below). The lead's independent review of the step 13 commits is in progress; its findings come in as fix items.
