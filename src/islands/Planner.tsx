@@ -65,6 +65,7 @@ export default function Planner(props: Props) {
   const headRef = useRef<HTMLHeadingElement>(null);
   const focusNext = useRef(false);
   const keepPlace = useRef(false); // a route restored after a language switch
+  const announceNext = useRef(false); // a route recomputed without moving focus ("I need")
   // After "Try again" (audit B8): the loading line, then the field (or the route, when a
   // submit was waiting), or "Try again" again if it fails.
   const statusRef = useRef<HTMLParagraphElement>(null);
@@ -146,6 +147,10 @@ export default function Planner(props: Props) {
 
   // After a new result: move focus to its heading, and start the draw-in.
   useEffect(() => {
+    if (announceNext.current && headRef.current) {
+      announceNext.current = false;
+      document.dispatchEvent(new CustomEvent('tbph:announce', { detail: headRef.current.textContent ?? '' }));
+    }
     if (focusNext.current && headRef.current) {
       focusNext.current = false;
       if (keepPlace.current) reapplyAnchor();
@@ -200,6 +205,7 @@ export default function Planner(props: Props) {
     const services: readonly Service[] = currentNeed === 'all' ? SERVICES : [currentNeed];
     setMsg('');
     focusNext.current = options.focus;
+    announceNext.current = !options.focus;
     setDrawn(!(options.animate && !reducedMotion()));
     setResult({ origin, route: route(data.list, origin, services), need: currentNeed });
     writeUrl(homeQuery(currentNeed, origin));
@@ -456,7 +462,7 @@ function RouteView({ result, data, lang, t, sources, drawn, headRef }: RouteView
                       href={href('place', lang, { id: p.id, query: { stop: single ? undefined : String(n) } })}
                       distance={d === null ? '' : showDistance(d, p.precise)}
                       chips={[{ status: p.svc[stop.k], label: statusLabel(t, p.svc[stop.k]) }]}
-                      heading="h4"
+                      heading={single ? 'h3' : 'h4'}
                       t={t}
                     />
                   ))}

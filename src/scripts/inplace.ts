@@ -29,6 +29,8 @@ function switchTo(lang: Lang, t: Strings): void {
   }
   html.lang = lang;
   document.title = t.title;
+  // The page doesn't reload, so say it changed (B28; src/scripts/announce.ts reads it out).
+  document.dispatchEvent(new CustomEvent('tbph:announce', { detail: t.title }));
   document.querySelector('meta[name="description"]')?.setAttribute('content', t.description ?? '');
   const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   if (canonical) {

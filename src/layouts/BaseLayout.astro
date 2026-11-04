@@ -100,11 +100,14 @@ const shareDescription = shareText?.[lang] || descriptionText;
       <slot />
       <SiteFooter lang={lang} current={current} togglePath={togglePath} features={features} />
     </div>
+    {/* Updates that don't move focus are read out here (src/scripts/announce.ts, audit B28). */}
+    <p id="tbph-announce" class="visually-hidden" role="status"></p>
     {inPlace && <InPlaceLanguage title={title} description={description} />}
     <script>
       import '../scripts/lang.ts';
       import '../scripts/pwa.ts';
       import '../scripts/tabbar.ts';
+      import '../scripts/announce.ts';
     </script>
   </body>
 </html>
