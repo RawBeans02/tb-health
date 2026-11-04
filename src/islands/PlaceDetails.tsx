@@ -50,18 +50,27 @@ export default function PlaceDetails({ place: p, lang, t, details, sample }: Pro
     return () => clearTimeout(id);
   }, [copied]);
 
-  // Back to the route: the route lives in Home's address, so going back restores it.
-  function onBack(event: MouseEvent) {
-    if (!document.documentElement.hasAttribute('data-stop') || history.length < 2) return;
+  // Back to the route: the route lives in Home's address, so going back restores it. Only
+  // when the reader came from Home's route; otherwise the link is labelled and goes home (B18).
+  function fromRoute(): boolean {
+    if (history.length < 2) return false;
     try {
       const from = new URL(document.referrer);
-      if (from.origin === location.origin && (from.pathname === '/' || from.pathname === '/fil')) {
-        event.preventDefault();
-        history.back();
-      }
+      return from.origin === location.origin && (from.pathname === '/' || from.pathname === '/fil');
     } catch {
-      // No usable referrer: follow the link to Home.
+      return false; // no usable referrer
     }
+  }
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (html.hasAttribute('data-stop') && !fromRoute()) html.setAttribute('data-back', 'home');
+  }, []);
+
+  function onBack(event: MouseEvent) {
+    if (!document.documentElement.hasAttribute('data-stop') || !fromRoute()) return;
+    event.preventDefault();
+    history.back();
   }
 
   const services = SERVICES.filter((k) => p.svc[k] !== 'no');

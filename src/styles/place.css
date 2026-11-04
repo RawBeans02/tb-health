@@ -19,6 +19,16 @@ html[data-stop] .back-label--route {
   display: inline;
 }
 
+/* Opened at a stop but not from Home's route (a shared link, a new tab, the other
+   language): there's no route to go back to, so the link says where it goes (B18). */
+html[data-stop][data-back='home'] .back-label--home {
+  display: inline;
+}
+
+html[data-stop][data-back='home'] .back-label--route {
+  display: none;
+}
+
 .stop-panel {
   display: none;
 }

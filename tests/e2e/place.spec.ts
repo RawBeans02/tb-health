@@ -61,7 +61,8 @@ test.describe('place page', () => {
     await expect(page.locator('.stop-label:visible')).toHaveText("You're at stop 2 of 3");
     await expect(page.locator('.motif-step[data-n="2"] .motif-name')).toHaveCSS('font-weight', '700');
     await expect(page.locator('.motif-step[data-n="3"] .motif-disc')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-    await expect(page.locator('.back-link')).toContainText('Back to your route');
+    // Opened directly: there's no route to go back to, so the link says where it goes (B18).
+    await expect(page.locator('.back-link')).toHaveText(/Find TB care/);
     await page.waitForLoadState('load');
     if (browserName === 'chromium') expect(await page.evaluate(() => (window as unknown as { shift: number }).shift)).toBe(0);
   });
@@ -70,6 +71,14 @@ test.describe('place page', () => {
     await page.goto(`${PATH}?stop=9`);
     await expect(page.locator('html')).not.toHaveAttribute('data-stop');
     await expect(page.locator('.stop-panel')).toBeHidden();
+  });
+
+  test('after a language switch at a stop, the link is the Filipino home label (B18)', async ({ page }) => {
+    await page.goto(`${PATH}?stop=2`);
+    await page.locator('.site-header [data-lang-link="fil"]').click();
+    await expect(page).toHaveURL(new RegExp(`/fil${PATH}\\?stop=2$`));
+    await expect(page.locator('.back-link')).toHaveText(/Hanapin ang gamutan/);
+    await expect(page.locator('.back-link')).toHaveAttribute('href', '/fil');
   });
 
   test('"Back to your route" returns to the route on Home', async ({ page }) => {
