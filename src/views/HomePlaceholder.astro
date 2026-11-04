@@ -1,0 +1,20 @@
+---
+// Placeholder until step 4 replaces it with the Home route planner. Home switches
+// language in place while a location fix is held, so it carries both languages' chrome.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { meta } from '../content/meta.ts';
+import type { Lang } from '../lib/i18n.ts';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+<BaseLayout lang={lang} title={meta.homeTitle} description={meta.homeDescription} current="home" inPlace>
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <p class="wordmark"><span class="wordmark-tb">TB</span> PH</p>
+    </div>
+  </main>
+</BaseLayout>

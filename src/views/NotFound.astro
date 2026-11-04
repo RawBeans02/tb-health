@@ -1,0 +1,53 @@
+---
+// 404 (README:247, 404.dc.html): one line and two ways back. Served by the host for any
+// unknown address, in the language of the nearest 404.html (/fil/… gets Filipino).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { chrome } from '../content/chrome.ts';
+import { meta } from '../content/meta.ts';
+import { notFound } from '../content/notfound.ts';
+import { pick } from '../content/types.ts';
+import { href, type Lang } from '../lib/i18n.ts';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(notFound, lang);
+const nav = pick(chrome, lang);
+---
+<BaseLayout lang={lang} title={meta.notFoundTitle} notFound>
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <div class="not-found">
+        <div class="not-found-head">
+          <h1 class="h1">{t.h1}</h1>
+          <p class="lede">{t.lead}</p>
+        </div>
+        <div class="not-found-actions">
+          <a class="btn btn--primary" href={href('home', lang)}>{nav.nav_home}</a>
+          <a class="btn btn--soft btn--lg" href={href('check', lang)}>{nav.nav_check}</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: var(--reading);
+    display: grid;
+    gap: 28px;
+  }
+
+  .not-found-head {
+    display: grid;
+    gap: 12px;
+  }
+
+  .not-found-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

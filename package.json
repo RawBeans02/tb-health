@@ -9,9 +9,11 @@
   "scripts": {
     "dev": "node scripts/prepare-data.mjs && astro dev",
     "prepare-data": "node scripts/prepare-data.mjs",
-    "build": "node scripts/prepare-data.mjs && astro build",
-    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && astro build",
+    "build": "node scripts/prepare-data.mjs && astro build && node scripts/check-links.mjs",
+    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && astro build && node scripts/check-links.mjs",
     "check": "astro check",
+    "check-links": "node scripts/check-links.mjs",
+    "launch-check": "node scripts/launch-check.mjs",
     "serve": "node scripts/serve-dist.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test"

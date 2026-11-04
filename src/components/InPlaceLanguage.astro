@@ -1,0 +1,27 @@
+---
+// Both languages' strings for everything outside <main>, inlined as JSON for
+// scripts/inplace.ts. Only on pages that can switch language in place (PLAN §4.2).
+import { chrome } from '../content/chrome.ts';
+import { fill, pick, type Str } from '../content/types.ts';
+import { formatDate, LAST_UPDATED } from '../lib/dates.ts';
+import { LANGS } from '../lib/i18n.ts';
+
+interface Props {
+  title: Str;
+  description?: Str;
+}
+
+const { title, description } = Astro.props;
+const strings = Object.fromEntries(
+  LANGS.map((lang) => {
+    const t = pick(chrome, lang);
+    return [lang, { ...t, credit: fill(t.credit, { date: formatDate(LAST_UPDATED, lang) }), title: title[lang], description: description?.[lang] ?? '' }];
+  }),
+);
+// "<" escaped so the JSON can't close the <script> element.
+const json = JSON.stringify(strings).replace(/</g, '\\u003c');
+---
+<script type="application/json" id="tbph-i18n" is:inline set:html={json} />
+<script>
+  import '../scripts/inplace.ts';
+</script>

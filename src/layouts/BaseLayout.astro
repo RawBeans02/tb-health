@@ -1,27 +1,56 @@
 ---
-// Page frame shared by every route. Step 2 adds the pre-paint script, skip link,
-// header, footer and hreflang links (PLAN §5).
+// Page frame shared by every route: head tags, the pre-paint script, header, footer and
+// the language links (PLAN §4.2). Pages pass their title and description as dictionary
+// strings so in-place pages can carry both languages.
+import { createHash } from 'node:crypto';
 import { Font } from 'astro:assets';
+import { TBPH_CHECK } from 'astro:env/server';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import InPlaceLanguage from '../components/InPlaceLanguage.astro';
+import type { Str } from '../content/types.ts';
+import { pagePath, toLang, type Lang } from '../lib/i18n.ts';
+import prepaint from '../scripts/prepaint.js?raw';
+import type { Features, NavKey } from '../lib/nav.ts';
 import '../styles/tokens.css';
 import '../styles/global.css';
-
-export type Lang = 'en' | 'fil';
+import '../styles/chrome.css';
+import '../styles/ui.css';
 
 interface Props {
   lang: Lang;
-  title: string;
-  description: string;
+  title: Str;
+  description?: Str;
+  /** Nav item marked current. Places and Place mark 'home' (README:133). */
+  current?: NavKey | '';
+  /** 404 pages: noindex, no canonical or alternates, language links to the homes. */
+  notFound?: boolean;
+  /** Check, Places, Home: the language can switch without a navigation (PLAN §4.2). */
+  inPlace?: boolean;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, current = '', notFound = false, inPlace = false } = Astro.props;
+const features: Features = { check: TBPH_CHECK };
+const site = Astro.site!; // placeholder domain until Q7 (launch-check flags it)
+const path = toLang(pagePath(Astro.url.pathname), 'en');
+const togglePath = notFound ? '/' : path;
+// Astro hashes the scripts it bundles, not is:inline ones.
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(prepaint).digest('base64')}`);
+const descriptionText = description?.[lang] || undefined;
 ---
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title[lang]}</title>
+    {descriptionText && <meta name="description" content={descriptionText} />}
+    {notFound && <meta name="robots" content="noindex" />}
+    {!notFound && <link rel="canonical" href={new URL(toLang(path, lang), site).href} />}
+    {!notFound && <link rel="alternate" hreflang="en" href={new URL(path, site).href} />}
+    {!notFound && <link rel="alternate" hreflang="fil" href={new URL(toLang(path, 'fil'), site).href} />}
+    {!notFound && <link rel="alternate" hreflang="x-default" href={new URL(path, site).href} />}
+    {/* Canvas. A meta tag can't read a CSS token; dark mode (V2) adds a prefers-color-scheme: dark twin. */}
     <meta name="theme-color" content="#F1F3F4" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,6 +63,15 @@ const { lang, title, description } = Astro.props;
     <Font cssVariable="--font-newsreader" />
   </head>
   <body>
-    <slot />
+    <script is:inline set:html={prepaint} />
+    <div class="page">
+      <SiteHeader lang={lang} current={current} togglePath={togglePath} features={features} />
+      <slot />
+      <SiteFooter lang={lang} current={current} togglePath={togglePath} features={features} />
+    </div>
+    {inPlace && <InPlaceLanguage title={title} description={description} />}
+    <script>
+      import '../scripts/lang.ts';
+    </script>
   </body>
 </html>

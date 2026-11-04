@@ -1,0 +1,64 @@
+/* Shared page-frame classes (README "Shared: v4 page frame", "Components"). The shared
+   Preact parts in src/ui (step 4 onward) render these same classes. */
+
+.frame {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(40px, 7vw, 88px) clamp(16px, 4vw, 64px) clamp(48px, 7vw, 80px);
+}
+
+/* Page title: Home's H1 on every page. */
+.h1 {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--tb-red);
+}
+
+.lede {
+  font-size: var(--text-19);
+  line-height: 1.5;
+  color: var(--secondary);
+  max-width: 34em;
+}
+
+/* Buttons are capsules. One solid (primary) per screen; soft for the rest. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-capsule);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.btn--primary {
+  min-height: 58px;
+  padding: 0 28px;
+  background: var(--teal);
+  color: var(--on-teal);
+  font-size: var(--text-20);
+}
+
+.btn--primary:hover {
+  background: var(--teal-deep);
+  color: var(--on-teal);
+}
+
+.btn--soft {
+  background: var(--teal-tint-13);
+  color: var(--teal-deep);
+}
+
+.btn--soft:hover {
+  background: var(--teal-tint-22);
+  color: var(--ink);
+}
+
+/* 58px / 20px soft capsule, next to a primary (404). */
+.btn--soft.btn--lg {
+  min-height: 58px;
+  padding: 0 26px;
+  font-size: var(--text-20);
+}

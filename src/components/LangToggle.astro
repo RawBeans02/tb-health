@@ -1,0 +1,34 @@
+---
+// Two language links instead of README's aria-pressed buttons (Q2a, docs/copy-overrides.md).
+// Without JS they point at this page's twin; scripts/lang.ts adds the query and hash, and
+// on 404 pages (served at any address) points them at the twin of the real address.
+import { chrome } from '../content/chrome.ts';
+import { toLang, type Lang } from '../lib/i18n.ts';
+
+interface Props {
+  lang: Lang;
+  /** This page's path; for 404 pages, '/' (the language homes). */
+  path: string;
+}
+
+const { lang, path } = Astro.props;
+const links = [
+  { to: 'en', label: chrome.langEn.en },
+  { to: 'fil', label: chrome.langFil.en },
+] as const;
+---
+<div class="lang-toggle" role="group" aria-label={chrome.langGroup.en}>
+  {
+    links.map((link) => (
+      <a
+        href={toLang(path, link.to)}
+        lang={link.to}
+        hreflang={link.to}
+        aria-current={link.to === lang ? 'true' : undefined}
+        data-lang-link={link.to}
+      >
+        {link.label}
+      </a>
+    ))
+  }
+</div>

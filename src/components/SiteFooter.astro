@@ -1,0 +1,58 @@
+---
+// Footer (README:139–145, SiteFooter.dc.html): safety note, emergency line, more pages,
+// the language links again, data credit and wordmark. "Install the app" hides when the
+// site runs as an installed app (html[data-standalone="true"]).
+import { chrome } from '../content/chrome.ts';
+import { fill, pick } from '../content/types.ts';
+import { formatDate, LAST_UPDATED } from '../lib/dates.ts';
+import type { Lang } from '../lib/i18n.ts';
+import { navHref, navKeys, type Features, type NavKey } from '../lib/nav.ts';
+import LangToggle from './LangToggle.astro';
+
+interface Props {
+  lang: Lang;
+  current: NavKey | '';
+  togglePath: string;
+  features: Features;
+}
+
+const { lang, current, togglePath, features } = Astro.props;
+const t = pick(chrome, lang);
+const items = navKeys('footer', features).map((key) => ({
+  key,
+  href: navHref(key, lang),
+  label: t[`nav_${key}`],
+  current: key === current ? ('page' as const) : undefined,
+}));
+---
+<footer class="site-footer" data-chrome data-noprint>
+  <div class="site-footer-inner">
+    <div class="site-footer-safety">
+      <p class="site-footer-note" data-t="safety">{t.safety}</p>
+      <p class="site-footer-emergency">
+        <span data-t="emergencyLead">{t.emergencyLead}</span>{' '}<a href="tel:911" data-t="emergencyCall">{t.emergencyCall}</a>
+      </p>
+    </div>
+    <div class="site-footer-row">
+      <nav class="site-footer-nav" aria-label={t.navMore} data-t-label="navMore">
+        <ul>
+          {
+            items.map((it) => (
+              <li class={it.key === 'install' ? 'install-entry' : undefined}>
+                <a href={it.href} aria-current={it.current} data-t={`nav_${it.key}`}>
+                  {it.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <LangToggle lang={lang} path={togglePath} />
+    </div>
+    <div class="site-footer-credit">
+      <p data-t="credit">{fill(t.credit, { date: formatDate(LAST_UPDATED, lang) })}</p>
+      <p class="site-footer-mark wordmark"><span class="wordmark-tb">TB</span> PH</p>
+    </div>
+  </div>
+  <div class="site-footer-spacer" aria-hidden="true"></div>
+</footer>

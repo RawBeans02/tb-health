@@ -1,0 +1,76 @@
+---
+// Sticky glass header, skip link and phone tab bar (README:125–133, SiteHeader.dc.html).
+// Desktop nav from 1000px in English and 1180px in Filipino; below that, the tab bar.
+// Layout and glass fallbacks are CSS only (src/styles/chrome.css). Elements marked
+// data-t / data-t-label are the ones inplace.ts swaps.
+import { chrome } from '../content/chrome.ts';
+import { pick } from '../content/types.ts';
+import type { Lang } from '../lib/i18n.ts';
+import { href } from '../lib/i18n.ts';
+import { navHref, navKeys, type Features, type NavKey } from '../lib/nav.ts';
+import LangToggle from './LangToggle.astro';
+
+interface Props {
+  lang: Lang;
+  current: NavKey | '';
+  togglePath: string;
+  features: Features;
+}
+
+const { lang, current, togglePath, features } = Astro.props;
+const t = pick(chrome, lang);
+
+// Tab bar icons, 24×24 (README:132).
+const ICONS: Partial<Record<NavKey, string>> = {
+  home: 'M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21zM12 12.6a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z',
+  check: 'M9 3h6v3H9zM8.5 4.5h-2A1.5 1.5 0 0 0 5 6v13.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5h-2M9 13.5l2 2 4-4.5',
+  learn: 'M3 5.5c2.5-1 5.5-1 9 1 3.5-2 6.5-2 9-1V19c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1zM12 6.5V20',
+  data: 'M5 20v-8M12 20V5M19 20v-5M3 20h18',
+};
+
+const item = (key: NavKey) => ({
+  key,
+  href: navHref(key, lang),
+  label: t[`nav_${key}`],
+  current: key === current ? ('page' as const) : undefined,
+});
+const items = navKeys('header', features).map(item);
+const tabs = navKeys('tabs', features).map(item);
+---
+<header class="site-header" data-chrome>
+  <span class="site-header-glass" aria-hidden="true"></span>
+  <a class="skip-link" href="#main" data-t="skip">{t.skip}</a>
+  <div class="site-header-row">
+    <a class="site-header-brand wordmark" href={href('home', lang)}><span><span class="wordmark-tb">TB</span> PH</span></a>
+    <nav class="site-nav" aria-label={t.navMain} data-t-label="navMain">
+      <ul>
+        {
+          items.map((it) => (
+            <li>
+              <a href={it.href} aria-current={it.current} data-t={`nav_${it.key}`}>
+                {it.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <LangToggle lang={lang} path={togglePath} />
+  </div>
+  <nav class="tab-bar" aria-label={t.navMain} data-t-label="navMain" data-noprint>
+    <ul>
+      {
+        tabs.map((it) => (
+          <li>
+            <a href={it.href} aria-current={it.current}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={ICONS[it.key]} />
+              </svg>
+              <span data-t={`nav_${it.key}`}>{it.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

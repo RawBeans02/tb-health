@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 import preact from '@astrojs/preact';
 
 /** @param {string} pkg @param {string} file */
@@ -7,10 +7,18 @@ const fontsource = (pkg, file) => `./node_modules/@fontsource/${pkg}/files/${fil
 
 export default defineConfig({
   output: 'static',
+  // Placeholder domain until the owner picks host and domain (Q7); launch-check flags it.
+  site: 'https://tb-ph.example',
   // Slashless URLs served from flat files: /places -> places.html (PLAN §2).
   trailingSlash: 'never',
   build: { format: 'file' },
   integrations: [preact()],
+  env: {
+    schema: {
+      // TBPH_CHECK=false builds without Check in the nav, tab bar, shortcuts and sitemap (Q9).
+      TBPH_CHECK: envField.boolean({ context: 'server', access: 'public', default: true }),
+    },
+  },
   // Self-hosted from the Fontsource npm packages (README:89, OFL 1.1), latin subset.
   // Astro writes the @font-face rules and metric-matched fallbacks, so the swap doesn't shift layout.
   fonts: [
