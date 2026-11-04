@@ -19,6 +19,10 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-18);
   line-height: 1.5;
+  /* A word too long for its line breaks instead of overflowing, as can happen at large
+     text sizes (audit B2). Only a word that can't fit is broken, so nothing changes at
+     the default size. */
+  overflow-wrap: break-word;
 }
 
 /* An author display rule must never undo the hidden attribute. */

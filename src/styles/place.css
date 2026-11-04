@@ -92,7 +92,7 @@ html[data-stop='3'] .motif-fill {
   color: var(--teal-deep);
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: max(13px, 0.8125rem);
   font-weight: 700;
 }
 

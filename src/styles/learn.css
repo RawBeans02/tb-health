@@ -172,7 +172,7 @@
 }
 
 .toc-chevron {
-  font-size: 26px;
+  font-size: max(26px, 1.625rem);
   line-height: 1;
   color: var(--chevron);
   transition: transform 160ms ease;
@@ -218,7 +218,7 @@
   display: none;
 }
 
-@media (min-width: 1080px) {
+@media (min-width: 67.5em) {
   .learn-layout {
     grid-template-columns: minmax(0, 44rem) 250px;
     gap: clamp(48px, 7vw, 112px);
@@ -326,7 +326,7 @@
   font-weight: 700;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 45em) {
   .myths-head {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);

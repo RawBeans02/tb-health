@@ -64,6 +64,8 @@ main:focus {
   padding: 0 clamp(16px, 5vw, 64px);
   min-height: 64px;
   display: flex;
+  /* At large text sizes the language links drop below the wordmark (audit B2). */
+  flex-wrap: wrap;
   align-items: center;
   gap: clamp(10px, 2vw, 28px);
 }
@@ -76,7 +78,7 @@ main:focus {
   flex: none;
   text-decoration: none;
   color: var(--ink);
-  font-size: 23px;
+  font-size: max(23px, 1.4375rem);
   letter-spacing: -0.01em;
   line-height: 1;
   white-space: nowrap;
@@ -169,7 +171,7 @@ main:focus {
   color: var(--paper); /* kept #F2F0EA, as approved (README:321) */
 }
 
-@media (max-width: 379.98px) {
+@media (max-width: 23.74875em) {
   .site-header-row {
     gap: 8px;
   }
@@ -223,7 +225,8 @@ main:focus {
   padding: 6px 4px;
   border-radius: var(--radius-tab);
   text-align: center;
-  font-size: var(--text-14);
+  /* Tab labels stay 14px at any text size (audit B2): four of them share a phone's width. */
+  font-size: 14px;
   line-height: 1.15;
   font-weight: 400;
   color: var(--ink);
@@ -382,7 +385,7 @@ html[data-standalone='true'] .install-entry {
 
 /* ---------- Desktop layout ---------- */
 
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   html[lang='en'] .site-nav {
     display: block;
   }
@@ -397,7 +400,7 @@ html[data-standalone='true'] .install-entry {
   }
 }
 
-@media (min-width: 1180px) {
+@media (min-width: 73.75em) {
   html[lang='fil'] .site-nav {
     display: block;
   }

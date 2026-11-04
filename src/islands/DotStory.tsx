@@ -31,7 +31,9 @@ export default function DotStory({ lang, d, tx }: Props) {
       if (!measured || beats.length < 2) return;
       const tops = beats.map((el) => el.getBoundingClientRect().top);
       if (tops.at(-1)! - tops[0] < 40) return; // not laid out yet
-      const b = beatAt(tops, triggerLine(lang, innerWidth, innerHeight, box.clientHeight));
+      // The breakpoints are em media queries (audit B2): compare in px at the 16px default.
+      const width = (innerWidth * 16) / parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const b = beatAt(tops, triggerLine(lang, width, innerHeight, box.clientHeight));
       if (b === current) return;
       current = b;
       setBeat(b);

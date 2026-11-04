@@ -28,7 +28,7 @@ interface Props {
 }
 
 const PAGE = 20;
-const WIDE = '(min-width: 1080px)';
+const WIDE = '(min-width: 67.5em)'; // 1080px at the default text size, as in places.css
 const number = (n: number) => n.toLocaleString('en-US');
 
 /** Where the visitor came from, for "Back to your route". */

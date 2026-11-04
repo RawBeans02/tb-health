@@ -60,18 +60,21 @@
      the README stacks plus metric-matched fallbacks. */
   --font-body: var(--font-atkinson);
   --font-wordmark: var(--font-newsreader);
-  /* Home type roles, exact sizes as specced (default D1: consolidation is an open owner item) */
+  /* Home type roles, exact sizes as specced (default D1: consolidation is an open owner item).
+     The px sizes are minimums: as rem they grow with the browser's text-size setting and are
+     the same at its 16px default (audit B2). Width media queries are in em for the same reason
+     (1000px = 62.5em). */
   --text-h1: clamp(2.125rem, 1.7rem + 1.8vw, 2.875rem);         /* 34→46px, 700 / 1.06 / -0.02em */
   --text-h2-route: clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem);     /* 24→30px, 700 / 1.2 / -0.01em */
   --text-h2-nomatch: clamp(1.375rem, 1.25rem + 0.6vw, 1.75rem); /* 22→28px, 700 / 1.25 */
   --text-h3-stop: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);   /* 20→23px, 700 / 1.25 */
-  --text-20: 20px; /* H3 "What to bring", primary button */
-  --text-19: 19px; /* lede, input text, facility name */
-  --text-18: 18px; /* base; choice rows, reassurance lines, links */
-  --text-17: 17px; /* labels, legend, soft buttons, body secondary, address */
-  --text-16: 16px; /* location note, hours, distance, teaser */
-  --text-15: 15px; /* chips, badges, footnotes */
-  --text-14: 14px; /* tab bar labels */
+  --text-20: max(20px, 1.25rem); /* H3 "What to bring", primary button */
+  --text-19: max(19px, 1.1875rem); /* lede, input text, facility name */
+  --text-18: max(18px, 1.125rem); /* base; choice rows, reassurance lines, links */
+  --text-17: max(17px, 1.0625rem); /* labels, legend, soft buttons, body secondary, address */
+  --text-16: max(16px, 1rem); /* location note, hours, distance, teaser */
+  --text-15: max(15px, 0.9375rem); /* chips, badges, footnotes */
+  --text-14: max(14px, 0.875rem); /* tab bar labels */
 
   /* Radius */
   --radius-sheet: 30px;  /* planner sheet, phone tab bar */
