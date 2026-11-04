@@ -44,7 +44,6 @@ export function loadLeaflet(): Promise<LeafletApi> {
 // Markers stay the same in light and dark mode (V2), so they aren't themed tokens.
 const MARKER = { fill: '#1E6B70', stroke: '#FFFFFF', you: '#C42032' };
 const PH_CENTRE: Leaflet.LatLngExpression = [12.88, 121.77];
-const MAX_MARKERS = 800;
 
 export interface PlacesMap {
   show(rows: readonly Listed[], origin: Point | null, placeHref: (id: string) => string, lang: string): void;
@@ -92,7 +91,8 @@ function tileLayerClass(L: LeafletApi) {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
-  const map = L.map(el, { scrollWheelZoom: false });
+  // Canvas markers: every located center is drawn, even at 2,000+ (audit B7).
+  const map = L.map(el, { scrollWheelZoom: false, preferCanvas: true });
   const Tiles = tileLayerClass(L) as unknown as typeof L.TileLayer;
   new Tiles('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -108,21 +108,26 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
       signature = next;
       layer.clearLayers();
       const points: Leaflet.LatLngTuple[] = [];
-      for (const { p } of rows.slice(0, MAX_MARKERS)) {
+      for (const { p } of rows) {
         if (p.lat === null || p.lng === null) continue;
-        // Built with textContent: names and addresses come from the data file.
-        const box = document.createElement('div');
-        const link = document.createElement('a');
-        link.className = 'map-popup-name';
-        link.href = placeHref(p.id);
-        link.textContent = p.name;
-        const address = document.createElement('div');
-        address.className = 'map-popup-address';
-        address.textContent = p.address;
-        box.append(link, address);
-        L.circleMarker([p.lat, p.lng], { radius: 9, color: MARKER.stroke, weight: 2, fillColor: MARKER.fill, fillOpacity: 0.9 }).bindPopup(box).addTo(layer);
+        // Built when opened, with textContent: names and addresses come from the data file.
+        const popup = () => {
+          const box = document.createElement('div');
+          const link = document.createElement('a');
+          link.className = 'map-popup-name';
+          link.href = placeHref(p.id);
+          link.textContent = p.name;
+          const address = document.createElement('div');
+          address.className = 'map-popup-address';
+          address.textContent = p.address;
+          box.append(link, address);
+          return box;
+        };
+        L.circleMarker([p.lat, p.lng], { radius: 9, color: MARKER.stroke, weight: 2, fillColor: MARKER.fill, fillOpacity: 0.9 }).bindPopup(popup).addTo(layer);
         points.push([p.lat, p.lng]);
       }
+      // How many centers are on the map (tests read it: canvas markers aren't elements).
+      el.dataset.markers = String(points.length);
       if (origin) {
         L.circleMarker([origin.lat, origin.lng], { radius: 10, color: MARKER.stroke, weight: 3, fillColor: MARKER.you, fillOpacity: 1 }).addTo(layer);
         points.push([origin.lat, origin.lng]);

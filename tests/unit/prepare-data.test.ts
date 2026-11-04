@@ -80,6 +80,13 @@ describe('syntheticFacilities', () => {
       expect(r).not.toHaveProperty('email');
     }
   });
+
+  it('groups rows by region, as the PhilHealth list does (audit B7)', () => {
+    const codes = rows.map((r) => r.region_code);
+    const runs = codes.filter((code, i) => i === 0 || code !== codes[i - 1]);
+    expect(new Set(runs).size).toBe(runs.length);
+    expect(runs.length).toBeGreaterThan(5);
+  });
 });
 
 describe('validateClaims', () => {

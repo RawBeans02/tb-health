@@ -176,7 +176,7 @@ test.describe('map', () => {
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
     await expect(page.locator('.leaflet-container')).toBeVisible();
     await expect(page.locator('.map-status')).toHaveCount(0);
-    await expect(page.locator('.leaflet-interactive').first()).toBeAttached();
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', /^[1-9]\d*$/); // markers drawn (canvas)
     await expect.poll(() => tiles.length).toBeGreaterThan(0);
     await expect(page.locator('.leaflet-control-attribution')).toContainText('OpenStreetMap');
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'List' }).click();
@@ -238,5 +238,20 @@ test.describe('map layers (audit B4)', () => {
       const s = (await sheet.boundingBox())!;
       return page.evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('[role="dialog"]'), { x: s.x + s.width / 2, y: s.y + 40 });
     }).toBe(true);
+  });
+});
+
+test.describe('map markers (audit B7)', () => {
+  test('every located center gets one, with its popup built on demand', async ({ page }) => {
+    await ready(page);
+    const located = await page.evaluate(async () => {
+      const file = await (await fetch('/data/facilities.json')).json();
+      return file.facilities.filter((r: { lat: unknown }) => typeof r.lat === 'number').length;
+    });
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', String(located));
+    // Canvas markers: no per-marker SVG paths.
+    await expect(page.locator('.leaflet-overlay-pane canvas')).toHaveCount(1);
+    await expect(page.locator('.leaflet-popup')).toHaveCount(0);
   });
 });

@@ -186,8 +186,10 @@ export function validateClaims(claims) {
   return errors;
 }
 
-// Deterministic, obviously fake rows placed around the sample's city centres. Never shipped:
-// launch-check flags a synthetic build, and nothing here resembles a real facility or person.
+// Deterministic, obviously fake rows placed around the sample's city centres, grouped by
+// region as the PhilHealth list is (so a cut at the first N rows would drop whole regions).
+// Never shipped: launch-check flags a synthetic build, and nothing here resembles a real
+// facility or person.
 export function syntheticFacilities(sampleRows, count = SYNTHETIC_ROWS) {
   let seed = 20261104;
   const random = () => {
@@ -195,7 +197,7 @@ export function syntheticFacilities(sampleRows, count = SYNTHETIC_ROWS) {
     return seed / 4294967296;
   };
   const located = sampleRows.filter((row) => typeof row.lat === 'number');
-  return Array.from({ length: count }, (_, i) => {
+  const rows = Array.from({ length: count }, (_, i) => {
     const base = located[i % located.length];
     const n = String(i + 1).padStart(5, '0');
     return {
@@ -220,6 +222,7 @@ export function syntheticFacilities(sampleRows, count = SYNTHETIC_ROWS) {
       source_updated: base.source_updated,
     };
   });
+  return rows.sort((a, b) => a.region_code.localeCompare(b.region_code, 'en', { numeric: true }));
 }
 
 function readJson(path) {
