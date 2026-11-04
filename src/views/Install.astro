@@ -1,0 +1,90 @@
+---
+// Install (README:250, Install.dc.html). Static steps for each platform, in the order that
+// suits the visitor's device (an inline script orders them before paint). The one-tap
+// button shows once the browser offers an install prompt; in the installed app the page
+// says so instead of showing the steps.
+import { createHash } from 'node:crypto';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { chrome } from '../content/chrome.ts';
+import { install } from '../content/install.ts';
+import { meta } from '../content/meta.ts';
+import { pick } from '../content/types.ts';
+import type { Lang } from '../lib/i18n.ts';
+import { TAB_ICONS } from '../lib/nav.ts';
+import order from '../scripts/install-order.js?raw';
+import '../styles/install.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(install, lang);
+// "Install the app — TB PH", from the footer link's label (the prototype's <title>).
+const title = { en: `${chrome.nav_install.en} — TB PH`, fil: `${chrome.nav_install.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(order).digest('base64')}`);
+const platforms = [
+  { id: 'android', title: t.android, steps: [t.android1, t.android2, t.android3] },
+  { id: 'ios', title: t.ios, steps: [t.ios1, t.ios2, t.ios3] },
+  { id: 'desktop', title: t.desktop, steps: [t.desktop1, t.desktop2, t.desktop3], hidden: true },
+];
+const offline = [
+  { text: t.off1, icon: TAB_ICONS.home },
+  { text: t.off2, icon: TAB_ICONS.check },
+  { text: t.off3, icon: TAB_ICONS.learn },
+];
+---
+<BaseLayout lang={lang} title={title} description={meta.installDescription} current="install">
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <div class="install">
+        <div class="install-head">
+          <h1 class="h1">{t.h1}</h1>
+          <p class="lede">{t.lead}</p>
+        </div>
+        <div class="install-done" role="status"><span aria-hidden="true">✓</span><span>{t.installed}</span></div>
+        <div class="install-action">
+          <button type="button" class="btn btn--primary" data-install>{t.button}</button>
+        </div>
+        <p class="install-status" role="status" data-install-status data-done={t.done} data-later={t.later}></p>
+        <div class="install-platforms install-entry">
+          {
+            platforms.map((p) => (
+              <section id={p.id} aria-labelledby={`${p.id}-h`} hidden={p.hidden}>
+                <h2 id={`${p.id}-h`} class="h2">{p.title}</h2>
+                <ol class="group install-steps">
+                  {p.steps.map((step, i) => (
+                    <li>
+                      <span class="install-step-n" aria-hidden="true">{i + 1}</span>
+                      <span class="install-step-text"><span class="visually-hidden">{`${i + 1}. `}</span>{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))
+          }
+        </div>
+        <script is:inline set:html={order} />
+        <section aria-labelledby="offline-h">
+          <h2 id="offline-h" class="h2">{t.offH}</h2>
+          <ul class="group install-offline">
+            {
+              offline.map((o) => (
+                <li>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path d={o.icon} /></svg>
+                  <span>{o.text}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="install-note">{t.offNote}</p>
+        </section>
+        <p class="install-privacy">{t.privacy}</p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../scripts/install.ts';
+</script>

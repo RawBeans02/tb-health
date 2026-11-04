@@ -35,5 +35,14 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 - **Pack :81 and :84 (dot story, beat 7 buttons):** "Find a TB-DOTS center" / "Hanapin ang TB-DOTS center".
 - **README:236 and the prototype (ship):** "Find TB care near you" / "Hanapin ang gamutan malapit sa iyo", the soft button beside "Check your symptoms" at the end of the dot story. It leads to the planner (`/`, or `/fil`), like Learn's L5 button with the same words.
 
-## Still to come (added with their steps)
-- Other 23 vs 30 October dates in page copy (steps 8–10).
+### `about.updatesText`: the data date (step 10)
+- **Prototype (About › Data and updates):** "Data last updated 30 October 2026." / "Huling update ng datos: 30 Oktubre 2026."
+- **Ships:** the same sentence with the date from the data files, as in the footer credit (`chrome.credit`), so it reads 4 November 2026 today and moves with the next refresh. The only other date in page copy, the Data page's "retrieved 23 October 2026" (`charts`, monthly notifications), is a retrieval date and stays as written.
+
+## The owner's own wording (`decision` strings)
+
+Strings whose wording the owner gave in `docs/decisions.md`; the parity test checks them against the line quoted there.
+
+### `about.n1555_note`: the DOH hotline note (step 10, V4)
+- **Prototype:** "[VERIFY] Confirm before launch" / "[VERIFY] Kumpirmahin bago ilunsad", in TB red.
+- **Ships (V4, decisions.md :38–39, the v7 wording):** "Press 2 for the National Patient Navigation and Referral Center." / "Pindutin ang 2 para sa National Patient Navigation and Referral Center.", in the muted note colour, since it is no longer a `[VERIFY]`.

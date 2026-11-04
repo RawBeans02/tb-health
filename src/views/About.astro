@@ -1,0 +1,110 @@
+---
+// About (README:244–245, About.dc.html). Static. "Use TB PH like an app" hides in the
+// installed app (html[data-standalone="true"], set before paint). Helpful numbers are
+// 44px tel: links; the owner's privacy row (Q5) shows once supplied.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { about } from '../content/about.ts';
+import { meta } from '../content/meta.ts';
+import { fill, pick } from '../content/types.ts';
+import { formatDate, LAST_UPDATED } from '../lib/dates.ts';
+import { href, type Lang } from '../lib/i18n.ts';
+import '../styles/about.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(about, lang);
+const title = { en: `${about.h1.en} — TB PH`, fil: `${about.h1.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+const privacy = [t.privacy1, t.privacy2, t.privacy3, t.privacyServices].filter(Boolean);
+const numbers = [
+  { who: t.n911_who, note: t.n911_note, number: '911', tel: 'tel:911' },
+  { who: t.n1555_who, note: t.n1555_note, number: '1555', tel: 'tel:1555' },
+  { who: t.lcp_who, note: t.fromList, number: t.lcp_number, tel: 'tel:+63289246101' },
+  { who: t.pts_who, note: t.fromList, number: t.pts_number, tel: 'tel:+63283565857' },
+  { who: t.local_who, note: t.local_note },
+];
+---
+<BaseLayout lang={lang} title={title} description={meta.aboutDescription} current="about">
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <div class="about">
+        <section id="mission" class="about-section" data-anchor>
+          <h1 class="h1">{t.h1}</h1>
+          <p class="lede">{t.lede}</p>
+        </section>
+
+        <section id="partners" class="about-section" data-anchor aria-labelledby="partners-h">
+          <h2 id="partners-h" class="h2">{t.partners}</h2>
+          <ul class="group about-rows about-rows--quiet" role="list"><li>{t.partnersRow}</li></ul>
+        </section>
+
+        <section id="review" class="about-section" data-anchor aria-labelledby="review-h">
+          <h2 id="review-h" class="h2">{t.review}</h2>
+          <div class="about-card"><p>{t.reviewText}</p></div>
+        </section>
+
+        <section id="disclaimer" class="about-section" data-anchor aria-labelledby="disclaimer-h">
+          <h2 id="disclaimer-h" class="h2">{t.disclaimer}</h2>
+          <div class="about-card"><p>{t.disclaimerText}</p></div>
+        </section>
+
+        <section id="privacy" class="about-section" data-anchor aria-labelledby="privacy-h">
+          <h2 id="privacy-h" class="h2">{t.privacy}</h2>
+          <ul class="group about-inset" role="list">
+            {privacy.map((row) => <li><p>{row}</p></li>)}
+          </ul>
+        </section>
+
+        <section id="updates" class="about-section" data-anchor aria-labelledby="updates-h">
+          <h2 id="updates-h" class="h2">{t.updates}</h2>
+          <div class="about-card"><p>{fill(t.updatesText, { date: formatDate(LAST_UPDATED, lang) })}</p></div>
+        </section>
+
+        <section id="app" class="about-section install-entry" data-anchor aria-labelledby="app-h">
+          <h2 id="app-h" class="h2">{t.appH}</h2>
+          <ul class="group about-rows" role="list">
+            <li class="about-loose">{t.appText}</li>
+            <li class="link-row-item">
+              <a class="link-row" href={href('install', lang)}><span>{t.appLink}</span><span class="link-row-chevron" aria-hidden="true">›</span></a>
+            </li>
+          </ul>
+        </section>
+
+        <section id="accessibility" class="about-section" data-anchor aria-labelledby="accessibility-h">
+          <h2 id="accessibility-h" class="h2">{t.a11y}</h2>
+          <div class="about-card"><p>{t.a11yText}</p></div>
+        </section>
+
+        <section id="numbers" class="about-section" data-anchor aria-labelledby="numbers-h">
+          <h2 id="numbers-h" class="h2">{t.numbers}</h2>
+          <ul class="group about-inset" role="list">
+            {
+              numbers.map((n) => (
+                <li>
+                  <div class="number-row">
+                    <div class="number-who">
+                      <p class="number-name">{n.who}</p>
+                      <p class="number-note">{n.note}</p>
+                    </div>
+                    {n.tel && (
+                      <a class="number-tel" href={n.tel} aria-label={fill(t.call, { who: n.who, number: n.number })}>
+                        {n.number}
+                      </a>
+                    )}
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section id="contact" class="about-section" data-anchor aria-labelledby="contact-h">
+          <h2 id="contact-h" class="h2">{t.contact}</h2>
+          <ul class="group about-rows" role="list"><li>{t.contactRow}</li></ul>
+        </section>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

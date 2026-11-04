@@ -1,0 +1,150 @@
+/* Install (README:250, Install.dc.html). What shows depends on html attributes set before
+   paint (prepaint.js) or by the install prompt (pwa.ts): data-standalone, data-installable. */
+
+.install {
+  max-width: 760px;
+  display: grid;
+  gap: 28px;
+}
+
+.install-head {
+  display: grid;
+  gap: 12px;
+}
+
+.install-head .h1 {
+  text-wrap: balance;
+}
+
+.install section {
+  display: grid;
+  gap: 12px;
+}
+
+.install .h2 {
+  letter-spacing: -0.01em;
+}
+
+/* In the installed app */
+.install-done {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-group);
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.install-done > span:first-child {
+  color: var(--teal);
+  font-size: var(--text-20);
+}
+
+html[data-standalone='true'] .install-done {
+  display: flex;
+}
+
+/* One-tap install, while the browser offers it */
+.install-action {
+  display: none;
+  gap: 10px;
+  max-width: 560px;
+}
+
+html[data-installable='true'] .install-action {
+  display: grid;
+}
+
+html[data-standalone='true'] .install-action {
+  display: none;
+}
+
+.install-action .btn {
+  width: 100%;
+  padding: 0 24px;
+  border: 0;
+  cursor: pointer;
+}
+
+.install-status {
+  font-size: var(--text-17);
+  font-weight: 700;
+}
+
+/* The platform sections take part in the page grid; hidden in the installed app. */
+.install-platforms {
+  display: contents;
+}
+
+/* Numbered steps and the offline list: separators inset on the text */
+.install-steps > li,
+.install-offline > li {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  align-items: center;
+}
+
+.install-steps > li {
+  min-height: 60px;
+}
+
+.install-offline > li {
+  min-height: 56px;
+}
+
+.group.install-steps > li + li,
+.group.install-offline > li + li {
+  border-top: 0;
+}
+
+.install-steps > li + li > .install-step-text,
+.install-offline > li + li > span {
+  border-top: 1px solid var(--separator);
+}
+
+.install-step-n {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--on-teal);
+  font-size: var(--text-15);
+  font-weight: 700;
+}
+
+.install-step-text,
+.install-offline > li > span {
+  padding: 14px 16px 14px 0;
+  font-size: var(--text-18);
+  line-height: 1.45;
+}
+
+.install-offline svg {
+  justify-self: center;
+  color: var(--teal);
+}
+
+.install-offline path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.install-note {
+  font-size: var(--text-16);
+  line-height: 1.45;
+  color: var(--secondary);
+}
+
+.install-privacy {
+  font-size: var(--text-16);
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 40em;
+}

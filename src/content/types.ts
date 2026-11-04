@@ -14,6 +14,7 @@ export type Origin =
   | 'pack' //     the content pack, verbatim
   | 'ui' //       the prototype (or README), where the pack has nothing
   | 'override' // README wording that differs from the pack (listed in docs/copy-overrides.md)
+  | 'decision' // the owner's own wording, quoted in docs/decisions.md (also listed in copy-overrides.md)
   | 'owner'; //   still to come from the owner; blocks launch
 
 /**
@@ -21,10 +22,11 @@ export type Origin =
  *   pack:N    line N of design/…/reference/content-and-data-pack.md
  *   readme:N  line N of design/…/README.md
  *   proto:F   prototype file F
+ *   decision:N  line N of docs/decisions.md (the owner's wording, quoted there)
  *   derived   built mechanically from other strings, as the note says (checked by hand)
  *   owner     not supplied yet
  */
-export type Ref = `pack:${number}` | `readme:${number}` | `proto:${string}` | 'derived' | 'owner';
+export type Ref = `pack:${number}` | `readme:${number}` | `proto:${string}` | `decision:${number}` | 'derived' | 'owner';
 
 export interface Str {
   en: string;

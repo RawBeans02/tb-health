@@ -50,7 +50,6 @@ const queues = [];
 const all = await strings();
 const ownerMissing = all.filter((s) => (s.src[0] === 'owner' && !s.en) || (s.src[1] === 'owner' && !s.fil));
 if (ownerMissing.length) blocking.push(`Strings the owner supplies, not in yet (${ownerMissing.length}): ${ownerMissing.map((s) => s.id).join(', ')}.`);
-blocking.push('About privacy rows, EN and FIL, from the owner (Q5): self-hosted fonts, map tiles, the host. Listed as strings in step 10.');
 for (const flag of ['REVIEW', 'VERIFY', 'PLACEHOLDER']) {
   const flagged = all.filter((s) => s.flags?.includes(flag));
   if (!flagged.length) continue;

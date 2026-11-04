@@ -1,0 +1,120 @@
+/* About (README:244–245, About.dc.html): an H2 and one white group or card per section. */
+
+.about {
+  max-width: 760px;
+  display: grid;
+  gap: 40px;
+}
+
+.about-section {
+  display: grid;
+  gap: 12px;
+}
+
+.about-section .h2 {
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Plain rows */
+.about-rows > li:not(.link-row-item) {
+  padding: 14px 18px;
+  font-size: var(--text-18);
+  line-height: 1.5;
+}
+
+.about-rows > li.about-loose {
+  line-height: 1.55;
+}
+
+.about-rows--quiet > li {
+  color: var(--secondary);
+}
+
+.about-rows .link-row {
+  padding: 0 18px;
+}
+
+/* A white card of text */
+.about-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-group);
+  background: var(--surface);
+}
+
+.about-card p {
+  font-size: var(--text-18);
+  line-height: 1.55;
+  max-width: 34em;
+}
+
+/* Rows with the separator inset on the text */
+.about-inset > li {
+  padding-left: 18px;
+}
+
+.group.about-inset > li + li {
+  border-top: 0;
+}
+
+.about-inset > li + li > * {
+  border-top: 1px solid var(--separator);
+}
+
+.about-inset > li > p {
+  padding: 14px 18px 14px 0;
+  font-size: var(--text-18);
+  line-height: 1.5;
+}
+
+/* Helpful numbers: who and a note, the number on the right as a 44px tel: link */
+.number-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 16px;
+  padding: 12px 18px 12px 0;
+}
+
+.number-who {
+  flex: 1 1 15em;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.number-who p {
+  text-wrap: wrap; /* as the prototype breaks them, not the global "pretty" */
+}
+
+.number-name {
+  font-size: var(--text-18);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.number-note {
+  font-size: var(--text-16);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.number-tel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--teal-deep);
+  font-size: var(--text-18);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+
+.number-tel:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}

@@ -16,7 +16,7 @@ import { langOf, pagePath, toLang } from '../src/lib/i18n.ts';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 
 // English paths of pages not built yet; remove each as its step lands.
-const PENDING = new Set(['/about', '/install']);
+const PENDING = new Set([]);
 const withoutCheck = process.env.TBPH_CHECK === 'false';
 
 function htmlFiles(dir) {

@@ -10,11 +10,13 @@ import { LANGS } from '../../src/lib/i18n.ts';
 const design = 'design/design_handoff_tb_ph';
 const packLines = readFileSync(`${design}/reference/content-and-data-pack.md`, 'utf8').split('\n');
 const readmeLines = readFileSync(`${design}/README.md`, 'utf8').split('\n');
+const decisionLines = readFileSync('docs/decisions.md', 'utf8').split('\n');
 const overridesDoc = readFileSync('docs/copy-overrides.md', 'utf8');
 
 // Prototype strings sit in JS literals or markup; undo the escaping before comparing.
 const prototype = (file: string) =>
   readFileSync(`${design}/prototype/${file}`, 'utf8')
+    .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)))
     .replace(/\\'/g, "'")
     .replace(/\\"/g, '"')
     .replace(/&#39;/g, "'")
@@ -64,8 +66,8 @@ describe('copy dictionaries', () => {
             return;
           }
           const [kind, where] = ref.split(/:(.*)/);
-          const source =
-            kind === 'pack' ? packLines[Number(where) - 1] : kind === 'readme' ? readmeLines[Number(where) - 1] : prototype(where);
+          const lines = { pack: packLines, readme: readmeLines, decision: decisionLines }[kind];
+          const source = lines ? lines[Number(where) - 1] : prototype(where);
           expect(source, `${ref} not found`).toBeDefined();
           if (/\{(?!date\})\w+\}/.test(text)) {
             // A template the prototype builds in code ('Hours: ' + h): each literal piece must be there.
@@ -83,6 +85,10 @@ describe('copy dictionaries', () => {
         if (str.origin === 'override') {
           expect(str.note, 'overrides name the pack line they replace').toMatch(/[Pp]ack :\d+/);
           expect(overridesDoc, 'every override is listed for the owner').toContain(id);
+        }
+        if (str.origin === 'decision') {
+          expect(str.src.every((r) => r.startsWith('decision:'))).toBe(true);
+          expect(overridesDoc, "the owner's wording is listed with the overrides").toContain(id);
         }
         if (str.origin === 'ui' && str.src[1] !== 'owner') expect(str.flags).toContain('FIL-REVIEW');
       });
