@@ -48,7 +48,8 @@ export const about = {
     fil: '',
     origin: 'owner',
     src: ['owner', 'owner'],
-    note: "The owner writes this row (Q5): self-hosted fonts, map tiles, the host. It replaces the prototype's row naming Google Fonts, which the site doesn't use. Not shown until supplied.",
+    note:
+      "The owner writes this row (Q5). It replaces the prototype's row naming Google Fonts, which the site doesn't use, and is not shown until supplied. What it has to cover, as the site works now: the fonts are served by TB PH itself; the host sees each visitor's IP address, browser and the pages requested; OpenStreetMap is contacted only if the map is opened, and then sees the IP address and the area viewed (around the reader if they used their location); directions hand off to Google Maps or Sakay.ph; calls go through the phone.",
   },
 
   updates: ui('Data and updates', 'Datos at mga update', file),
