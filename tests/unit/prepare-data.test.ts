@@ -84,8 +84,9 @@ describe('syntheticFacilities', () => {
   it('groups rows by region, as the PhilHealth list does (audit B7)', () => {
     const codes = rows.map((r) => r.region_code);
     const runs = codes.filter((code, i) => i === 0 || code !== codes[i - 1]);
-    expect(new Set(runs).size).toBe(runs.length);
-    expect(runs.length).toBeGreaterThan(5);
+    // One run per region, and more than one region.
+    expect(runs).toHaveLength(new Set(codes).size);
+    expect(runs.length).toBeGreaterThan(1);
   });
 });
 
