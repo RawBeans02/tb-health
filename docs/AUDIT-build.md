@@ -51,7 +51,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Cancellation / unsubscribe / dark-pattern review | N/A | Nothing to subscribe to. |
 | Child/age-related compliance | N/A | Unchanged (interim). |
 | Reliability / retries / failure handling | Verified | Try again on list and map with focus kept (B8), submits kept through errors (B16), malformed hashes ignored (B37), offline after one visit with the place shell and offline page (pwa.spec, L10). |
-| Tests / CI / regression coverage | Verified | 2,167 unit tests; e2e on chromium (346), webkit (227), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run. |
+| Tests / CI / regression coverage | Verified | 2,167 unit tests; e2e on chromium (346), webkit (227), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run, after the merge to `main` (GitHub runs a manual workflow only from the default branch). |
 | Agent model/provider routing & fallback safety | N/A | No AI at runtime. |
 | Release-build verification | Verified / Runtime check | Tests run on `dist/` served like the host; the Check-off variant is built and tested (B26); `launch-check --release` is the gate; the post-deploy check reads the live site back (no cookies, HTML identical to `dist/`, headers). Runs after the first deploy. |
 | App Store / platform compliance | N/A | No store; installable PWA (manifest, service worker) tested in step 11. |

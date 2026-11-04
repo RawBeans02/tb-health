@@ -31,7 +31,7 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
 
 ## Pending first runs
 
-- **CI** (`.github/workflows/ci.yml`, D22): manual only. Start it once from the repository's Actions tab after the push; it runs the type check, unit tests, the build, every browser project and the Check-off build. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
+- **CI** (`.github/workflows/ci.yml`, D22): manual only. GitHub offers a manual workflow only once its file is on the default branch, so start it from the repository's Actions tab after the merge to `main`; it runs the type check, unit tests, the build, every browser project and the Check-off build. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
 - **Outside links** (L8): `node scripts/outside-links.mjs --fetch` asks each of the 27 cited sources whether it still answers. It contacts other sites, so it waits for your OK; dead sources go to the content owner.
 
 ## Device checks
