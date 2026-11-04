@@ -22,6 +22,8 @@ export interface GazEntry extends Point {
   name: string;
   prov: string;
   kind: 'city' | 'prov';
+  /** Normalised abbreviations that also find it ("qc"), from data/place-abbreviations.json. */
+  aka: string[];
   /** Shown in the field and written to the URL as `near`: "Bangued, Abra" or "Quezon City". */
   label: string;
   key: string;
@@ -30,18 +32,26 @@ export interface GazEntry extends Point {
   full: string;
 }
 
+export type GazBase = Pick<GazEntry, 'name' | 'prov' | 'kind' | 'lat' | 'lng'> & { aka?: string[] };
+
 /**
- * One entry per city at its first facility's coordinates, plus one per province at the
- * average of its cities (unless a city has the same name). Sorted by label.
+ * One entry per city at the mean of its clinics' pins (owner decision, 4 Nov 2026; the
+ * prototype used the first clinic's pin, so the nearest read "about 1 km"), plus one per
+ * province at the mean of its cities, unless a city has the same name. Abbreviations
+ * attach to the entry whose name they spell out. Sorted by label. Built by prepare-data.
  */
-export function buildGazetteer(places: readonly Place[]): GazEntry[] {
-  const cities = new Map<string, GazBase>();
+export function buildGazetteer(places: readonly Place[], abbreviations: Record<string, string> = {}): GazEntry[] {
+  const cities = new Map<string, { name: string; prov: string; lat: number; lng: number; n: number }>();
   for (const p of places) {
     if (p.lat === null || p.lng === null || !p.city) continue;
     const id = `${p.city}|${p.prov}`;
-    if (!cities.has(id)) cities.set(id, { name: p.city, prov: p.prov, lat: p.lat, lng: p.lng, kind: 'city' });
+    const sum = cities.get(id) ?? { name: p.city, prov: p.prov, lat: 0, lng: 0, n: 0 };
+    sum.lat += p.lat;
+    sum.lng += p.lng;
+    sum.n += 1;
+    cities.set(id, sum);
   }
-  const out = [...cities.values()];
+  const out: GazBase[] = [...cities.values()].map((c) => ({ name: c.name, prov: c.prov, lat: c.lat / c.n, lng: c.lng / c.n, kind: 'city' }));
   const provinces = new Map<string, { lat: number; lng: number; n: number }>();
   for (const c of out) {
     const sum = provinces.get(c.prov) ?? { lat: 0, lng: 0, n: 0 };
@@ -53,19 +63,28 @@ export function buildGazetteer(places: readonly Place[]): GazEntry[] {
   for (const [name, sum] of provinces) {
     if (name && !out.some((c) => c.name === name)) out.push({ name, prov: name, lat: sum.lat / sum.n, lng: sum.lng / sum.n, kind: 'prov' });
   }
-  return out.map(withKeys).sort((a, b) => a.label.localeCompare(b.label));
+  const entries = fromCompact(out);
+  for (const [abbreviation, target] of Object.entries(abbreviations)) {
+    const t = norm(target).replace(/ city$/, '');
+    const g = entries.find((e) => e.key2 === t) ?? entries.find((e) => e.key === norm(target));
+    if (g && !g.aka.includes(norm(abbreviation))) g.aka.push(norm(abbreviation));
+  }
+  return entries;
 }
 
-export type GazBase = Pick<GazEntry, 'name' | 'prov' | 'kind' | 'lat' | 'lng'>;
+/** Gazetteer entries from their compact form (facilities.json, gazetteer.json), sorted by label. */
+export function fromCompact(entries: readonly GazBase[]): GazEntry[] {
+  return entries.map(withKeys).sort((a, b) => a.label.localeCompare(b.label));
+}
 
-/** Adds the label and match keys. Also rebuilds entries from public/data/gazetteer.json. */
+/** Adds the label and match keys. */
 export function withKeys(g: GazBase): GazEntry {
   const key = norm(g.name);
   const label = g.kind === 'city' && g.prov && g.prov !== g.name && !g.name.includes(g.prov) ? `${g.name}, ${g.prov}` : g.name;
-  return { ...g, label, key, key2: key.replace(/^city of /, '').replace(/ city$/, ''), full: norm(label) };
+  return { ...g, aka: [...(g.aka ?? [])], label, key, key2: key.replace(/^city of /, '').replace(/ city$/, ''), full: norm(label) };
 }
 
-/** The best gazetteer entry for typed text: exact, then prefix, then contains. Cities win ties. */
+/** The best gazetteer entry for typed text: exact (or an abbreviation), then prefix, then contains. Cities win ties. */
 export function matchPlace(text: string, gaz: readonly GazEntry[]): GazEntry | null {
   const t = norm(text);
   if (t.length < 2) return null;
@@ -73,7 +92,7 @@ export function matchPlace(text: string, gaz: readonly GazEntry[]): GazEntry | n
   let bestScore = 0;
   for (const g of gaz) {
     let score = 0;
-    if (g.full === t || g.key === t || g.key2 === t) score = 100;
+    if (g.full === t || g.key === t || g.key2 === t || g.aka.includes(t)) score = 100;
     else if (g.full.startsWith(t) || g.key2.startsWith(t)) score = 80;
     else if (` ${t} `.includes(` ${g.full} `)) score = 75;
     else if (g.key2.length >= 4 && ` ${t} `.includes(` ${g.key2} `)) score = 70;

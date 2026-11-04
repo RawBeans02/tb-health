@@ -41,3 +41,12 @@ export function titleCase(text: unknown): string {
     })
     .join('');
 }
+
+/**
+ * Whether normalised `key` contains normalised search text `t`. Two letters match only the
+ * start of a word, so "ab" finds Abra but not Malabon (owner decision, 4 Nov 2026); longer
+ * text matches anywhere.
+ */
+export function contains(key: string, t: string): boolean {
+  return t.length > 2 ? key.includes(t) : ` ${key}`.includes(` ${t}`);
+}

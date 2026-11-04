@@ -83,6 +83,14 @@ test.describe('planner', () => {
     await expect(commute).toHaveAttribute('href', /^https:\/\/www\.google\.com\/maps\/dir\/\?api=1&destination=.+&travelmode=transit$/);
   });
 
+  test('a listed abbreviation finds its place: "QC" plans from Quezon City', async ({ page }) => {
+    await ready(page);
+    await field(page).fill('QC');
+    await submit(page).click();
+    await expect(page.locator('.route-origin')).toHaveText('Quezon City');
+    expect(new URL(page.url()).search).toBe('?need=all&near=Quezon+City');
+  });
+
   test('typed text that matches no place stays out of the URL (Q4)', async ({ page }) => {
     await ready(page);
     await field(page).fill('12 Synthetic Street');

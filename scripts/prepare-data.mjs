@@ -10,7 +10,9 @@
 //
 // Writes (git-ignored):
 //   public/data/facilities.json       slimmed facility list with stable place ids, fetched at runtime
-//   public/data/gazetteer.json        cities and provinces, for distances from a typed `near` (Place)
+//   public/data/gazetteer.json        cities and provinces (also inside facilities.json), for the Place page
+//
+// data/place-abbreviations.json lists widely used short names ("QC") that find a place.
 //   src/generated/region-counts.json  facilities per region, for the Data page (d14)
 //
 // Place ids (Q6) come from the normalised name + city + province. data/place-ids.json is
@@ -34,6 +36,7 @@ const out = {
 };
 const idRegistryPath = join(dataDir, 'place-ids.json');
 const aliasesPath = join(dataDir, 'place-aliases.json');
+const abbreviationsPath = join(dataDir, 'place-abbreviations.json');
 
 const SYNTHETIC_ROWS = 2100;
 
@@ -264,6 +267,13 @@ function main() {
   const withIds = rows.map((row, i) => ({ ...row, id: ids[i] }));
   if (!synthetic) reportIds(withIds, aliases);
 
+  const round = (x) => Math.round(x * 1e5) / 1e5;
+  const abbreviations = existsSync(abbreviationsPath) ? readJson(abbreviationsPath).abbreviations : {};
+  const gazEntries = buildGazetteer(withIds.map(prepare), abbreviations);
+  const gazetteer = gazEntries.map(({ name, prov, kind, lat, lng, aka }) => ({ name, prov, kind, lat: round(lat), lng: round(lng), ...(aka.length ? { aka } : {}) }));
+  const found = gazEntries.flatMap((g) => g.aka);
+  console.log(`prepare-data: abbreviations: ${found.length} of ${Object.keys(abbreviations).length} match a place in this list${found.length ? ` (${found.join(', ')})` : ''}`);
+
   const published = {
     meta: {
       title: source.title,
@@ -273,12 +283,11 @@ function main() {
       synthetic,
     },
     aliases,
+    gazetteer,
     facilities: withIds.map(slim),
   };
   const bytes = writeJson(out.facilities, published);
   writeJson(out.regionCounts, regionCounts(rows));
-  const round = (x) => Math.round(x * 1e5) / 1e5;
-  const gazetteer = buildGazetteer(withIds.map(prepare)).map(({ name, prov, kind, lat, lng }) => ({ name, prov, kind, lat: round(lat), lng: round(lng) }));
   const gazBytes = writeJson(out.gazetteer, gazetteer);
 
   const kind = synthetic ? 'SYNTHETIC' : sample ? 'SAMPLE' : 'real';

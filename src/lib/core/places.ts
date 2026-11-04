@@ -2,12 +2,12 @@
 // held in memory only, never written to the URL (D20).
 import { offers, type Place, type Service } from './facility.ts';
 import { km, type Point } from './geo.ts';
-import { norm } from './text.ts';
+import { contains, norm } from './text.ts';
 
 export type Sector = '' | 'gov' | 'priv';
 
 export interface PlaceFilters {
-  /** Words that must all appear in the name, city or province. */
+  /** Words that must all appear in the name, city or province (two letters: at a word start). */
   q: string;
   svc: '' | Service;
   region: string;
@@ -34,7 +34,7 @@ export function filterPlaces(list: readonly Place[], f: PlaceFilters, origin: Po
       (!f.region || p.code === f.region) &&
       (!f.prov || p.prov === f.prov) &&
       (!f.sector || (f.sector === 'gov') === p.gov) &&
-      tokens.every((t) => p.key.includes(t)),
+      tokens.every((t) => contains(p.key, t)),
   );
   const svc = f.svc;
   let shown = svc ? base.filter((p) => offers(p, svc)) : base;

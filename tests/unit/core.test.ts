@@ -129,9 +129,32 @@ describe('geo', () => {
     expect(matchPlace('Manila', sample.gaz)?.label).toBe('City of Manila');
   });
 
-  it('matches nothing for one letter, and "QC" stays unmatched as in the prototype', () => {
+  it('matches nothing for one letter', () => {
     expect(matchPlace('a', sample.gaz)).toBeNull();
-    expect(matchPlace('QC', sample.gaz)).toBeNull();
+  });
+
+  it('finds a place by a listed abbreviation, ignoring case and a trailing "City" (owner, 4 Nov 2026)', () => {
+    const gaz = buildGazetteer(sample.list, { QC: 'Quezon City', SJDM: 'San Jose del Monte', CDO: 'Cagayan de Oro' });
+    expect(matchPlace('QC', gaz)?.label).toBe('Quezon City');
+    expect(matchPlace('qc', gaz)?.label).toBe('Quezon City');
+    expect(matchPlace('SJDM', gaz)?.name).toMatch(/^San Jose del Monte/i);
+    // CDO isn't in the sample, so it attaches to nothing.
+    expect(gaz.flatMap((g) => g.aka).sort()).toEqual(['qc', 'sjdm']);
+    expect(matchPlace('QC', buildGazetteer(sample.list))).toBeNull();
+  });
+
+  it("places a city at the mean of its clinics' pins, and a province at the mean of its cities", () => {
+    const list = [
+      prepare(row({ id: 'A', city_municipality: 'Testville', lat: 15.0, lng: 121.0 })),
+      prepare(row({ id: 'B', city_municipality: 'Testville', lat: 15.2, lng: 121.4 })),
+      prepare(row({ id: 'C', city_municipality: 'Othertown', lat: 16.0, lng: 122.0 })),
+    ];
+    const gaz = buildGazetteer(list);
+    const city = gaz.find((g) => g.name === 'Testville')!;
+    expect(city.lat).toBeCloseTo(15.1, 10);
+    expect(city.lng).toBeCloseTo(121.2, 10);
+    const province = gaz.find((g) => g.kind === 'prov')!;
+    expect(province.lat).toBeCloseTo((15.1 + 16.0) / 2, 10);
   });
 
   it('labels distances: exact only for a precise place and the visitor\'s own location', () => {
@@ -170,8 +193,9 @@ describe('route', () => {
     expect(r.stops.map((s) => s.mode)).toEqual(['noXray', 'ok', 'ok']);
     for (const stop of r.stops) expect(stop.items).toHaveLength(3);
     expect(r.stops[0].items.map((x) => x.p.city)).toEqual(['Quezon City', 'Quezon City', 'Quezon City']);
-    // The gazetteer pins a city at its first facility, so the nearest is 0 km ("about 1 km"), as the readers found.
-    expect(r.nearest).toBe(0);
+    // The sample pins every clinic at its city's approximate centre, so the city's mean pin
+    // is that same point and the nearest is 0 km ("about 1 km"). Real pins will differ.
+    expect(r.nearest).toBeCloseTo(0, 6);
   });
 
   it('falls back to the province when nothing is within 10 km (the "far" demo point)', () => {
@@ -186,6 +210,14 @@ describe('route', () => {
     const r = route(sample.list, { text: 'a', label: 'a' }, ALL);
     expect(r.empty).toBe(true);
     expect(r.stops.every((s) => s.items.length === 0)).toBe(true);
+  });
+
+  it('matches two letters only at the start of a word (owner, 4 Nov 2026)', () => {
+    const list = ['Malabon', 'Abucay', 'Tabuk'].map((city, i) => prepare(row({ id: `T${i}`, city_municipality: city, province_or_city_group: 'Test Province' })));
+    const r = route(list, { text: 'ab', label: 'ab' }, ['meds']);
+    expect(r.stops[0].items.map((x) => x.p.city)).toEqual(['Abucay']);
+    // Three letters still match anywhere.
+    expect(route(list, { text: 'abo', label: 'abo' }, ['meds']).stops[0].items.map((x) => x.p.city)).toEqual(['Malabon']);
   });
 
   it('ranks unmatched text by city, then province', () => {
@@ -288,6 +320,9 @@ describe('filterPlaces (Places)', () => {
     expect(ids({ svc: 'test' })).toEqual(['G1', 'N1']);
     expect(ids({ q: 'synthetic gov' })).toEqual(['G1']);
     expect(ids({ q: 'synthetic nowhere' })).toEqual([]);
+    // Two letters match only the start of a word: "ri" starts no word ("private" has it inside).
+    expect(ids({ q: 'ri' })).toEqual([]);
+    expect(ids({ q: 'pr' })).toEqual(['P1']);
   });
 
   it('sorts by distance with unpinned places last, only while the switch is on', async () => {

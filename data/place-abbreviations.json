@@ -1,0 +1,14 @@
+{
+  "note": "Widely used short names that find a city or province in the planner and Places (owner decision, 4 Nov 2026). Each maps to the place's name; it applies only when that place is in the facility list. Matching ignores case, accents and a trailing 'City'.",
+  "abbreviations": {
+    "QC": "Quezon City",
+    "CDO": "Cagayan de Oro",
+    "GenSan": "General Santos",
+    "SJDM": "San Jose del Monte",
+    "Dasma": "Dasmariñas",
+    "CamSur": "Camarines Sur",
+    "CamNorte": "Camarines Norte",
+    "NegOcc": "Negros Occidental",
+    "NegOr": "Negros Oriental"
+  }
+}

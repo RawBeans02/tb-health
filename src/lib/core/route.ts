@@ -1,10 +1,11 @@
 // The care route, ported from tbph-core.js (route) and Home.dc.html (origin), with the
 // owner's fixes: text shorter than two characters matches nothing (Q4; the prototype's
-// "a" returned 82 rows), an emptied field doesn't reuse an old location fix (Q4), and the
-// referral note shows only when no confirmed X-ray site exists at all (Q13, README:293).
+// "a" returned 82 rows), two letters match only the start of a word (4 Nov 2026), an
+// emptied field doesn't reuse an old location fix (Q4), and the referral note shows only
+// when no confirmed X-ray site exists at all (Q13, README:293).
 import { offers, type Place, type Service } from './facility.ts';
 import { km, matchPlace, type GazEntry, type Point } from './geo.ts';
-import { norm } from './text.ts';
+import { contains, norm } from './text.ts';
 
 /** Where the route starts: the visitor's location, a matched city or province, or unmatched text. */
 export type Origin =
@@ -69,8 +70,8 @@ export function route(places: readonly Place[], origin: Origin, services: readon
   const rank = ({ p }: Candidate) => {
     const c = p.ckey;
     const pv = p.pkey;
-    if (c && (c === t || t.includes(c) || c.includes(t))) return 0;
-    if (pv && (pv.includes(t) || t.includes(pv))) return 1;
+    if (c && (c === t || t.includes(c) || contains(c, t))) return 0;
+    if (pv && (contains(pv, t) || t.includes(pv))) return 1;
     return 2;
   };
   const all: Candidate[] = places.map((p) => ({ p, d: point && p.lat !== null && p.lng !== null ? km(point, p as Point) : null }));
