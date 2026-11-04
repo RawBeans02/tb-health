@@ -68,6 +68,10 @@ describe('phone', () => {
     expect(telHref('+63 2 8000 0000', 'NCR')).toBe('tel:+63280000000');
     expect(telHref('8000-0000 loc. 123', 'NCR')).toBe('tel:+63280000000');
     expect(telHref('8000-0000', 'R1')).toBe('tel:80000000');
+    // Every NCR 8-digit number, not only 7xxx and 8xxx (B20). Made-up numbers.
+    expect(telHref('5000-0000 loc 110', 'NCR')).toBe('tel:+63250000000');
+    expect(telHref('5100-0001', 'NCR')).toBe('tel:+63251000001');
+    expect(telHref('3000-0000', 'NCR')).toBe('tel:+63230000000');
     expect(telHref('', 'NCR')).toBe('');
     expect(telHref('n/a', 'NCR')).toBe('');
   });
