@@ -175,21 +175,8 @@
   display: none;
 }
 
-.toc-chevron {
-  font-size: max(26px, 1.625rem);
-  line-height: 1;
-  color: var(--chevron);
-  transition: transform 160ms ease;
-}
-
 .toc-narrow[open] .toc-chevron {
   transform: rotate(90deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .toc-chevron {
-    transition: none;
-  }
 }
 
 .toc-narrow ul {

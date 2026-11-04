@@ -257,3 +257,12 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await expect(page.locator('main h1')).toBeVisible();
   });
 });
+
+test("the Methods chevron has the contents chevron's style (audit B34)", async ({ page }) => {
+  await page.goto('/data');
+  const chevron = page.locator('#methods .toc-chevron');
+  await expect(chevron).toHaveCSS('font-size', '26px');
+  await expect(chevron).toHaveCSS('color', 'rgb(138, 148, 154)');
+  await page.goto('/learn');
+  await expect(page.locator('.toc-narrow .toc-chevron')).toHaveCSS('font-size', '26px');
+});

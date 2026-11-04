@@ -165,6 +165,21 @@
   }
 }
 
+/* The "›" of a details summary (Learn's contents, Data's Methods); each page turns it on
+   [open]. Shared here: page stylesheets aren't on every page (audit B34). */
+.toc-chevron {
+  font-size: max(26px, 1.625rem);
+  line-height: 1;
+  color: var(--chevron);
+  transition: transform 160ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-chevron {
+    transition: none;
+  }
+}
+
 /* Full-width rows sit in a group that clips (radius, overflow hidden): their ring is drawn
    inside, as choice rows do (README:116). Link rows, install rows, and the summary of a
    details group (Learn's contents, Data's Methods). */
