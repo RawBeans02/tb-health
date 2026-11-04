@@ -1,0 +1,563 @@
+{
+ "note": "Place ids last accepted with prepare-data --accept-ids (Q6).",
+ "places": {
+  "bangued-rural-health-unit-abra": {
+   "name": "BANGUED RURAL HEALTH UNIT",
+   "street": "ACTIVIDAD ECONOMIA ST. ZONE 3",
+   "city": "Bangued",
+   "prov": "Abra"
+  },
+  "far-north-luzon-general-hospital-and-training-center-luna-apayao": {
+   "name": "FAR NORTH LUZON GENERAL HOSPITAL AND TRAINING CENTER",
+   "street": "BARANGAY QUIRINO",
+   "city": "Luna",
+   "prov": "Apayao"
+  },
+  "baguio-general-hospital-and-medical-center-baguio-city": {
+   "name": "BAGUIO GENERAL HOSPITAL AND MEDICAL CENTER",
+   "street": "GOVERNOR PACK ROAD",
+   "city": "Baguio City",
+   "prov": "Baguio City"
+  },
+  "saint-louis-university-sacred-heart-medical-center-ppmd-unit-baguio-city": {
+   "name": "SAINT LOUIS UNIVERSITY - SACRED HEART MEDICAL CENTER - PPMD UNIT",
+   "street": "ASSUMPTION ROAD EXTENSION",
+   "city": "Baguio City",
+   "prov": "Baguio City"
+  },
+  "benguet-general-hospital-la-trinidad": {
+   "name": "BENGUET GENERAL HOSPITAL",
+   "street": "KM. 5, PICO",
+   "city": "La Trinidad",
+   "prov": "Benguet"
+  },
+  "banaue-rural-health-unit-ifugao": {
+   "name": "BANAUE RURAL HEALTH UNIT",
+   "street": "POBLACION, DISTRICT II",
+   "city": "Banaue",
+   "prov": "Ifugao"
+  },
+  "kalinga-provincial-hospital-tabuk": {
+   "name": "KALINGA PROVINCIAL HOSPITAL",
+   "street": "PUROK 7, BULANAO",
+   "city": "Tabuk",
+   "prov": "Kalinga"
+  },
+  "luis-hora-memorial-regional-hospital-bauko-mountain-province": {
+   "name": "LUIS HORA MEMORIAL REGIONAL HOSPITAL",
+   "street": "ABATAN",
+   "city": "Bauko",
+   "prov": "Mountain Province"
+  },
+  "region-i-medical-center-tb-dots-center-dagupan-city": {
+   "name": "REGION I MEDICAL CENTER TB DOTS CENTER",
+   "street": "ARELLANO ST.",
+   "city": "Dagupan City",
+   "prov": "Dagupan City"
+  },
+  "the-medical-city-pangasinan-cough-center-dagupan-city": {
+   "name": "THE MEDICAL CITY - PANGASINAN COUGH CENTER",
+   "street": "NABLE STREET PANTAL DISTRICT",
+   "city": "Dagupan City",
+   "prov": "Dagupan City"
+  },
+  "laoag-city-health-office-ilocos-norte": {
+   "name": "LAOAG CITY HEALTH OFFICE",
+   "street": "A.G. TUPAZ BARANGAY 10",
+   "city": "Laoag City",
+   "prov": "Ilocos Norte"
+  },
+  "mariano-marcos-memorial-hospital-and-medical-center-tb-dots-center-batac-ilocos-norte": {
+   "name": "MARIANO MARCOS MEMORIAL HOSPITAL AND MEDICAL CENTER - TB DOTS CENTER",
+   "street": "NO. 6 SAN JULIAN",
+   "city": "Batac",
+   "prov": "Ilocos Norte"
+  },
+  "ilocos-sur-medical-center-candon": {
+   "name": "ILOCOS SUR MEDICAL CENTER",
+   "street": "HEROES BYPASS ROAD, PARIOC PRIMERO",
+   "city": "Candon",
+   "prov": "Ilocos Sur"
+  },
+  "vigan-city-health-office-ilocos-sur": {
+   "name": "VIGAN CITY HEALTH OFFICE",
+   "street": "QUEZON AVE., BRGY. II",
+   "city": "Vigan",
+   "prov": "Ilocos Sur"
+  },
+  "ilocos-training-and-regional-medical-center-san-fernando-city-la-union": {
+   "name": "ILOCOS TRAINING AND REGIONAL MEDICAL CENTER",
+   "street": "PARIAN",
+   "city": "San Fernando City",
+   "prov": "La Union"
+  },
+  "pangasinan-provincial-hospital-san-carlos-city": {
+   "name": "PANGASINAN PROVINCIAL HOSPITAL",
+   "street": "BARANGAY BOLINGIT",
+   "city": "San Carlos City",
+   "prov": "Pangasinan"
+  },
+  "urdaneta-city-health-office-i-pangasinan": {
+   "name": "URDANETA CITY HEALTH OFFICE I",
+   "street": "ALEXANDER ST., POBLACION",
+   "city": "Urdaneta",
+   "prov": "Pangasinan"
+  },
+  "basco-rural-health-unit-batanes": {
+   "name": "BASCO RURAL HEALTH UNIT",
+   "street": "NUÑEZ ST., BRGY. KAYCHANARIANAN",
+   "city": "Basco",
+   "prov": "Batanes"
+  },
+  "cagayan-valley-medical-center-tb-dots-tuguegarao-city": {
+   "name": "CAGAYAN VALLEY MEDICAL CENTER-TB DOTS",
+   "street": "NO. 2 DALAN NA PAGAYAYA, CARIG SUR",
+   "city": "Tuguegarao City",
+   "prov": "Cagayan"
+  },
+  "philippine-tuberculosis-society-inc-tuguegarao-city-cagayan": {
+   "name": "PHILIPPINE TUBERCULOSIS SOCIETY, INC.",
+   "street": "MAHARLIKA HIGHWAY, CARIG SUR",
+   "city": "Tuguegarao City",
+   "prov": "Cagayan"
+  },
+  "city-health-office-ilagan-city-i-isabela": {
+   "name": "CITY HEALTH OFFICE-ILAGAN CITY I",
+   "street": "BRGY. SAN VICENTE",
+   "city": "Ilagan",
+   "prov": "Isabela"
+  },
+  "region-2-trauma-and-medical-center-bayombong-nueva-vizcaya": {
+   "name": "REGION 2 TRAUMA AND MEDICAL CENTER",
+   "street": "MAGSAYSAY",
+   "city": "Bayombong",
+   "prov": "Nueva Vizcaya"
+  },
+  "quirino-province-medical-center-cabarroguis": {
+   "name": "QUIRINO PROVINCE MEDICAL CENTER",
+   "street": "MANGANDINGAY",
+   "city": "Cabarroguis",
+   "prov": "Quirino"
+  },
+  "southern-isabela-medical-center-santiago-city": {
+   "name": "SOUTHERN ISABELA MEDICAL CENTER",
+   "street": "ZAMORA ST., ROSARIO",
+   "city": "Santiago City",
+   "prov": "Santiago City"
+  },
+  "aurora-memorial-hospital-baler": {
+   "name": "AURORA MEMORIAL HOSPITAL",
+   "street": "BRGY. RESERVA",
+   "city": "Baler",
+   "prov": "Aurora"
+  },
+  "bataan-general-hospital-and-medical-center-balanga": {
+   "name": "BATAAN GENERAL HOSPITAL AND MEDICAL CENTER",
+   "street": "MANAHAN STREET, TENEJERO",
+   "city": "Balanga",
+   "prov": "Bataan"
+  },
+  "bulacan-medical-center-malolos": {
+   "name": "BULACAN MEDICAL CENTER",
+   "street": "99 POTENCIANO ST., MOJON ROAD",
+   "city": "Malolos",
+   "prov": "Bulacan"
+  },
+  "san-jose-del-monte-city-health-center-i-bulacan": {
+   "name": "SAN JOSE DEL MONTE CITY HEALTH CENTER I",
+   "street": "SAN PEDRO ST., BRGY. POBLACION 1",
+   "city": "San Jose del Monte",
+   "prov": "Bulacan"
+  },
+  "dr-paulino-j-garcia-memorial-research-medical-center-cabanatuan-city-nueva-ecija": {
+   "name": "DR. PAULINO J. GARCIA MEMORIAL RESEARCH & MEDICAL CENTER",
+   "street": "MABINI STREET",
+   "city": "Cabanatuan City",
+   "prov": "Nueva Ecija"
+  },
+  "james-l-gordon-memorial-hospital-olongapo-city": {
+   "name": "JAMES L. GORDON MEMORIAL HOSPITAL",
+   "street": "NO.1 PERIMETER ROAD, NEW ASINAN",
+   "city": "Olongapo City",
+   "prov": "Olongapo City"
+  },
+  "jose-b-lingad-memorial-general-hospital-san-fernando-pampanga": {
+   "name": "JOSE B. LINGAD MEMORIAL GENERAL HOSPITAL",
+   "street": "DOLORES",
+   "city": "San Fernando",
+   "prov": "Pampanga"
+  },
+  "tarlac-provincial-hospital": {
+   "name": "TARLAC PROVINCIAL HOSPITAL",
+   "street": "HOSPITAL DRIVE, SAN VICENTE",
+   "city": "Tarlac",
+   "prov": "Tarlac"
+  },
+  "president-ramon-magsaysay-memorial-hospital-iba-zambales": {
+   "name": "PRESIDENT RAMON MAGSAYSAY MEMORIAL HOSPITAL",
+   "street": "BRGY. PALANGINAN",
+   "city": "Iba",
+   "prov": "Zambales"
+  },
+  "caloocan-city-north-medical-center": {
+   "name": "CALOOCAN CITY NORTH MEDICAL CENTER",
+   "street": "CAMARIN ROAD BRGY 177 CAMARIN",
+   "city": "Caloocan City",
+   "prov": "Caloocan City"
+  },
+  "caloocan-city-treasurer-baesa-health-center": {
+   "name": "CALOOCAN CITY TREASURER / BAESA HEALTH CENTER",
+   "street": "356 ROSE ST BAESA BGY 161",
+   "city": "Caloocan City",
+   "prov": "Caloocan City"
+  },
+  "caloocan-city-treasurer-tala-health-center": {
+   "name": "CALOOCAN CITY TREASURER / TALA HEALTH CENTER",
+   "street": "SAINT JOSEPH AVENUE, TALA",
+   "city": "Caloocan City",
+   "prov": "Caloocan City"
+  },
+  "dr-jose-n-rodriguez-memorial-hospital-and-sanitarium-caloocan-city": {
+   "name": "DR. JOSE N. RODRIGUEZ MEMORIAL HOSPITAL AND SANITARIUM",
+   "street": "ST. JOSEPH AVENUE TALA",
+   "city": "Caloocan City",
+   "prov": "Caloocan City"
+  },
+  "manila-central-university-dr-filemon-d-tanchoco-sr-medical-foundation-inc-caloocan-city": {
+   "name": "MANILA CENTRAL UNIVERSITY- DR. FILEMON D. TANCHOCO SR. MEDICAL FOUNDATION, INC.",
+   "street": "EDSA CALOOCAN CITY",
+   "city": "Caloocan City",
+   "prov": "Caloocan City"
+  },
+  "arsenio-h-lacson-health-center-sta-ana-manila-city-of-manila": {
+   "name": "ARSENIO H. LACSON HEALTH CENTER",
+   "street": "873 PLAZA HUGO, BRGY 884",
+   "city": "Sta. Ana, Manila",
+   "prov": "City of Manila"
+  },
+  "bacood-health-center-santa-mesa-manila-city-of-manila": {
+   "name": "BACOOD HEALTH CENTER",
+   "street": "3312 DALISAY ST. COR. LAKAS ST. BACOOD, BRGY. 624",
+   "city": "Santa Mesa, Manila",
+   "prov": "City of Manila"
+  },
+  "baseco-health-center-port-area-manila-city-of-manila": {
+   "name": "BASECO HEALTH CENTER",
+   "street": "BLOCK 17-A BASECO, BRGY. 649",
+   "city": "Port Area, Manila",
+   "prov": "City of Manila"
+  },
+  "chinese-general-hospital-and-medical-center-santa-cruz-manila-city-of-manila": {
+   "name": "CHINESE GENERAL HOSPITAL AND MEDICAL CENTER",
+   "street": "286 BLUMENTRITT ST",
+   "city": "Santa Cruz, Manila",
+   "prov": "City of Manila"
+  },
+  "gat-andres-bonifacio-memorial-medical-center-tondo-manila-city-of-manila": {
+   "name": "GAT ANDRES BONIFACIO MEMORIAL MEDICAL CENTER",
+   "street": "8001 DELPAN ST.",
+   "city": "Tondo, Manila",
+   "prov": "City of Manila"
+  },
+  "justice-jose-abad-santos-general-hospital-binondo-manila-city-of-manila": {
+   "name": "JUSTICE JOSE ABAD SANTOS GENERAL HOSPITAL",
+   "street": "NUMANCIA ST",
+   "city": "Binondo, Manila",
+   "prov": "City of Manila"
+  },
+  "manila-doctors-hospital-ermita-manila-city-of-manila": {
+   "name": "MANILA DOCTORS HOSPITAL",
+   "street": "667 UNITED NATIONS AVENUE",
+   "city": "Ermita, Manila",
+   "prov": "City of Manila"
+  },
+  "mary-johnston-hospital-inc-tondo-manila-city-of-manila": {
+   "name": "MARY JOHNSTON HOSPITAL, INC.",
+   "street": "1221 JUAN NOLASCO ST",
+   "city": "Tondo, Manila",
+   "prov": "City of Manila"
+  },
+  "medical-center-manila-inc-paco-manila-city-of-manila": {
+   "name": "MEDICAL CENTER MANILA INC",
+   "street": "850 UNITED NATIONS AVENUE",
+   "city": "Paco, Manila",
+   "prov": "City of Manila"
+  },
+  "ospital-ng-maynila-medical-center-malate-manila-city-of-manila": {
+   "name": "OSPITAL NG MAYNILA MEDICAL CENTER",
+   "street": "PRES. QUIRINO AVE. COR ROXAS BLVD.",
+   "city": "Malate, Manila",
+   "prov": "City of Manila"
+  },
+  "ospital-ng-tondo-tondo-manila-city-of-manila": {
+   "name": "OSPITAL NG TONDO",
+   "street": "BRGY. 215 JOSE ABAD SANTOS AVENUE, TONDO",
+   "city": "Tondo, Manila",
+   "prov": "City of Manila"
+  },
+  "our-lady-of-lourdes-hospital-santa-mesa-manila-city-of-manila": {
+   "name": "OUR LADY OF LOURDES HOSPITAL",
+   "street": "46 P. SANCHEZ ST., BRGY 606",
+   "city": "Santa Mesa, Manila",
+   "prov": "City of Manila"
+  },
+  "san-lazaro-hospital-santa-cruz-manila-city-of-manila": {
+   "name": "SAN LAZARO HOSPITAL",
+   "street": "QUIRICADA ST.",
+   "city": "Santa Cruz, Manila",
+   "prov": "City of Manila"
+  },
+  "sta-ana-hospital-sta-ana-manila-city-of-manila": {
+   "name": "STA. ANA HOSPITAL",
+   "street": "2629 NEW PANADEROS ST.",
+   "city": "Sta. Ana, Manila",
+   "prov": "City of Manila"
+  },
+  "tondo-health-center-tondo-manila-city-of-manila": {
+   "name": "TONDO HEALTH CENTER",
+   "street": "2474 INT. JUAN LUNA ST., GAGALANGIN",
+   "city": "Tondo, Manila",
+   "prov": "City of Manila"
+  },
+  "tondo-medical-center-tondo-manila-city-of-manila": {
+   "name": "TONDO MEDICAL CENTER",
+   "street": "HONORIO LOPEZ BOULEVARD, BALUT",
+   "city": "Tondo, Manila",
+   "prov": "City of Manila"
+  },
+  "city-government-of-las-pinas-zapote-health-center-las-pinas-city": {
+   "name": "CITY GOVERNMENT OF LAS PIÑAS / ZAPOTE HEALTH CENTER",
+   "street": "SANTOS AVENUE, ZAPOTE",
+   "city": "Las Piñas City",
+   "prov": "Las Piñas City"
+  },
+  "las-pinas-general-hospital-and-satellite-trauma-center-las-pinas-city": {
+   "name": "LAS PIÑAS GENERAL HOSPITAL AND SATELLITE TRAUMA CENTER",
+   "street": "P. DIEGO CERA AVE., BERNABE CMPD. PULANGLUPA I",
+   "city": "Las Piñas City",
+   "prov": "Las Piñas City"
+  },
+  "city-government-of-makati-palanan-health-center-makati-city": {
+   "name": "CITY GOVERNMENT OF MAKATI/PALANAN HEALTH CENTER",
+   "street": "4513 CASINO ST. BRGY. PALANAN",
+   "city": "Makati City",
+   "prov": "Makati City"
+  },
+  "city-government-of-makati-san-isidro-health-center-makati-city": {
+   "name": "CITY GOVERNMENT OF MAKATI/SAN ISIDRO HEALTH CENTER",
+   "street": "2701 GUATEMALA ST., SAN ISIDRO",
+   "city": "Makati City",
+   "prov": "Makati City"
+  },
+  "tropical-disease-foundation-inc-makati-city": {
+   "name": "TROPICAL DISEASE FOUNDATION, INC.",
+   "street": "AMORSOLO ST COR. URBAN AVE., PIO DEL PILAR",
+   "city": "Makati City",
+   "prov": "Makati City"
+  },
+  "city-government-of-malabon-catmon-super-health-center-malabon-city": {
+   "name": "CITY GOVERNMENT OF MALABON/ CATMON SUPER HEALTH CENTER",
+   "street": "SANCIANGCO ST. BRGY. CATMON",
+   "city": "Malabon",
+   "prov": "Malabon City"
+  },
+  "love-yourself-inc-mandaluyong-city": {
+   "name": "LOVE YOURSELF INC.",
+   "street": "715 A UNIT 7 3RD FLR ANGLO BLDG, BRGY WACKWACK, SHAW BLVD.",
+   "city": "Mandaluyong City",
+   "prov": "Mandaluyong City"
+  },
+  "mandaluyong-city-medical-center": {
+   "name": "MANDALUYONG CITY MEDICAL CENTER",
+   "street": "C3 ROAD F MARTINEZ AVE BRGY ADDITION HILLS",
+   "city": "Mandaluyong City",
+   "prov": "Mandaluyong City"
+  },
+  "amang-rodriguez-memorial-medical-center-marikina-city": {
+   "name": "AMANG RODRIGUEZ MEMORIAL MEDICAL CENTER",
+   "street": "SUMULONG HIGHWAY, STO. NIÑO",
+   "city": "Marikina City",
+   "prov": "Marikina City"
+  },
+  "asian-hospital-inc-muntinlupa-city": {
+   "name": "ASIAN HOSPITAL INC.",
+   "street": "2205 CIVIC DRIVE, FILINVEST CORPORATE CITY, ALABANG",
+   "city": "Muntinlupa City",
+   "prov": "Muntinlupa City"
+  },
+  "city-government-of-muntinlupa-poblacion-health-center-muntinlupa-city": {
+   "name": "CITY GOVERNMENT OF MUNTINLUPA/POBLACION HEALTH CENTER",
+   "street": "RIZAL-BURGOS COR. ST., BRGY. POBLACION",
+   "city": "Muntinlupa City",
+   "prov": "Muntinlupa City"
+  },
+  "ospital-ng-muntinlupa-muntinlupa-city": {
+   "name": "OSPITAL NG MUNTINLUPA",
+   "street": "CIVIC DRIVE, FILINVEST CORPORATE CITY, ALABANG",
+   "city": "Muntinlupa City",
+   "prov": "Muntinlupa City"
+  },
+  "research-institute-for-tropical-medicine-tb-dots-muntinlupa-city": {
+   "name": "RESEARCH INSTITUTE FOR TROPICAL MEDICINE TB DOTS",
+   "street": "9002 RESEARCH DRIVE, RITM COMPOUND, FILINVEST CORPORATE CITY, ALABANG",
+   "city": "Muntinlupa City",
+   "prov": "Muntinlupa City"
+  },
+  "city-government-of-navotas-san-roque-health-center-navotas-city": {
+   "name": "CITY GOVERNMENT OF NAVOTAS (SAN ROQUE HEALTH CENTER)",
+   "street": "GOV. A. PASCUAL ST., SAN ROQUE",
+   "city": "Navotas",
+   "prov": "Navotas City"
+  },
+  "city-government-of-navotas-tangos-health-center-navotas-city": {
+   "name": "CITY GOVERNMENT OF NAVOTAS (TANGOS HEALTH CENTER)",
+   "street": "A CRUZ ST. TANGOS SOUTH",
+   "city": "Navotas",
+   "prov": "Navotas City"
+  },
+  "city-government-of-paranaque-baclaran-health-center-paranaque-city": {
+   "name": "CITY GOVERNMENT OF PARAÑAQUE / BACLARAN HEALTH CENTER",
+   "street": "PINAGLABANAN ST. BRGY. BACLARAN",
+   "city": "Parañaque City",
+   "prov": "Parañaque City"
+  },
+  "city-government-of-paranaque-bf-homes-health-center-paranaque-city": {
+   "name": "CITY GOVERNMENT OF PARAÑAQUE / BF HOMES HEALTH CENTER",
+   "street": "CONRADO BENITEZ ST. COR. DELA RAMA, BRGY. BF HOMES",
+   "city": "Parañaque City",
+   "prov": "Parañaque City"
+  },
+  "city-government-of-paranaque-tambo-health-center-paranaque-city": {
+   "name": "CITY GOVERNMENT OF PARAÑAQUE / TAMBO HEALTH CENTER",
+   "street": "QUIRINO AVE. COR. GABRIEL ST., BRGY. TAMBO",
+   "city": "Parañaque City",
+   "prov": "Parañaque City"
+  },
+  "city-government-of-paranaque-sun-valley-mega-health-center-paranaque-city": {
+   "name": "CITY GOVERNMENT OF PARAÑAQUE/SUN VALLEY MEGA HEALTH CENTER",
+   "street": "4386 SUN VALLEY DRIVE, BRGY SUN VALLEY",
+   "city": "Parañaque City",
+   "prov": "Parañaque City"
+  },
+  "olivarez-general-hospital-inc-paranaque-city": {
+   "name": "OLIVAREZ GENERAL HOSPITAL INC.",
+   "street": "DR. ARCADIO SANTOS AVENUE SUCAT ROAD, SAN DIONISIO",
+   "city": "Parañaque City",
+   "prov": "Parañaque City"
+  },
+  "pasay-city-government-for-dona-nena-health-center": {
+   "name": "PASAY CITY GOVERNMENT FOR DOÑA NENA HEALTH CENTER",
+   "street": "CHEST CLINIC CMPD., AURORA BLVD.",
+   "city": "Pasay City",
+   "prov": "Pasay City"
+  },
+  "pasay-city-government-for-malibay-health-center": {
+   "name": "PASAY CITY GOVERNMENT FOR MALIBAY HEALTH CENTER",
+   "street": "MALIBAY CENTRAL, C. JOSE ST., MALIBAY",
+   "city": "Pasay City",
+   "prov": "Pasay City"
+  },
+  "san-juan-de-dios-educational-foundation-inc-hospital-pasay-city": {
+   "name": "SAN JUAN DE DIOS EDUCATIONAL FOUNDATION INC. HOSPITAL",
+   "street": "2772 ROXAS BLVD",
+   "city": "Pasay City",
+   "prov": "Pasay City"
+  },
+  "city-government-of-pasig-santolan-super-health-center-pasig-city": {
+   "name": "CITY GOVERNMENT OF PASIG - SANTOLAN SUPER HEALTH CENTER",
+   "street": "EVANGELISTA ST. SANTOLAN",
+   "city": "Pasig City",
+   "prov": "Pasig City"
+  },
+  "city-government-of-pasig-rosario-super-health-center-pasig-city": {
+   "name": "CITY GOVERNMENT OF PASIG- ROSARIO SUPER HEALTH CENTER",
+   "street": "97 DR. SIXTO ANTONIO AVENUE, ROSARIO",
+   "city": "Pasig City",
+   "prov": "Pasig City"
+  },
+  "rizal-medical-center-pasig-city": {
+   "name": "RIZAL MEDICAL CENTER",
+   "street": "425 PASIG BLVD., BRGY. BAGONG ILOG",
+   "city": "Pasig City",
+   "prov": "Pasig City"
+  },
+  "the-medical-city-pasig-city": {
+   "name": "THE MEDICAL CITY",
+   "street": "BRGY. UGONG, ORTIGAS AVE.",
+   "city": "Pasig City",
+   "prov": "Pasig City"
+  },
+  "municipality-of-pateros-mayor-juan-r-sanchez-health-center": {
+   "name": "MUNICIPALITY OF PATEROS/MAYOR JUAN R. SANCHEZ HEALTH CENTER",
+   "street": "P. ROSALES ST., BRGY. STA. ANA",
+   "city": "Pateros",
+   "prov": "Pateros"
+  },
+  "de-los-santos-medical-center-quezon-city": {
+   "name": "DE LOS SANTOS MEDICAL CENTER",
+   "street": "201 E RODRIGUEZ SR AVENUE BARANGAY KALUSUGAN",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "east-avenue-medical-center-idots-clinic-quezon-city": {
+   "name": "EAST AVENUE MEDICAL CENTER- IDOTS CLINIC",
+   "street": "EAST AVENUE, DILIMAN, BRGY. PINYAHAN",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "lung-center-of-the-philippines-lcp-quezon-city": {
+   "name": "LUNG CENTER OF THE PHILIPPINES (LCP)",
+   "street": "NCPR BLDG., QUEZON AVE., EXTENSION, BRGY. CENTRAL",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "national-children-s-hospital-quezon-city": {
+   "name": "NATIONAL CHILDREN'S HOSPITAL",
+   "street": "264 E. RODRIGUEZ SR. BLVD., DAMAYANG LAGI",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "philippine-tuberculosis-society-inc-quezon-institute-quezon-city": {
+   "name": "PHILIPPINE TUBERCULOSIS SOCIETY INC. -QUEZON INSTITUTE",
+   "street": "QI COMPOUND E. RODRIGUEZ SR. AVE.",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-general-hospital": {
+   "name": "QUEZON CITY GENERAL HOSPITAL",
+   "street": "SEMINARY ROAD, BRGY BAHAY TORO, PROJECT 8",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-government-kamuning-super-health-center": {
+   "name": "QUEZON CITY GOVERNMENT / KAMUNING SUPER HEALTH CENTER",
+   "street": "19 T. GENER ST. CORNER K-5TH ST., BRGY. KAMUNING",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-government-a-j-maximo-super-health-center": {
+   "name": "QUEZON CITY GOVERNMENT /A.J. MAXIMO SUPER HEALTH CENTER",
+   "street": "QUIRINO HIGHWAY, BRGY NOVALICHES PROPER",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-government-betty-go-belmonte-super-health-center": {
+   "name": "QUEZON CITY GOVERNMENT /BETTY GO BELMONTE SUPER HEALTH CENTER",
+   "street": "2F, 12 ARTILLERY ROAD, BRGY. HOLY SPIRIT",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-government-commonwealth-health-center": {
+   "name": "QUEZON CITY GOVERNMENT /COMMONWEALTH HEALTH CENTER",
+   "street": "2 KATUPARAN ST., BRGY. COMMONWEALTH",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  },
+  "quezon-city-government-lupang-pangako-health-center": {
+   "name": "QUEZON CITY GOVERNMENT /LUPANG PANGAKO HEALTH CENTER",
+   "street": "PHASE 1, LUPANG PANGAKO, BRGY. PAYATAS",
+   "city": "Quezon City",
+   "prov": "Quezon City"
+  }
+ }
+}

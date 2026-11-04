@@ -5,24 +5,35 @@
 //   node scripts/prepare-data.mjs              real facility file if present, else the 93-row sample
 //   node scripts/prepare-data.mjs --synthetic  ~2,100 obviously fake rows, for measuring scale only
 //
+//   node scripts/prepare-data.mjs --accept-ids  also records this list's place ids in
+//                                               data/place-ids.json (after reviewing the report)
+//
 // Writes (git-ignored):
-//   public/data/facilities.json       slimmed facility list, fetched at runtime
+//   public/data/facilities.json       slimmed facility list with stable place ids, fetched at runtime
+//   public/data/gazetteer.json        cities and provinces, for distances from a typed `near` (Place)
 //   src/generated/region-counts.json  facilities per region, for the Data page (d14)
 //
-// Still to come: the small gazetteer (step 3, with the ported core), and stable
-// place ids with an alias map (Q6, not yet answered).
+// Place ids (Q6) come from the normalised name + city + province. data/place-ids.json is
+// the last accepted list of ids: each run reports ids added and removed since then, and
+// suggests renames. data/place-aliases.json maps old ids to current ones so old links work.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
+import { prepare } from '../src/lib/core/facility.ts';
+import { buildGazetteer } from '../src/lib/core/geo.ts';
+import { norm } from '../src/lib/core/text.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataDir = join(root, 'data');
 const out = {
   facilities: join(root, 'public/data/facilities.json'),
+  gazetteer: join(root, 'public/data/gazetteer.json'),
   regionCounts: join(root, 'src/generated/region-counts.json'),
 };
+const idRegistryPath = join(dataDir, 'place-ids.json');
+const aliasesPath = join(dataDir, 'place-aliases.json');
 
 const SYNTHETIC_ROWS = 2100;
 
@@ -42,9 +53,60 @@ const GEO_PRECISION = ['', 'address', 'name', 'city', 'confirmed', 'approx_city_
 // Generous box around the Philippines; anything outside is a geocoding error.
 const PH_BOUNDS = { minLat: 4.2, maxLat: 21.5, minLng: 116.0, maxLng: 127.0 };
 
-/** Q6 stub: ids pass through from the source file until the owner decides how they're derived. */
-export function placeId(row) {
-  return row.id;
+/**
+ * A readable place id from the normalised name + city + province (Q6). A part the earlier
+ * ones already spell out is skipped: "Laoag City Health Office" + "Laoag City" +
+ * "Ilocos Norte" → laoag-city-health-office-ilocos-norte.
+ */
+export function placeKey(row) {
+  let text = '';
+  for (const part of [row.name, row.city_municipality, row.province_or_city_group]) {
+    const n = norm(part);
+    if (n && !` ${text} `.includes(` ${n} `)) text = text ? `${text} ${n}` : n;
+  }
+  return text.replace(/ /g, '-');
+}
+
+/**
+ * Ids for every row, in row order. Rows sharing a key get -2, -3… in a fixed order
+ * (street, then the source's row id), so a row added elsewhere can't shift them.
+ */
+export function assignPlaceIds(rows) {
+  const groups = new Map();
+  rows.forEach((row, i) => {
+    const key = placeKey(row);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(i);
+  });
+  const ids = new Array(rows.length);
+  const order = (a, b) => norm(rows[a].street).localeCompare(norm(rows[b].street)) || String(rows[a].id).localeCompare(String(rows[b].id));
+  for (const [key, members] of groups) {
+    members.sort(order).forEach((i, n) => {
+      ids[i] = n === 0 ? key : `${key}-${n + 1}`;
+    });
+  }
+  return ids;
+}
+
+/** What changed since the accepted ids, with likely renames (same street, city and province). */
+export function compareIds(accepted, current) {
+  const added = Object.keys(current).filter((id) => !(id in accepted));
+  const removed = Object.keys(accepted).filter((id) => !(id in current));
+  const where = (p) => norm([p.street, p.city, p.prov].join(' '));
+  const renamed = removed.flatMap((from) => {
+    const to = added.find((id) => where(current[id]) === where(accepted[from]));
+    return to ? [{ from, to }] : [];
+  });
+  return { added, removed, renamed };
+}
+
+export function validateAliases(aliases, ids) {
+  const errors = [];
+  for (const [from, to] of Object.entries(aliases)) {
+    if (ids.has(from)) errors.push(`alias ${from}: is a current place id, so it can't also be an alias`);
+    if (!ids.has(to)) errors.push(`alias ${from} → ${to}: no place has that id`);
+  }
+  return errors;
 }
 
 export function validateFacilities(rows) {
@@ -86,7 +148,7 @@ export function validateFacilities(rows) {
 }
 
 export function slim(row) {
-  const copy = { ...row, id: placeId(row) };
+  const copy = { ...row };
   for (const key of DROPPED_FIELDS) delete copy[key];
   return copy;
 }
@@ -190,11 +252,17 @@ function main() {
 
   for (const warning of facilityCheck.warnings.slice(0, 20)) console.warn(`prepare-data: warning: ${warning}`);
   if (facilityCheck.warnings.length > 20) console.warn(`prepare-data: …and ${facilityCheck.warnings.length - 20} more warnings`);
-  if (failures.length) {
-    for (const failure of failures.slice(0, 50)) console.error(`prepare-data: ${failure}`);
-    console.error(`prepare-data: ${failures.length} problem(s); fix the data in data/ before building.`);
-    process.exit(1);
-  }
+  if (failures.length) fail(failures);
+
+  const ids = assignPlaceIds(rows);
+  const idSet = new Set(ids);
+  if (idSet.size !== ids.length) failures.push('place ids are not unique (a suffixed id matches another place)');
+  const aliases = existsSync(aliasesPath) ? readJson(aliasesPath) : {};
+  failures.push(...validateAliases(aliases, idSet));
+  if (failures.length) fail(failures);
+
+  const withIds = rows.map((row, i) => ({ ...row, id: ids[i] }));
+  if (!synthetic) reportIds(withIds, aliases);
 
   const published = {
     meta: {
@@ -204,16 +272,52 @@ function main() {
       sample,
       synthetic,
     },
-    facilities: rows.map(slim),
+    aliases,
+    facilities: withIds.map(slim),
   };
   const bytes = writeJson(out.facilities, published);
   writeJson(out.regionCounts, regionCounts(rows));
+  const round = (x) => Math.round(x * 1e5) / 1e5;
+  const gazetteer = buildGazetteer(withIds.map(prepare)).map(({ name, prov, kind, lat, lng }) => ({ name, prov, kind, lat: round(lat), lng: round(lng) }));
+  const gazBytes = writeJson(out.gazetteer, gazetteer);
 
   const kind = synthetic ? 'SYNTHETIC' : sample ? 'SAMPLE' : 'real';
   console.log(
     `prepare-data: ${rows.length} facilities (${kind}, from ${relative(root, sourcePath)}) → ${relative(root, out.facilities)} ` +
-      `${kb(bytes.length)}, gzip ${kb(gzipSync(bytes).length)}, brotli ${kb(brotliCompressSync(bytes).length)}`,
+      `${kb(bytes.length)}, gzip ${kb(gzipSync(bytes).length)}, brotli ${kb(brotliCompressSync(bytes).length)}; ` +
+      `gazetteer ${gazetteer.length} places, gzip ${kb(gzipSync(gazBytes).length)}`,
   );
+}
+
+function fail(failures) {
+  for (const failure of failures.slice(0, 50)) console.error(`prepare-data: ${failure}`);
+  console.error(`prepare-data: ${failures.length} problem(s); fix the data in data/ before building.`);
+  process.exit(1);
+}
+
+/** Q6: reports place ids added and removed since data/place-ids.json; --accept-ids records the new list. */
+function reportIds(rows, aliases) {
+  const current = Object.fromEntries(
+    rows.map((r) => [r.id, { name: r.name, street: r.street ?? '', city: r.city_municipality, prov: r.province_or_city_group }]),
+  );
+  if (process.argv.includes('--accept-ids')) {
+    writeFileSync(idRegistryPath, `${JSON.stringify({ note: 'Place ids last accepted with prepare-data --accept-ids (Q6).', places: current }, null, 1)}\n`);
+    console.log(`prepare-data: recorded ${rows.length} place ids in ${relative(root, idRegistryPath)}.`);
+    return;
+  }
+  if (!existsSync(idRegistryPath)) {
+    console.warn(`prepare-data: no ${relative(root, idRegistryPath)} yet; run with --accept-ids to record these ids.`);
+    return;
+  }
+  const { added, removed, renamed } = compareIds(readJson(idRegistryPath).places, current);
+  if (!added.length && !removed.length) return;
+  console.warn(`prepare-data: place ids changed since they were accepted: ${added.length} added, ${removed.length} removed.`);
+  for (const { from, to } of renamed) console.warn(`prepare-data:   probably renamed: ${from} → ${to}`);
+  const unaliased = removed.filter((id) => !(id in aliases) && !renamed.some((r) => r.from === id));
+  for (const id of unaliased.slice(0, 20)) console.warn(`prepare-data:   gone, no alias: ${id}`);
+  if (renamed.some((r) => !(r.from in aliases))) {
+    console.warn(`prepare-data:   add renames to ${relative(root, aliasesPath)} so old links keep working, then rerun with --accept-ids.`);
+  }
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
