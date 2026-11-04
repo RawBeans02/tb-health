@@ -123,9 +123,11 @@
   color: var(--muted);
 }
 
-.claim-meta a:hover,
-.learn-sources a:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .claim-meta a:hover,
+  .learn-sources a:hover {
+    color: var(--ink);
+  }
 }
 
 .claim-more,
@@ -140,10 +142,12 @@
   text-decoration: none;
 }
 
-.claim-more:hover,
-.to-top:hover {
-  text-decoration: underline;
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .claim-more:hover,
+  .to-top:hover {
+    text-decoration: underline;
+    color: var(--ink);
+  }
 }
 
 .learn-sources {
@@ -210,8 +214,10 @@
   text-decoration: none;
 }
 
-.toc-narrow a:hover {
-  color: var(--teal-deep);
+@media (hover: hover) and (pointer: fine) {
+  .toc-narrow a:hover {
+    color: var(--teal-deep);
+  }
 }
 
 .toc-wide {
@@ -265,8 +271,10 @@
     text-decoration: none;
   }
 
-  .toc-wide a:hover {
-    color: var(--teal-deep);
+  @media (hover: hover) and (pointer: fine) {
+    .toc-wide a:hover {
+      color: var(--teal-deep);
+    }
   }
 
   .toc-wide a[aria-current] {

@@ -315,9 +315,11 @@
   text-decoration: none;
 }
 
-.urgent-call:hover {
-  background: var(--canvas);
-  color: var(--tb-red);
+@media (hover: hover) and (pointer: fine) {
+  .urgent-call:hover {
+    background: var(--canvas);
+    color: var(--tb-red);
+  }
 }
 
 .urgent-actions {
@@ -338,8 +340,10 @@
   cursor: pointer;
 }
 
-.urgent-actions button:hover {
-  background: rgba(255, 255, 255, 0.26);
+@media (hover: hover) and (pointer: fine) {
+  .urgent-actions button:hover {
+    background: rgba(255, 255, 255, 0.26);
+  }
 }
 
 .urgent-foot {

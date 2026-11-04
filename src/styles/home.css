@@ -250,9 +250,11 @@
   text-align: center;
 }
 
-.text-link:hover {
-  text-decoration: underline;
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover {
+    text-decoration: underline;
+    color: var(--ink);
+  }
 }
 
 /* ---------- Results ---------- */
@@ -475,8 +477,10 @@
   color: var(--muted);
 }
 
-.route-notes a:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .route-notes a:hover {
+    color: var(--ink);
+  }
 }
 
 /* ---------- Good to know ---------- */

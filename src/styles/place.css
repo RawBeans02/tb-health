@@ -208,8 +208,10 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   text-underline-offset: 4px;
 }
 
-.place-call:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .place-call:hover {
+    color: var(--ink);
+  }
 }
 
 .place-copied {

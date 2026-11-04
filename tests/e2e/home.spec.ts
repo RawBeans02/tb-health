@@ -298,3 +298,25 @@ test.describe('language switch from a typed-place route (audit B17)', () => {
     expect(running).toBe(0);
   });
 });
+
+test.describe('hover on touch screens (audit B29)', () => {
+  test('a tap leaves no hover colour behind; a mouse hover still shows it', async ({ browser, page }) => {
+    const touch = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, permissions: [] });
+    const phone = await touch.newPage();
+    await phone.goto('/');
+    await expect(phone.locator('#tbph-places option').first()).toBeAttached();
+    const locate = phone.getByRole('button', { name: 'Use my location' });
+    const rest = await locate.evaluate((el) => getComputedStyle(el).backgroundColor);
+    await locate.tap();
+    await expect(phone.locator('#from-msg')).toHaveText('No problem. Type your barangay or city instead.');
+    expect(await locate.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(rest);
+    await touch.close();
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await ready(page);
+    const button = page.getByRole('button', { name: 'Use my location' });
+    const before = await button.evaluate((el) => getComputedStyle(el).backgroundColor);
+    await button.hover();
+    await expect.poll(() => button.evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(before);
+  });
+});

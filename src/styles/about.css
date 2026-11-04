@@ -114,7 +114,9 @@
   text-decoration: none;
 }
 
-.number-tel:hover {
-  color: var(--ink);
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .number-tel:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
 }

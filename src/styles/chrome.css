@@ -84,8 +84,10 @@ main:focus {
   white-space: nowrap;
 }
 
-.site-header-brand:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .site-header-brand:hover {
+    color: var(--ink);
+  }
 }
 
 .site-nav {
@@ -118,8 +120,10 @@ main:focus {
   white-space: nowrap;
 }
 
-.site-nav a:hover {
-  color: var(--teal);
+@media (hover: hover) and (pointer: fine) {
+  .site-nav a:hover {
+    color: var(--teal);
+  }
 }
 
 .site-nav a[aria-current] {
@@ -162,8 +166,10 @@ main:focus {
   border-radius: 0 4.5px 4.5px 0;
 }
 
-.lang-toggle a:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .lang-toggle a:hover {
+    color: var(--ink);
+  }
 }
 
 .lang-toggle a[aria-current] {
@@ -312,8 +318,10 @@ main:focus {
   text-underline-offset: 4px;
 }
 
-.site-footer-emergency a:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .site-footer-emergency a:hover {
+    color: var(--ink);
+  }
 }
 
 .site-footer-row {
@@ -344,8 +352,10 @@ main:focus {
   text-underline-offset: 4px;
 }
 
-.site-footer-nav a:hover {
-  color: var(--teal-deep);
+@media (hover: hover) and (pointer: fine) {
+  .site-footer-nav a:hover {
+    color: var(--teal-deep);
+  }
 }
 
 .site-footer-nav a[aria-current] {

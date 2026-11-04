@@ -264,9 +264,11 @@
   text-decoration: none;
 }
 
-.panel-link:hover {
-  text-decoration: underline;
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .panel-link:hover {
+    text-decoration: underline;
+    color: var(--ink);
+  }
 }
 
 /* ---------- Tables (README:239) ---------- */

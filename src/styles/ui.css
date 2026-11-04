@@ -89,9 +89,11 @@
   font-size: var(--text-20);
 }
 
-.btn--primary:hover {
-  background: var(--teal-deep);
-  color: var(--on-teal);
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover {
+    background: var(--teal-deep);
+    color: var(--on-teal);
+  }
 }
 
 .btn--soft {
@@ -99,9 +101,11 @@
   color: var(--teal-deep);
 }
 
-.btn--soft:hover {
-  background: var(--teal-tint-22);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .btn--soft:hover {
+    background: var(--teal-tint-22);
+    color: var(--ink);
+  }
 }
 
 /* 58px / 20px soft capsule, next to a primary (404). */
@@ -154,9 +158,11 @@
   text-decoration: none;
 }
 
-.link-row:hover {
-  background: var(--row-hover);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .link-row:hover {
+    background: var(--row-hover);
+    color: var(--ink);
+  }
 }
 
 /* Full-width rows sit in a group that clips (radius, overflow hidden): their ring is drawn
@@ -316,8 +322,10 @@
   cursor: pointer;
 }
 
-.locate:hover {
-  background: var(--teal-tint-22);
+@media (hover: hover) and (pointer: fine) {
+  .locate:hover {
+    background: var(--teal-tint-22);
+  }
 }
 
 .locate:disabled {
@@ -381,8 +389,10 @@
   text-underline-offset: 4px;
 }
 
-.facility-name a:hover {
-  color: var(--teal);
+@media (hover: hover) and (pointer: fine) {
+  .facility-name a:hover {
+    color: var(--teal);
+  }
 }
 
 .facility-dist {
@@ -435,8 +445,10 @@
   text-decoration: none;
 }
 
-.call-link:hover {
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .call-link:hover {
+    text-decoration: underline;
+  }
 }
 
 
@@ -712,9 +724,11 @@
   text-decoration: none;
 }
 
-.back-link:hover {
-  color: var(--ink);
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .back-link:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
 }
 
 .back-link span:first-child {
@@ -784,9 +798,11 @@ html[data-online='false'] .offline-line {
   text-decoration: none;
 }
 
-.install-row:hover {
-  background: var(--row-hover);
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .install-row:hover {
+    background: var(--row-hover);
+    color: var(--ink);
+  }
 }
 
 
