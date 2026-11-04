@@ -1,0 +1,151 @@
+---
+// Learn about TB (PLAN §5 step 8): a static article. Two small scripts: the contents
+// scroll-spy and "Back to top". The language switch navigates and keeps the section in
+// place through the data-anchor sections (README:283).
+import { TBPH_CHECK } from 'astro:env/server';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import claims from '../../data/claims.json' with { type: 'json' };
+import { learn } from '../content/learn.ts';
+import { meta } from '../content/meta.ts';
+import { pick } from '../content/types.ts';
+import { href, type Lang } from '../lib/i18n.ts';
+import { italics, NUMBERS, SECTION_SOURCES, SECTIONS, SOURCES } from '../lib/learn.ts';
+import '../styles/learn.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(learn, lang);
+const byId = new Map(claims.claims.map((c) => [c.id, c]));
+const claimSources = claims.sources as Record<string, { title: string; url: string }>;
+const myths = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({
+  myth: t[`myth${n}_myth` as keyof typeof t],
+  fact: t[`myth${n}_fact` as keyof typeof t],
+}));
+const title = { en: `${learn.h1.en} — TB PH`, fil: `${learn.h1.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+---
+<BaseLayout lang={lang} title={title} description={meta.learnDescription} current="learn">
+  <main id="main" tabindex="-1">
+    <div class="frame">
+      <div class="learn-layout">
+        <article class="learn">
+          <header id="top" class="learn-top" data-anchor>
+            <h1 class="h1">{t.h1}</h1>
+            <details class="toc-narrow group">
+              <summary><span>{t.contents}</span><span class="toc-chevron" aria-hidden="true">›</span></summary>
+              <nav aria-label={t.contents}>
+                <ul role="list">
+                  {SECTIONS.map((s) => <li><a href={`#${s.id}`}>{t[`${s.id}_h` as keyof typeof t]}</a></li>)}
+                </ul>
+              </nav>
+            </details>
+          </header>
+
+          {
+            SECTIONS.map((s) => (
+              <section id={s.id} class="learn-section" data-anchor aria-labelledby={`${s.id}-h`}>
+                <h2 id={`${s.id}-h`}>{t[`${s.id}_h` as keyof typeof t]}</h2>
+                {s.blocks.map((b) =>
+                  b.kind === 'p' ? (
+                    <p class="learn-p">
+                      {italics(t[b.key]).map((r) => (r.italic ? <i>{r.text}</i> : r.text))}
+                    </p>
+                  ) : b.kind === 'ol' ? (
+                    <ol class="learn-steps">
+                      {b.keys.map((k) => <li>{t[k]}</li>)}
+                    </ol>
+                  ) : b.kind === 'ul' ? (
+                    <ul class="learn-bullets" role="list">
+                      {b.keys.map((k) => (
+                        <li>
+                          <span aria-hidden="true" />
+                          <span>{t[k]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : b.kind === 'actions' ? (
+                    <div class="learn-actions">
+                      {TBPH_CHECK && <a class="btn btn--primary" href={href('check', lang)}>{t.l5_action1}</a>}
+                      <a class="btn btn--soft" href={href('home', lang)}>{t.l5_action2}</a>
+                    </div>
+                  ) : (
+                    <div class="group myths" role="table" aria-labelledby={`${s.id}-h`}>
+                      <div class="myths-head" role="row">
+                        <span role="columnheader">{t.myth}</span>
+                        <span role="columnheader">{t.fact}</span>
+                      </div>
+                      {myths.map((m) => (
+                        <div class="myth-row" role="row">
+                          <div>
+                            <div role="cell">
+                              <span class="myth-label">{t.myth}</span>
+                              <span class="myth-text">{m.myth}</span>
+                            </div>
+                            <div role="cell">
+                              <span class="fact-label">{t.fact}</span>
+                              <span class="fact-text">{m.fact}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ),
+                )}
+                {NUMBERS[s.id] && (
+                  <div class="by-numbers">
+                    <h3>{t.byNumbers}</h3>
+                    <ul class="group inset-group" role="list">
+                      {NUMBERS[s.id].map((id) => {
+                        const c = byId.get(id)!;
+                        return (
+                          <li>
+                            <div class="claim">
+                              <p>{c[lang]}</p>
+                              <p class="claim-meta">
+                                {c.kind}.{' '}
+                                {c.sources.map((sid, i) => (
+                                  <>
+                                    <a href={claimSources[sid].url}>{claimSources[sid].title}</a>
+                                    {i < c.sources.length - 1 ? '; ' : ''}
+                                  </>
+                                ))}
+                              </p>
+                              <a class="claim-more" href={href('data', lang, { hash: `claim-${id}` })}>{t.more}</a>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+                <p class="learn-sources">
+                  {t.sources}{' '}
+                  {SECTION_SOURCES[s.id].map((sid, i) => (
+                    <>
+                      <a href={SOURCES[sid].url}>{SOURCES[sid].name}</a>
+                      {i < SECTION_SOURCES[s.id].length - 1 ? '; ' : ''}
+                    </>
+                  ))}
+                </p>
+                <a class="to-top" href="#top" data-to-top>{t.top}</a>
+              </section>
+            ))
+          }
+        </article>
+
+        <nav class="toc-wide" aria-label={t.contents}>
+          <p>{t.contents}</p>
+          <ul role="list">
+            {SECTIONS.map((s) => <li><a href={`#${s.id}`} data-toc={s.id}>{t[`${s.id}_h` as keyof typeof t]}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../scripts/learn.ts';
+</script>

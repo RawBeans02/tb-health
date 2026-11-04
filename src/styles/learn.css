@@ -1,0 +1,352 @@
+/* Learn (README:228–233). Reading text 18px/1.6 at a 34em measure; contents as a
+   collapsible group below 1080px and a sticky sidebar from 1080px; myths as two columns
+   from 720px and stacked below. */
+
+.learn-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.learn {
+  min-width: 0;
+  max-width: var(--reading);
+  display: grid;
+  gap: clamp(48px, 7vw, 72px);
+}
+
+.learn-top {
+  display: grid;
+  gap: 24px;
+}
+
+.learn-section {
+  display: grid;
+  gap: 20px;
+}
+
+.learn-section h2 {
+  font-size: var(--text-h2-route);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.learn-p {
+  font-size: var(--text-18);
+  line-height: 1.6;
+  max-width: 34em;
+}
+
+.learn-steps {
+  padding-left: 1.6em;
+  display: grid;
+  gap: 14px;
+  max-width: 34em;
+  font-size: var(--text-18);
+  line-height: 1.6;
+}
+
+.learn-steps li {
+  padding-left: 6px;
+}
+
+.learn-bullets {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  max-width: 34em;
+}
+
+.learn-bullets li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 16px;
+  font-size: var(--text-18);
+  line-height: 1.6;
+}
+
+.learn-bullets li > span:first-child {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--teal);
+  margin-top: 0.62em;
+}
+
+/* D21: the global button sizes, 58px solid and 46px soft (the prototype used 52px). */
+.learn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.learn-actions .btn--soft {
+  min-height: 46px;
+  padding: 0 20px;
+  font-size: var(--text-17);
+}
+
+.by-numbers {
+  display: grid;
+  gap: 10px;
+}
+
+.by-numbers h3 {
+  font-size: var(--text-19);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.claim {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px 6px 0;
+}
+
+.claim p:first-child {
+  font-size: var(--text-18);
+  line-height: 1.5;
+}
+
+.claim-meta {
+  font-size: var(--text-15);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.claim-meta a,
+.learn-sources a {
+  color: var(--muted);
+}
+
+.claim-meta a:hover,
+.learn-sources a:hover {
+  color: var(--ink);
+}
+
+.claim-more,
+.to-top {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--teal-deep);
+  font-size: var(--text-16);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.claim-more:hover,
+.to-top:hover {
+  text-decoration: underline;
+  color: var(--ink);
+}
+
+.learn-sources {
+  font-size: var(--text-15);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ---------- Contents ---------- */
+
+.toc-narrow summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  font-size: var(--text-18);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.toc-narrow summary::-webkit-details-marker {
+  display: none;
+}
+
+.toc-chevron {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--chevron);
+  transition: transform 160ms ease;
+}
+
+.toc-narrow[open] .toc-chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-chevron {
+    transition: none;
+  }
+}
+
+.toc-narrow ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-narrow li {
+  padding-left: 16px;
+}
+
+.toc-narrow a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 16px 8px 0;
+  border-top: 1px solid var(--separator);
+  font-size: var(--text-17);
+  line-height: 1.35;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.toc-narrow a:hover {
+  color: var(--teal-deep);
+}
+
+.toc-wide {
+  display: none;
+}
+
+@media (min-width: 1080px) {
+  .learn-layout {
+    grid-template-columns: minmax(0, 44rem) 250px;
+    gap: clamp(48px, 7vw, 112px);
+  }
+
+  .toc-narrow {
+    display: none;
+  }
+
+  .toc-wide {
+    position: sticky;
+    top: 96px;
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+    border-radius: var(--radius-group);
+    background: var(--surface);
+  }
+
+  .toc-wide p {
+    padding: 8px 12px 0;
+    font-size: var(--text-15);
+    font-weight: 700;
+    color: var(--secondary);
+  }
+
+  .toc-wide ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+
+  .toc-wide a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: var(--text-16);
+    line-height: 1.3;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .toc-wide a:hover {
+    color: var(--teal-deep);
+  }
+
+  .toc-wide a[aria-current] {
+    background: var(--teal-tint-14);
+    color: var(--teal-deep);
+    font-weight: 700;
+  }
+}
+
+/* ---------- Myths and facts (ARIA table, two layouts) ---------- */
+
+.myths-head {
+  display: none;
+}
+
+.myth-row {
+  padding-left: 18px;
+}
+
+.myth-row > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px 20px;
+  padding: 14px 18px 14px 0;
+}
+
+.myth-row + .myth-row > div {
+  border-top: 1px solid var(--separator);
+}
+
+.myth-row [role='cell'] {
+  display: grid;
+  gap: 2px;
+}
+
+.myth-label {
+  font-size: var(--text-14);
+  font-weight: 700;
+  color: var(--tb-red);
+}
+
+.fact-label {
+  font-size: var(--text-14);
+  font-weight: 700;
+  color: var(--teal-deep);
+}
+
+.myth-text {
+  font-size: var(--text-17);
+  line-height: 1.5;
+  color: var(--secondary);
+}
+
+.fact-text {
+  font-size: var(--text-17);
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+@media (min-width: 720px) {
+  .myths-head {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 20px;
+    padding: 12px 18px 10px;
+    border-bottom: 1px solid var(--separator);
+  }
+
+  .myths-head span {
+    font-size: var(--text-15);
+    font-weight: 700;
+    color: var(--secondary);
+  }
+
+  .myth-row > div {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .myth-label,
+  .fact-label {
+    display: none;
+  }
+}

@@ -71,13 +71,20 @@
   - Parity test lists `src/content` at run time (Vitest's module cache had kept an old `import.meta.glob` list).
   - Tests: unit decision tables (`tests/unit/check.test.ts`); e2e `tests/e2e/check.spec.ts` incl. the §4.5 privacy test, print, PNG download, share (Chromium), in-place switch, sticky Next above the tab bar.
   - Visual check vs `Check.dc.html` (intro, first question, urgent, result A) at 390/1280: identical.
+- 4 Nov 2026: **lead approved step 7**; the lead is running an independent read-only check of `flow.ts` routing against pack §4.
+- **5 Nov 2026: step 8 (Learn) built** on `build/08-learn`:
+  - `src/content/learn.ts` (generated once from the prototype markup, each string tied to its pack §3 line; `*asterisks*` for italics as in the pack; L6 strings flagged REVIEW), `src/lib/learn.ts` (section blocks, claim ids per section, sources), `src/views/Learn.astro` (static), `src/scripts/learn.ts` (scroll-spy, back to top), `src/styles/learn.css`.
+  - "By the numbers" from `data/claims.json` at build; 17 "More in the data" links to `/data#claim-…` (pending page). L5 "Check your symptoms" dropped when `TBPH_CHECK=false`.
+  - D21: L5 buttons at the global 58/46px (prototype 52px).
+  - `.inset-group` moved to `ui.css` (third case of a shared style in a page stylesheet; keep shared rules in ui.css).
+  - Visual check vs `Learn.dc.html` at 390/1280 EN and 390 FIL: section positions identical (1280: +6px from L6 on, the D21 buttons); myth rows 1–3px shorter on phones.
 - Node 22.23.4 installed through nvm for this folder only and pinned in `.nvmrc` (owner said yes via the Account Admin session, 30 Oct 2026). nvm's default alias (`16`) and the Homebrew/global Node were left unchanged, because the KitaMo builders use them. Don't change them.
 
 ## Next
 1. **Steps back to back** (lead, 4 Nov 2026): each step on its own branch cut from the previous one, staged by path. At the end of each, send the lead a short report (commits, test results, guard peak line, deviations), then start the next one straight away. The lead messages if something needs fixing.
 2. Stop and ask the lead only for: a genuinely open question; anything needing new copy, a new service or a pipeline run; failing tests I can't fix; a big change to the plan.
 3. **v7 (V1–V3):** when the lead imports `design/v7/` and messages, read `design/v7/HANDOFF.md` › "v7", then in my own commit update PLAN.md (D2 dark mode, D6 em dashes, D14 dot red `#F26A72`, §7.3 conflicts and 1555, the launch-check list, the QA matrix in light and dark, design/v7 as a reference) and tell the lead if v7 changes anything bigger. Then: drop `theme.css`'s dark values into `tokens.css` (plus a dark `theme-color` meta), apply v7's wording for changed strings (step 2 has: the footer safety line, the Home and 404 titles), point their parity refs at v7, and log them in `docs/copy-overrides.md`. Any other em dash: list for the lead, don't reword.
-4. Step 8 (Learn) on `build/08-learn`, cut from `build/07-check`: static L1–L10 from pack §3, contents (collapsible / sticky sidebar with scroll-spy), "By the numbers" from claims at build, myths table, back to top; L6 [REVIEW]; with `TBPH_CHECK=false` drop L5's "Check your symptoms" button (Q9) and list any sentence that still mentions the check.
+4. Step 9 (Data) on `build/09-data`, cut from `build/08-learn`: D5 default (d1–d15 takeaways stay the pack's text); 20 chart panels with tables, dot story canvas (D14: TB red #C42032; dark value #F26A72 waits for v7), "TB in numbers" with `#claim-{id}` anchors and topic picker. Large step: consider splitting into charts first, then the dot story.
 5. Step 4's owner demo instructions went to the lead (4 Nov 2026).
 6. **Before step 12, ask the lead about Q7** (host and domain). Until then the placeholder `https://tb-ph.example` (`astro.config.mjs` `site`), flagged in `launch-check`.
 - Checkout: this checkout is mine and I own branch switching. The lead only edits `docs/decisions.md`, reviews with `git show`/`git diff`, and tells me before committing a decision by path on my current branch.

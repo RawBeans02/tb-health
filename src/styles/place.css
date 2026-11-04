@@ -218,21 +218,6 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   letter-spacing: -0.01em;
 }
 
-/* Rows with the separator inset on the text, as in the prototype. */
-.inset-group > li,
-.inset-group > div {
-  padding-left: 16px;
-}
-
-.group.inset-group > li + li,
-.group.inset-group > div + div {
-  border-top: 0;
-}
-
-.inset-group > * + * > * {
-  border-top: 1px solid var(--separator);
-}
-
 .service-row {
   display: flex;
   flex-wrap: wrap;
