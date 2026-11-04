@@ -4,6 +4,7 @@
 //     hreflang alternates (elements carrying hreflang) are the only exceptions;
 //   - an internal link points at a page or file that wasn't built.
 // Pages from later steps are in PENDING: links to them only warn until they exist.
+// A build without Check (TBPH_CHECK=false, Q9) must not build or link to /check at all.
 //
 //   node scripts/check-links.mjs
 
@@ -16,6 +17,7 @@ const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 
 // English paths of pages not built yet; remove each as its step lands.
 const PENDING = new Set(['/places', '/check', '/learn', '/data', '/about', '/install']);
+const withoutCheck = process.env.TBPH_CHECK === 'false';
 
 function htmlFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -71,11 +73,19 @@ for (const file of htmlFiles(dist)) {
     if (isPage && attrs.hreflang === undefined && langOf(path) !== pageLang) {
       errors.push(`${page} (${pageLang}): links to ${href}, a ${langOf(path)} page`);
     }
-    if (builtFile(path)) continue;
     const english = isPage ? toLang(path, 'en') : path;
+    if (withoutCheck && english === '/check') {
+      errors.push(`${page}: links to ${href}, but this build leaves Check out (TBPH_CHECK=false)`);
+      continue;
+    }
+    if (builtFile(path)) continue;
     if (PENDING.has(english)) pending.set(english, (pending.get(english) ?? 0) + 1);
     else errors.push(`${page}: links to ${href}, which wasn't built`);
   }
+}
+
+if (withoutCheck) {
+  for (const path of ['/check', '/fil/check']) if (builtFile(path)) errors.push(`${path} was built, but this build leaves Check out (TBPH_CHECK=false)`);
 }
 
 if (pending.size) {

@@ -1,6 +1,8 @@
 ---
 // 404 (README:247, 404.dc.html): one line and two ways back. Served by the host for any
 // unknown address, in the language of the nearest 404.html (/fil/… gets Filipino).
+// Without Check (TBPH_CHECK=false, Q9) the Check button goes; the lead line names no page.
+import { TBPH_CHECK } from 'astro:env/server';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { chrome } from '../content/chrome.ts';
 import { meta } from '../content/meta.ts';
@@ -26,7 +28,7 @@ const nav = pick(chrome, lang);
         </div>
         <div class="not-found-actions">
           <a class="btn btn--primary" href={href('home', lang)}>{nav.nav_home}</a>
-          <a class="btn btn--soft btn--lg" href={href('check', lang)}>{nav.nav_check}</a>
+          {TBPH_CHECK && <a class="btn btn--soft btn--lg" href={href('check', lang)}>{nav.nav_check}</a>}
         </div>
       </div>
     </div>
