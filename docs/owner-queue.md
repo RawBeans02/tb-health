@@ -10,6 +10,11 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 4. **Place abbreviations** the builder added to the place search: QC, CDO, GenSan, SJDM, Dasma, CamSur, CamNorte, NegOcc, NegOr. Confirm them or strike any that are wrong or too local.
 5. **Seven wording overrides** in `docs/copy-overrides.md`, where the README's or the prototype's wording ships instead of the content pack's (e.g. "Commute directions", "Call before you go", "Find TB care"). Confirm or change them.
 6. **The smaller design items, in one go.** Accept my recommendations for O2 to O7, O9, O10, O13 to O17, O19 to O21 and O24 to O26 (O16 means "keep as designed"). Also record O23 (don't adopt Glisse; port three small behaviours) and O27 (keep the frosted Home card as an approved exception). Several need a short line of wording from you; they're listed below.
+   - **O3 (short tab labels) matters more than the audit said.** The builder measured the phone tab bar:
+     - English labels already take two lines at 390px;
+     - "Check symptoms" overflows its tab by 6px at 320px, even at the default text size.
+
+     Until short labels land, Check's Next button sits 11px higher on phones than in the prototype. That keeps the README's 14px gap above the bar (my call; say if you'd rather keep the prototype's 3px). With short labels it goes back to the README position.
 
 ## Wording only you can write (EN and FIL)
 
@@ -47,3 +52,4 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 - **O12.** Record the reuse terms for the WHO data and the PhilHealth list, before step 14.
 - **O18 and O28:** try them on a real iPhone and Android phone first.
 - **Device checks:** the runtime checks listed in the audit report.
+- **The first CI run (D22).** It comes after the merge to `main`: GitHub runs a manual workflow only once its file is on the default branch. Then start "CI" from the repository's Actions tab; it never runs on its own. One step, `npm audit`, sends the list of dependencies to the npm registry, the same registry `npm install` already uses. The run's result is step 14 evidence.
