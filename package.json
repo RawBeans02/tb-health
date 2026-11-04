@@ -16,7 +16,8 @@
     "launch-check": "node scripts/launch-check.mjs",
     "serve": "node scripts/serve-dist.mjs",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:no-check": "node scripts/test-no-check.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "6.1.1",
