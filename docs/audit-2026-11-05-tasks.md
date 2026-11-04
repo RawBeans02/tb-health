@@ -373,3 +373,129 @@ From the interim build audit (docs/audit-2026-11-05.md), snapshot 6f759ff. Every
 - Real device: OSM tile requests after Use my location, a province filter and Map (tiles requested and the Referer sent).
 - Check-off build: any /check link rendered only by islands after hydration, which check-links can't see.
 - An iPad-width (768 to 1024px) layout pass in EN and FIL.
+
+## Review of steps 13 and 14 (5 November 2026)
+
+A read-only review of step 13 (6f5a77b..1b7f618) and step 14 (1b7f618..8884d65). An adversarial verifier checked every finding, and the lead re-read the serious ones at 5180cd1. Refuted findings were dropped. The rules in "How to work" apply.
+
+### B44. Make the forced-colours block win the cascade (High)
+
+- **Files:** src/styles/global.css, tests/e2e/forced-colors.spec.ts
+- **Fix:** The `@media (forced-colors: active)` block in global.css loads before chrome.css and ui.css. Their rules have the same specificity, so they win. The block's `forced-color-adjust: none` then leaves the author colours on screen in a contrast theme: the current tab is about 2.3:1 on black, and the switch keeps its teal. Prefix each selector in the block with `html`, or move the block to the end of ui.css.
+- **Acceptance:** In forced-colours emulation (Chromium), the selected segment, the current tab and the current language compute to the same colours as a probe styled `background: Highlight; color: HighlightText`. The switch track equals Canvas when off and Highlight when on. "The colours differ" is no longer enough to pass.
+- **Sources:** review of step 13, finding 0 (B11)
+
+### B45. Keep the reader's place on /data after a language switch (High)
+
+- **Files:** src/scripts/data.ts, src/scripts/lang.ts, src/lib/anchor.ts, tests/e2e/data.spec.ts
+- **Fix:** lang.ts carries `location.hash` to the twin page. Since B6, data.ts's `toHash()` acts on any id, and it runs after `restoreAnchor()` at load and after `reapplyAnchor` on `tbph:charts-ready`. So a reader who used "On this page" to reach #d5, read on to d14 and switched language lands back on d5.
+  - Skip `toHash()` while an anchor was restored.
+  - Drop the hash from the twin link when `saveAnchor()` saved one. Otherwise the browser's own fragment scroll still wins.
+- **Acceptance:** at 390px in Chromium and WebKit:
+  - On /data, follow "On this page" to #d5 and scroll so #d14 sits at 120px. Switch to Filipino and wait for the charts island to hydrate. #d14's top stays within 2px of 120.
+  - Plain deep links (/data#d16, /data#claim-…) still land on target.
+- **Sources:** review of step 13, findings 12 and 13 (B6)
+
+### B46. Let the type check run on a clean checkout (Medium)
+
+- **Files:** package.json (or .github/workflows/ci.yml)
+- **Fix:** `astro check` reads src/generated/region-counts.json. That file is git-ignored and only `prepare-data` writes it, inside `build`, so CI's type check fails on its first run. Make `check` run `node scripts/prepare-data.mjs` first. It makes no network calls.
+- **Acceptance:** in a throwaway worktree with no src/generated/, `npm ci && npm run check` passes.
+- **Sources:** review of step 13, finding 16 (B27)
+
+### B47. Drive Home's waiting reveal from state, not a ref (Medium)
+
+- **Files:** src/islands/Planner.tsx, tests/e2e/home.spec.ts
+- **Fix:** A second submit while `waiting` is already true changes no state, so nothing renders. The armed ref then fires on the next unrelated render, for example a keystroke, and moves focus to "Try again" mid-word. Use a counter state (`setReveal((n) => n + 1)`) and run the effect on `[reveal]`.
+- **Acceptance:** with a forced list failure:
+  - submit, refocus the field and submit again: "Try again" has focus;
+  - refocus the field and type: the field keeps focus;
+  - submit while loading, let the load fail, submit again: "Try again" has focus.
+  - Measure the error's position against the 70px / 60% rule; `toBeInViewport()` passes on any overlap.
+- **Sources:** review of step 13, findings 6 and 10 (B16)
+
+### B48. List the remaining Check-off wording in launch-check (Medium)
+
+- **Files:** scripts/launch-check.mjs
+- **Fix:** Add two ids to the Check-off list:
+  - `home.bring3` ("Your TB check summary" under What to bring, on every route);
+  - `notFound.lead` (C8: "These" above a single button).
+  Reword and hide nothing; the owner decides (owner queue, Q9).
+- **Acceptance:** launch-check for a TBPH_CHECK=false build lists both ids.
+- **Sources:** review of step 13, finding 3 (B25); audit C8
+
+### B49. Clear the side safe areas in the Data story (Medium)
+
+- **Files:** src/styles/data.css
+- **Fix:** Wrap the side padding of `.story-step` and the left and right offsets of `.story-legend` (including the 60em legend's 32px) in `max(…, env(safe-area-inset-left))` and `max(…, env(safe-area-inset-right))`.
+- **Acceptance:** The rules carry the insets. The landscape device check already lists the Data story.
+- **Sources:** review of step 13, finding 1 (B5)
+
+### B50. Make the text-size and QA probes look inside clipped boxes and SVG (Medium)
+
+- **Files:** tests/e2e/textsize.spec.ts, tests/e2e/qa.spec.ts
+- **Fix:**
+  - Treat only `overflow: auto` and `scroll` ancestors as scrollers.
+  - Inside `hidden` or `clip` ancestors, keep checking. Report an element whose box passes the clipping ancestor's box, or whose text has `scrollWidth > clientWidth`.
+  - For charts, compare each SVG `<text>` box with its `<svg>` box after the charts hydrate.
+- **Acceptance:**
+  - textsize.spec checks `.locate` inside `.planner-sheet` and the grouped rows at 150% and 200%.
+  - On /data and /fil/data at 320px and 390px, no SVG text lies outside its chart.
+  - Fix any real failure this turns up, or bring it to the lead.
+- **Sources:** review of step 13, findings 2 (B2) and 19 (L2)
+
+### B51. Put the worst-case rows and the one- and zero-row lists through the matrix (Medium)
+
+- **Files:** scripts/prepare-data.mjs, tests/e2e/qa.spec.ts
+- **Fix:**
+  - In the worst-case build, put the five synthetic rows first so /places shows them.
+  - Add a Places state with one result and one with none, driven through the interface, to the matrix at 320px, 390px and 1280px in EN and FIL.
+- **Acceptance:** The matrix probes the worst-case rows in the Places list, the one-row count and the empty panel.
+- **Sources:** review of step 13, findings 17 and 18 (L2)
+
+### B52. Make the map and sheet tests prove B7, B12 and B30 (Medium)
+
+- **Files:** tests/e2e/places.spec.ts
+- **Fix:**
+  - B7: run the marker-count test on the 2,100-row synthetic build instead of pinning "93 centers", and record the draw and filter timings with the map open.
+  - B12: after fast broadening input, assert that every marker is inside `map.getBounds()`.
+  - B30: put the second finger on the grab strip, so the test exercises the touch-identifier guard.
+- **Acceptance:** each test fails with its fix temporarily reverted (locally, never committed) and passes at the tip.
+- **Sources:** review of step 13, findings 7, 9 and 8
+
+### B53. Make the Data claim deep-link tests wait for the charts (Medium)
+
+- **Files:** tests/e2e/data.spec.ts
+- **Fix:** Pass `charts: true` in the #claim-burden-cases and Learn-link tests, so they assert after the relayout.
+- **Acceptance:** Both tests wait for the island to hydrate before they assert.
+- **Sources:** review of step 13, finding 14 (B6)
+
+### B54. Guard Safari's IME Enter on the Places field (Low)
+
+- **Files:** src/ui/controls.tsx
+- **Fix:** Skip the Enter blur when `e.isComposing || e.keyCode === 229`. WebKit ends the composition before the Enter's keydown.
+- **Acceptance:** A unit or e2e test: Enter with keyCode 229 doesn't blur the field.
+- **Sources:** review of step 13, finding 11 (B31)
+
+### B55. Read the newest IntersectionObserver entry in the dot story (Low)
+
+- **Files:** src/islands/DotStory.tsx
+- **Fix:** Use the last entry the callback receives, not the first.
+- **Acceptance:** A unit test with two queued entries ([leave, enter]) leaves the story active.
+- **Sources:** review of step 13, finding 15 (L3)
+
+### B56. Let the dependency audit cover Workbox (Low)
+
+- **Files:** package.json
+- **Fix:** Workbox ships in dist/sw.js but sits in devDependencies, so `npm audit --omit=dev` skips it. Move the four workbox-* packages to dependencies at the same versions. Nothing new is installed.
+- **Acceptance:** `npm ls --omit=dev` lists workbox-core, -precaching, -routing and -strategies.
+- **Sources:** review of step 13, finding 22 (B27)
+
+### B57. Small records (Low)
+
+- PLAN.md: say which jobs CI runs (D22's list plus the iphone and pixel projects), not "the same jobs".
+- The note on `about.privacyServices`: after the directions hand-off, add "which then see the chosen place", as in the owner queue.
+- AUDIT-build.md: record two limits:
+  - L3's trace was Chromium at 6x CPU; the mid-range Android trace stays a runtime check;
+  - the iphone project closes the Filters sheet with Done, because WebKit can't drive the swipe (runtime check B30).
+- **Sources:** review of step 13, findings 21, 5 and 20

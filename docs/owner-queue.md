@@ -34,7 +34,7 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
   - a message for locations outside the Philippines (O21);
   - "shared" and "couldn't save" lines for the summary image (O22).
 - **Alt text** for the link-preview image.
-- **Launch without Check (Q9):** versions without the check, or a yes to keep these as they are: `install.off2`, `install.lead`, `about.disclaimerText`, `about.privacy1`, `about.appText`, `meta.installDescription`, and the 404 lead (C3, C8).
+- **Launch without Check (Q9):** versions without the check, or a yes to keep these as they are: `install.off2`, `install.lead`, `about.disclaimerText`, `about.privacy1`, `about.appText`, `meta.installDescription`, the 404 lead (C3, C8), and `home.bring3`, "Your TB check summary" in every route's What to bring list (found in the step 13 review).
 - **Placeholders:** group name, partners, medical reviewer, contact emails (`launch-check` lists them).
 - **Calls to make with the content owner:**
   - C4: explain jargon at first use;
