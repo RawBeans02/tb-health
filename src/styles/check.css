@@ -243,27 +243,17 @@
   line-height: 1.45;
   font-weight: 700;
   color: var(--tb-red);
-  /* Scrolled into view 10px clear of the Next bar (78px) and, on phones, the tab bar
-     below it (84px). */
-  scroll-margin-bottom: calc(172px + env(safe-area-inset-bottom));
-}
-
-@media (min-width: 62.5em) {
-  html[lang='en'] .question-error {
-    scroll-margin-bottom: 88px;
-  }
-}
-
-@media (min-width: 73.75em) {
-  html[lang='fil'] .question-error {
-    scroll-margin-bottom: 88px;
-  }
+  /* Scrolled into view 10px clear of the Next bar and, on phones, the tab bar (the page's
+     scroll-padding-bottom, global.css, keeps both clear). */
+  scroll-margin-bottom: 10px;
 }
 
 /* Next stays in reach: above the floating tab bar on phones, at the bottom on desktop. */
 .next-bar {
   position: sticky;
-  bottom: calc(84px + env(safe-area-inset-bottom));
+  /* 84px with the usual 81px tab bar, as specced; a taller bar (labels on more lines)
+     raises it by the difference, so the button never sits on the bar (B14). */
+  bottom: calc(var(--tabbar-h) + 3px + env(safe-area-inset-bottom));
   z-index: 5;
   margin: 0 -4px;
   padding: 10px 4px;

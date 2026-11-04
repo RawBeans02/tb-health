@@ -378,9 +378,10 @@ html[data-standalone='true'] .install-entry {
   line-height: 1.2;
 }
 
-/* Keeps the floating tab bar off the footer's last line. */
+/* Keeps the floating tab bar (10px off the bottom) off the footer's last line: 92px with the
+   usual 81px bar, as before, and more when its labels take more lines (B14). */
 .site-footer-spacer {
-  height: calc(92px + env(safe-area-inset-bottom));
+  height: calc(var(--tabbar-h) + 11px + env(safe-area-inset-bottom));
 }
 
 /* ---------- Desktop layout ---------- */

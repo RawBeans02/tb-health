@@ -102,6 +102,10 @@
   --reading: 760px;
   --reading-check: 640px;
 
+  /* The phone tab bar's height as usually drawn (icons and two-line English labels at 390px);
+     src/scripts/tabbar.ts sets the real one, so taller labels push what sits above it up. */
+  --tabbar-h: 81px;
+
   /* Focus */
   --focus-ring: 3px solid var(--ink);
   --focus-ring-on-film: 3px solid var(--paper);

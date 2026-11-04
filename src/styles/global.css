@@ -9,8 +9,36 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Link targets and focused elements land clear of the sticky header (audit B6, B10). */
-  scroll-padding-top: 80px;
+  /* Link targets and focused elements land clear of the sticky header and, on phones, the
+     floating tab bar, or Check's Next bar too (audit B6, B10). */
+  /* Capped by the window's height, so at high zoom (a 225px-tall window at 400%) a band is
+     left to scroll into: WebKit doesn't scroll a focused element into view otherwise. */
+  scroll-padding-top: min(80px, 30vh);
+  scroll-padding-bottom: min(calc(var(--tabbar-h) + 27px + env(safe-area-inset-bottom)), 40vh); /* 108px */
+}
+
+html:has(.next-bar) {
+  scroll-padding-bottom: min(calc(var(--tabbar-h) + 81px + env(safe-area-inset-bottom)), 50vh); /* 162px */
+}
+
+@media (min-width: 62.5em) {
+  html[lang='en'] {
+    scroll-padding-bottom: 0;
+  }
+
+  html[lang='en']:has(.next-bar) {
+    scroll-padding-bottom: 78px;
+  }
+}
+
+@media (min-width: 73.75em) {
+  html[lang='fil'] {
+    scroll-padding-bottom: 0;
+  }
+
+  html[lang='fil']:has(.next-bar) {
+    scroll-padding-bottom: 78px;
+  }
 }
 
 body {
