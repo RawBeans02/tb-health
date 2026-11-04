@@ -9,7 +9,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 - **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the planned host (Cloudflare Pages, HANDOVER's one release path: B58) serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
 - **Branch / commit:** `build/14-release` (from `build/13-qa`). Steps 1–13 and the audit tasks are on the branches before it.
 - **Audit date:** 5 November 2026
-- **Auditor:** Jr. Builder (self-audit, with evidence below). The lead's independent review of the step 13 commits is in progress; its findings come in as fix items.
+- **Auditor:** Jr. Builder (self-audit, with evidence below). The TB Health lead reviewed steps 13 and 14 independently; its fix items (B44–B68) are in, each with its test.
 - **Blocking findings** (`npm run launch-check -- --release`, keys in brackets):
   - [check-review] Check ships, but its clinical review is pending: 68 check strings carry [REVIEW] and the footer's reviewer placeholder is in. It clears when the review is recorded (B61). Or build with `TBPH_CHECK=false`, which turns it into [check-mentions]: the strings launch-check lists that still mention the check.
   - [review] Learn L6 and the six route-stop strings wait on the clinical review.
@@ -22,7 +22,14 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 
 ## Release decision
 
-- **Release status:** open. Set after the lead's review of the step 13 commits. On the evidence below the build itself has no known blocking defect; launch is BLOCKED by the launch-check items above until the owner resolves them, or accepts the ones that are their own calls (`--accept=<key>`, B60).
+- **Release status:** **BLOCKED for production** until the owner answers Q7 (host and domain) and the open items launch-check lists above: Check's clinical review (or a launch without Check, Q9), Learn L6 and the route stops; the owner's strings and placeholders; the full facility list (Q8). The build itself has no known blocking defect: every gate passes (see Evidence). Only the owner's own calls can be accepted (`--accept=<key>`, B60); the placeholder domain and a non-production build can't.
+- **Risks if it launched as it stands:**
+  - unreviewed medical content: the symptom check's questions and results, Learn L6 and the route-stop lines;
+  - the 93-row sample list: few centers, approximate pins, X-ray unknown everywhere, no hours;
+  - no privacy row for the outside services yet (Q5), and no qualified review under RA 10173;
+  - the placeholder address, which the installed app and every canonical and sitemap URL would carry;
+  - the device-only checks not yet done (VoiceOver, TalkBack, real installs, landscape insets);
+  - the accepted risks below.
 - **Accepted risks (pending the owner):** see "Accepted risks" below.
 - **Post-release checks:** `npm run post-deploy-check -- <origin>` after every deploy; the runtime checks below; Search Console for the `fil` alternates. No metrics are collected, by design.
 
@@ -43,7 +50,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | SEO audit tooling / agent-assisted verification | Partial | seo.spec, check-links, the sitemap test and Lighthouse SEO 100 on a production-mode build. Open: Search Console on the production domain after launch (owner list). |
 | Domain / DNS / email-deliverability setup | Missing | Blocked on Q7 [domain]. No email sent, so SPF/DKIM/DMARC N/A. |
 | Frontend quality metrics | Verified (automated) / Runtime check | Real 404s in both languages, print (card only), copy feedback, data dates, sticky bars never cover targets or focus (bars.spec, B10); each metric in the appendix. Device-only: printing a check result. |
-| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode build, compressed like the host, mobile and desktop (B66): every page 99–100 performance and 100 in the other categories; LCP ≤ 1.68 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05; TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). |
+| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode build, compressed like the host, mobile and desktop (B66): every page 99–100 performance and 100 in the other categories; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05; TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). |
 | Authentication / authorization | N/A | No accounts, backend or admin. |
 | Data integrity / sensitive fields | Partial | Every located center on the map (B7), +632 tel links (B20), hatch patterns (B21), the Q11 dot-count tripwire, no silent sample fallback; synthetic and worst-case fixtures only. Open: the 93-row sample ships until the real list (Q8): launch-check blocks [sample]. |
 | API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1.13 MB), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
@@ -52,7 +59,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Cancellation / unsubscribe / dark-pattern review | N/A | Nothing to subscribe to. |
 | Child/age-related compliance | N/A | Unchanged (interim). |
 | Reliability / retries / failure handling | Verified | Try again on list and map with focus kept (B8), submits kept through errors (B16), malformed hashes ignored (B37), offline after one visit with the place shell and offline page (pwa.spec, L10). |
-| Tests / CI / regression coverage | Verified | 2,167 unit tests; e2e on chromium (346), webkit (227), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run, after the merge to `main` (GitHub runs a manual workflow only from the default branch). |
+| Tests / CI / regression coverage | Verified (automated) / Runtime check | 2,194 unit tests; e2e on chromium (365), webkit (246), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run, after the merge to `main` (GitHub runs a manual workflow only from the default branch). |
 | Agent model/provider routing & fallback safety | N/A | No AI at runtime. |
 | Release-build verification | Verified (automated) / Runtime check | Tests run on `dist/` served like the host; the Check-off variant is built and tested (B26); `launch-check --release` is the gate, reading `dist/` and unit-tested (B59–B62); the post-deploy check reads the live site back (no cookies, HTML identical to `dist/`, every response's headers exactly as `dist/_headers` sets them, the 404s in both languages; unit-tested, B63). It hasn't run against a host yet: it runs after the first deploy. |
 | App Store / platform compliance | N/A | No store; installable PWA (manifest, service worker) tested in step 11. |
@@ -98,7 +105,8 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 ## Evidence
 
 - **Final gate (step 13, `build/13-qa`):** unit 2,167; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,131 KB; JS per page ≤ 31.1 KB gzip (Data 49.7 KB of 120); facilities.json 6.9 KB Brotli (29.8 KB at 2,100 rows); check-links 4,796 links + 800 head links; chromium 346; webkit 227 (+119 Chromium-only skips); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages). Step 14's gate (`build/14-release`, after the B14 ruling): the same counts, all passing.
-- **Lighthouse** (13.5.0, production-mode build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.68 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Per page in the appendix.
+- **Final gate (step 14, after the review fixes B44–B68):** unit 2,194; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,144 KB; JS per page ≤ 31.6 KB gzip (Data 50.5 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 365; webkit 246 (+119 Chromium-only skips; one test was flaky under load and fixed: it now waits for the Check result's own focus, and its specs passed twice over); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files). On a Check-off build, launch-check swaps [check-review] for [check-mentions] and lists no check strings. Guard peak 6.6 GB. The gate also found that B45 had left the twin's address without its hash; fixed (B45 follow-up).
+- **Lighthouse** (13.5.0, production-mode build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.81 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Rechecked on mobile after B68's inline script: `/` and `/fil` 100, `/fil/places` 99, CLS 0. Per page in the appendix.
 - **Scale:** 2,100 synthetic rows: 4,222 pages built in 4.5 s (whole build 11 s, 496 MB largest process); all 2,100 markers drawn 327 ms after Map at 4× CPU; Places list shown 490 ms after navigation at 4× CPU.
 - **Check routing:** the interim audit's two independent comparisons (215,197 combinations; 0 mismatches) plus the child-path unit tests (B43).
 - **Outside links:** `node scripts/outside-links.mjs`: 28 sources on 23 sites (page links and the islands' props, such as Home's route sources: B64), 558 directions links; not fetched (owner's OK needed). With `--fetch` it sends HEAD, then GET after any answer that isn't 2xx or 3xx, one request a second with a 15 s timeout and a plain project User-Agent, and reports redirects without following them.
@@ -247,7 +255,7 @@ Lighthouse 13.5.0 on a production-mode build (`SITE_URL=https://tbph.example.org
 | Accessibility | ✅ | 100 everywhere |
 | Best Practices | ✅ | 100 everywhere |
 | SEO | ✅ | 100 everywhere |
-| LCP | ✅ | Mobile 1.21–1.68 s, desktop 0.32–0.41 s |
+| LCP | ✅ | Mobile 1.21–1.81 s, desktop 0.32–0.41 s |
 | INP | 🔍 | Needs a real device; lab TBT below |
 | CLS | ✅ | Mobile ≤ 0.031 (Install 0.059 when the browser offers to install), desktop ≤ 0.050 |
 | TBT | ✅ | Mobile 0–62 ms, desktop 0 ms |
@@ -256,7 +264,9 @@ Lighthouse 13.5.0 on a production-mode build (`SITE_URL=https://tbph.example.org
 | Console errors and warnings | ✅ | None in any report; every e2e test fails on a console error or CSP violation |
 | Network failures, 4xx and 5xx | ✅ | None in any report; check-links every build |
 
-Per page, mobile / desktop. JS, CSS and fonts give requests · KB transferred, the same on both (to 0.1 KB):
+After B68 added a small inline script to every page, a mobile recheck of `/`, `/fil` and `/fil/places` gave 100, 100 and 99, LCP 1.65, 1.66 and 1.81 s, CLS 0 and TBT 0.
+
+Per page, mobile / desktop, before B68. JS, CSS and fonts give requests · KB transferred, the same on both (to 0.1 KB):
 
 | Page | Perf | LCP s | CLS | TBT ms | Requests | KB | JS | CSS | Fonts |
 |---|---|---|---|---|---|---|---|---|---|
