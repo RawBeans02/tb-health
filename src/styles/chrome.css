@@ -233,6 +233,11 @@ main:focus {
   text-align: center;
   /* Tab labels stay 14px at any text size (audit B2): four of them share a phone's width. */
   font-size: 14px;
+  /* A long press on a control opens no callout and selects no label (audit B32). */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
   line-height: 1.15;
   font-weight: 400;
   color: var(--ink);

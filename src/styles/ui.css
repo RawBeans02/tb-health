@@ -519,6 +519,11 @@
 }
 
 .segmented button {
+  /* A long press on a control opens no callout and selects no label (audit B32). */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
   min-width: 0;
   min-height: 44px;
   padding: 4px 10px;
@@ -567,6 +572,11 @@
   font-size: var(--text-17);
   font-weight: 700;
   cursor: pointer;
+  /* A long press on a control opens no callout and selects no label (audit B32). */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .switch-track {

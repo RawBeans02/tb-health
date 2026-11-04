@@ -423,3 +423,13 @@ test.describe('place field keyboard (audit B31)', () => {
     await expect(page.locator('#from')).toHaveAttribute('autocorrect', 'off');
   });
 });
+
+test('long press: no selection on tabs, segments and the switch; content stays selectable (audit B32)', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ready(page);
+  await page.getByRole('button', { name: 'Use my location' }).click();
+  const select = (selector: string) => page.locator(selector).first().evaluate((el) => getComputedStyle(el).userSelect);
+  for (const control of ['.tab-bar a', '.segmented button', '.switch']) expect(await select(control), control).toBe('none');
+  for (const content of ['.footnotes p', '.facility-name a', 'main h1']) expect(await select(content), content).not.toBe('none');
+});
