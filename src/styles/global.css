@@ -130,3 +130,40 @@ a:hover {
 .wordmark-tb {
   color: var(--tb-red);
 }
+
+/* Forced colours (Windows contrast themes): the browser replaces our colours, which would leave
+   selected states looking like the rest. These keep them as system Highlight (audit B11). */
+@media (forced-colors: active) {
+  .lang-toggle a[aria-current],
+  .segmented button[aria-pressed='true'],
+  .tab-bar a[aria-current],
+  .toc-wide a[aria-current],
+  .choice.is-included .num-disc {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .switch-track,
+  .switch-knob {
+    forced-color-adjust: none;
+  }
+
+  .switch-track {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .switch-knob {
+    background: CanvasText;
+  }
+
+  .switch[aria-checked='true'] .switch-track {
+    background: Highlight;
+    border-color: Highlight;
+  }
+
+  .switch[aria-checked='true'] .switch-knob {
+    background: HighlightText;
+  }
+}
