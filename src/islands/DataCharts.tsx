@@ -5,7 +5,7 @@ import { Fragment } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import claims from '../../data/claims.json' with { type: 'json' };
 import stats from '../../data/tb-ph-data.json' with { type: 'json' };
-import { buildPanels, type ChartStrings, type Panel, type PanelState } from '../lib/charts/panels.ts';
+import { buildPanels, HATCHES, type ChartStrings, type Panel, type PanelState } from '../lib/charts/panels.ts';
 import type { Chart, Table } from '../lib/charts/primitives.ts';
 import type { Lang } from '../lib/i18n.ts';
 
@@ -52,10 +52,12 @@ export default function DataCharts({ lang, tx, top, regions }: Props) {
     <>
       <svg class="chart-defs" width="0" height="0" aria-hidden="true">
         <defs>
-          <pattern id="dhatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect width="6" height="6" fill="#FFFFFF" />
-            <line x1="0" y1="0" x2="0" y2="6" stroke="#7A8C97" stroke-width="3" />
-          </pattern>
+          {Object.entries(HATCHES).map(([id, stroke]) => (
+            <pattern key={id} id={id} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="6" height="6" fill="#FFFFFF" />
+              <line x1="0" y1="0" x2="0" y2="6" stroke={stroke} stroke-width="3" />
+            </pattern>
+          ))}
         </defs>
       </svg>
       {panels.map((p, i) => (

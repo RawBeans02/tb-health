@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { charts } from '../../src/content/charts.ts';
 import { pick } from '../../src/content/types.ts';
-import { buildPanels, type PanelState } from '../../src/lib/charts/panels.ts';
+import { buildPanels, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
 
 const data = JSON.parse(readFileSync('data/tb-ph-data.json', 'utf8'));
 const claims = JSON.parse(readFileSync('data/claims.json', 'utf8'));
@@ -59,5 +59,17 @@ describe('buildPanels', () => {
   it('d14 counts clinics per region from the prepared list, with the sample note', () => {
     const d14 = buildPanels(data, 'en', 640, true, state(), pick(charts, 'en')).find((p) => p.id === 'd14')!;
     expect(d14.caption).toContain('Sample list: 93 clinics from 2 regions');
+  });
+});
+
+describe('hatch patterns (audit B21)', () => {
+  it('every url(#id) a chart fills with has its pattern', () => {
+    for (const lang of ['en', 'fil'] as const) {
+      for (const [w, wide] of [[928, true], [320, false]] as const) {
+        const used = new Set([...JSON.stringify(buildPanels(data, lang, w, wide, state(), pick(charts, lang))).matchAll(/url\(#([\w-]+)\)/g)].map((m) => m[1]));
+        expect(used.size).toBeGreaterThan(0);
+        for (const id of used) expect(HATCHES, `#${id}`).toHaveProperty(id);
+      }
+    }
   });
 });

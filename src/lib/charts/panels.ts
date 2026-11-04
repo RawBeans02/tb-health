@@ -13,6 +13,9 @@ export type ChartStrings = Record<keyof typeof charts, string>;
 /** Data-page colours (Data.dc.html C). Charts use TB red for illness, Teal for care, Dot for context. */
 export const COLORS = { ink: '#14212B', muted: '#56626A', rule: '#E3E6E8', coral: '#C42032', coralDeep: '#C42032', teal: '#1E6B70', tealDeep: '#175458', dot: '#7A8C97', paper: '#FFFFFF', paper2: '#E3E6E8' };
 
+/** The hatch patterns charts fill with (Data.dc.html:34-37): a 3px line on white, by id. */
+export const HATCHES: Record<string, string> = { dhatch: COLORS.dot, 'dh-teal': COLORS.teal, 'dh-ink': COLORS.ink, 'dh-dot': COLORS.dot };
+
 /** Region codes and names for d14 (Data.dc.html REG). */
 export const REGIONS: [string, string][] = [['NCR', 'NCR & Rizal'], ['CAR', 'Cordillera (CAR)'], ['R1', 'Region I (Ilocos)'], ['R2', 'Region II (Cagayan Valley)'], ['R3', 'Region III (Central Luzon)'], ['R4A', 'Region IV-A (Calabarzon)'], ['R4B', 'MIMAROPA (Region IV-B)'], ['R5', 'Region V (Bicol)'], ['R6', 'Region VI (Western Visayas)'], ['R7', 'Region VII (Central Visayas)'], ['R8', 'Region VIII (Eastern Visayas)'], ['R9', 'Region IX (Zamboanga Peninsula)'], ['R10', 'Region X (Northern Mindanao)'], ['R11', 'Region XI (Davao)'], ['R12', 'Region XII (Soccsksargen)'], ['R13', 'Caraga (Region XIII)'], ['BARMM', 'BARMM']];
 
