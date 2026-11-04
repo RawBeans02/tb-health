@@ -17,12 +17,15 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
 
 ## Release
 
-1. **Build for production** with the real address:
-   `SITE_URL=https://your.address TBPH_PRODUCTION=true npm run build`
-   (A production build refuses the placeholder address. Add `TBPH_CHECK=false` to launch without the check.)
-2. **Run the gate:** `npm run launch-check -- --release`. It stops on anything still open. To launch with an item you have decided to accept (for example the sample list), name it: `npm run launch-check -- --release --accept=sample`. Accepted items are printed with the release, so the decision is on record.
-3. **Deploy `dist/` to Cloudflare Pages**, the one release path set up (the recommended answer to Q7), in a project that belongs to TB Health only, never KitaMo's: `npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main` (after `npx wrangler@4.151.3 login` once). It uploads `dist/` as built, without rebuilding, and reads `dist/_headers` as is.
-   Keep previews private: a build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, but only a host that reads `_headers` sends it on.
+1. **Build, gate and deploy in one command**, so the upload is the build the gate just passed:
+   ```
+   SITE_URL=https://your.address TBPH_PRODUCTION=true npm run build && npm run launch-check -- --release && npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main
+   ```
+   - To launch without the check, put `TBPH_CHECK=false` before `npm run build` (Q9).
+   - A production build refuses the placeholder address.
+   - Log in once first with `npx wrangler@4.151.3 login`. Use a Cloudflare Pages project that belongs to TB Health only, never KitaMo's. Cloudflare Pages is the one release path set up (the recommended answer to Q7). Wrangler uploads `dist/` as built, without rebuilding, and Cloudflare reads `dist/_headers` as is.
+2. **If the gate stops**, it lists what's open, and nothing is uploaded. You may accept only your own calls, by naming them after `--release`, for example `--release --accept=sample`: `check-review`, `sample`, `owner-strings`, `review`, `verify`, `placeholders` and `check-mentions`. The rest can't be accepted: synthetic data, no build, no facility list, a missing `_headers`, the placeholder address and a noindex build. The gate prints what you accepted with the release. Send that list to the TB Health lead, who records it in `docs/decisions.md`.
+3. **Keep previews private.** A build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, but only a host that reads `_headers` sends it on.
 4. **Check the live site:** `npm run post-deploy-check -- https://your.address`. It reads every page back and compares it with `dist/`: identical HTML (no injected scripts), no cookies, the security and caching headers, and the 404s. Turn off any host feature it flags (analytics beacons, email obfuscation, script optimisers, bot challenges).
 5. **Search Console:** add the site, submit `https://your.address/sitemap.xml`, and check that Google sees the Filipino pages as `fil` alternates.
 

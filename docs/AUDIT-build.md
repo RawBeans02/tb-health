@@ -11,17 +11,18 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 - **Audit date:** 5 November 2026
 - **Auditor:** Jr. Builder (self-audit, with evidence below). The lead's independent review of the step 13 commits is in progress; its findings come in as fix items.
 - **Blocking findings** (`npm run launch-check -- --release`, keys in brackets):
-  - [check-review] Check ships, but its clinical review is pending (or build with `TBPH_CHECK=false`, which turns this into [check-mentions]: six strings that still mention the check).
+  - [check-review] Check ships, but its clinical review is pending: 68 check strings carry [REVIEW] and the footer's reviewer placeholder is in. It clears when the review is recorded (B61). Or build with `TBPH_CHECK=false`, which turns it into [check-mentions]: the strings launch-check lists that still mention the check.
   - [review] Learn L6 and the six route-stop strings wait on the clinical review.
   - [owner-strings] the privacy row (Q5) and five Filipino page descriptions (Q3).
-  - [placeholders] About's lede, partners, medical review, accessibility and contact rows; the check card's footer.
+  - [placeholders] About's lede, partners, medical review, accessibility and contact rows. (The check card's footer counts under [check-review].)
   - [sample] the 93-row sample facility list (Q8).
   - [domain] the placeholder domain (Q7), and [not-production] until the release is built with `TBPH_PRODUCTION=true`.
+  - The owner may accept only their own calls (check-review, sample, owner-strings, review, verify, placeholders, check-mentions). Synthetic data, no build, no facility list, a missing `_headers`, the placeholder domain and a noindex build can't be accepted; naming one, an unknown key or an unknown argument exits 2 (B59, B60). The gate reads the data and the Check switch from `dist/` (B59) and is unit-tested (B62).
 - **Accepted exceptions / N/A rationale:** as in the interim audit's "N/A rationale by SOT section", plus: push notifications, accounts, payments and store submission remain N/A; the PWA (step 11) and the SEO and headers work (step 12) now exist and are assessed below.
 
 ## Release decision
 
-- **Release status:** open. Set after the lead's review of the step 13 commits. On the evidence below the build itself has no known blocking defect; launch is BLOCKED by the launch-check items above until the owner resolves them or accepts them explicitly (`--accept=<key>`).
+- **Release status:** open. Set after the lead's review of the step 13 commits. On the evidence below the build itself has no known blocking defect; launch is BLOCKED by the launch-check items above until the owner resolves them, or accepts the ones that are their own calls (`--accept=<key>`, B60).
 - **Accepted risks (pending the owner):** see "Accepted risks" below.
 - **Post-release checks:** `npm run post-deploy-check -- <origin>` after every deploy; the runtime checks below; Search Console for the `fil` alternates. No metrics are collected, by design.
 
