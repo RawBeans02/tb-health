@@ -63,6 +63,9 @@ scripts/
   prepare-data.mjs        validate data, slim the facility list, derive ids, region counts and a small gazetteer (no network)
   build-sw.mjs            explicit precache list with content hashes and the budget check, then bundle src/sw.ts with it
   build-headers.mjs       dist/_headers from src/lib/headers.ts (noindex unless TBPH_PRODUCTION=true)
+  check-budgets.mjs       §4.6 budgets on every build (JS per page, Data page, facility JSON)
+  lighthouse.mjs          Lighthouse (npx, pinned) on given pages, mobile, against the §4.6 budgets
+  test-no-check.mjs       the Check-off build and its smoke project (Q9)
   launch-check.mjs        lists everything still open before launch (see 4.3)
 src/
   styles/                 tokens.css (README tokens), global.css (focus, links, glass + fallbacks, print)
@@ -213,9 +216,12 @@ The owner-only list at step 14 covers:
 Step 4 is deliberately early: it proves the whole chain (copy, data, logic, island, URL, language, tests, visual match) on the most important page before the rest is built the same way.
 
 **How checks run on the 8 GB Mac.** The site is built once per gate. The rest runs as separate guarded jobs (`GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh …`):
-- one per Playwright project (Chromium, then WebKit);
+- one per Playwright project: chromium, webkit, pwa (service worker on), iphone and pixel (the @phone smoke set), and no-check through `npm run test:no-check`;
+- the worst-case fixture (`npm run build:worst-case`) and the 2,100-row synthetic build through the QA matrix when content or layout changes;
 - the prototype comparison, Chromium only;
-- Lighthouse on its own.
+- Lighthouse on its own (`node scripts/lighthouse.mjs [page …]`, a few pages per job on a busy machine, on a `SITE_URL=… TBPH_PRODUCTION=true` build so the noindex header doesn't cost SEO).
+
+CI (D22) runs the same jobs in `.github/workflows/ci.yml` when the owner starts it.
 
 `playwright.config` reads the guard's `E2E_WORKERS`. The build runs under the guard's 1.5 GB heap, which the synthetic fixture measures. Guard exits 97/98/99 mean "retry later", not a test failure, and each step's evidence records the guard's peak memory line.
 
