@@ -270,3 +270,47 @@ describe('loadFacilities', () => {
     expect(data.gaz.map((g) => g.label)).toEqual(buildGazetteer(data.list).map((g) => g.label));
   });
 });
+
+describe('filterPlaces (Places)', () => {
+  const list = [
+    prepare(row({ id: 'G1', name: 'SYNTHETIC GOV CLINIC', sector: 'Government', region_code: 'R1', region: 'Region I', province_or_city_group: 'Alpha', lat: 15.02, lng: 121 })),
+    prepare(row({ id: 'P1', name: 'SYNTHETIC PRIVATE CLINIC', sector: 'Private', region_code: 'R2', region: 'Region II', province_or_city_group: 'Beta', lat: 15.01, lng: 121, svc_tb_test: 'no' })),
+    prepare(row({ id: 'N1', name: 'SYNTHETIC UNPINNED CLINIC', sector: 'Government', region_code: 'R1', region: 'Region I', province_or_city_group: 'Alpha', lat: null, lng: null })),
+  ];
+
+  it('combines region, province, type, service and every search word', async () => {
+    const { filterPlaces, NO_FILTERS } = await import('../../src/lib/core/places.ts');
+    const ids = (f: Partial<typeof NO_FILTERS>) => filterPlaces(list, { ...NO_FILTERS, ...f }, null, true).rows.map((r) => r.p.id);
+    expect(ids({})).toEqual(['G1', 'P1', 'N1']);
+    expect(ids({ region: 'R1' })).toEqual(['G1', 'N1']);
+    expect(ids({ prov: 'Beta' })).toEqual(['P1']);
+    expect(ids({ sector: 'priv' })).toEqual(['P1']);
+    expect(ids({ svc: 'test' })).toEqual(['G1', 'N1']);
+    expect(ids({ q: 'synthetic gov' })).toEqual(['G1']);
+    expect(ids({ q: 'synthetic nowhere' })).toEqual([]);
+  });
+
+  it('sorts by distance with unpinned places last, only while the switch is on', async () => {
+    const { filterPlaces, NO_FILTERS } = await import('../../src/lib/core/places.ts');
+    const here = { lat: 15, lng: 121 };
+    expect(filterPlaces(list, NO_FILTERS, here, true).rows.map((r) => r.p.id)).toEqual(['P1', 'G1', 'N1']);
+    expect(filterPlaces(list, NO_FILTERS, here, false).rows.map((r) => r.p.id)).toEqual(['G1', 'P1', 'N1']);
+  });
+
+  it('lists the other matches with a note when no X-ray site is confirmed', async () => {
+    const { filterPlaces, NO_FILTERS } = await import('../../src/lib/core/places.ts');
+    const result = filterPlaces(list, { ...NO_FILTERS, svc: 'xray' }, null, true);
+    expect(result.noXray).toBe(true);
+    expect(result.rows).toHaveLength(3);
+  });
+
+  it('offers regions by name and provinces within a region, and counts filters as the button does', async () => {
+    const { activeFilters, NO_FILTERS, provinceOptions, regionOptions } = await import('../../src/lib/core/places.ts');
+    expect(regionOptions(list)).toEqual([
+      { code: 'R1', name: 'Region I' },
+      { code: 'R2', name: 'Region II' },
+    ]);
+    expect(provinceOptions(list, 'R2')).toEqual(['Beta']);
+    expect(activeFilters({ ...NO_FILTERS, q: ' x ', region: 'R1', svc: 'test' })).toBe(2);
+  });
+});

@@ -56,13 +56,14 @@ export default defineConfig({
   },
   // On from step 1 (PLAN §4.5). Astro hashes its inline scripts and styles into a
   // <meta> CSP. Headers a meta tag can't carry (HSTS, frame-ancestors) come from
-  // the host in step 12. Add hosts here only with the owner's OK (e.g. OSM tiles, Q5).
+  // the host in step 12. Add hosts here only with the owner's OK.
   security: {
     csp: {
       algorithm: 'SHA-256',
       directives: [
         "default-src 'self'",
-        "img-src 'self'",
+        // OpenStreetMap tiles for the optional Places map, and nothing else (Q5).
+        "img-src 'self' https://tile.openstreetmap.org",
         "font-src 'self'",
         "connect-src 'self'",
         "manifest-src 'self'",

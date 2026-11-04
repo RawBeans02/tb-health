@@ -80,3 +80,21 @@ describe('copy dictionaries', () => {
     });
   }
 });
+
+describe('dictionaries an island merges', () => {
+  // Home's island gets home + care; Places gets home + care + places. A shared key would
+  // let one page's string silently replace another's.
+  it('share no keys', async () => {
+    const { home } = await import('../../src/content/home.ts');
+    const { care } = await import('../../src/content/care.ts');
+    const { places } = await import('../../src/content/places.ts');
+    const sets = [Object.keys(home), Object.keys(care), Object.keys(places)];
+    const seen = new Map<string, number>();
+    sets.forEach((keys, i) => {
+      for (const k of keys) {
+        expect(seen.has(k), `${k} is in two dictionaries`).toBe(false);
+        seen.set(k, i);
+      }
+    });
+  });
+});

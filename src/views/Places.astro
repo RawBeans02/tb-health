@@ -1,0 +1,29 @@
+---
+// Places: the full list (PLAN §5 step 5). The island owns <main> and switches language in
+// place, so it carries both languages' strings.
+import Places from '../islands/Places.tsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { care } from '../content/care.ts';
+import { home } from '../content/home.ts';
+import { meta } from '../content/meta.ts';
+import { places } from '../content/places.ts';
+import { pick } from '../content/types.ts';
+import type { Lang } from '../lib/i18n.ts';
+import '../styles/home.css';
+import '../styles/places.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const strings = {
+  en: { ...pick(home, 'en'), ...pick(care, 'en'), ...pick(places, 'en') },
+  fil: { ...pick(home, 'fil'), ...pick(care, 'fil'), ...pick(places, 'fil') },
+};
+---
+<BaseLayout lang={lang} title={meta.placesTitle} description={meta.placesDescription} current="home" inPlace>
+  <main id="main" tabindex="-1">
+    <Places client:load lang={lang} strings={strings} />
+  </main>
+</BaseLayout>

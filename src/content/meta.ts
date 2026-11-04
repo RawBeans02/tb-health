@@ -30,6 +30,23 @@ export const meta = {
     note: 'FIL: a verbatim pack sentence (Places intro), not a translation of the English description.',
   },
 
+  placesTitle: {
+    en: 'Find TB care near you — TB PH',
+    fil: 'Hanapin ang gamutan malapit sa iyo — TB PH',
+    origin: 'ui',
+    src: ['proto:Places.dc.html', 'derived'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the Filipino H1 (Places.dc.html), then the brand, as in the English title.',
+  },
+  placesDescription: {
+    en: 'Search PhilHealth-accredited TB-DOTS clinics by city, service, region and type. Testing and TB medicines are free at public health centers.',
+    fil: 'Makikita rito ang mga TB-DOTS clinic na accredited ng PhilHealth (update noong 30 Setyembre 2026).',
+    origin: 'ui',
+    src: ['proto:Places.dc.html', 'pack:395'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: a verbatim pack sentence (Places intro), not a translation of the English description.',
+  },
+
   notFoundTitle: {
     en: 'Page not found — TB PH',
     fil: 'Hindi namin mahanap ang pahinang iyon — TB PH',

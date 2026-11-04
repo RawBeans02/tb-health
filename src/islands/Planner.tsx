@@ -11,11 +11,12 @@ import { fill } from '../content/types.ts';
 import { loadFacilities, type Dataset } from '../lib/core/data.ts';
 import { SERVICES, type Service } from '../lib/core/facility.ts';
 import { distanceLabel, type Point } from '../lib/core/geo.ts';
-import { directionsUrl, homeQuery, readHomeParams, type Need } from '../lib/core/links.ts';
+import { homeQuery, readHomeParams, type Need } from '../lib/core/links.ts';
 import { locate } from '../lib/core/locate.ts';
 import { isPoint, resolveOrigin, route, type Origin, type Route } from '../lib/core/route.ts';
 import { href, isLang, type Lang } from '../lib/i18n.ts';
-import { Chip, InfoLine, LinkRow, SectorBadge } from '../ui/parts.tsx';
+import { FacilityRow, LocationField } from '../ui/controls.tsx';
+import { InfoLine, LinkRow, statusLabel } from '../ui/parts.tsx';
 
 export type PlannerStrings = Record<keyof typeof home | keyof typeof care, string>;
 
@@ -219,47 +220,24 @@ export default function Planner(props: Props) {
               <p class="planner-lede">{t.lede}</p>
             </div>
 
-            <div class="planner-block">
-              <label class="field-label" for="from">
-                {t.fromLabel}
-              </label>
-              <div class="search">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke-width="2.2" stroke-linecap="round">
-                  <circle cx="11" cy="11" r="6.5" />
-                  <path d="M16 16l4.5 4.5" />
-                </svg>
-                <input
-                  id="from"
-                  ref={fromRef}
-                  type="text"
-                  value={from}
-                  onInput={(e) => {
-                    setFrom(e.currentTarget.value);
-                    setMsg('');
-                  }}
-                  placeholder={t.fromPh}
-                  list="tbph-places"
-                  autocomplete="off"
-                  aria-describedby="from-msg from-note"
-                  aria-invalid={msg === 'none' ? 'true' : 'false'}
-                />
-              </div>
-              <datalist id="tbph-places">
-                {data?.gaz.map((g) => (
-                  <option key={`${g.kind}:${g.label}`} value={g.label} />
-                ))}
-              </datalist>
-              <button type="button" class="locate" onClick={useLocation} disabled={locating} aria-busy={locating ? 'true' : 'false'}>
-                <span class="locate-dot" aria-hidden="true" />
-                <span>{t.useLoc}</span>
-              </button>
-              <p id="from-msg" class={`field-msg${msg === 'none' ? ' field-msg--error' : ''}`} role={msg === 'none' ? 'alert' : 'status'} hidden={!msg}>
-                {msg === 'none' ? t.noLoc : msg === 'denied' ? t.denied : ''}
-              </p>
-              <p id="from-note" class="field-note">
-                {t.locNote}
-              </p>
-            </div>
+            <LocationField
+              id="from"
+              label={t.fromLabel}
+              placeholder={t.fromPh}
+              value={from}
+              onInput={(value) => {
+                setFrom(value);
+                setMsg('');
+              }}
+              inputRef={fromRef}
+              gaz={data?.gaz ?? null}
+              locLabel={t.useLoc}
+              locating={locating}
+              onLocate={useLocation}
+              invalid={msg === 'none'}
+              message={msg ? { text: msg === 'none' ? t.noLoc : t.denied, error: msg === 'none' } : null}
+              note={t.locNote}
+            />
 
             <fieldset>
               <legend>{t.need}</legend>
@@ -429,30 +407,15 @@ function RouteView({ result, data, lang, t, sources, drawn, headRef }: RouteView
                 {stop.mode !== 'ok' && <InfoLine>{stop.mode === 'far' ? t.far : t.noXray}</InfoLine>}
                 <ul class="group" role="list">
                   {stop.items.map(({ p, d }) => (
-                    <li key={p.id} class="facility">
-                      <div class="facility-head">
-                        <h4 class="facility-name">
-                          <a href={href('place', lang, { id: p.id, query: { stop: single ? undefined : String(n) } })}>{p.name}</a>
-                        </h4>
-                        {d !== null && <span class="facility-dist">{showDistance(d, p.precise)}</span>}
-                      </div>
-                      <div class="facility-tags">
-                        <Chip status={p.svc[stop.k]} label={p.svc[stop.k] === 'yes' ? t.status_yes : p.svc[stop.k] === 'referral' ? t.status_referral : t.status_unknown} />
-                        <SectorBadge gov={p.gov} label={p.gov ? t.gov : t.priv} />
-                      </div>
-                      <p class="facility-address">{p.address}</p>
-                      <p class="facility-hours">{p.hours ? fill(t.hours, { hours: p.hours }) : t.noHours}</p>
-                      <div class="facility-actions">
-                        <a class="btn btn--soft" href={directionsUrl(p, 'transit')} target="_blank" rel="noopener" aria-label={`${t.commute}: ${p.name}`}>
-                          {t.commute}
-                        </a>
-                        {p.tel && (
-                          <a class="call-link" href={p.tel} aria-label={`${t.call}: ${p.name}, ${p.first}`}>
-                            {t.call}
-                          </a>
-                        )}
-                      </div>
-                    </li>
+                    <FacilityRow
+                      key={p.id}
+                      place={p}
+                      href={href('place', lang, { id: p.id, query: { stop: single ? undefined : String(n) } })}
+                      distance={d === null ? '' : showDistance(d, p.precise)}
+                      chips={[{ status: p.svc[stop.k], label: statusLabel(t, p.svc[stop.k]) }]}
+                      heading="h4"
+                      t={t}
+                    />
                   ))}
                   <li class="link-row-item">
                     <LinkRow href={href('places', lang, { query: { svc: stop.k, near: placesQuery.near, loc: placesQuery.loc } })}>{t.seeMore}</LinkRow>

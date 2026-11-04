@@ -4,16 +4,26 @@
 import type { ComponentChildren } from 'preact';
 import type { Status } from '../lib/core/facility.ts';
 
-/** Service status: fill, outline or dashed outline, a ring glyph and text, so never colour alone. */
-export function Chip({ status, label }: { status: Status; label: string }) {
+/**
+ * Service status: fill, outline or dashed outline, a ring glyph and text, so never colour
+ * alone. With `prefix` (Places with no service filter) it reads "Chest X-ray: ✓ Offers this"
+ * (README:208).
+ */
+export function Chip({ status, label, prefix }: { status: Status; label: string; prefix?: string }) {
   const kind = status === 'yes' ? 'yes' : status === 'referral' ? 'referral' : 'unknown';
   // Same text run as the prototype: ring (not for "yes"), then "✓ label" or " label".
   return (
     <span class={`chip chip--${kind}`}>
+      {prefix && <span>{prefix}</span>}
       {kind !== 'yes' && <span class="chip-ring" aria-hidden="true" />}
       {`${kind === 'yes' ? '✓' : ''} ${label}`}
     </span>
   );
+}
+
+/** The chip label for a status: "Offers this", "Collects your sample or refers you" or "Call to confirm". */
+export function statusLabel(t: { status_yes: string; status_referral: string; status_unknown: string }, status: Status): string {
+  return status === 'yes' ? t.status_yes : status === 'referral' ? t.status_referral : t.status_unknown;
 }
 
 export function SectorBadge({ gov, label }: { gov: boolean; label: string }) {

@@ -15,6 +15,8 @@
   --link-underline: #9AA3A8;  /* underline on facility-name links */
   --chevron: #8A949A;         /* "›" in link rows */
   --row-hover: #F6F8F8;       /* hover fill on link rows */
+  --grabber: #C3C9CD;         /* bottom sheet grabber */
+  --scrim: rgba(20, 33, 43, 0.32); /* behind the bottom sheet */
   --teal: #1E6B70;            /* primary button, route, stops, checkmarks, "Offers this" chip */
   --teal-deep: #175458;       /* teal text, primary hover */
   --teal-tint-13: rgba(30, 107, 112, 0.13); /* soft buttons */

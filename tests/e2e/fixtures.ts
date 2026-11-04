@@ -6,7 +6,12 @@ export const test = base.extend<{ expectedErrors: RegExp[]; pageProblems: string
   /** Console errors a test expects, e.g. the browser's note about a 404 response. */
   expectedErrors: [[], { option: true }],
   pageProblems: [
-    async ({ page, expectedErrors }, use) => {
+    async ({ page, expectedErrors, browserName }, use) => {
+      // WebKit reports its own <select> internals as a style-src violation (seen with a bare
+      // <select> under a strict CSP, no page code involved). Chromium has no such quirk, so it
+      // still catches any real violation of ours.
+      const browserQuirks =
+        browserName === 'webkit' ? [/^Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline'/, /^CSP violation: style-src-attr blocked inline$/] : [];
       const problems: string[] = [];
       await page.addInitScript(() => {
         document.addEventListener('securitypolicyviolation', (event) => {
@@ -16,7 +21,7 @@ export const test = base.extend<{ expectedErrors: RegExp[]; pageProblems: string
       page.on('console', (message) => {
         if (message.type() !== 'error') return;
         const text = message.text();
-        if (!expectedErrors.some((pattern) => pattern.test(text))) problems.push(`console: ${text}`);
+        if (![...expectedErrors, ...browserQuirks].some((pattern) => pattern.test(text))) problems.push(`console: ${text}`);
       });
       page.on('pageerror', (error) => problems.push(`uncaught: ${error.message}`));
       await use(problems);

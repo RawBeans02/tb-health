@@ -157,6 +157,7 @@ test.describe('language links', () => {
 
   test('a saved Filipino choice sends English pages to their twin, keeping query and hash (Q2b)', async ({ page }) => {
     await page.goto('/');
+    await expect(page.locator('#tbph-places option').first()).toBeAttached(); // Home's list has loaded
     await page.evaluate(() => localStorage.setItem('tbph-lang', 'fil'));
     await page.goto('/?need=all#x');
     await page.waitForURL((url) => url.pathname === '/fil');
@@ -214,6 +215,7 @@ test.describe('404', () => {
 
   test('a saved Filipino choice turns an English 404 into the Filipino one', async ({ page }) => {
     await page.goto('/');
+    await expect(page.locator('#tbph-places option').first()).toBeAttached(); // Home's list has loaded
     await page.evaluate(() => localStorage.setItem('tbph-lang', 'fil'));
     await page.goto('/no-such-page');
     await page.waitForURL((url) => url.pathname === '/fil/no-such-page');
