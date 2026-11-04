@@ -20,5 +20,6 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+lighthouse-report/
 # Prototype-vs-build screenshot pairs (PLAN §5, visual check)
 visual-check/

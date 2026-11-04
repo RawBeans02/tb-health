@@ -5,11 +5,14 @@
 //   /places/ and /places.html → 308 to /places (query kept)
 //   unknown path   → nearest 404.html walking up (place/404.html, fil/404.html, 404.html), status 404
 //   dist/_headers  → applied to every response it matches, and never served itself
+//   text files     → Brotli or gzip when the browser accepts it, as the host compresses them
+//                    (Lighthouse's throttled timings count the bytes sent)
 //
 //   node scripts/serve-dist.mjs [--port 4322]
 
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 import { dirname, extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -74,13 +77,25 @@ function headersFor(urlPath) {
   return out;
 }
 
-function send(res, status, file, urlPath) {
-  res.writeHead(status, {
+const COMPRESSIBLE = new Set(['.html', '.js', '.mjs', '.css', '.json', '.webmanifest', '.svg', '.txt', '.xml']);
+
+function send(req, res, status, file, urlPath) {
+  const headers = {
     'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
     'Cache-Control': 'no-store',
     ...headersFor(urlPath),
-  });
-  createReadStream(file).pipe(res);
+  };
+  const accepts = req.headers['accept-encoding'] ?? '';
+  if (!COMPRESSIBLE.has(extname(file)) || !/\b(br|gzip)\b/.test(accepts)) {
+    res.writeHead(status, headers);
+    createReadStream(file).pipe(res);
+    return;
+  }
+  const body = readFileSync(file);
+  const br = /\bbr\b/.test(accepts);
+  const encoded = br ? brotliCompressSync(body, { params: { [constants.BROTLI_PARAM_QUALITY]: 6 } }) : gzipSync(body);
+  res.writeHead(status, { ...headers, 'Content-Encoding': br ? 'br' : 'gzip', Vary: 'Accept-Encoding', 'Content-Length': encoded.length });
+  res.end(encoded);
 }
 
 const server = createServer((req, res) => {
@@ -107,13 +122,13 @@ const server = createServer((req, res) => {
   if (base) {
     const file = urlPath === '/' ? join(root, 'index.html') : isFile(`${base}.html`) ? `${base}.html` : isFile(base) ? base : null;
     if (file) {
-      send(res, 200, file, urlPath);
+      send(req, res, 200, file, urlPath);
       return;
     }
   }
 
   const notFound = nearest404(urlPath);
-  if (notFound) send(res, 404, notFound, urlPath);
+  if (notFound) send(req, res, 404, notFound, urlPath);
   else res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found');
 });
 
