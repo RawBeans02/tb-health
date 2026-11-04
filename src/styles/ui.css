@@ -155,6 +155,15 @@
   color: var(--ink);
 }
 
+/* Full-width rows sit in a group that clips (radius, overflow hidden): their ring is drawn
+   inside, as choice rows do (README:116). Link rows, install rows, and the summary of a
+   details group (Learn's contents, Data's Methods). */
+.link-row:focus-visible,
+.install-row:focus-visible,
+.group > summary:focus-visible {
+  outline-offset: -3px;
+}
+
 .link-row-chevron {
   font-size: 26px;
   line-height: 1;

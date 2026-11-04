@@ -134,6 +134,12 @@
   background: var(--surface);
 }
 
+/* The frame clips the map, ring included: the frame draws the ring instead. */
+.map-frame:has(> .map:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+
 .map {
   width: 100%;
   height: clamp(360px, 62vh, 640px);
