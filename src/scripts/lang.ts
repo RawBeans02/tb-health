@@ -2,7 +2,7 @@
 // current language. They always point at this page's twin with the current query and
 // hash, save the choice before leaving (Q2b reads it), and keep the reader's place.
 // On pages whose island holds state, the switch happens in place (inplace.ts).
-import { restoreAnchor, saveAnchor } from '../lib/anchor.ts';
+import { reapplyAnchor, restoreAnchor, saveAnchor } from '../lib/anchor.ts';
 import { LANG_KEY, isLang, toLang, type Lang } from '../lib/i18n.ts';
 
 const html = document.documentElement;
@@ -52,3 +52,4 @@ window.addEventListener('popstate', refresh);
 document.addEventListener('tbph:lang', refresh);
 refresh();
 restoreAnchor();
+document.addEventListener('tbph:charts-ready', reapplyAnchor);

@@ -9,6 +9,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Link targets and focused elements land clear of the sticky header (audit B6, B10). */
+  scroll-padding-top: 80px;
 }
 
 body {

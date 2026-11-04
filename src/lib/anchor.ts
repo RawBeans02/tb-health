@@ -38,6 +38,15 @@ export function saveAnchor(path: string): void {
   }
 }
 
+// This load's restored anchor, kept until the reader scrolls: content that lays itself out
+// again after load (Data's charts, audit B6) can apply it once more.
+let restored: Anchor | null = null;
+
+/** Applies this load's restored anchor again, if the reader hasn't scrolled since. */
+export function reapplyAnchor(): void {
+  keepAnchor(restored);
+}
+
 /** On load: applies and deletes a saved anchor meant for this page. */
 export function restoreAnchor(): void {
   let saved: string | null;
@@ -50,7 +59,11 @@ export function restoreAnchor(): void {
   if (!saved) return;
   try {
     const { path, id, top } = JSON.parse(saved) as Record<string, unknown>;
-    if (path === location.pathname && typeof id === 'string' && typeof top === 'number') keepAnchor({ id, top });
+    if (path === location.pathname && typeof id === 'string' && typeof top === 'number') {
+      restored = { id, top };
+      keepAnchor(restored);
+      for (const type of ['wheel', 'touchstart', 'keydown', 'mousedown']) addEventListener(type, () => (restored = null), { once: true, passive: true });
+    }
   } catch {
     // Ignore a malformed entry; it's already deleted.
   }

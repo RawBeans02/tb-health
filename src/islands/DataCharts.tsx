@@ -36,6 +36,16 @@ export default function DataCharts({ lang, tx, top, regions }: Props) {
     return () => observer.disconnect();
   }, []);
 
+  // Once the charts are drawn at their real width, the page below them has moved: say so,
+  // once, so a deep link or a restored reading place can be applied again (audit B6).
+  const announced = useRef(false);
+  useEffect(() => {
+    if (announced.current || cw === DEFAULT_WIDTH || !measure.current) return;
+    if (Math.round(measure.current.getBoundingClientRect().width) !== cw) return;
+    announced.current = true;
+    document.dispatchEvent(new CustomEvent('tbph:charts-ready'));
+  }, [cw]);
+
   const panels = buildPanels(stats, lang, cw, cw >= 640, { pyr, setPyr, regions, claims }, tx);
 
   return (

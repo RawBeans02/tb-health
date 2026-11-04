@@ -206,3 +206,54 @@ test.describe('Dot story', () => {
     await expect(canvas(page)).toHaveAttribute('aria-label', 'Isang hanay ng 724 tuldok. Bawat tuldok ay 1,000 taong nagkasakit ng TB noong 2024.');
   });
 });
+
+test.describe('deep links on a phone (audit B6, B37)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+  });
+
+  /** In the viewport, below the sticky header; for a chart, once the charts have hydrated. */
+  async function inView(page: Page, selector: string, charts = !selector.includes('claim-')) {
+    if (charts) await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+    await expect
+      .poll(() => page.locator(selector).evaluate((el) => { const r = el.getBoundingClientRect(); return r.top >= 60 && r.top < innerHeight - 40; }))
+      .toBe(true);
+  }
+
+  for (const hash of ['d12', 'd16']) {
+    test(`/data#${hash} lands on its chart after the charts hydrate`, async ({ page }) => {
+      await page.goto(`/data#${hash}`);
+      await inView(page, `#${hash}`);
+      // And stays there once the charts have settled.
+      await page.waitForTimeout(400);
+      await inView(page, `#${hash}`);
+    });
+  }
+
+  test('/data#claim-… lands on the claim row and focuses it', async ({ page }) => {
+    await page.goto('/data#claim-burden-cases');
+    await inView(page, '#claim-burden-cases');
+    await expect(page.locator('#claim-burden-cases')).toBeFocused();
+  });
+
+  test("a Learn 'More in the data' link lands on its claim", async ({ page }) => {
+    await page.goto('/learn');
+    await page.locator('a[href="/data#claim-burden-deaths"]').first().click();
+    await expect(page).toHaveURL(/\/data#claim-burden-deaths$/);
+    await inView(page, '#claim-burden-deaths');
+    await expect(page.locator('#claim-burden-deaths')).toBeFocused();
+  });
+
+  test('a language switch keeps the section', async ({ page }) => {
+    await page.goto('/data#d16');
+    await inView(page, '#d16');
+    await page.locator('.site-header [data-lang-link="fil"]').click();
+    await expect(page).toHaveURL(/\/fil\/data/);
+    await inView(page, '#d16');
+  });
+
+  test('a malformed hash loads without an error', async ({ page }) => {
+    await page.goto('/data#%');
+    await expect(page.locator('main h1')).toBeVisible();
+  });
+});

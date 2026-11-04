@@ -133,7 +133,7 @@ const title = { en: `${dataPage.h2.en} — TB PH`, fil: `${dataPage.h2.fil} — 
         </details>
       </div>
 
-      <DataCharts client:visible lang={lang} tx={tx} top={t.top} regions={regions} />
+      <DataCharts client:visible={{ rootMargin: '800px' }} lang={lang} tx={tx} top={t.top} regions={regions} />
 
       <section id="numbers" class="numbers" data-anchor aria-labelledby="numbers-h">
         <h2 id="numbers-h">{t.inNumbers}</h2>
