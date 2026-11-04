@@ -5,12 +5,13 @@
 //   SITE_URL=https://tbph.example.org TBPH_PRODUCTION=true npm run build
 //   GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && node scripts/lighthouse.mjs [page …]'
 // With no pages it runs the list below; on a busy machine, pass a few at a time.
-// Lighthouse runs through npx at a pinned version (not a project dependency), in Playwright's
-// Chromium (CHROME_PATH), never the Mac's own Chrome. Reports go to lighthouse-report/.
+// Lighthouse runs through npx at a pinned version (not a project dependency) and attaches to
+// a Chromium this script launches through Playwright (never the Mac's own Chrome), so a stop
+// by the memory guard closes the browser too. Reports go to lighthouse-report/.
 // Fails when a page misses a budget:
 // every category ≥ 90, Accessibility 100, LCP ≤ 2.5 s, CLS ≤ 0.1.
 
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
@@ -23,21 +24,34 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const out = `${root}lighthouse-report`;
 mkdirSync(out, { recursive: true });
 
+const DEBUG_PORT = 9333;
 const server = spawn(process.execPath, ['scripts/serve-dist.mjs', '--port', String(PORT)], { cwd: root, stdio: 'ignore' });
+const browser = await chromium.launch({ args: [`--remote-debugging-port=${DEBUG_PORT}`] });
+let child = null;
+const stop = async () => {
+  child?.kill('SIGTERM');
+  server.kill();
+  await browser.close().catch(() => {});
+};
+for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => stop().then(() => process.exit(1)));
 await new Promise((resolve) => setTimeout(resolve, 800));
+
+/** Runs one command and resolves with its exit code; `child` is it, for a stop signal. */
+const run = (command, args) =>
+  new Promise((resolve) => {
+    // CHROME_PATH too: if Lighthouse can't attach and launches a browser, it's still Playwright's.
+    child = spawn(command, args, { cwd: root, stdio: ['ignore', 'ignore', 'inherit'], env: { ...process.env, CHROME_PATH: chromium.executablePath() } });
+    child.on('exit', (code) => resolve(code ?? 1));
+  });
 
 const failures = [];
 try {
   for (const page of PAGES) {
     const name = page === '/' ? 'home' : page.slice(1).replace(/\//g, '_');
     const report = `${out}/${name}.json`;
-    const run = spawnSync(
-      'npx',
-      ['-y', LIGHTHOUSE, `http://127.0.0.1:${PORT}${page}`, '--output=json', `--output-path=${report}`, '--chrome-flags=--headless=new', '--quiet'],
-      { cwd: root, stdio: ['ignore', 'ignore', 'inherit'], env: { ...process.env, CHROME_PATH: chromium.executablePath() } },
-    );
-    if (run.status !== 0) {
-      failures.push(`${page}: Lighthouse exited ${run.status}`);
+    const status = await run('npx', ['-y', LIGHTHOUSE, `http://127.0.0.1:${PORT}${page}`, `--port=${DEBUG_PORT}`, '--output=json', `--output-path=${report}`, '--quiet']);
+    if (status !== 0) {
+      failures.push(`${page}: Lighthouse exited ${status}`);
       continue;
     }
     const lhr = JSON.parse(readFileSync(report, 'utf8'));
@@ -52,7 +66,7 @@ try {
     if (cls > 0.1) failures.push(`${page}: CLS ${cls.toFixed(3)}`);
   }
 } finally {
-  server.kill();
+  await stop();
 }
 
 if (failures.length) {
