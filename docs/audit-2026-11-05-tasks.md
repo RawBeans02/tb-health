@@ -107,6 +107,14 @@ From the interim build audit (docs/audit-2026-11-05.md), snapshot 6f759ff. Every
 - **Fix:** Publish the real tab-bar height as a custom property (ResizeObserver on .tab-bar) and use it for .site-footer-spacer, .next-bar's bottom offset and B10's scroll-padding-bottom. No visual change with a one-line bar. Part (b) of the tab-label finding; the label wording is O3.
 - **Acceptance:** At 360, 375 and 390px in EN and FIL, Check's Next button keeps the same 14px clearance above the tab bar as with a one-line bar; the footer is never covered.
 - **Sources:** wf1:apple-conventions:tab-labels-wrap (option b); mobile-native limit
+- **Lead ruling, 5 Nov 2026.** The builder measured the bar at 81px, because English labels already take two lines at 390px. So there is no one-line bar at rest, and the first fix (calibrated to 81px) left about 3px above it.
+  - **Ruling:** calibrate to the README's one-line bar (about 70px) instead:
+    - Next's offset is the measured bar plus 14px;
+    - the footer spacer is the bar plus 22px;
+    - Check's scroll padding moves with Next.
+  - **Result:** a one-line bar gives exactly the README's 84px and 92px. With today's labels, Next sits 11px higher than in the prototype. This is the one task that moves something at rest; short labels (O3) bring it back.
+  - **Why:** the README puts Next "above the tab bar", and at 3px a slightly low tap lands on a tab and leaves the check.
+  - The owner can overrule this in favour of the prototype's 3px.
 
 ## B15. Close the Filters sheet on the system Back gesture (Medium, step now)
 
@@ -351,6 +359,7 @@ From the interim build audit (docs/audit-2026-11-05.md), snapshot 6f759ff. Every
 - Reduced-motion emulation while changing a filter in Map view (B12); Map view taps on tabs while the map is under the tab bar (B4).
 - Check risk step at 390x844 in EN and FIL: where the error lands after an unanswered Next (B3).
 - Check's Next button under a three-line Filipino tab bar at 360 and 375px, and a two-line English bar at 390px (B14).
+- iPhone Safari: Enter in the place field while the suggestion list is open. The double Enter is logged as native behaviour (B31).
 - WebKit and Chromium at 390 and 393px: where Filipino tab labels break with kerning (O3).
 - Chromium and WebKit: the dashed ring's dash pattern in 'Call to confirm' chips (O26).
 - Filipino /data at 744 to 768px: where the chart sub-label spill lands (B39).
