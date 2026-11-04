@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // Every link to another site in dist/ (audit L8): the sources pages cite, and the directions,
-// map and Sakay.ph links. Without --fetch it only lists them, offline. With --fetch it asks
-// each source once whether it still answers: that contacts other sites, so it runs only
-// with the owner's OK, and dead sources go to the content owner (never rewritten here).
-// Directions links (one per place) are counted, not fetched.
+// map and Sakay.ph links, in the HTML and in the islands' props, which only the client
+// renders (Home's route sources: audit B64). Without --fetch it only lists them, offline.
+// With --fetch it asks each source once whether it still answers: that contacts other
+// sites, so it runs only with the owner's OK, and dead sources go to the content owner
+// (never rewritten here). It doesn't follow redirects, so no other host is contacted; it
+// reports where they point. Directions links (one per place) are counted, not fetched.
 //
 //   node scripts/outside-links.mjs           the inventory, offline
 //   node scripts/outside-links.mjs --fetch   also checks each source (owner's OK first)
@@ -15,6 +17,8 @@ import { fileURLToPath } from 'node:url';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 const site = new URL(/<link rel="canonical" href="([^"]+)"/.exec(readFileSync(join(dist, 'index.html'), 'utf8'))[1]).origin;
 const DIRECTIONS = /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/dir\//;
+const TIMEOUT = 15_000;
+const USER_AGENT = 'tb-health-outside-links/1 (checks that cited sources still answer)';
 
 function htmlFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -24,12 +28,20 @@ function htmlFiles(dir) {
   });
 }
 
+const unescape = (text) => text.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+/** The outside URLs in one page: its links, and the URLs in its islands' props (JSON strings). */
+function urls(html) {
+  const links = [...html.matchAll(/<a\s[^>]*href="(https?:\/\/[^"]+)"/g)].map((m) => unescape(m[1]));
+  const props = [...html.matchAll(/<astro-island\b[^>]*\bprops="([^"]*)"/g)].flatMap((m) => [...unescape(m[1]).matchAll(/"(https?:\/\/[^"\s{}]+)"/g)].map((u) => u[1]));
+  return [...links, ...props];
+}
+
 const sources = new Map(); // URL → pages citing it
 const directions = new Map(); // host → count
 for (const file of htmlFiles(dist)) {
   const page = `/${relative(dist, file).replace(/\.html$/, '')}`;
-  for (const [, raw] of readFileSync(file, 'utf8').matchAll(/<a\s[^>]*href="(https?:\/\/[^"]+)"/g)) {
-    const href = raw.replace(/&amp;/g, '&');
+  for (const href of urls(readFileSync(file, 'utf8'))) {
     if (new URL(href).origin === site) continue;
     if (DIRECTIONS.test(href)) {
       const host = new URL(href).host;
@@ -51,19 +63,28 @@ for (const [host, n] of [...byHost].sort((a, b) => b[1] - a[1])) console.log(`  
 
 if (!process.argv.includes('--fetch')) process.exit(0);
 
-// --fetch: one request per source, a second apart; HEAD first, then GET if HEAD isn't allowed.
+// --fetch: one request per source, a second apart, each with a timeout and a plain project
+// User-Agent. HEAD first, then GET after any HEAD answer that isn't 2xx or 3xx (some sites
+// refuse HEAD). Redirects aren't followed: their target is reported instead.
+const request = (href, method) => fetch(href, { method, redirect: 'manual', headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT) });
 const dead = [];
+const moved = [];
 for (const [href, pages] of sources) {
-  let status = 0;
+  const on = `(on ${[...pages].slice(0, 3).join(', ')}${pages.size > 3 ? ', …' : ''})`;
+  let response = null;
+  let failure = '';
   try {
-    let response = await fetch(href, { method: 'HEAD', redirect: 'follow' });
-    if (response.status === 405 || response.status === 403) response = await fetch(href, { redirect: 'follow' });
-    status = response.status;
-  } catch {
-    status = 0;
+    response = await request(href, 'HEAD');
+    if (response.status >= 400) response = await request(href, 'GET');
+  } catch (error) {
+    failure = error.name === 'TimeoutError' ? `no answer in ${TIMEOUT / 1000} s` : 'no answer';
   }
-  if (status === 0 || status >= 400) dead.push(`${status || 'no answer'}  ${href}  (on ${[...pages].slice(0, 3).join(', ')}${pages.size > 3 ? ', …' : ''})`);
+  if (!response || response.status >= 400) dead.push(`${response?.status ?? failure}  ${href}  ${on}`);
+  else if (response.status >= 300) moved.push(`${response.status} to ${response.headers.get('location') ?? '?'}  ${href}  ${on}`);
+  await response?.body?.cancel();
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 console.log(`\noutside-links: ${dead.length} of ${sources.size} sources didn't answer with a page:`);
 for (const line of dead) console.log(`  ${line}`);
+console.log(`\noutside-links: ${moved.length} redirect elsewhere (not followed; the content owner checks the target):`);
+for (const line of moved) console.log(`  ${line}`);

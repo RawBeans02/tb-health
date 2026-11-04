@@ -58,7 +58,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | App Store / platform compliance | N/A | No store; installable PWA (manifest, service worker) tested in step 11. |
 | Billing / subscriptions / entitlements | N/A | Free. |
 | Billing grace / retry / cancellation retention settings | N/A | No billing. |
-| Legal links / policies / support | Partial | About's disclaimer, privacy and accessibility sections. Open: contact and medical-review placeholders, data reuse terms (O12), outside links unchecked until the owner OKs `outside-links --fetch` (L8: 27 sources on 22 sites). |
+| Legal links / policies / support | Partial | About's disclaimer, privacy and accessibility sections. Open: contact and medical-review placeholders, data reuse terms (O12), outside links unchecked until the owner OKs `outside-links --fetch` (L8: 28 sources on 23 sites). |
 | Analytics / attribution / consent | Verified | No analytics, cookies or trackers; the post-deploy check confirms no Set-Cookie on the live host. |
 | Growth / store assets / localization | Partial | Icons, og-image, manifest, EN and FIL throughout. Open: Filipino descriptions (Q3), the Filipino review queue (D10). |
 | Launch-content / acquisition experiments | N/A | Unchanged. |
@@ -95,7 +95,7 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - **Lighthouse** (mobile, production-mode build, `scripts/lighthouse.mjs`), after the audit fixes, performance: `/` 100, `/places` 99, a place page 100, `/check` 100, `/learn` 100, `/data` 99, `/about` 100, `/install` 100, `/fil` 100, `/fil/places` 99; 100 in accessibility, best practices and SEO on every page; LCP 1.21–1.82 s; CLS ≤ 0.031 (Install 0.059 when the browser offers to install).
 - **Scale:** 2,100 synthetic rows: 4,222 pages built in 4.5 s (whole build 11 s, 496 MB largest process); all 2,100 markers drawn 327 ms after Map at 4× CPU; Places list shown 490 ms after navigation at 4× CPU.
 - **Check routing:** the interim audit's two independent comparisons (215,197 combinations; 0 mismatches) plus the child-path unit tests (B43).
-- **Outside links:** `node scripts/outside-links.mjs`: 27 sources on 22 sites, 558 directions links; not fetched (owner's OK needed).
+- **Outside links:** `node scripts/outside-links.mjs`: 28 sources on 23 sites (page links and the islands' props, such as Home's route sources: B64), 558 directions links; not fetched (owner's OK needed). With `--fetch` it sends HEAD, then GET after any answer that isn't 2xx or 3xx, one request a second with a 15 s timeout and a plain project User-Agent, and reports redirects without following them.
 
 ## Runtime checks still needed
 

@@ -38,7 +38,7 @@ The release steps above are for Cloudflare Pages only. Another host needs this f
 ## Pending first runs
 
 - **CI** (`.github/workflows/ci.yml`, D22): manual only. GitHub offers a manual workflow only once its file is on the default branch, so start it from the repository's Actions tab after the merge to `main`; it runs the type check, unit tests, the build, every browser project and the Check-off build. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
-- **Outside links** (L8): `node scripts/outside-links.mjs --fetch` asks each of the 27 cited sources whether it still answers. It contacts other sites, so it waits for your OK; dead sources go to the content owner.
+- **Outside links** (L8): `node scripts/outside-links.mjs --fetch` asks each of the 28 cited sources whether it still answers. It contacts those 23 sites only (it reports redirects instead of following them), so it waits for your OK. Dead or moved sources go to the content owner.
 
 ## Device checks
 
