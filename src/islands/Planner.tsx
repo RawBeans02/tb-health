@@ -177,21 +177,21 @@ export default function Planner(props: Props) {
 
   // A submit (or a location fix) before the list is there is kept and runs once it loads,
   // as in the prototype; the loading line or the error comes into view, and on an error
-  // focus goes to "Try again" (audit B16).
-  const revealPending = useRef(false);
+  // focus goes to "Try again" (audit B16). A counter, so every such submit renders, and
+  // nothing else (a keystroke) can set it off (B47).
+  const [reveal, setReveal] = useState(0);
   useEffect(() => {
-    if (!revealPending.current) return;
-    revealPending.current = false;
+    if (!reveal) return;
     const box = document.querySelector<HTMLElement>('#route .results-error, #route .results-status');
     if (box) intoView(box);
     if (load === 'error') retryRef.current?.focus({ preventScroll: true });
-  });
+  }, [reveal]);
 
   function run(options: { text?: string; fix?: Point | null; needOverride?: Need; focus: boolean; animate: boolean }) {
     const currentNeed = options.needOverride ?? need;
     if (!data) {
       setWaiting(true);
-      revealPending.current = options.focus;
+      if (options.focus) setReveal((n) => n + 1);
       return;
     }
     const origin = resolveOrigin({ text: options.text ?? from, gps: options.fix === undefined ? gps : options.fix, myLocation }, data.gaz);

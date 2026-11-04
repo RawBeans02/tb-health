@@ -253,6 +253,49 @@ test.describe('facility list errors (Q6)', () => {
     await expect(heading(page)).toBeFocused();
   });
 
+  test('every submit during a failure brings the error up by the 70px / 60% rule; typing keeps the field (B47)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route('**/data/facilities.json', (route) => route.fulfill({ status: 503, body: '' }));
+    await page.goto('/');
+    await expect(page.locator('.results-error')).toBeVisible();
+    const retry = page.getByRole('button', { name: 'Try again' });
+    const inBand = async () => {
+      const top = (await page.locator('.results-error').boundingBox())!.y;
+      return top >= 70 && top <= 844 * 0.6;
+    };
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    await expect(retry).toBeFocused();
+    await expect.poll(inBand).toBe(true); // a smooth scroll
+    // Back to the field and submit again: Try again again.
+    await field(page).focus();
+    await submit(page).click();
+    await expect(retry).toBeFocused();
+    // Back to the field and type: the field keeps focus.
+    await field(page).focus();
+    await field(page).pressSequentially(' North');
+    await expect(field(page)).toBeFocused();
+    await expect(field(page)).toHaveValue('Quezon City North');
+  });
+
+  test('a submit while loading, then a failure, then a submit: Try again (B47)', async ({ page }) => {
+    let release: () => void = () => {};
+    const held = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/data/facilities.json', async (route) => {
+      await held;
+      await route.fulfill({ status: 503, body: '' });
+    });
+    await page.goto('/');
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    await expect(page.locator('.results-status')).toBeVisible();
+    release();
+    await expect(page.locator('.results-error')).toBeVisible();
+    await field(page).focus();
+    await submit(page).click();
+    await expect(page.getByRole('button', { name: 'Try again' })).toBeFocused();
+  });
+
   test('a failed load shows "Try again", never the sample; retrying neither re-prompts nor loses the field', async ({ page }) => {
     await countLocationRequests(page);
     await page.route('**/data/facilities.json', (route) => route.fulfill({ status: 503, body: '' }));
