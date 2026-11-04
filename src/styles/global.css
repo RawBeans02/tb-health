@@ -134,38 +134,40 @@ a {
 }
 
 /* Forced colours (Windows contrast themes): the browser replaces our colours, which would leave
-   selected states looking like the rest. These keep them as system Highlight (audit B11). */
+   selected states looking like the rest. These keep them as system Highlight (audit B11).
+   Each selector starts with html: chrome.css and ui.css load later with the same
+   selectors, and would otherwise win (B44). */
 @media (forced-colors: active) {
-  .lang-toggle a[aria-current],
-  .segmented button[aria-pressed='true'],
-  .tab-bar a[aria-current],
-  .toc-wide a[aria-current],
-  .choice.is-included .num-disc {
+  html .lang-toggle a[aria-current],
+  html .segmented button[aria-pressed='true'],
+  html .tab-bar a[aria-current],
+  html .toc-wide a[aria-current],
+  html .choice.is-included .num-disc {
     forced-color-adjust: none;
     background: Highlight;
     color: HighlightText;
   }
 
-  .switch-track,
-  .switch-knob {
+  html .switch-track,
+  html .switch-knob {
     forced-color-adjust: none;
   }
 
-  .switch-track {
+  html .switch-track {
     background: Canvas;
     border-color: CanvasText;
   }
 
-  .switch-knob {
+  html .switch-knob {
     background: CanvasText;
   }
 
-  .switch[aria-checked='true'] .switch-track {
+  html .switch[aria-checked='true'] .switch-track {
     background: Highlight;
     border-color: Highlight;
   }
 
-  .switch[aria-checked='true'] .switch-knob {
+  html .switch[aria-checked='true'] .switch-knob {
     background: HighlightText;
   }
 }
