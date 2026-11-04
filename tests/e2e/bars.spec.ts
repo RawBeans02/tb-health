@@ -46,6 +46,38 @@ test.describe('tab bar clearance (B14)', () => {
   }
 });
 
+test.describe('the tab bar is measured before first paint (B68)', () => {
+  // Filipino labels wrap at tablet widths (an 81px bar): with only the 70px fallback until
+  // tabbar.ts ran, the footer moved 11px after the first paint.
+  for (const [width, height] of [[768, 1024], [1024, 768]]) {
+    test(`/fil/offline at ${width}x${height}: --tabbar-h is the bar's height in the first frame, and the footer stays put`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.addInitScript(() => {
+        const frames: { tab: string; bar: number; footer: number }[] = [];
+        (window as unknown as { frames_: typeof frames }).frames_ = frames;
+        const tick = () => {
+          const bar = document.querySelector('.tab-bar');
+          const footer = document.querySelector('.site-footer');
+          if (bar && footer) {
+            frames.push({ tab: getComputedStyle(document.documentElement).getPropertyValue('--tabbar-h').trim(), bar: Math.round(bar.getBoundingClientRect().height), footer: Math.round(footer.getBoundingClientRect().top) });
+          }
+          if (frames.length < 30) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+      await page.goto('/fil/offline');
+      const frames = await page.waitForFunction(() => {
+        const f = (window as unknown as { frames_: { tab: string; bar: number; footer: number }[] }).frames_;
+        return f.length >= 30 && f;
+      });
+      const all = await frames.jsonValue();
+      expect(all[0].bar).toBeGreaterThan(70);
+      expect(all[0].tab).toBe(`${all[0].bar}px`);
+      expect(new Set(all.map((f) => f.footer)).size).toBe(1);
+    });
+  }
+});
+
 test.describe('link targets below the header (B10)', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

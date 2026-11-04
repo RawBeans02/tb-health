@@ -9,6 +9,7 @@ import type { Lang } from '../lib/i18n.ts';
 import { href } from '../lib/i18n.ts';
 import { navHref, navKeys, TAB_ICONS as ICONS, type Features, type NavKey } from '../lib/nav.ts';
 import LangToggle from './LangToggle.astro';
+import tabbarPrepaint from '../scripts/tabbar-prepaint.js?raw';
 
 interface Props {
   lang: Lang;
@@ -65,4 +66,5 @@ const tabs = navKeys('tabs', features).map(item);
       }
     </ul>
   </nav>
+  <script is:inline set:html={tabbarPrepaint} />
 </header>
