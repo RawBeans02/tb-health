@@ -26,6 +26,20 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 - **Filipino descriptions for About, Data, Install, Learn and Place: the owner will supply them later.** The builder lists the strings needed (origin `owner`) and writes none. They stay blocking items in `launch-check` until supplied; the build carries on meanwhile.
 - Follows from Q3 = yes: defaults D10 and D11 apply as written.
 
+### Q4. Privacy in URLs and location (asked ahead of step 3–4)
+- **Approved as recommended:**
+  - `near` goes in a URL only when it matches a known city or province, never free text such as a home address.
+  - Location is asked for only when the visitor taps "Use my location", including on `?loc=gps` links, which show that button instead of prompting.
+  - Fix the prototype bugs: the one-letter search (82 rows), the reused stale location fix, and Retry re-prompting.
+- **(a) Place links carry only `id` and `stop`.** No `need`, `near` or `loc` in links into a place page (`need=meds` hints at treatment, and links reach browser history and host logs).
+- **(b) No GPS distance on the Place page.** It shows a distance only from a typed `near` (a known city or province); there's no new location control and no new copy.
+
+### Q6. Facility data (asked ahead of step 4)
+- **Approved as recommended:**
+  - If the facility list fails to load, production shows "could not be loaded / Try again". It never silently falls back to the 93-row sample.
+  - Stable place ids derived from the normalised name + city + province, with a suffix on collisions and an alias map so old links keep working. `prepare-data` reports which ids changed between refreshes.
+  - One prerendered page per place and language.
+
 ## 30 October 2026 (owner, via the Account Admin)
 
 ### Q1. Node
