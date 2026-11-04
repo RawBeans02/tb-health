@@ -79,6 +79,15 @@
 
 .places-toolbar .h2 {
   letter-spacing: -0.01em;
+  /* The count is empty until the list loads. Reserving one line and the width of the
+     longest count ("2,140 centers", "2,140 na center") keeps the tools where they will be
+     when it arrives (CLS). */
+  min-width: 13ch;
+  min-height: 1lh;
+}
+
+:lang(fil) .places-toolbar .h2 {
+  min-width: 15ch;
 }
 
 .places-tools {
