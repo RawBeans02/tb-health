@@ -116,6 +116,24 @@ test.describe('planner', () => {
     expect(await page.locator('.facility-name a').first().getAttribute('href')).toMatch(/^\/place\/[a-z0-9-]+$/);
   });
 
+  test('a second route on the same page draws in again from the start (B33)', async ({ page }) => {
+    await ready(page);
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    await expect(page.locator('.route')).toHaveAttribute('data-drawn', 'true');
+    await page.waitForTimeout(1900); // the first draw-in has finished
+    await field(page).fill('Baguio');
+    await submit(page).click();
+    await expect(page.locator('.route-origin')).toHaveText('Baguio City');
+    await expect(page.locator('.route')).toHaveAttribute('data-drawn', 'true');
+    // Each rail segment starts again from empty (it waits 430, 860 or 1290 ms, then grows).
+    const scales = await page.evaluate(() =>
+      [1, 2, 3].map((i) => new DOMMatrix(getComputedStyle(document.querySelector(`.route-step[data-i="${i}"] .rail-fill`)!).transform).d),
+    );
+    for (const scale of scales) expect(scale).toBeLessThan(0.2);
+    await expect.poll(() => page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.route-step[data-i="3"] .rail-fill')!).transform).d), { timeout: 3000 }).toBeCloseTo(1);
+  });
+
   test('a new route draws in, and appears drawn at once under reduced motion', async ({ page }) => {
     await ready(page);
     await watchDrawn(page);

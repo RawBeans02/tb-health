@@ -356,6 +356,8 @@
    at (i + 1) × 430 − 80ms. */
 .route[data-drawn='false'] .rail-fill {
   transform: scaleY(0);
+  /* Back to undrawn at once, so every new route draws in from the start (audit B33). */
+  transition: none;
 }
 
 .route-step[data-i='1'] .rail-fill { transition-delay: 430ms; }
@@ -401,6 +403,7 @@
 .route[data-drawn='false'] .stop-disc {
   background: var(--surface);
   color: var(--teal-deep);
+  transition: none;
 }
 
 .route-step[data-i='1'] .stop-disc { transition-delay: 350ms; }
