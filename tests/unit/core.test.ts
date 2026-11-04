@@ -166,6 +166,10 @@ describe('geo', () => {
     expect(distanceLabel(12.6, true)).toEqual({ km: '13 km', approx: false });
     expect(distanceLabel(0, false)).toEqual({ km: '1 km', approx: true });
     expect(distanceLabel(12.6, false)).toEqual({ km: '13 km', approx: true });
+    // A thousands separator from 1,000 km (B40).
+    expect(distanceLabel(1234, false)).toEqual({ km: '1,234 km', approx: true });
+    expect(distanceLabel(1234.4, true)).toEqual({ km: '1,234 km', approx: false });
+    expect(distanceLabel(999.4, true)).toEqual({ km: '999 km', approx: false });
     expect(distanceLabel(null, true)).toBeNull();
   });
 });

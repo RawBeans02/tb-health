@@ -113,6 +113,8 @@ export function matchPlace(text: string, gaz: readonly GazEntry[]): GazEntry | n
  */
 export function distanceLabel(d: number | null, precise: boolean): { km: string; approx: boolean } | null {
   if (d === null) return null;
-  if (precise) return { km: `${d < 10 ? d.toFixed(1) : String(Math.round(d))} km`, approx: false };
-  return { km: `${Math.max(1, Math.round(d))} km`, approx: true };
+  // Whole kilometres with a thousands separator, as the rest of the site writes numbers (B40).
+  const whole = (n: number) => n.toLocaleString('en-US');
+  if (precise) return { km: `${d < 10 ? d.toFixed(1) : whole(Math.round(d))} km`, approx: false };
+  return { km: `${whole(Math.max(1, Math.round(d)))} km`, approx: true };
 }
