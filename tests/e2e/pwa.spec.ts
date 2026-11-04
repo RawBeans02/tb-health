@@ -153,3 +153,39 @@ test.describe('phone app', () => {
     await expect(page.locator('main h1')).toHaveText('Hanapin ang daan papunta sa gamutan sa TB.');
   });
 });
+
+test.describe("what Install and About promise offline (audit L10)", () => {
+  test('after one visit, offline: the planner routes from the saved list', async ({ page }) => {
+    await firstVisit(page);
+    await offline(page);
+    await page.goto('/');
+    await expect(page.locator('#tbph-places option').first()).toBeAttached();
+    await page.locator('#from').fill('Quezon City');
+    await page.getByRole('button', { name: 'Show me where to go' }).click();
+    await expect(page.locator('.results h2')).toHaveText('Your TB care route: 3 stops. The nearest is about 1 km away.');
+  });
+
+  test('after one visit, offline: the symptom check runs to a result', async ({ page }) => {
+    await firstVisit(page);
+    await offline(page);
+    await page.goto('/check');
+    await page.getByRole('button', { name: 'Start' }).click();
+    for (const label of ['Myself', 'None of these', 'Cough, with or without phlegm', 'No', 'No', 'None of these']) {
+      await page.locator('.check-choice', { hasText: new RegExp(`^${label}`) }).first().click();
+      await page.locator('.next-bar button').click();
+    }
+    await expect(page.locator('main h1')).toHaveText('Get tested for TB this week.');
+  });
+
+  test('after one visit, offline: Learn, and the data with its charts working', async ({ page }) => {
+    await firstVisit(page);
+    await offline(page);
+    await page.goto('/learn');
+    await expect(page.locator('main h1')).toBeVisible();
+    await page.goto('/data');
+    await page.locator('#d1').scrollIntoViewIfNeeded();
+    await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+    await page.locator('#d1 button[aria-expanded]').click();
+    await expect(page.locator('#d1 button[aria-expanded]')).toHaveAttribute('aria-expanded', 'true');
+  });
+});
