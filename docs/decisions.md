@@ -4,6 +4,56 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 4 November 2026, third batch (owner, written to the lead)
+
+Why: PLAN.md was written from the v6 handoff. The owner asked for more changes after v6, and they're in the v7 prototype (`TB-PH-project.zip`, 4 Nov 2026). **Where v6 and v7 differ, v7 wins.**
+
+### V1. v7 is the newer design reference
+- `TB-PH-project.zip` goes into the repo unzipped to `design/v7/`. `design/v7/HANDOFF.md` › "v7" lists every change. *(Pending: the zip isn't on the Mac yet; the owner is adding it to `~/Downloads`.)*
+- `design/design_handoff_tb_ph/` (v6) stays untouched, except `pipeline/build_claims.py` (V5).
+
+### V2. Dark mode ships (overrides D2)
+- Use `design/v7/theme.css`. Its light values are the existing tokens; its dark values apply under `prefers-color-scheme: dark`. **No in-app switch.**
+- These stay fixed (not themed) on purpose:
+  - the urgent Film screen and its white "Call 911" button;
+  - the saved summary image, which is always light;
+  - the map tiles and markers.
+- Contrast results are in HANDOFF › v7.
+- In dark mode the dot story's TB red is `#F26A72`, the red token's dark value (amends D14).
+- QA covers every page in light and dark.
+
+### V3. No em dashes in copy (overrides D6)
+- Where v7 changed a string, **the v7 wording is the owner's approved wording.** Ship it, log each case in `docs/copy-overrides.md`, and run the parity test against the v7 wording for those strings. This covers:
+  - page titles (e.g. "Check symptoms | TB PH");
+  - the footer safety line;
+  - the sector badges "Government (free TB care)" and "Private (fees may apply)";
+  - "Hours not listed. Call first.";
+  - the Check intro and result texts;
+  - "[partner clinicians, pending]" (the clinical review itself is still pending);
+  - the Learn and Data lines listed in HANDOFF › v7.
+- Any other copy string that still has an em dash: **list it for the owner. Don't reword it.**
+
+### V4. DOH hotline 1555 is verified (closes that `[VERIFY]`)
+- About's note uses the v7 wording:
+  - EN: "Press 2 for the National Patient Navigation and Referral Center."
+  - FIL: "Pindutin ang 2 para sa National Patient Navigation and Referral Center."
+- Sources the owner gave:
+  - GMA News, 2025: a DOH official named 1555 as the DOH hotline, alongside 911. https://www.gmanetwork.com/news/topstories/nation/953374/doh-habagat-evacuation-drinking-water/story
+  - DOH-led inter-agency advisory, 29 Sep 2023: callers choose option 2 at 1555 for patient navigation and referral. https://bmb.gov.ph/wp-content/uploads/2023/10/PhiICZ_Advisory_on_Henipavirus_29Sep2023.pdf
+  - Daily Tribune, 28 Apr 2025: DOH hotline 1555, option 2, for medical emergencies. https://tribune.net.ph/2025/04/28/bulusan-volcano-erupts-alert-level-1-raised
+- The Sakay.ph deep links stay `[VERIFY]`.
+
+### V5. The content conflicts are resolved (the list under D5 and §7.3)
+- The claims now use the content pack's rounding:
+  - about 7,500 deaths (the 2025 milestone, `target-endtb`);
+  - 27,900 people with drug-resistant TB (`tx-dr`);
+  - 14% and 12% for the trend since 2015 (`burden-trend`).
+- `data/claims.json` and `design/design_handoff_tb_ph/pipeline/build_claims.py` are replaced with the owner's versions. The owner chose to overwrite the v6 copy of `build_claims.py`. The lead checked that only those three claims changed (EN and FIL); ids, order and sources are the same, and only `meta.generated` moved to 2026-11-04.
+- No pipeline run is needed. D5's default (the d1–d15 takeaways stay the pack's text) still applies.
+
+### Still open
+Q7 (host and domain), Q8 (full clinic list), Q11 (WHO 2026 report), Q12 (lapsed accreditations), the Filipino descriptions (Q3) and the privacy text (Q5).
+
 ## 4 November 2026 (owner, in chat with the lead)
 
 ### Plan

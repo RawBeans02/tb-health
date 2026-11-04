@@ -11,6 +11,7 @@ rf = {r['key']: r['cases'] for r in D['risk_factor_attributable_cases_2024']}
 diag = {r['year']: r for r in dg['series']}; tps = {r['year']: r['contacts_started_tpt'] for r in tp['tpt_series']}
 fy = {r['year']: r for r in fin['series']}
 k = lambda n: f"{round(n, -3):,}"; c = lambda n: f"{n:,}"
+h100 = lambda n: f"{int(round(n, -2)):,}"  # nearest hundred, as in the content pack (7,500; 27,900)
 def M(x): return f"US${x/1e6:.1f} million"
 def Mf(x): return f"US${x/1e6:.1f} milyon"
 S = {
@@ -46,8 +47,8 @@ add('burden-rank', 'burden', f"The Philippines has the 3rd-most TB cases in the 
     f"Pangatlo ang Pilipinas sa pinakamaraming kaso ng TB sa mundo, {h['share_of_global_cases_pct']}% ng kabuuan.", ['S1'], 'WHO estimate', 'headline_2024.share_of_global_cases_pct', 2024, ('data','learn'))
 add('burden-sea', 'burden', "Among countries with over 1 million people, only Papua New Guinea has a higher TB rate. In Southeast Asia, ours is the highest.",
     "Sa mga bansang may higit 1 milyong tao, Papua New Guinea lang ang may mas mataas na antas ng TB. Sa Timog-Silangang Asya, tayo ang pinakamataas.", ['S1'], 'WHO estimate', 'global_comparison.top8_by_rate_over_1M_people', 2024)
-add('burden-trend', 'burden', f"Since 2015, our TB rate rose {h['incidence_rate_change_since_2015_pct']}%. The world's fell {abs(g['rate_change_since_2015_pct'])}%.",
-    f"Mula 2015, tumaas nang {h['incidence_rate_change_since_2015_pct']}% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang {abs(g['rate_change_since_2015_pct'])}%.", ['S1'], 'WHO estimate', 'headline_2024.incidence_rate_change_since_2015_pct', 2024)
+add('burden-trend', 'burden', f"Since 2015, our TB rate rose {round(h['incidence_rate_change_since_2015_pct'])}%. The world's fell {round(abs(g['rate_change_since_2015_pct']))}%.",
+    f"Mula 2015, tumaas nang {round(h['incidence_rate_change_since_2015_pct'])}% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang {round(abs(g['rate_change_since_2015_pct']))}%.", ['S1'], 'WHO estimate', 'headline_2024.incidence_rate_change_since_2015_pct', 2024)
 add('burden-deaths', 'burden', f"TB killed about {k(h['estimated_deaths'])} people in the Philippines in 2024, nearly 100 a day.",
     f"Mga {k(h['estimated_deaths'])} katao sa Pilipinas ang namatay sa TB noong 2024, halos 100 bawat araw.", ['S1','S12'], 'WHO estimate (range 32,800 to 42,400)', 'headline_2024.estimated_deaths', 2024, ('data','learn'))
 # Detection
@@ -93,8 +94,8 @@ add('tx-success', 'treatment', f"{round(o['success_pct'])}% of people who starte
     f"{round(o['success_pct'])}% ng nagsimula ng gamutan sa TB noong 2023 ang gumaling o nakatapos. 90% ang target ng DOH.", ['S1','S31'], 'DOH data reported to WHO', 'treatment_outcomes.new_and_relapse_2023', 2023, ('learn','data'))
 add('tx-ltfu', 'treatment', f"{o['lost_to_follow_up_pct']}% stopped treatment before finishing, the most common reason treatment did not succeed.",
     f"{o['lost_to_follow_up_pct']}% ang huminto sa gamutan bago matapos, ang pinakakaraniwang dahilan kung bakit hindi nagtagumpay ang gamutan.", ['S1'], 'DOH data reported to WHO', 'treatment_outcomes.new_and_relapse_2023', 2023, ('learn','data'))
-add('tx-dr', 'treatment', f"About {k(dr['estimated_rr_mdr_cases'])} people developed drug-resistant TB in 2024, but only {c(dr['lab_confirmed_rr'])} were confirmed by a lab ({round(dr['pct_detected_of_estimated'])}%).",
-    f"Mga {k(dr['estimated_rr_mdr_cases'])} katao ang nagkaroon ng drug-resistant TB noong 2024, pero {c(dr['lab_confirmed_rr'])} lang ang nakumpirma ng laboratoryo ({round(dr['pct_detected_of_estimated'])}%).", ['S1'], 'WHO estimate; DOH data', 'drug_resistant_tb', 2024, ('learn','data'))
+add('tx-dr', 'treatment', f"About {h100(dr['estimated_rr_mdr_cases'])} people developed drug-resistant TB in 2024, but only {c(dr['lab_confirmed_rr'])} were confirmed by a lab ({round(dr['pct_detected_of_estimated'])}%).",
+    f"Mga {h100(dr['estimated_rr_mdr_cases'])} katao ang nagkaroon ng drug-resistant TB noong 2024, pero {c(dr['lab_confirmed_rr'])} lang ang nakumpirma ng laboratoryo ({round(dr['pct_detected_of_estimated'])}%).", ['S1'], 'WHO estimate; DOH data', 'drug_resistant_tb', 2024, ('learn','data'))
 add('tx-dr-success', 'treatment', f"{tx['mdr_rr_2022']['success_pct']}% of people treated for drug-resistant TB in 2022 succeeded. An all-oral 6-month regimen now replaces 2-year treatment.",
     f"{tx['mdr_rr_2022']['success_pct']}% ng mga ginamot para sa drug-resistant TB noong 2022 ang nagtagumpay. May gamutan na ngayong puro iniinom at 6 na buwan lang, kapalit ng 2 taon.", ['S1','S12'], 'DOH data reported to WHO', 'treatment_outcomes.mdr_rr_2022', 2022, ('learn','data'))
 add('tx-hiv', 'treatment', f"{round(hv['pct_on_art'])}% of people with both TB and HIV were on HIV treatment in 2024. {round(hv['pct_tested'])}% of TB patients knew their HIV status.",
@@ -123,8 +124,8 @@ add('target-screen', 'targets', "The national TB plan aims to screen 12 million 
     "Layunin ng pambansang plano sa TB na ma-screen ang 12 milyong Pilipino pagsapit ng 2026.", ['S12'], 'Official target', None, 2026, ('data','learn'))
 add('target-2030', 'targets', "DOH aims to bring the TB rate down to 300 per 100,000 by 2030. In 2024 it was 625.",
     "Layunin ng DOH na pababain ang antas ng TB sa 300 bawat 100,000 pagsapit ng 2030. Noong 2024, 625 ito.", ['S21','S1'], 'Official target', 'end_tb_milestones', 2030, ('data',))
-add('target-endtb', 'targets', f"The world's 2025 milestone was to halve the TB rate and cut deaths by 75% from 2015. For the Philippines that meant {D['end_tb_milestones']['milestone_2025_incidence_rate_target']} per 100,000 and about {k(D['end_tb_milestones']['milestone_2025_deaths_target'])} deaths.",
-    f"Ang pandaigdigang target para sa 2025 ay hatiin ang antas ng TB at bawasan nang 75% ang namamatay mula 2015. Para sa Pilipinas, {D['end_tb_milestones']['milestone_2025_incidence_rate_target']} bawat 100,000 iyon at mga {k(D['end_tb_milestones']['milestone_2025_deaths_target'])} na namatay.", ['S1'], 'WHO End TB Strategy', 'end_tb_milestones', 2025, ('data',))
+add('target-endtb', 'targets', f"The world's 2025 milestone was to halve the TB rate and cut deaths by 75% from 2015. For the Philippines that meant {D['end_tb_milestones']['milestone_2025_incidence_rate_target']} per 100,000 and about {h100(D['end_tb_milestones']['milestone_2025_deaths_target'])} deaths.",
+    f"Ang pandaigdigang target para sa 2025 ay hatiin ang antas ng TB at bawasan nang 75% ang namamatay mula 2015. Para sa Pilipinas, {D['end_tb_milestones']['milestone_2025_incidence_rate_target']} bawat 100,000 iyon at mga {h100(D['end_tb_milestones']['milestone_2025_deaths_target'])} na namatay.", ['S1'], 'WHO End TB Strategy', 'end_tb_milestones', 2025, ('data',))
 add('facilities', 'targets', "The National TB Program runs over 3,300 TB-DOTS facilities. About 2,100 are accredited by PhilHealth (September 2026 list).",
     "Higit 3,300 ang TB-DOTS facility ng National TB Program. Mga 2,100 dito ang accredited ng PhilHealth (listahan noong Setyembre 2026).", ['S20','S4'], 'Official', None, 2026, ('home','learn'))
 # Regional snapshots (different years and sources; label them)
@@ -138,7 +139,7 @@ add('region-tondo', 'regional', "Tondo, Manila: 1,280 TB cases were logged (repo
     "Tondo, Maynila: 1,280 kaso ng TB ang naitala (iniulat noong Disyembre 2024).", ['S34'], 'As reported in the news', None, 2024, ('data',))
 add('survey-2016', 'regional', f"In the 2016 national survey, {c(ps['overall']['per_100k'])} per 100,000 adults had lab-confirmed lung TB: {c(ps['men']['per_100k'])} among men and {ps['women']['per_100k']} among women.",
     f"Sa pambansang survey noong 2016, {c(ps['overall']['per_100k'])} bawat 100,000 na nasa hustong gulang ang may lab-confirmed na TB sa baga: {c(ps['men']['per_100k'])} sa mga lalaki at {ps['women']['per_100k']} sa mga babae.", ['S1'], 'National prevalence survey', 'prevalence_survey_2016', 2016, ('data',))
-out = dict(meta=dict(title='TB PH claims registry', generated='2026-10-30', count=len(C),
+out = dict(meta=dict(title='TB PH claims registry', generated='2026-11-04', count=len(C),
   rule='Only show a claim with its source link. Numbers come from tb-ph-data.json. Regional snapshots come from different years and sources; always show the period.'),
   sources={k_: dict(title=v[0], url=v[1]) for k_, v in S.items()}, claims=C)
 json.dump(out, open('data/claims.json','w'), indent=1, ensure_ascii=False)
