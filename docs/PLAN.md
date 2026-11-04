@@ -1,6 +1,6 @@
 # TB PH build plan: stack and steps
 
-Status: **approved by the owner on 4 November 2026** (as of commit `7ea78ff`), with Q2 and Q3 answered. The owner's decisions are recorded in `docs/decisions.md`, which the TB Health lead keeps; where this plan and that file differ, `decisions.md` wins.
+Status: **approved by the owner on 4 November 2026** (as of commit `7ea78ff`), with Q2 and Q3 answered; Q4, Q5, Q6, Q9, Q10 and Q13 answered the same day. The owner's decisions are recorded in `docs/decisions.md`, which the TB Health lead keeps; where this plan and that file differ, `decisions.md` wins.
 Written 30 October 2026 by the Jr. Builder, from the v6 design handoff (`design/design_handoff_tb_ph/`). Updated 4 November 2026 after an independent review from five angles (stack facts, spec coverage, rules and privacy, sequencing and tests, owner questions), with every finding re-checked by a skeptic. §7.1 changed: Q2, Q3, Q4, Q5, Q6, Q7 and Q8 were reworded, and Q9–Q13 are new.
 
 ## 1. Summary
@@ -8,7 +8,7 @@ Written 30 October 2026 by the Jr. Builder, from the v6 design handoff (`design/
 - **Stack:** Astro 7 (static output) + Preact islands + TypeScript (strict) + plain CSS with design tokens. Self-hosted fonts. Workbox service worker generated after the build. Vitest for logic, Playwright + axe for the browser. Node 22 LTS, npm.
 - **Shape:** every page is prerendered HTML, in English at `/…` and Filipino at `/fil/…` (Q2). JavaScript runs only in the interactive parts: the route planner, the Places list and filters, the Place page, the symptom check, the dot story, the Data charts and a few small helpers.
 - **Order:** scaffold → shared shell (header, footer, languages, 404) → ported planner logic with tests → **Home route planner as the first end-to-end slice** → Places → Place → Check → Learn → Data → About and Install → phone app (PWA) → SEO and headers → QA hardening → release audit.
-- **Owner input needed:** 7 questions before specific steps, 4 before launch (§7.1). Q1 (Node), Q2 (languages) and Q3 (copy source) are answered. Everything else has a stated default (§7.2) that I follow unless the owner says otherwise.
+- **Owner input needed:** 7 questions before specific steps, 4 before launch (§7.1). Q1–Q6, Q9, Q10 and Q13 are answered; Q7 (host and domain, asked before step 12), Q8, Q11 and Q12 are open. Everything else has a stated default (§7.2) that I follow unless the owner says otherwise.
 
 ## 2. What we're building
 
@@ -45,7 +45,7 @@ Reference material, all read in full for this plan: README, the 13 prototype pag
 | Phone app | Web manifest + **Workbox**: `src/sw.ts` bundled on its own, then `workbox-build` 7 `injectManifest` inserts an explicit precache list after `astro build` | README:371 asks for a build-generated service worker with the prototype's strategies. `injectManifest` doesn't bundle the worker itself, so a small separate bundle step runs first. A post-build step avoids `@vite-pwa/astro`, which doesn't support Astro 6+ yet. |
 | Data | Statistics and claims **imported at build time**; facility list **fetched at runtime** from a slimmed JSON that the build prepares | See §4.4. |
 | Tests | **Vitest** (logic, chart builders, copy parity), **Playwright** with Chromium + WebKit, one worker (end-to-end, accessibility with `@axe-core/playwright`, a port of `qa-harness.html`), **Lighthouse** on the production build | All heavy runs go through `_handoff/lowmem-run.sh` with `GUARD_NO_DOCKER=1`, split into small guarded jobs (§5, "How checks run"). |
-| Tooling | **Node 22.23.4 LTS** pinned with `.nvmrc`, **npm** (ships with that Node) | Astro 7 and Vitest 5 need Node ≥ 22.23.4. It is installed through nvm for this folder only (owner said yes, 30 Oct 2026). nvm's default alias and the global/Homebrew Node are unchanged, because the KitaMo builders use them. npm 10.9.9, bundled with that Node, runs scripts and `npm ci`, but its installer crashes on this dependency tree (`Cannot read properties of null (reading 'edgesOut')`), so adding or updating packages uses `npx npm@11 install` (step 1). The Homebrew pnpm on this Mac is 9.15.9 from March 2025, so it's left alone. Shells run `. ~/.nvm/nvm.sh && nvm use` before any npm command, including inside `lowmem-run.sh`. Astro's experimental parallel prerendering stays off, because it starts one worker per CPU core. |
+| Tooling | **Node 22.23.4 LTS** pinned with `.nvmrc`, **npm** (ships with that Node) | Astro 7 and Vitest 5 need Node ≥ 22.23.4. It is installed through nvm for this folder only (owner said yes, 30 Oct 2026). nvm's default alias and the global/Homebrew Node are unchanged, because the KitaMo builders use them. npm 10.9.9, bundled with that Node, runs scripts and `npm ci`, but its installer crashes on this dependency tree (`Cannot read properties of null (reading 'edgesOut')`), so adding or updating packages uses `npx -y npm@11.21.1 install`, pinned so installs repeat exactly (step 1). The Homebrew pnpm on this Mac is 9.15.9 from March 2025, so it's left alone. Shells run `. ~/.nvm/nvm.sh && nvm use` before any npm command, including inside `lowmem-run.sh`. Astro's experimental parallel prerendering stays off, because it starts one worker per CPU core. |
 | Host | Any static host. Recommended: **Cloudflare Pages**, in a TB Health-only project the owner controls (**Q7**) | It serves real 404s from the nearest `404.html`, so `/fil/404.html` and `/place/404.html` work. Without a top-level `404.html` it would answer every unknown URL with the home page and a 200. It supports a `_headers` file (HSTS etc.) and Brotli, and has no bandwidth billing. GitHub Pages also works if no new vendor is wanted, but it can't set security headers and serves only one root 404 page. |
 
 **Alternatives considered**
@@ -244,21 +244,12 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
 - ~~**Q3. Copy source.**~~ Answered 4 Nov 2026 (`docs/decisions.md`): approved as proposed. Pack copy verbatim and parity-tested; prototype strings where the pack has none, flagged for EN/FIL review; README wins over the pack, each case in `docs/copy-overrides.md`; the stop explanations flagged `[REVIEW]` with L6. There is no newer content pack: build from the handoff's `content-and-data-pack.md`. The owner supplies the Filipino descriptions for About, Data, Install, Learn and Place later; they are `owner` strings that block in `launch-check`, and I write none. D10 and D11 apply.
 
 **Before a specific step**
-- **Q4. Privacy in URLs and location (step 4).** *Recommend:*
-  - Put `near` in the URL only when it matches a known city or province, never free text such as a home address.
-  - Ask for location only on a click, including for `?loc=gps` links, which show the "Use my location" button instead.
-  - Fix the small prototype bugs (one-letter search, stale location fix, Retry re-prompt).
-  - Also decide:
-    - (a) Should links into a place page carry only `id` and `stop` (*recommended*), or also `need`/`near`/`loc` as specced? `need=meds` hints at treatment, and links reach host logs and browser history.
-    - (b) The Place page has no location control, so for visitors who used their location: show no distance there (*recommended*), or add a "Use my location" capsule with new copy you supply.
-- **Q5. OpenStreetMap and the privacy text (steps 5, 10).** OK to use the public OpenStreetMap tile server for the optional map, as the spec does? It sees the visitor's IP and our domain when the map opens. Who writes the new EN/FIL About privacy rows? They need to cover self-hosted fonts (no Google Fonts), the map tiles, and the host from Q7, which sees IPs and page addresses.
-- **Q6. Facility data (step 4).** *Recommend:*
-  - Production shows "could not be loaded / Try again" instead of silently falling back to the 93-row sample.
-  - Stable place ids derived from name + city + province, with an alias map so old links keep working. The cost: a PhilHealth name correction or a clinic move changes an id, and only the alias map saves old links.
-  - One prerendered page per place.
+- ~~**Q4. Privacy in URLs and location.**~~ Answered 4 Nov 2026 (`docs/decisions.md`): as recommended. `near` only for a known city or province; location only on a tap, including `?loc=gps`; the three prototype bugs fixed. (a) Place links carry only `id` and `stop`. (b) No GPS distance on Place, only a distance from a typed `near`.
+- ~~**Q5. OpenStreetMap and the privacy text.**~~ Answered 4 Nov 2026: the public OSM tile server; `tile.openstreetmap.org` joins `img-src` only when the map is built. The owner writes the new EN/FIL privacy rows (`owner` strings, blocking in `launch-check`).
+- ~~**Q6. Facility data.**~~ Answered 4 Nov 2026: as recommended. An error and "Try again", never a silent sample fallback; stable ids from normalised name + city + province with a collision suffix, an alias map and a changed-ids report (built in step 3); one prerendered page per place and language.
 - **Q7. Host, domain and deploys (before connecting a host; step 12).** Which host, account and domain? *Recommend* a TB Health-only Cloudflare Pages project and token held by you, never KitaMo's. Deploys by a direct upload you run, with no automatic branch previews or production deploys from `main` until launch. If you prefer Git integration, keep previews behind access control. GitHub Pages works too, but has no security headers and only a root 404 page. The domain also fixes the installed app's identity, so it's best chosen once.
-- **Q9. Launching without Check (before step 7, or before connecting a host).** The clinical review of Check is pending. If it isn't done by launch, may the site go live without `/check`? If so, what does the 4-tab phone bar show? I'll drive the nav, tab bar and shortcuts from one route list so Check can be left out at build time either way.
-- **Q10. Check question titles (before step 7).** TB red as specced, or Ink as AUDIT-v6 recommends (keeping red for the intro and result titles)? I build TB red until you decide.
+- ~~**Q9. Launching without Check.**~~ Answered 4 Nov 2026: the site may launch without `/check`. Check is built in full, behind one build-time switch that drops it from the nav, tab bar, manifest shortcuts and sitemap.
+- ~~**Q10. Check question titles.**~~ Answered 4 Nov 2026: TB red, as specced.
 
 **Before launch**
 - **Q8. Full facility list.** May I run the PhilHealth scrape + Nominatim geocoding (about 2,100 rows, 40 min to 2 h at 1 request/s)? Or will you provide the file? Details:
@@ -268,7 +259,7 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
   - Should automatic street-level matches count as "precise" (exact distances, coordinate directions) before a person spot-checks them?
 - **Q11. WHO 2026 report.** It is due late 2026 and will likely appear during the build. Launch on the WHO 2025 report (2024 data), dated as such, or refresh first? A refresh means a pipeline run (`build_tb_ph_data.py`, `build_claims.py`, with your OK), and the content owner updating the literal numbers in the pack, EN and FIL.
 - **Q12. Lapsed accreditations.** In the sample, 76 of the 93 rows have PhilHealth accreditation ending on or before 31 Dec 2026 (3 have already ended). Show them as listed (default D24), rank them lower, or hide them? Any visible "lapsed" label is new copy you'd supply.
-- **Q13. No-X-ray rule.** This logic decides where people are sent. README:293 shows the referral note only when no confirmed X-ray site exists at all. The v6 notes and the prototype show it when none is within 10 km. I build README's rule and switch if you say so. It only matters once real X-ray data exists.
+- ~~**Q13. No-X-ray rule.**~~ Answered 4 Nov 2026: README:293's rule (the referral note shows only when no confirmed X-ray site exists at all).
 
 ### 7.2 Defaults I'll follow unless you say otherwise
 - **D1** Type scale: build the exact sizes specced, as named tokens, so consolidating later is a one-file change (README:107). The consolidation decision is on the pre-launch owner list.
