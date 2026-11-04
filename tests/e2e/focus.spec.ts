@@ -75,6 +75,8 @@ test.describe('focus ring', () => {
       await page.locator('.next-bar button').click();
     }
     await expect(page.locator('main h1')).toHaveText('Get tested for TB this week.');
+    // The result moves focus to its heading after paint; tabbing before that lands back on it.
+    await expect(page.locator('main h1')).toBeFocused();
     expect(await tabThrough(page, 40)).toEqual([]);
   });
 
