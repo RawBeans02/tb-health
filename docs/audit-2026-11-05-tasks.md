@@ -499,3 +499,140 @@ A read-only review of step 13 (6f5a77b..1b7f618) and step 14 (1b7f618..8884d65).
   - L3's trace was Chromium at 6x CPU; the mid-range Android trace stays a runtime check;
   - the iphone project closes the Filters sheet with Done, because WebKit can't drive the swipe (runtime check B30).
 - **Sources:** review of step 13, findings 21, 5 and 20
+
+### Step 14 items
+
+The step 14 review confirmed 21 of 28 findings and refuted one, which B48 had already fixed. Three depended on host behaviour, and the lead checked those against the hosts' documentation on 5 Nov 2026:
+- **Netlify:** `netlify deploy` builds the project locally unless given `--no-build` (cli.netlify.com, deploy command).
+- **Netlify 404s:** a 404.html below the root needs a rule such as `/en/* /en/404.html 404` (Netlify docs, redirect options, custom 404 handling).
+- **Cloudflare:** for Direct Upload, wrangler asks for the production branch when it creates the project, and the docs give no default (Cloudflare Pages docs, Direct Upload).
+
+### B58. Make Cloudflare Pages the one release path in HANDOVER (High)
+
+- **Files:** docs/HANDOVER.md, docs/AUDIT-build.md
+- **Fix:** The Netlify command as written would rebuild before uploading, without SITE_URL, TBPH_PRODUCTION or TBPH_CHECK. It would ship a non-production build, and in a launch without Check it would put the unreviewed check back. Keep Cloudflare Pages as the release path. Move Netlify and GitHub Pages to a short "Other hosts (not set up)" note that says what each needs first:
+  - **Netlify:** `--no-build`, plus netlify.toml 404 rules for /fil/place/*, /place/* and /fil/* (most specific first).
+  - **GitHub Pages:** it can't send our security headers or the Filipino 404s, so post-deploy-check fails there by design. It also needs .nojekyll and an Actions deploy.
+  - Also say that the noindex header only works on hosts that read _headers.
+- **Acceptance:** HANDOVER has no deploy command that rebuilds or skips the gate. Each other host's note says what it lacks.
+- **Sources:** review of step 14, findings 18, 20 and 26; host docs above
+
+### B59. Tie the release to the build it checked (Medium)
+
+- **Files:** scripts/launch-check.mjs, docs/HANDOVER.md
+- **Fix:**
+  - HANDOVER gives one chained command: `SITE_URL=… TBPH_PRODUCTION=true [TBPH_CHECK=false] npm run build && npm run launch-check -- --release [--accept=…] && npx wrangler@4.151.3 pages deploy dist --project-name=<project> --branch=main`. The upload then runs only on the build the gate just passed.
+  - In launch-check:
+    - read sample and synthetic from dist/data/facilities.json, not public/;
+    - decide whether Check is in the build from dist/check.html, not a regex on the nav markup, which fails open;
+    - block, with no override, when dist/_headers is missing;
+    - exit 2 on any unknown argument.
+- **Acceptance:** Covered by B62's tests. HANDOVER's release step is the chained command.
+- **Sources:** review of step 14, findings 2, 4, 5, 7 and 21
+
+### B60. Let the owner accept only the owner's own calls (Medium)
+
+- **Files:** scripts/launch-check.mjs, docs/HANDOVER.md
+- **Fix:**
+  - `--accept` takes only check-review, sample, owner-strings, review, verify, placeholders and check-mentions.
+  - synthetic, no-build, no-data, domain, not-production and a missing _headers can never be accepted. Naming one exits 2.
+  - HANDOVER: accepted items are printed, and the owner sends the list to the lead, who records it in decisions.md. Drop "on record".
+- **Acceptance:** Covered by B62's tests.
+- **Sources:** review of step 14, findings 3, 9 and 25
+
+### B61. Clear check-review when the clinical review is recorded (Medium)
+
+- **Files:** scripts/launch-check.mjs
+- **Fix:**
+  - Block check-review only while Check is in the build and a check.* string still carries [REVIEW], or the check footer's reviewer placeholder is still in. Name how many are left. The [REVIEW] flags are removed only when the owner records the review.
+  - In a build without Check, leave check.* strings out of every list.
+  - check-mentions stays a fixed list, updated when the owner answers Q9.
+- **Acceptance:** Covered by B62's tests.
+- **Sources:** review of step 14, finding 1
+
+### B62. Unit-test the release gate (Medium)
+
+- **Files:** scripts/launch-check.mjs (move the decision into a pure function), tests/unit/launch-check.test.ts
+- **Fix:** Test each key's trigger, accepting versus refusing, unknown keys and arguments (exit 2), detecting a build without Check, check-review clearing once no flags are left, and a missing _headers.
+- **Acceptance:** The tests run with `npm test`, so CI runs them.
+- **Sources:** review of step 14, finding 5
+
+### B63. Check every page type's headers after deploy, against dist/_headers (Medium)
+
+- **Files:** scripts/post-deploy-check.mjs
+- **Fix:**
+  - Parse dist/_headers. For one URL of each type, compare the live headers with the expected values exactly, not by pattern: /, /fil, /places, /fil/places, a place page in each language, /data, a stand-in, /sw.js, the manifest, an /_astro file, an /icons file, /data/facilities.json and each 404. A loose pattern lets an HSTS max-age of 0 pass.
+  - Add 404 probes for /fil/place/… and, in a build without Check, /fil/check.
+  - Give each request a timeout and its own error handling. Exit 3 when the host can't be reached or the script fails; 1 still means problems were found.
+  - Warn when the origin given differs from the build's canonical origin.
+- **Acceptance:** It passes against the local server, and a hand-edited header fails.
+- **Sources:** review of step 14, findings 10, 11, 12, 14 and 15
+
+### B64. Make the outside-link inventory complete and its fetch careful (Low)
+
+- **Files:** scripts/outside-links.mjs, docs/AUDIT-build.md, docs/HANDOVER.md
+- **Fix:**
+  - Also scan the island props, for example Home's route sources, which only the client renders. The Devex source makes it 28 sources on 23 sites.
+  - In --fetch:
+    - fall back to GET after any HEAD status that isn't 2xx or 3xx;
+    - don't follow redirects: report the target, so no other host is contacted;
+    - give each request a 15 s timeout;
+    - send a plain project User-Agent with no personal data.
+- **Acceptance:** The counts in AUDIT-build and HANDOVER match the scan.
+- **Sources:** review of step 14, findings 13 and 16
+
+### B65. Give HANDOVER the plan's full owner-only list (Medium)
+
+- **Files:** docs/HANDOVER.md, docs/AUDIT-build.md
+- **Fix:** Add a "Before launch" checklist that mirrors PLAN section 5:
+  - the clinical review, including whether the saved or printed card lists risk factors such as HIV;
+  - the [VERIFY] items, including the Sakay.ph links, and the placeholders;
+  - the Filipino review;
+  - the content conflicts (resolved, V5) and D5 (the default stands);
+  - type-scale consolidation (D1);
+  - lapsed accreditations (Q12), the data's age and who runs the monthly refresh;
+  - real-device installs;
+  - VoiceOver, TalkBack and Safari keyboard passes;
+  - Search Console.
+
+  Name the strings that still mention Check by pointing to launch-check, not with a count: "six" is now eight. In AUDIT-build, record launch-check's whole report, including its "For the owner to decide or check" part.
+- **Acceptance:** Every item in PLAN section 5's owner-only list appears in HANDOVER.
+- **Sources:** review of step 14, findings 22, 19 and 8
+
+### B66. Rate AUDIT-build's rows by their open items, and give a status per rule (Medium)
+
+- **Files:** docs/AUDIT-build.md
+- **Fix:**
+  - **Ratings:**
+    - Privacy becomes Partial (the Q5 row and C9 are open).
+    - Data integrity becomes Partial (the sample list, Q8).
+    - Rows whose evidence includes device-only items become "Verified (automated) / Runtime check", as Accessibility already is.
+  - **Wording:**
+    - The no-cookie check runs after the first deploy; it hasn't confirmed anything yet.
+    - Add B40, B20 and B28 to the deliberate changes.
+  - **Per-rule appendix** (SOT section > rule > status > evidence or N/A reason):
+    - cover the Lighthouse release-gate list (TBT, request counts and transfer sizes from the existing reports), the Website/SEO checklist and both Website Quality Metrics tables;
+    - close the "not assessed" mascot and widget items as N/A, with reasons;
+    - run Lighthouse desktop on the ten pages through lowmem-run, or list it as an accepted gap.
+- **Acceptance:** No row says Verified while an open owner item undercuts it. Every SOT rule that could apply has a status.
+- **Sources:** review of step 14, findings 23, 17, 24 and 27
+
+### B67. Tell the owner how to make the first Cloudflare deploy production (Low)
+
+- **Files:** docs/HANDOVER.md
+- **Fix:**
+  - The first deploy, whether `wrangler pages project create` or the first `pages deploy`, asks for the production branch. Tell the owner to enter `main`, so `--branch=main` deploys to production.
+  - Add: if post-deploy-check says every page differs from dist/, run `npx wrangler@4.151.3 pages deployment list --project-name=<project>` and look for a Preview deployment.
+- **Acceptance:** HANDOVER says both.
+- **Sources:** review of step 14, finding 26; Cloudflare Direct Upload docs
+
+### B68. Check B14's fallback for a first-paint shift (Low)
+
+- **Files:** none unless a shift shows
+- **Fix:** Record layout-shift entries on a cold load in Chromium and WebKit:
+  - /fil/offline and a Filipino 404, at 768x1024 and 1024x768;
+  - English /offline at 768px, as the control.
+
+  If anything shifts, measure the bar before first paint with a small inline script right after the tab bar, its hash added through Astro.csp the way BaseLayout does for prepaint. Keep tabbar.ts for later changes.
+- **Acceptance:** The result is recorded in the resume, and any shift is fixed.
+- **Sources:** review of step 14, finding 0

@@ -4,9 +4,10 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 
 ## Decide now
 
-1. **Q7. Host and web address.** Recommended: Cloudflare Pages, in a TB Health-only account you control (never KitaMo's). Use a free `*.pages.dev` address for testing, and choose the real domain before launch, because an installed app is tied to its address. Once the domain is known, HSTS also gets `includeSubDomains`. The builder already reads the address from one setting (`SITE_URL`), so your answer is a config change.
+1. **Q7. Host and web address.** Recommended: Cloudflare Pages, in a TB Health-only account you control (never KitaMo's). Use a free `*.pages.dev` address for testing, and choose the real domain before launch, because an installed app is tied to its address. Once the domain is known, HSTS also gets `includeSubDomains`. The builder already reads the address from one setting (`SITE_URL`), so your answer is a config change. Cloudflare Pages is the only host set up end to end. Netlify needs extra setup first, and GitHub Pages can't send the site's security headers at all.
 2. **O1. Typed barangays and landmarks hit a dead end.** The field asks for a barangay, but the site only knows cities and provinces. Recommended: the field's hint asks for a city or province (you write the new hint in EN and FIL), and the no-match state links to the full list. Revisit after the full clinic list (Q8).
 3. **O11. Four symptom-check cases for the clinical reviewers.** The code follows the content pack exactly, and two independent checks found no routing difference. In four cases, though, the pack's own wording conflicts, e.g. "No signs of TB right now" for someone who reported current symptoms. Recommended: add them to the clinical review list.
+   - **Also for the clinical review:** whether the saved or printed summary card should list risk factors such as HIV. That is sensitive health information under the Data Privacy Act (RA 10173).
 4. **Place abbreviations** the builder added to the place search: QC, CDO, GenSan, SJDM, Dasma, CamSur, CamNorte, NegOcc, NegOr. Confirm them or strike any that are wrong or too local.
 5. **Seven wording overrides** in `docs/copy-overrides.md`, where the README's or the prototype's wording ships instead of the content pack's (e.g. "Commute directions", "Call before you go", "Find TB care"). Confirm or change them.
 6. **The smaller design items, in one go.** Accept my recommendations for O2 to O7, O9, O10, O13 to O17, O19 to O21 and O24 to O26 (O16 means "keep as designed"). Also record O23 (don't adopt Glisse; port three small behaviours) and O27 (keep the frosted Home card as an approved exception). Several need a short line of wording from you; they're listed below.
@@ -51,5 +52,8 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 - **Q11** (WHO 2026 report) and **Q12** (lapsed accreditations; default D24 applies until you decide).
 - **O12.** Record the reuse terms for the WHO data and the PhilHealth list, before step 14.
 - **O18 and O28:** try them on a real iPhone and Android phone first.
-- **Device checks:** the runtime checks listed in the audit report.
+- **Device checks:** the runtime checks listed in the audit report, including installing the app on a real iPhone and Android phone, VoiceOver, TalkBack and a Safari keyboard pass.
+- **Type sizes (D1):** the build uses the exact sizes the design specifies. Merging them into a smaller set later is a one-file change. Recommended: keep them as they are for launch.
+- **Keeping the clinic list fresh:** who refreshes the list each month, and the oldest list date you'll accept. launch-check shows the current date.
+- **Sakay.ph:** the site copies the address and opens sakay.ph, so no deep link ships. The deep links stay [VERIFY] until someone confirms Sakay's link format.
 - **The first CI run (D22).** It comes after the merge to `main`: GitHub runs a manual workflow only once its file is on the default branch. Then start "CI" from the repository's Actions tab; it never runs on its own. One step, `npm audit`, sends the list of dependencies to the npm registry, the same registry `npm install` already uses. The run's result is step 14 evidence.
