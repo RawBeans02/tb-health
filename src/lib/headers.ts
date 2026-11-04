@@ -24,5 +24,12 @@ export function headersFile(production: boolean): string {
     '/sw.js',
     '  Cache-Control: no-cache',
     '',
+    '# Content-hashed build files never change under one name (build-headers checks the names).',
+    '/_astro/*',
+    '  Cache-Control: public, max-age=31536000, immutable',
+    '',
+    '# Data, icons and the manifest keep their names across releases: always revalidated.',
+    '# Pages get the same from both hosts by default (a /* rule would merge with the one above).',
+    ...['/data/*', '/icons/*', '/manifest.webmanifest'].flatMap((path) => [path, '  Cache-Control: public, max-age=0, must-revalidate', '']),
   ].join('\n');
 }

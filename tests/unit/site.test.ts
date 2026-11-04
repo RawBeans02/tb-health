@@ -72,6 +72,15 @@ describe('headersFile', () => {
     expect(file).toContain('/sw.js\n  Cache-Control: no-cache\n');
   });
 
+  it('caches hashed build files for a year and revalidates the rest (L6)', () => {
+    const file = headersFile(true);
+    expect(file).toContain('/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n');
+    for (const path of ['/data/*', '/icons/*', '/manifest.webmanifest']) expect(file).toContain(`${path}\n  Cache-Control: public, max-age=0, must-revalidate\n`);
+    // No Cache-Control on /*: hosts merge every matching rule's headers.
+    const all = file.slice(file.indexOf('/*\n'), file.indexOf('\n\n', file.indexOf('/*\n')));
+    expect(all).not.toContain('Cache-Control');
+  });
+
   it('marks every build but production noindex', () => {
     expect(headersFile(false)).toContain('  X-Robots-Tag: noindex\n');
     expect(headersFile(true)).not.toContain('X-Robots-Tag');

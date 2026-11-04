@@ -103,6 +103,9 @@ test.describe('search and sharing', () => {
       expect(headers['x-robots-tag'], path).toBe('noindex');
     }
     expect((await get(request, '/sw.js')).headers()['cache-control']).toBe('no-cache');
+    const asset = (await (await get(request, '/')).text()).match(/\/_astro\/[^"]+\.js/)![0];
+    expect((await get(request, asset)).headers()['cache-control']).toBe('public, max-age=31536000, immutable');
+    expect((await get(request, '/data/facilities.json')).headers()['cache-control']).toBe('public, max-age=0, must-revalidate');
     expect((await get(request, '/_headers')).status()).toBe(404);
   });
 });
