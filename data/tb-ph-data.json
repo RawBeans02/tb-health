@@ -1,0 +1,2181 @@
+{
+ "meta": {
+  "title": "TB in the Philippines — data pack",
+  "generated": "2026-10-23",
+  "latest_who_report": "Global Tuberculosis Report 2025 (published 12 Nov 2025; covers 2024)",
+  "note": "WHO re-estimates the whole time series every year. When the 2026 report is published, replace every series, don't append. Estimates have wide uncertainty intervals; show them.",
+  "sources": {
+   "estimates": "WHO Global Tuberculosis Report 2025 (estimates for 2024); data from WHO GTB report repository github.com/GTB-TME/gtbreport2025",
+   "notifications": "Case notifications reported by the Philippines DOH to WHO (WHO global TB database, snapshot 2025-07-30)",
+   "monthly": "WHO provisional monthly notifications CSV (extranet.who.int/tme/generateCSV.asp?ds=provisional_notifications), retrieved 23 Oct 2026",
+   "who_data_page": "https://www.who.int/teams/global-tuberculosis-programme/data"
+  },
+  "v5_additions": [
+   "diagnostics_network",
+   "financing",
+   "bcg_coverage",
+   "sdg_context"
+  ]
+ },
+ "headline_2024": {
+  "year": 2024,
+  "population": 115843666,
+  "estimated_cases": 723902,
+  "estimated_cases_lo": 398854,
+  "estimated_cases_hi": 1175835,
+  "incidence_rate_per_100k": 625,
+  "incidence_rate_lo": 344,
+  "incidence_rate_hi": 1015,
+  "share_of_global_cases_pct": 6.8,
+  "global_rank_by_cases": 3,
+  "global_rank_by_rate_among_countries_over_1M_people": 2,
+  "estimated_deaths": 37404,
+  "estimated_deaths_lo": 32810,
+  "estimated_deaths_hi": 42404,
+  "deaths_hiv_negative": 35971,
+  "deaths_per_day_hiv_negative": 98,
+  "cases_per_day": 1978,
+  "notified_new_and_relapse": 544948,
+  "treatment_coverage_pct": 75.3,
+  "not_reached": 178954,
+  "case_fatality_ratio_pct": 5.6,
+  "incidence_rate_change_since_2015_pct": 13.6,
+  "deaths_change_since_2015_pct": 25.3,
+  "men": 461339,
+  "women": 262563,
+  "children_0_14": 73456,
+  "high_burden_lists": [
+   "TB",
+   "MDR/RR-TB",
+   "TB/HIV"
+  ],
+  "income_group": "Lower-middle income"
+ },
+ "end_tb_milestones": {
+  "baseline_year": 2015,
+  "milestone_2025_incidence_rate_target": 275,
+  "milestone_2025_deaths_target": 7465,
+  "actual_2024_incidence_rate": 625,
+  "actual_2024_deaths": 37404,
+  "note": "WHO End TB Strategy 2025 milestones: -50% incidence rate and -75% deaths vs 2015."
+ },
+ "incidence_series": [
+  {
+   "year": 2000,
+   "rate_per_100k": 590,
+   "rate_lo": 307,
+   "rate_hi": 964,
+   "cases": 469740,
+   "cases_lo": 244134,
+   "cases_hi": 767405
+  },
+  {
+   "year": 2001,
+   "rate_per_100k": 579,
+   "rate_lo": 305,
+   "rate_hi": 939,
+   "cases": 471673,
+   "cases_lo": 248484,
+   "cases_hi": 764685
+  },
+  {
+   "year": 2002,
+   "rate_per_100k": 569,
+   "rate_lo": 304,
+   "rate_hi": 916,
+   "cases": 472745,
+   "cases_lo": 252376,
+   "cases_hi": 760641
+  },
+  {
+   "year": 2003,
+   "rate_per_100k": 559,
+   "rate_lo": 302,
+   "rate_hi": 893,
+   "cases": 473599,
+   "cases_lo": 256132,
+   "cases_hi": 756340
+  },
+  {
+   "year": 2004,
+   "rate_per_100k": 549,
+   "rate_lo": 301,
+   "rate_hi": 870,
+   "cases": 474303,
+   "cases_lo": 259769,
+   "cases_hi": 751919
+  },
+  {
+   "year": 2005,
+   "rate_per_100k": 539,
+   "rate_lo": 299,
+   "rate_hi": 849,
+   "cases": 474631,
+   "cases_lo": 263164,
+   "cases_hi": 747019
+  },
+  {
+   "year": 2006,
+   "rate_per_100k": 530,
+   "rate_lo": 297,
+   "rate_hi": 828,
+   "cases": 474134,
+   "cases_lo": 266059,
+   "cases_hi": 740946
+  },
+  {
+   "year": 2007,
+   "rate_per_100k": 520,
+   "rate_lo": 292,
+   "rate_hi": 813,
+   "cases": 473967,
+   "cases_lo": 265968,
+   "cases_hi": 740687
+  },
+  {
+   "year": 2008,
+   "rate_per_100k": 524,
+   "rate_lo": 294,
+   "rate_hi": 819,
+   "cases": 485794,
+   "cases_lo": 272603,
+   "cases_hi": 759168
+  },
+  {
+   "year": 2009,
+   "rate_per_100k": 528,
+   "rate_lo": 296,
+   "rate_hi": 825,
+   "cases": 498086,
+   "cases_lo": 279500,
+   "cases_hi": 778377
+  },
+  {
+   "year": 2010,
+   "rate_per_100k": 531,
+   "rate_lo": 298,
+   "rate_hi": 830,
+   "cases": 511950,
+   "cases_lo": 287279,
+   "cases_hi": 800041
+  },
+  {
+   "year": 2011,
+   "rate_per_100k": 535,
+   "rate_lo": 300,
+   "rate_hi": 836,
+   "cases": 525761,
+   "cases_lo": 295028,
+   "cases_hi": 821624
+  },
+  {
+   "year": 2012,
+   "rate_per_100k": 539,
+   "rate_lo": 302,
+   "rate_hi": 842,
+   "cases": 539824,
+   "cases_lo": 302918,
+   "cases_hi": 843599
+  },
+  {
+   "year": 2013,
+   "rate_per_100k": 543,
+   "rate_lo": 305,
+   "rate_hi": 848,
+   "cases": 553917,
+   "cases_lo": 310825,
+   "cases_hi": 865621
+  },
+  {
+   "year": 2014,
+   "rate_per_100k": 546,
+   "rate_lo": 307,
+   "rate_hi": 854,
+   "cases": 567032,
+   "cases_lo": 318183,
+   "cases_hi": 886115
+  },
+  {
+   "year": 2015,
+   "rate_per_100k": 550,
+   "rate_lo": 309,
+   "rate_hi": 860,
+   "cases": 579507,
+   "cases_lo": 325182,
+   "cases_hi": 905608
+  },
+  {
+   "year": 2016,
+   "rate_per_100k": 554,
+   "rate_lo": 311,
+   "rate_hi": 866,
+   "cases": 591446,
+   "cases_lo": 331880,
+   "cases_hi": 924264
+  },
+  {
+   "year": 2017,
+   "rate_per_100k": 554,
+   "rate_lo": 311,
+   "rate_hi": 866,
+   "cases": 599115,
+   "cases_lo": 336183,
+   "cases_hi": 936249
+  },
+  {
+   "year": 2018,
+   "rate_per_100k": 554,
+   "rate_lo": 311,
+   "rate_hi": 866,
+   "cases": 606571,
+   "cases_lo": 340367,
+   "cases_hi": 947901
+  },
+  {
+   "year": 2019,
+   "rate_per_100k": 554,
+   "rate_lo": 311,
+   "rate_hi": 866,
+   "cases": 613993,
+   "cases_lo": 344532,
+   "cases_hi": 959499
+  },
+  {
+   "year": 2020,
+   "rate_per_100k": 544,
+   "rate_lo": 304,
+   "rate_hi": 863,
+   "cases": 609834,
+   "cases_lo": 341234,
+   "cases_hi": 966862
+  },
+  {
+   "year": 2021,
+   "rate_per_100k": 579,
+   "rate_lo": 325,
+   "rate_hi": 934,
+   "cases": 654909,
+   "cases_lo": 367610,
+   "cases_hi": 1056590
+  },
+  {
+   "year": 2022,
+   "rate_per_100k": 627,
+   "rate_lo": 346,
+   "rate_hi": 1013,
+   "cases": 714302,
+   "cases_lo": 394776,
+   "cases_hi": 1153904
+  },
+  {
+   "year": 2023,
+   "rate_per_100k": 632,
+   "rate_lo": 348,
+   "rate_hi": 1024,
+   "cases": 726118,
+   "cases_lo": 400143,
+   "cases_hi": 1176384
+  },
+  {
+   "year": 2024,
+   "rate_per_100k": 625,
+   "rate_lo": 344,
+   "rate_hi": 1015,
+   "cases": 723902,
+   "cases_lo": 398854,
+   "cases_hi": 1175835
+  }
+ ],
+ "deaths_series": [
+  {
+   "year": 2000,
+   "deaths_total": 35280,
+   "deaths_hiv_negative": 35242,
+   "deaths_hiv_positive": 38,
+   "deaths_lo": 31782,
+   "deaths_hi": 38958,
+   "death_rate_per_100k": 44.3
+  },
+  {
+   "year": 2001,
+   "deaths_total": 35219,
+   "deaths_hiv_negative": 35174,
+   "deaths_hiv_positive": 45,
+   "deaths_lo": 31660,
+   "deaths_hi": 38964,
+   "death_rate_per_100k": 43.3
+  },
+  {
+   "year": 2002,
+   "deaths_total": 36841,
+   "deaths_hiv_negative": 36785,
+   "deaths_hiv_positive": 55,
+   "deaths_lo": 33010,
+   "deaths_hi": 40879,
+   "death_rate_per_100k": 44.3
+  },
+  {
+   "year": 2003,
+   "deaths_total": 35374,
+   "deaths_hiv_negative": 35306,
+   "deaths_hiv_positive": 68,
+   "deaths_lo": 31320,
+   "deaths_hi": 39671,
+   "death_rate_per_100k": 41.7
+  },
+  {
+   "year": 2004,
+   "deaths_total": 34283,
+   "deaths_hiv_negative": 34198,
+   "deaths_hiv_positive": 85,
+   "deaths_lo": 31066,
+   "deaths_hi": 37656,
+   "death_rate_per_100k": 39.7
+  },
+  {
+   "year": 2005,
+   "deaths_total": 33675,
+   "deaths_hiv_negative": 33573,
+   "deaths_hiv_positive": 103,
+   "deaths_lo": 30612,
+   "deaths_hi": 36882,
+   "death_rate_per_100k": 38.3
+  },
+  {
+   "year": 2006,
+   "deaths_total": 33802,
+   "deaths_hiv_negative": 33683,
+   "deaths_hiv_positive": 120,
+   "deaths_lo": 30113,
+   "deaths_hi": 37702,
+   "death_rate_per_100k": 37.8
+  },
+  {
+   "year": 2007,
+   "deaths_total": 31206,
+   "deaths_hiv_negative": 31066,
+   "deaths_hiv_positive": 140,
+   "deaths_lo": 27957,
+   "deaths_hi": 34631,
+   "death_rate_per_100k": 34.3
+  },
+  {
+   "year": 2008,
+   "deaths_total": 31606,
+   "deaths_hiv_negative": 31435,
+   "deaths_hiv_positive": 171,
+   "deaths_lo": 28500,
+   "deaths_hi": 34871,
+   "death_rate_per_100k": 34.1
+  },
+  {
+   "year": 2009,
+   "deaths_total": 32538,
+   "deaths_hiv_negative": 32318,
+   "deaths_hiv_positive": 220,
+   "deaths_lo": 29437,
+   "deaths_hi": 35793,
+   "death_rate_per_100k": 34.5
+  },
+  {
+   "year": 2010,
+   "deaths_total": 31376,
+   "deaths_hiv_negative": 31104,
+   "deaths_hiv_positive": 272,
+   "deaths_lo": 28489,
+   "deaths_hi": 34400,
+   "death_rate_per_100k": 32.6
+  },
+  {
+   "year": 2011,
+   "deaths_total": 30935,
+   "deaths_hiv_negative": 30616,
+   "deaths_hiv_positive": 319,
+   "deaths_lo": 28080,
+   "deaths_hi": 33927,
+   "death_rate_per_100k": 31.5
+  },
+  {
+   "year": 2012,
+   "deaths_total": 29928,
+   "deaths_hiv_negative": 29538,
+   "deaths_hiv_positive": 389,
+   "deaths_lo": 27868,
+   "deaths_hi": 32060,
+   "death_rate_per_100k": 29.9
+  },
+  {
+   "year": 2013,
+   "deaths_total": 29785,
+   "deaths_hiv_negative": 29340,
+   "deaths_hiv_positive": 445,
+   "deaths_lo": 27717,
+   "deaths_hi": 31927,
+   "death_rate_per_100k": 29.2
+  },
+  {
+   "year": 2014,
+   "deaths_total": 30849,
+   "deaths_hiv_negative": 30394,
+   "deaths_hiv_positive": 455,
+   "deaths_lo": 27671,
+   "deaths_hi": 34197,
+   "death_rate_per_100k": 29.7
+  },
+  {
+   "year": 2015,
+   "deaths_total": 29860,
+   "deaths_hiv_negative": 29382,
+   "deaths_hiv_positive": 478,
+   "deaths_lo": 27817,
+   "deaths_hi": 31974,
+   "death_rate_per_100k": 28.4
+  },
+  {
+   "year": 2016,
+   "deaths_total": 33307,
+   "deaths_hiv_negative": 32789,
+   "deaths_hiv_positive": 518,
+   "deaths_lo": 29846,
+   "deaths_hi": 36955,
+   "death_rate_per_100k": 31.2
+  },
+  {
+   "year": 2017,
+   "deaths_total": 31012,
+   "deaths_hiv_negative": 30419,
+   "deaths_hiv_positive": 593,
+   "deaths_lo": 27725,
+   "deaths_hi": 34481,
+   "death_rate_per_100k": 28.7
+  },
+  {
+   "year": 2018,
+   "deaths_total": 30676,
+   "deaths_hiv_negative": 30009,
+   "deaths_hiv_positive": 667,
+   "deaths_lo": 27316,
+   "deaths_hi": 34227,
+   "death_rate_per_100k": 28.0
+  },
+  {
+   "year": 2019,
+   "deaths_total": 31220,
+   "deaths_hiv_negative": 30470,
+   "deaths_hiv_positive": 750,
+   "deaths_lo": 27699,
+   "deaths_hi": 34949,
+   "death_rate_per_100k": 28.2
+  },
+  {
+   "year": 2020,
+   "deaths_total": 36320,
+   "deaths_hiv_negative": 35462,
+   "deaths_hiv_positive": 857,
+   "deaths_lo": 31833,
+   "deaths_hi": 40732,
+   "death_rate_per_100k": 32.4
+  },
+  {
+   "year": 2021,
+   "deaths_total": 42133,
+   "deaths_hiv_negative": 41074,
+   "deaths_hiv_positive": 1059,
+   "deaths_lo": 36927,
+   "deaths_hi": 47317,
+   "death_rate_per_100k": 37.3
+  },
+  {
+   "year": 2022,
+   "deaths_total": 40588,
+   "deaths_hiv_negative": 39288,
+   "deaths_hiv_positive": 1300,
+   "deaths_lo": 35807,
+   "deaths_hi": 45823,
+   "death_rate_per_100k": 35.6
+  },
+  {
+   "year": 2023,
+   "deaths_total": 38499,
+   "deaths_hiv_negative": 37275,
+   "deaths_hiv_positive": 1225,
+   "deaths_lo": 33715,
+   "deaths_hi": 43636,
+   "death_rate_per_100k": 33.5
+  },
+  {
+   "year": 2024,
+   "deaths_total": 37404,
+   "deaths_hiv_negative": 35971,
+   "deaths_hiv_positive": 1434,
+   "deaths_lo": 32810,
+   "deaths_hi": 42404,
+   "death_rate_per_100k": 32.3
+  }
+ ],
+ "detection_gap_series": [
+  {
+   "year": 2010,
+   "estimated_new_cases": 511950,
+   "notified_new_and_relapse": 166323,
+   "treatment_coverage_pct": 32.5,
+   "not_reached": 345627
+  },
+  {
+   "year": 2011,
+   "estimated_new_cases": 525761,
+   "notified_new_and_relapse": 195560,
+   "treatment_coverage_pct": 37.2,
+   "not_reached": 330201
+  },
+  {
+   "year": 2012,
+   "estimated_new_cases": 539824,
+   "notified_new_and_relapse": 216627,
+   "treatment_coverage_pct": 40.1,
+   "not_reached": 323197
+  },
+  {
+   "year": 2013,
+   "estimated_new_cases": 553917,
+   "notified_new_and_relapse": 229918,
+   "treatment_coverage_pct": 41.5,
+   "not_reached": 323999
+  },
+  {
+   "year": 2014,
+   "estimated_new_cases": 567032,
+   "notified_new_and_relapse": 243379,
+   "treatment_coverage_pct": 42.9,
+   "not_reached": 323653
+  },
+  {
+   "year": 2015,
+   "estimated_new_cases": 579507,
+   "notified_new_and_relapse": 276672,
+   "treatment_coverage_pct": 47.7,
+   "not_reached": 302835
+  },
+  {
+   "year": 2016,
+   "estimated_new_cases": 591446,
+   "notified_new_and_relapse": 332941,
+   "treatment_coverage_pct": 56.3,
+   "not_reached": 258505
+  },
+  {
+   "year": 2017,
+   "estimated_new_cases": 599115,
+   "notified_new_and_relapse": 317266,
+   "treatment_coverage_pct": 53.0,
+   "not_reached": 281849
+  },
+  {
+   "year": 2018,
+   "estimated_new_cases": 606571,
+   "notified_new_and_relapse": 371668,
+   "treatment_coverage_pct": 61.3,
+   "not_reached": 234903
+  },
+  {
+   "year": 2019,
+   "estimated_new_cases": 613993,
+   "notified_new_and_relapse": 409167,
+   "treatment_coverage_pct": 66.6,
+   "not_reached": 204826
+  },
+  {
+   "year": 2020,
+   "estimated_new_cases": 609834,
+   "notified_new_and_relapse": 256541,
+   "treatment_coverage_pct": 42.1,
+   "not_reached": 353293
+  },
+  {
+   "year": 2021,
+   "estimated_new_cases": 654909,
+   "notified_new_and_relapse": 321564,
+   "treatment_coverage_pct": 49.1,
+   "not_reached": 333345
+  },
+  {
+   "year": 2022,
+   "estimated_new_cases": 714302,
+   "notified_new_and_relapse": 435890,
+   "treatment_coverage_pct": 61.0,
+   "not_reached": 278412
+  },
+  {
+   "year": 2023,
+   "estimated_new_cases": 726118,
+   "notified_new_and_relapse": 575770,
+   "treatment_coverage_pct": 79.3,
+   "not_reached": 150348
+  },
+  {
+   "year": 2024,
+   "estimated_new_cases": 723902,
+   "notified_new_and_relapse": 544948,
+   "treatment_coverage_pct": 75.3,
+   "not_reached": 178954
+  }
+ ],
+ "notifications_annual": [
+  {
+   "year": 2000,
+   "notified": 119914
+  },
+  {
+   "year": 2001,
+   "notified": 107133
+  },
+  {
+   "year": 2002,
+   "notified": 118408
+  },
+  {
+   "year": 2003,
+   "notified": 132759
+  },
+  {
+   "year": 2004,
+   "notified": 130530
+  },
+  {
+   "year": 2005,
+   "notified": 137100
+  },
+  {
+   "year": 2006,
+   "notified": 147305
+  },
+  {
+   "year": 2007,
+   "notified": 140588
+  },
+  {
+   "year": 2008,
+   "notified": 139603
+  },
+  {
+   "year": 2009,
+   "notified": 146565
+  },
+  {
+   "year": 2010,
+   "notified": 166323
+  },
+  {
+   "year": 2011,
+   "notified": 195560
+  },
+  {
+   "year": 2012,
+   "notified": 216627
+  },
+  {
+   "year": 2013,
+   "notified": 229918
+  },
+  {
+   "year": 2014,
+   "notified": 243379
+  },
+  {
+   "year": 2015,
+   "notified": 276672
+  },
+  {
+   "year": 2016,
+   "notified": 332941
+  },
+  {
+   "year": 2017,
+   "notified": 317266
+  },
+  {
+   "year": 2018,
+   "notified": 371668
+  },
+  {
+   "year": 2019,
+   "notified": 409167
+  },
+  {
+   "year": 2020,
+   "notified": 256541
+  },
+  {
+   "year": 2021,
+   "notified": 321564
+  },
+  {
+   "year": 2022,
+   "notified": 435890
+  },
+  {
+   "year": 2023,
+   "notified": 575770
+  },
+  {
+   "year": 2024,
+   "notified": 544948
+  }
+ ],
+ "notifications_monthly": [
+  {
+   "year": 2020,
+   "month": 1,
+   "notified": 40104,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 2,
+   "notified": 37042,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 3,
+   "notified": 28376,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 4,
+   "notified": 10489,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 5,
+   "notified": 13726,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 6,
+   "notified": 20282,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 7,
+   "notified": 20338,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 8,
+   "notified": 16938,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 9,
+   "notified": 18701,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 10,
+   "notified": 18757,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 11,
+   "notified": 17100,
+   "provisional": false
+  },
+  {
+   "year": 2020,
+   "month": 12,
+   "notified": 17605,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 1,
+   "notified": 24679,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 2,
+   "notified": 24663,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 3,
+   "notified": 29335,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 4,
+   "notified": 22354,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 5,
+   "notified": 23501,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 6,
+   "notified": 25733,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 7,
+   "notified": 27894,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 8,
+   "notified": 26705,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 9,
+   "notified": 25224,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 10,
+   "notified": 24386,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 11,
+   "notified": 23571,
+   "provisional": false
+  },
+  {
+   "year": 2021,
+   "month": 12,
+   "notified": 19748,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 1,
+   "notified": 29412,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 2,
+   "notified": 32204,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 3,
+   "notified": 40998,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 4,
+   "notified": 25236,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 5,
+   "notified": 35013,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 6,
+   "notified": 42979,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 7,
+   "notified": 34115,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 8,
+   "notified": 38115,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 9,
+   "notified": 43520,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 10,
+   "notified": 34399,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 11,
+   "notified": 31057,
+   "provisional": false
+  },
+  {
+   "year": 2022,
+   "month": 12,
+   "notified": 28132,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 1,
+   "notified": 43957,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 2,
+   "notified": 49398,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 3,
+   "notified": 57963,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 4,
+   "notified": 41777,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 5,
+   "notified": 51352,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 6,
+   "notified": 47295,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 7,
+   "notified": 48786,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 8,
+   "notified": 51994,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 9,
+   "notified": 48728,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 10,
+   "notified": 43485,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 11,
+   "notified": 39452,
+   "provisional": false
+  },
+  {
+   "year": 2023,
+   "month": 12,
+   "notified": 27884,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 1,
+   "notified": 51986,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 2,
+   "notified": 48541,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 3,
+   "notified": 47907,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 4,
+   "notified": 48493,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 5,
+   "notified": 46159,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 6,
+   "notified": 40536,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 7,
+   "notified": 48710,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 8,
+   "notified": 48681,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 9,
+   "notified": 47534,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 10,
+   "notified": 46451,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 11,
+   "notified": 41901,
+   "provisional": false
+  },
+  {
+   "year": 2024,
+   "month": 12,
+   "notified": 31748,
+   "provisional": false
+  },
+  {
+   "year": 2025,
+   "month": 1,
+   "notified": 45795,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 2,
+   "notified": 47467,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 3,
+   "notified": 49051,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 4,
+   "notified": 42378,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 5,
+   "notified": 45091,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 6,
+   "notified": 42923,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 7,
+   "notified": 47222,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 8,
+   "notified": 43278,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 9,
+   "notified": 48067,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 10,
+   "notified": 48707,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 11,
+   "notified": 40395,
+   "provisional": true
+  },
+  {
+   "year": 2025,
+   "month": 12,
+   "notified": 34689,
+   "provisional": true
+  },
+  {
+   "year": 2026,
+   "month": 1,
+   "notified": 23723,
+   "provisional": true
+  }
+ ],
+ "notifications_monthly_annual_totals": {
+  "2020": 259458,
+  "2021": 297793,
+  "2022": 415180,
+  "2023": 552071,
+  "2024": 548647,
+  "2025": 535063
+ },
+ "incidence_by_age_sex_2024": [
+  {
+   "age_group": "0-4",
+   "men": 15233,
+   "women": 14595
+  },
+  {
+   "age_group": "5-9",
+   "men": 13150,
+   "women": 11680
+  },
+  {
+   "age_group": "10-14",
+   "men": 9603,
+   "women": 9196
+  },
+  {
+   "age_group": "15-24",
+   "men": 75518,
+   "women": 36528
+  },
+  {
+   "age_group": "25-34",
+   "men": 66757,
+   "women": 36311
+  },
+  {
+   "age_group": "35-44",
+   "men": 67048,
+   "women": 33924
+  },
+  {
+   "age_group": "45-54",
+   "men": 74976,
+   "women": 37532
+  },
+  {
+   "age_group": "55-64",
+   "men": 70735,
+   "women": 37420
+  },
+  {
+   "age_group": "65plus",
+   "men": 68319,
+   "women": 45378
+  }
+ ],
+ "notifications_by_age_sex_2024": [
+  {
+   "age_group": "0-4",
+   "men": 9783,
+   "women": 8041
+  },
+  {
+   "age_group": "5-9",
+   "men": 9428,
+   "women": 8294
+  },
+  {
+   "age_group": "10-14",
+   "men": 5848,
+   "women": 4716
+  },
+  {
+   "age_group": "15-19",
+   "men": 15019,
+   "women": 9937
+  },
+  {
+   "age_group": "20-24",
+   "men": 24845,
+   "women": 15231
+  },
+  {
+   "age_group": "25-34",
+   "men": 49072,
+   "women": 27128
+  },
+  {
+   "age_group": "35-44",
+   "men": 51351,
+   "women": 25921
+  },
+  {
+   "age_group": "45-54",
+   "men": 60194,
+   "women": 29017
+  },
+  {
+   "age_group": "55-64",
+   "men": 60262,
+   "women": 30834
+  },
+  {
+   "age_group": "65plus",
+   "men": 60643,
+   "women": 38392
+  }
+ ],
+ "notification_breakdown_2024": {
+  "new_and_relapse_total": 544948,
+  "pulmonary_bacteriologically_confirmed": 245406,
+  "pulmonary_clinically_diagnosed": 289922,
+  "extrapulmonary": 9620,
+  "children_0_14": 46110,
+  "men": 346445,
+  "women": 197511,
+  "pct_pulmonary_bacteriologically_confirmed": 45.8,
+  "pct_extrapulmonary": 1.8,
+  "pct_children": 8.5
+ },
+ "risk_factor_attributable_cases_2024": [
+  {
+   "risk_factor": "Alcohol use disorders",
+   "key": "alcohol",
+   "cases": 70714,
+   "lo": 13214,
+   "hi": 175482,
+   "age_scope": "15+"
+  },
+  {
+   "risk_factor": "Smoking",
+   "key": "smoking",
+   "cases": 66603,
+   "lo": 8208,
+   "hi": 184764,
+   "age_scope": "15+"
+  },
+  {
+   "risk_factor": "Undernutrition",
+   "key": "undernutrition",
+   "cases": 60916,
+   "lo": 28545,
+   "hi": 105346,
+   "age_scope": "a"
+  },
+  {
+   "risk_factor": "Diabetes",
+   "key": "diabetes",
+   "cases": 52985,
+   "lo": 23253,
+   "hi": 94751,
+   "age_scope": "18+"
+  },
+  {
+   "risk_factor": "HIV infection",
+   "key": "hiv",
+   "cases": 4592,
+   "lo": 787,
+   "hi": 11683,
+   "age_scope": "a"
+  }
+ ],
+ "treatment_outcomes": {
+  "new_and_relapse_2023": {
+   "cohort_year": 2023,
+   "cohort": 570492,
+   "success": 478394,
+   "failed": 1195,
+   "died": 10073,
+   "lost_to_follow_up": 59715,
+   "not_evaluated": 21115,
+   "success_pct": 83.9,
+   "failed_pct": 0.2,
+   "died_pct": 1.8,
+   "lost_to_follow_up_pct": 10.5,
+   "not_evaluated_pct": 3.7
+  },
+  "success_trend": [
+   {
+    "cohort_year": 2012,
+    "cohort": 214028,
+    "success_pct": 87.7
+   },
+   {
+    "cohort_year": 2013,
+    "cohort": 216250,
+    "success_pct": 89.6
+   },
+   {
+    "cohort_year": 2014,
+    "cohort": 219737,
+    "success_pct": 92.0
+   },
+   {
+    "cohort_year": 2015,
+    "cohort": 263481,
+    "success_pct": 91.3
+   },
+   {
+    "cohort_year": 2016,
+    "cohort": 332308,
+    "success_pct": 90.5
+   },
+   {
+    "cohort_year": 2017,
+    "cohort": 315923,
+    "success_pct": 91.1
+   },
+   {
+    "cohort_year": 2018,
+    "cohort": 369442,
+    "success_pct": 82.7
+   },
+   {
+    "cohort_year": 2019,
+    "cohort": 342777,
+    "success_pct": 86.5
+   },
+   {
+    "cohort_year": 2020,
+    "cohort": 270987,
+    "success_pct": 76.3
+   },
+   {
+    "cohort_year": 2021,
+    "cohort": 376014,
+    "success_pct": 79.7
+   },
+   {
+    "cohort_year": 2022,
+    "cohort": 505882,
+    "success_pct": 78.1
+   },
+   {
+    "cohort_year": 2023,
+    "cohort": 570492,
+    "success_pct": 83.9
+   }
+  ],
+  "mdr_rr_2022": {
+   "cohort_year": 2022,
+   "cohort": 7700,
+   "success": 5825,
+   "died": 720,
+   "failed": 270,
+   "lost_to_follow_up": 876,
+   "success_pct": 75.6,
+   "failed_pct": 3.5,
+   "died_pct": 9.4,
+   "lost_to_follow_up_pct": 11.4
+  },
+  "tb_hiv_2023": {
+   "cohort_year": 2023,
+   "cohort": 2538,
+   "success_pct": 85.3
+  },
+  "children_2023": {
+   "cohort_year": 2023,
+   "cohort": 48877,
+   "success_pct": 88.6
+  }
+ },
+ "drug_resistant_tb": {
+  "year": 2024,
+  "estimated_rr_mdr_cases": 27870,
+  "lo": 11845,
+  "hi": 43895,
+  "pct_among_new": 2.3,
+  "pct_among_previously_treated": 19.3,
+  "lab_confirmed_rr": 7549,
+  "enrolled_on_treatment": 6631,
+  "pct_detected_of_estimated": 27.1,
+  "share_of_global_pct": 7.1,
+  "global_rank": 3,
+  "confirmed_series": [
+   {
+    "year": 2015,
+    "lab_confirmed": 3788
+   },
+   {
+    "year": 2016,
+    "lab_confirmed": 5233
+   },
+   {
+    "year": 2017,
+    "lab_confirmed": 6438
+   },
+   {
+    "year": 2018,
+    "lab_confirmed": 7276
+   },
+   {
+    "year": 2019,
+    "lab_confirmed": 7492
+   },
+   {
+    "year": 2020,
+    "lab_confirmed": 6279
+   },
+   {
+    "year": 2021,
+    "lab_confirmed": 7589
+   },
+   {
+    "year": 2022,
+    "lab_confirmed": 9844
+   },
+   {
+    "year": 2023,
+    "lab_confirmed": 8752
+   },
+   {
+    "year": 2024,
+    "lab_confirmed": 7549
+   }
+  ]
+ },
+ "tb_hiv": {
+  "year": 2024,
+  "estimated_hiv_positive_tb": 5502,
+  "notified_tested_for_hiv": 363386,
+  "pct_tested": 66.7,
+  "hiv_positive": 2762,
+  "on_art": 2737,
+  "pct_on_art": 99.1,
+  "deaths_hiv_positive": 1434
+ },
+ "contacts_and_tpt_2024": {
+  "year": 2024,
+  "household_contacts_identified": 165430,
+  "contacts_screened": 125060,
+  "tb_found_among_contacts": 3220,
+  "contacts_started_tpt": 77195,
+  "children_under5_started_tpt": 12715,
+  "short_rifamycin_regimens": 53468,
+  "tpt_series": [
+   {
+    "year": 2018,
+    "contacts_started_tpt": 5409
+   },
+   {
+    "year": 2019,
+    "contacts_started_tpt": 5821
+   },
+   {
+    "year": 2020,
+    "contacts_started_tpt": 3057
+   },
+   {
+    "year": 2021,
+    "contacts_started_tpt": 9069
+   },
+   {
+    "year": 2022,
+    "contacts_started_tpt": 34083
+   },
+   {
+    "year": 2023,
+    "contacts_started_tpt": 50883
+   },
+   {
+    "year": 2024,
+    "contacts_started_tpt": 77195
+   }
+  ]
+ },
+ "global_comparison": {
+  "global_2024": {
+   "year": 2024,
+   "cases": 10691405,
+   "rate_per_100k": 131,
+   "deaths": 1230571,
+   "notified": 8304684,
+   "rate_change_since_2015_pct": -12.3,
+   "deaths_change_since_2015_pct": -29.4
+  },
+  "top10_by_cases": [
+   {
+    "country": "India",
+    "iso3": "IND",
+    "cases": 2707572,
+    "share_of_global_pct": 25.3
+   },
+   {
+    "country": "Indonesia",
+    "iso3": "IDN",
+    "cases": 1083351,
+    "share_of_global_pct": 10.1
+   },
+   {
+    "country": "Philippines",
+    "iso3": "PHL",
+    "cases": 723902,
+    "share_of_global_pct": 6.8
+   },
+   {
+    "country": "China",
+    "iso3": "CHN",
+    "cases": 696296,
+    "share_of_global_pct": 6.5
+   },
+   {
+    "country": "Pakistan",
+    "iso3": "PAK",
+    "cases": 668698,
+    "share_of_global_pct": 6.3
+   },
+   {
+    "country": "Nigeria",
+    "iso3": "NGA",
+    "cases": 509674,
+    "share_of_global_pct": 4.8
+   },
+   {
+    "country": "DR Congo",
+    "iso3": "COD",
+    "cases": 411937,
+    "share_of_global_pct": 3.9
+   },
+   {
+    "country": "Bangladesh",
+    "iso3": "BGD",
+    "cases": 383883,
+    "share_of_global_pct": 3.6
+   },
+   {
+    "country": "Myanmar",
+    "iso3": "MMR",
+    "cases": 262580,
+    "share_of_global_pct": 2.5
+   },
+   {
+    "country": "South Africa",
+    "iso3": "ZAF",
+    "cases": 249127,
+    "share_of_global_pct": 2.3
+   }
+  ],
+  "top8_by_rate_over_1M_people": [
+   {
+    "country": "Papua New Guinea",
+    "iso3": "PNG",
+    "rate_per_100k": 664
+   },
+   {
+    "country": "Philippines",
+    "iso3": "PHL",
+    "rate_per_100k": 625
+   },
+   {
+    "country": "Lesotho",
+    "iso3": "LSO",
+    "rate_per_100k": 548
+   },
+   {
+    "country": "DPR Korea",
+    "iso3": "PRK",
+    "rate_per_100k": 513
+   },
+   {
+    "country": "Timor-Leste",
+    "iso3": "TLS",
+    "rate_per_100k": 496
+   },
+   {
+    "country": "Djibouti",
+    "iso3": "DJI",
+    "rate_per_100k": 495
+   },
+   {
+    "country": "Myanmar",
+    "iso3": "MMR",
+    "rate_per_100k": 482
+   },
+   {
+    "country": "Mongolia",
+    "iso3": "MNG",
+    "rate_per_100k": 446
+   }
+  ],
+  "southeast_asia_rates": [
+   {
+    "country": "Philippines",
+    "iso3": "PHL",
+    "rate_per_100k": 625,
+    "death_rate_per_100k": 32.3
+   },
+   {
+    "country": "Timor-Leste",
+    "iso3": "TLS",
+    "rate_per_100k": 496,
+    "death_rate_per_100k": 79.2
+   },
+   {
+    "country": "Myanmar",
+    "iso3": "MMR",
+    "rate_per_100k": 482,
+    "death_rate_per_100k": 66.8
+   },
+   {
+    "country": "Indonesia",
+    "iso3": "IDN",
+    "rate_per_100k": 382,
+    "death_rate_per_100k": 44.3
+   },
+   {
+    "country": "Cambodia",
+    "iso3": "KHM",
+    "rate_per_100k": 272,
+    "death_rate_per_100k": 18.2
+   },
+   {
+    "country": "Viet Nam",
+    "iso3": "VNM",
+    "rate_per_100k": 182,
+    "death_rate_per_100k": 12.3
+   },
+   {
+    "country": "Thailand",
+    "iso3": "THA",
+    "rate_per_100k": 146,
+    "death_rate_per_100k": 15.8
+   },
+   {
+    "country": "Lao PDR",
+    "iso3": "LAO",
+    "rate_per_100k": 127,
+    "death_rate_per_100k": 9.0
+   },
+   {
+    "country": "Malaysia",
+    "iso3": "MYS",
+    "rate_per_100k": 96,
+    "death_rate_per_100k": 8.3
+   },
+   {
+    "country": "Brunei",
+    "iso3": "BRN",
+    "rate_per_100k": 65,
+    "death_rate_per_100k": 5.7
+   },
+   {
+    "country": "Singapore",
+    "iso3": "SGP",
+    "rate_per_100k": 43,
+    "death_rate_per_100k": 0.5
+   }
+  ],
+  "who_region_rates": [
+   {
+    "who_region": "Africa",
+    "rate_per_100k": 207
+   },
+   {
+    "who_region": "South-East Asia",
+    "rate_per_100k": 201
+   },
+   {
+    "who_region": "Western Pacific",
+    "rate_per_100k": 131
+   },
+   {
+    "who_region": "Eastern Mediterranean",
+    "rate_per_100k": 112
+   },
+   {
+    "who_region": "Americas",
+    "rate_per_100k": 33
+   },
+   {
+    "who_region": "Europe",
+    "rate_per_100k": 22
+   }
+  ]
+ },
+ "prevalence_survey_2016": {
+  "year": 2016,
+  "measure": "Prevalence of bacteriologically confirmed pulmonary TB among adults (15+), per 100,000",
+  "overall": {
+   "per_100k": 1159,
+   "lo": 1016,
+   "hi": 1301
+  },
+  "men": {
+   "per_100k": 1713,
+   "lo": 1482,
+   "hi": 1943
+  },
+  "women": {
+   "per_100k": 627,
+   "lo": 516,
+   "hi": 739
+  },
+  "by_age": [
+   {
+    "age_group": "15-24",
+    "per_100k": 799,
+    "lo": 586,
+    "hi": 1011
+   },
+   {
+    "age_group": "25-34",
+    "per_100k": 900,
+    "lo": 677,
+    "hi": 1123
+   },
+   {
+    "age_group": "35-44",
+    "per_100k": 1126,
+    "lo": 821,
+    "hi": 1430
+   },
+   {
+    "age_group": "45-54",
+    "per_100k": 1714,
+    "lo": 1364,
+    "hi": 2064
+   },
+   {
+    "age_group": "55-64",
+    "per_100k": 1504,
+    "lo": 1104,
+    "hi": 1903
+   },
+   {
+    "age_group": "65plus",
+    "per_100k": 1659,
+    "lo": 1261,
+    "hi": 2058
+   }
+  ],
+  "by_area": [
+   {
+    "area": "NCR, Region III and Region IV-A",
+    "per_100k": 1358,
+    "lo": 1103,
+    "hi": 1612
+   },
+   {
+    "area": "Rest of Luzon",
+    "per_100k": 1038,
+    "lo": 787,
+    "hi": 1288
+   },
+   {
+    "area": "Visayas",
+    "per_100k": 1234,
+    "lo": 873,
+    "hi": 1594
+   },
+   {
+    "area": "Mindanao",
+    "per_100k": 856,
+    "lo": 686,
+    "hi": 1026
+   }
+  ],
+  "source": "2016 National TB Prevalence Survey (Philippines), as compiled in WHO global TB database (svy.prev)"
+ },
+ "patient_costs": {
+  "survey": "First national TB patient cost survey, 2016–2017 (Philippines NTP)",
+  "catastrophic_cost_pct_all": 42.4,
+  "ci": [
+   40.2,
+   44.6
+  ],
+  "catastrophic_cost_pct_drtb": 89.7,
+  "definition": "Total TB-related costs (direct medical + non-medical + lost income, net of social assistance) above 20% of annual household income",
+  "source": "PLOS ONE 2022; https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8884492/"
+ },
+ "diagnostics_network": {
+  "series": [
+   {
+    "year": 2019,
+    "diagnostic_sites": null,
+    "smear_microscopy_sites": 2876,
+    "rapid_molecular_test_sites": null,
+    "rapid_tests_performed": null,
+    "rapid_tests_positive": null,
+    "culture_labs": 24,
+    "tb_management_units": 2768
+   },
+   {
+    "year": 2020,
+    "diagnostic_sites": 2954,
+    "smear_microscopy_sites": 2887,
+    "rapid_molecular_test_sites": 519,
+    "rapid_tests_performed": null,
+    "rapid_tests_positive": null,
+    "culture_labs": 15,
+    "tb_management_units": 3122
+   },
+   {
+    "year": 2021,
+    "diagnostic_sites": 2919,
+    "smear_microscopy_sites": 2890,
+    "rapid_molecular_test_sites": 768,
+    "rapid_tests_performed": 561332,
+    "rapid_tests_positive": 147231,
+    "culture_labs": 22,
+    "tb_management_units": 2872
+   },
+   {
+    "year": 2022,
+    "diagnostic_sites": 2906,
+    "smear_microscopy_sites": 2882,
+    "rapid_molecular_test_sites": 879,
+    "rapid_tests_performed": 888028,
+    "rapid_tests_positive": 224719,
+    "culture_labs": 24,
+    "tb_management_units": 3011
+   },
+   {
+    "year": 2023,
+    "diagnostic_sites": 2789,
+    "smear_microscopy_sites": 2759,
+    "rapid_molecular_test_sites": 888,
+    "rapid_tests_performed": 1165484,
+    "rapid_tests_positive": 259973,
+    "culture_labs": 24,
+    "tb_management_units": 3189
+   },
+   {
+    "year": 2024,
+    "diagnostic_sites": 2929,
+    "smear_microscopy_sites": 2929,
+    "rapid_molecular_test_sites": 992,
+    "rapid_tests_performed": 1213143,
+    "rapid_tests_positive": 251129,
+    "culture_labs": 27,
+    "tb_management_units": 3144
+   }
+  ],
+  "latest_year": 2024,
+  "rapid_test_positivity_pct": 20.7,
+  "source": "WHO global TB database, strategy and laboratory data reported by the Philippines NTP (snapshot 2025-07-30)",
+  "note": "rapid_molecular_test_sites = sites using WHO-recommended rapid diagnostics (e.g. Xpert MTB/RIF, TB-LAMP, Truenat)."
+ },
+ "financing": {
+  "series": [
+   {
+    "year": 2019,
+    "budget_usd": 204542239,
+    "available_usd": 75794002,
+    "available_domestic_usd": 24357641,
+    "available_global_fund_usd": 51436361,
+    "available_usaid_usd": null,
+    "available_other_grants_usd": null,
+    "received_usd": 71853791,
+    "received_domestic_usd": 25827119,
+    "received_global_fund_usd": 33609672,
+    "received_usaid_usd": 12417000,
+    "spent_usd": 63694935
+   },
+   {
+    "year": 2020,
+    "budget_usd": 217018862,
+    "available_usd": 64617598,
+    "available_domestic_usd": 40095950,
+    "available_global_fund_usd": 18054527,
+    "available_usaid_usd": 6467121,
+    "available_other_grants_usd": null,
+    "received_usd": 80529274,
+    "received_domestic_usd": 27512285,
+    "received_global_fund_usd": 40016989,
+    "received_usaid_usd": 13000000,
+    "spent_usd": 80234998
+   },
+   {
+    "year": 2021,
+    "budget_usd": 313822668,
+    "available_usd": 150090913,
+    "available_domestic_usd": 82279113,
+    "available_global_fund_usd": 43847961,
+    "available_usaid_usd": 23963839,
+    "available_other_grants_usd": null,
+    "received_usd": 98992033,
+    "received_domestic_usd": 39529643,
+    "received_global_fund_usd": 44962390,
+    "received_usaid_usd": 14500000,
+    "spent_usd": 88106537
+   },
+   {
+    "year": 2022,
+    "budget_usd": 338589018,
+    "available_usd": 131967023,
+    "available_domestic_usd": 70861545,
+    "available_global_fund_usd": 44105478,
+    "available_usaid_usd": 17000000,
+    "available_other_grants_usd": null,
+    "received_usd": 127261713,
+    "received_domestic_usd": 63963354,
+    "received_global_fund_usd": 46298359,
+    "received_usaid_usd": 17000000,
+    "spent_usd": 123881461
+   },
+   {
+    "year": 2023,
+    "budget_usd": 413841097,
+    "available_usd": 165439641,
+    "available_domestic_usd": 102296911,
+    "available_global_fund_usd": 41142730,
+    "available_usaid_usd": 22000000,
+    "available_other_grants_usd": null,
+    "received_usd": 156438683,
+    "received_domestic_usd": 82534237,
+    "received_global_fund_usd": 51904446,
+    "received_usaid_usd": 22000000,
+    "spent_usd": 129092891
+   },
+   {
+    "year": 2024,
+    "budget_usd": 188073247,
+    "available_usd": 121984989,
+    "available_domestic_usd": 65117321,
+    "available_global_fund_usd": 44530633,
+    "available_usaid_usd": 10996966,
+    "available_other_grants_usd": 1340069,
+    "received_usd": 119135649,
+    "received_domestic_usd": 50256286,
+    "received_global_fund_usd": 36760768,
+    "received_usaid_usd": 32118595,
+    "spent_usd": 87728089
+   },
+   {
+    "year": 2025,
+    "budget_usd": 112542777,
+    "available_usd": 111593745,
+    "available_domestic_usd": 48565748,
+    "available_global_fund_usd": 40827997,
+    "available_usaid_usd": 22200000,
+    "available_other_grants_usd": null,
+    "received_usd": null,
+    "received_domestic_usd": null,
+    "received_global_fund_usd": null,
+    "received_usaid_usd": null,
+    "spent_usd": null
+   }
+  ],
+  "currency": "US$ (current)",
+  "expected_2025": {
+   "total": 111593745,
+   "domestic_pct": 43.5,
+   "global_fund_pct": 36.6,
+   "usaid_pct": 19.9
+  },
+  "received_2024": {
+   "total": 119135649,
+   "domestic_pct": 42.2,
+   "global_fund_pct": 30.9,
+   "usaid_pct": 27.0
+  },
+  "caveat_2025": "2025 figures are funding the NTP expected when it reported to WHO in mid-2025. WHO reports that USAID ceased to exist as an entity in 2025, and that in the Philippines the loss of USAID funding reduced community outreach, contact investigations and diagnostic operations of partner organisations. Do not present the 2025 USAID amount as money received.",
+  "source": "WHO global TB database, finance data reported by the Philippines NTP (snapshot 2025-07-30); WHO Global TB Report 2025, featured topic on 2025 funding cuts"
+ },
+ "bcg_coverage": {
+  "series": [
+   {
+    "year": 2015,
+    "coverage_pct": 85
+   },
+   {
+    "year": 2016,
+    "coverage_pct": 90
+   },
+   {
+    "year": 2017,
+    "coverage_pct": 90
+   },
+   {
+    "year": 2018,
+    "coverage_pct": 89
+   },
+   {
+    "year": 2019,
+    "coverage_pct": 89
+   },
+   {
+    "year": 2020,
+    "coverage_pct": 88
+   },
+   {
+    "year": 2021,
+    "coverage_pct": 71
+   },
+   {
+    "year": 2022,
+    "coverage_pct": 87
+   },
+   {
+    "year": 2023,
+    "coverage_pct": 91
+   },
+   {
+    "year": 2024,
+    "coverage_pct": 86
+   }
+  ],
+  "source": "WHO/UNICEF estimates of national immunization coverage, via WHO Global Health Observatory (in WHO GTB report data)"
+ },
+ "sdg_context": {
+  "indicators": [
+   {
+    "key": "urban_slum_pct",
+    "indicator_id": "EN_LND_SLUM",
+    "year": 2022,
+    "value": 35.9,
+    "label": "Population living in slums (% of urban population)",
+    "source": "UN SDG database"
+   },
+   {
+    "key": "smoking_pct_15plus",
+    "indicator_id": "M_Est_smk_curr_std",
+    "year": 2022,
+    "value": 20.4,
+    "label": "Smoking prevalence (% of population aged >= 15 years)",
+    "source": "WHO-GHO",
+    "by_sex": {
+     "f": 4.5,
+     "m": 36.2
+    }
+   },
+   {
+    "key": "adult_undernutrition_pct",
+    "indicator_id": "NCD_BMI_18C",
+    "year": 2022,
+    "value": 9.9,
+    "label": "Prevalence of undernutrition (% of population aged >= 18 years)",
+    "source": "WHO-GHO",
+    "by_sex": {
+     "f": 10.3,
+     "m": 9.4
+    }
+   },
+   {
+    "key": "diabetes_pct_18plus",
+    "indicator_id": "NCD_GLUC_04",
+    "year": 2014,
+    "value": 7.2,
+    "label": "Diabetes prevalence (% of population aged >= 18 years)",
+    "source": "WHO-GHO",
+    "by_sex": {
+     "f": 7.3,
+     "m": 7.1
+    }
+   },
+   {
+    "key": "alcohol_use_disorders_pct_15plus",
+    "indicator_id": "SA_0000001462",
+    "year": 2016,
+    "value": 5.3,
+    "label": "Alcohol use disorders, 12 month prevalence (% of population aged >= 15 years)",
+    "source": "WHO-GHO",
+    "by_sex": {
+     "f": 1.8,
+     "m": 8.8
+    }
+   },
+   {
+    "key": "hiv_prevalence_pct_15_49",
+    "indicator_id": "MDG_0000000029",
+    "year": 2023,
+    "value": 0.2,
+    "label": "HIV prevalence (% of population aged 15-49 years)",
+    "source": "WHO-GHO"
+   },
+   {
+    "key": "uhc_service_coverage_index",
+    "indicator_id": "UHC_INDEX_REPORTED",
+    "year": 2021,
+    "value": 58.2,
+    "label": "UHC index of essential service coverage (based on 14 tracer indicators including TB treatment)",
+    "source": "WHO-GHO"
+   },
+   {
+    "key": "health_spending_per_person_ppp_usd",
+    "indicator_id": "SH.XPD.CHEX.PP.CD",
+    "year": 2023,
+    "value": 569,
+    "label": "Health expenditure per capita, PPP (current international $)",
+    "source": "World Bank"
+   },
+   {
+    "key": "social_protection_coverage_pct",
+    "indicator_id": "per_allsp.cov_pop_tot",
+    "year": 2018,
+    "value": 43.0,
+    "label": "Population covered by social protection floors/systems (% of population)",
+    "source": "World Bank"
+   },
+   {
+    "key": "clean_cooking_fuel_pct",
+    "indicator_id": "EG.CFT.ACCS.ZS",
+    "year": 2022,
+    "value": 59.1,
+    "label": "Access to clean fuels and technologies for cooking  (% of population)",
+    "source": "World Bank"
+   },
+   {
+    "key": "extreme_poverty_pct",
+    "indicator_id": "SI_POV_DAY1",
+    "year": 2021,
+    "value": 3,
+    "label": "Population living below the international poverty line (% of population)",
+    "source": "UN SDG database"
+   },
+   {
+    "key": "household_health_spending_over_10pct_pct",
+    "indicator_id": "FINPROTECTION_CATA_TOT_10_POP",
+    "year": 2015,
+    "value": 6.3,
+    "label": "Greater than 10% of total household expenditure or income on health (% of population)",
+    "source": "WHO-GHO"
+   }
+  ],
+  "source": "WHO GTB report SDG dataset (WHO GHO, World Bank, UN SDG database)"
+ }
+}

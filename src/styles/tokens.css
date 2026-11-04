@@ -1,0 +1,99 @@
+/* Design tokens from design/design_handoff_tb_ph/README.md, "Design tokens (v4 — from Home)".
+   Values are copied as specced; don't change one here without changing the README or
+   recording the decision in docs/. */
+
+:root {
+  /* Color */
+  --canvas: #F1F3F4;          /* page background */
+  --surface: #FFFFFF;         /* grouped lists, inputs, solid bars */
+  --ink: #14212B;             /* text, focus ring, info disc, selected language */
+  --secondary: #3F4B53;       /* secondary body text, distances, location note */
+  --muted: #56626A;           /* captions, hours, footnotes, placeholder, icons */
+  --control-edge: #7A858C;    /* input border, unselected radio ring/glyph */
+  --separator: #E3E6E8;       /* 1px row separators inside groups */
+  --track: #DADDE0;           /* undrawn route track; non-glass sheet edge */
+  --link-underline: #9AA3A8;  /* underline on facility-name links */
+  --chevron: #8A949A;         /* "›" in link rows */
+  --row-hover: #F6F8F8;       /* hover fill on link rows */
+  --teal: #1E6B70;            /* primary button, route, stops, checkmarks, "Offers this" chip */
+  --teal-deep: #175458;       /* teal text, primary hover */
+  --teal-tint-13: rgba(30, 107, 112, 0.13); /* soft buttons */
+  --teal-tint-22: rgba(30, 107, 112, 0.22); /* soft button hover */
+  --tb-red: #C42032;          /* H1, "you are here", errors, invalid input border; never a button */
+  --map-ground: #DCE6E5;      /* planner backdrop */
+
+  /* Data-only colors (Data page, urgent screen) */
+  --film: #0E1A22;
+  --film-muted: #A9B4BA;
+  --film-rule: #33434D;
+  --dot: #7A8C97;
+  --dot-on-film: #8FA1AC;
+  --tb-red-on-film: #F0646C;
+  --teal-on-film: #6FB5B9;
+  --paper-2: #E8E4DA;
+
+  /* v3 colors still used in places the README names (toggle text, solid-fallback edges) */
+  --paper: #F2F0EA;
+  --field: #FBFAF6;
+  --rule: #D9D5CB;
+
+  /* Glass (navigation and the Home planner sheet only) */
+  --glass-blur: blur(24px) saturate(1.5);
+  --glass-blur-sheet: blur(28px) saturate(1.5);
+  --header-glass-bg: rgba(255, 255, 255, 0.72);
+  --header-glass-edge: rgba(20, 33, 43, 0.12);
+  --tabbar-glass-bg: rgba(255, 255, 255, 0.68);
+  --tabbar-glass-edge: rgba(255, 255, 255, 0.7);
+  --tabbar-shadow: 0 10px 30px rgba(20, 33, 43, 0.16);
+  --sheet-glass-bg: rgba(255, 255, 255, 0.64);
+  --sheet-glass-edge: rgba(255, 255, 255, 0.75);
+  --sheet-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 20px 50px rgba(20, 33, 43, 0.16);
+
+  /* Typography */
+  /* --font-atkinson and --font-newsreader come from Astro's fonts config (astro.config.mjs):
+     the README stacks plus metric-matched fallbacks. */
+  --font-body: var(--font-atkinson);
+  --font-wordmark: var(--font-newsreader);
+  /* Home type roles, exact sizes as specced (default D1: consolidation is an open owner item) */
+  --text-h1: clamp(2.125rem, 1.7rem + 1.8vw, 2.875rem);         /* 34→46px, 700 / 1.06 / -0.02em */
+  --text-h2-route: clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem);     /* 24→30px, 700 / 1.2 / -0.01em */
+  --text-h2-nomatch: clamp(1.375rem, 1.25rem + 0.6vw, 1.75rem); /* 22→28px, 700 / 1.25 */
+  --text-h3-stop: clamp(1.25rem, 1.15rem + 0.4vw, 1.4375rem);   /* 20→23px, 700 / 1.25 */
+  --text-20: 20px; /* H3 "What to bring", primary button */
+  --text-19: 19px; /* lede, input text, facility name */
+  --text-18: 18px; /* base; choice rows, reassurance lines, links */
+  --text-17: 17px; /* labels, legend, soft buttons, body secondary, address */
+  --text-16: 16px; /* location note, hours, distance, teaser */
+  --text-15: 15px; /* chips, badges, footnotes */
+  --text-14: 14px; /* tab bar labels */
+
+  /* Radius */
+  --radius-sheet: 30px;  /* planner sheet, phone tab bar */
+  --radius-tab: 26px;    /* active tab pill */
+  --radius-group: 18px;  /* grouped lists */
+  --radius-input: 16px;  /* search input, select */
+  --radius-chip: 8px;    /* chips, badges */
+  --radius-capsule: 999px;
+  --radius-track: 3px;
+  --radius-toggle: 6px;  /* header language toggle */
+  --radius-skip: 4px;
+
+  /* Spacing (v3 steps) and layout */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-72: 72px;
+  --space-112: 112px;
+  --container: 1120px;
+  --container-wide: 1280px; /* header and footer */
+  --reading: 760px;
+  --reading-check: 640px;
+
+  /* Focus */
+  --focus-ring: 3px solid var(--ink);
+  --focus-ring-on-film: 3px solid var(--paper);
+}

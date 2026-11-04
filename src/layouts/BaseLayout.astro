@@ -1,0 +1,39 @@
+---
+// Page frame shared by every route. Step 2 adds the pre-paint script, skip link,
+// header, footer and hreflang links (PLAN §5).
+import { Font } from 'astro:assets';
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+export type Lang = 'en' | 'fil';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#F1F3F4" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="TB PH" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <Font cssVariable="--font-atkinson" preload={[{ weight: 400, style: 'normal' }, { weight: 700, style: 'normal' }]} />
+    <Font cssVariable="--font-newsreader" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

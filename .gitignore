@@ -1,6 +1,7 @@
 node_modules/
 dist/
 build/
+.astro/
 .next/
 coverage/
 .env*
@@ -9,3 +10,15 @@ coverage/
 *.log
 # Keep the raw design zip out of git; commit the unzipped files in design/
 *.zip
+
+# Written by scripts/prepare-data.mjs on every build
+public/data/
+src/generated/
+
+# Test output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+# Prototype-vs-build screenshot pairs (PLAN §5, visual check)
+visual-check/
