@@ -64,6 +64,10 @@
   - Shared `.h2` and `.footnotes` moved to `ui.css` (page stylesheets aren't on every page).
   - Synthetic build: 4,208 pages in 5.0 s, whole build 9 s, largest process 360 MB, machine peak 6.51 GB; `dist/` 118 MB.
   - Visual check vs `Place.dc.html?id=PH-DOTS-00002&stop=2` at 390/1280 EN and 390 FIL: identical positions and heights.
+- 4 Nov 2026: **lead approved step 6.** CSP: `blob:` may join `img-src` only if save-as-image needs it (never `data:`); revoke object URLs at once, keep the PNG in no cache or storage. File name: neutral `tbph-summary.png` (7.3 open item).
+- **Step 7 (Check) in progress** on `build/07-check`:
+  - Done: `src/content/check.ts` (9ac44b4; generated once from the prototype's objects with pack lines looked up; `res_A_find` is the D11 override), parity test now lists `src/content` at run time (Vitest's module cache had kept an old `import.meta.glob` list and silently skipped new dictionaries), `src/lib/check/flow.ts` + `tests/unit/check.test.ts` (5681b82).
+  - To do: `src/islands/CheckFlow.tsx` (owns `<main>`, always in-place switch; intro, question, urgent Film screen, results A–D with notes, card, Print = card only, Save as image via canvas + toBlob + download, share stubbed in tests), sticky Next above the tab bar, focus on each H1, Q10 TB-red question titles; page as `src/pages/[check].astro` + `fil/[check].astro` whose getStaticPaths returns nothing when `TBPH_CHECK=false` (Q9); remove `/check` from check-links PENDING; e2e incl. the §4.5 privacy test; visual check vs `Check.dc.html`.
 - Node 22.23.4 installed through nvm for this folder only and pinned in `.nvmrc` (owner said yes via the Account Admin session, 30 Oct 2026). nvm's default alias (`16`) and the Homebrew/global Node were left unchanged, because the KitaMo builders use them. Don't change them.
 
 ## Next
