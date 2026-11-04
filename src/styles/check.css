@@ -251,9 +251,10 @@
 /* Next stays in reach: above the floating tab bar on phones, at the bottom on desktop. */
 .next-bar {
   position: sticky;
-  /* 84px with the usual 81px tab bar, as specced; a taller bar (labels on more lines)
-     raises it by the difference, so the button never sits on the bar (B14). */
-  bottom: calc(var(--tabbar-h) + 3px + env(safe-area-inset-bottom));
+  /* README's 84px with a one-line tab bar: the bar's 10px off the bottom, 4px, and the
+     Next bar's 10px padding put the button 14px above the bar, however many lines its
+     labels take (B14, lead's ruling: a low tap on Next must not land on a tab). */
+  bottom: calc(var(--tabbar-h) + 14px + env(safe-area-inset-bottom));
   z-index: 5;
   margin: 0 -4px;
   padding: 10px 4px;

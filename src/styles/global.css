@@ -14,11 +14,11 @@ html {
   /* Capped by the window's height, so at high zoom (a 225px-tall window at 400%) a band is
      left to scroll into: WebKit doesn't scroll a focused element into view otherwise. */
   scroll-padding-top: min(80px, 30vh);
-  scroll-padding-bottom: min(calc(var(--tabbar-h) + 27px + env(safe-area-inset-bottom)), 40vh); /* 108px */
+  scroll-padding-bottom: min(calc(var(--tabbar-h) + 38px + env(safe-area-inset-bottom)), 40vh); /* 108px, one-line bar */
 }
 
 html:has(.next-bar) {
-  scroll-padding-bottom: min(calc(var(--tabbar-h) + 81px + env(safe-area-inset-bottom)), 50vh); /* 162px */
+  scroll-padding-bottom: min(calc(var(--tabbar-h) + 92px + env(safe-area-inset-bottom)), 50vh); /* 162px, with Next */
 }
 
 @media (min-width: 62.5em) {

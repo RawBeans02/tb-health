@@ -1,7 +1,7 @@
 // The sticky header and the floating tab bar never hide what they shouldn't (audit B10, B14):
-// link targets land below the header, Check's Next keeps the same clearance above the tab bar
-// (about 3px, as specced with the usual 81px bar) however many lines the tab labels take, the
-// footer clears it, and focus stays visible when zoomed.
+// link targets land below the header, Check's Next keeps 14px above the tab bar however many
+// lines the tab labels take (lead's ruling on B14), the footer clears it, and focus stays
+// visible when zoomed.
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
 
@@ -24,7 +24,7 @@ async function belowHeader(page: Page, selector: string) {
 test.describe('tab bar clearance (B14)', () => {
   for (const lang of ['en', 'fil'] as const) {
     for (const width of [360, 375, 390]) {
-      test(`${lang} at ${width}px: Next keeps its clearance above the tab bar; the footer clears it`, async ({ page }) => {
+      test(`${lang} at ${width}px: Next sits 14px above the tab bar; the footer clears it`, async ({ page }) => {
         // The danger-signs step: long enough that Next sticks above the tab bar.
         await page.setViewportSize({ width, height: 640 });
         await page.goto(lang === 'fil' ? '/fil/check' : '/check');
@@ -36,7 +36,7 @@ test.describe('tab bar clearance (B14)', () => {
         await expect(page.locator('main h1')).toBeFocused();
         const next = (await page.locator('.next-bar button').boundingBox())!;
         const bar = (await page.locator('.tab-bar').boundingBox())!;
-        expect(Math.round(bar.y - (next.y + next.height))).toBe(3);
+        expect(Math.abs(bar.y - (next.y + next.height) - 14)).toBeLessThanOrEqual(1);
 
         await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
         const last = (await page.locator('.site-footer-credit').boundingBox())!;
