@@ -152,11 +152,9 @@ export default function PlaceDetails({ place: p, lang, t, details, sample }: Pro
         </h2>
         <dl class="group inset-group">
           {details.map((d) => (
-            <div key={d.label}>
-              <div class="detail-row">
-                <dt>{d.label}</dt>
-                <dd>{d.value}</dd>
-              </div>
+            <div key={d.label} class="detail-row">
+              <dt>{d.label}</dt>
+              <dd>{d.value}</dd>
             </div>
           ))}
         </dl>

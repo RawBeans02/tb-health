@@ -773,16 +773,24 @@ html[data-online='false'] .offline-line {
 
 
 /* Rows with the separator inset on the text, as in the prototype. */
-.inset-group > li,
-.inset-group > div {
+.inset-group > li {
   padding-left: 16px;
 }
 
-.group.inset-group > li + li,
-.group.inset-group > div + div {
+.group.inset-group > li + li {
   border-top: 0;
 }
 
-.inset-group > * + * > * {
+.inset-group > li + li > * {
+  border-top: 1px solid var(--separator);
+}
+
+/* In a <dl> each row is the <div> holding its <dt> and <dd> (HTML allows no deeper
+   wrapper), so the row itself is inset and carries the separator. */
+dl.inset-group > div {
+  margin-left: 16px;
+}
+
+dl.inset-group > div + div {
   border-top: 1px solid var(--separator);
 }
