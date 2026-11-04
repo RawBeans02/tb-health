@@ -1,7 +1,7 @@
 {
  "meta": {
   "title": "TB PH claims registry",
-  "generated": "2026-10-30",
+  "generated": "2026-11-04",
   "count": 44,
   "rule": "Only show a claim with its source link. Numbers come from tb-ph-data.json. Regional snapshots come from different years and sources; always show the period."
  },
@@ -150,8 +150,8 @@
   {
    "id": "burden-trend",
    "topic": "burden",
-   "en": "Since 2015, our TB rate rose 13.6%. The world's fell 12.3%.",
-   "fil": "Mula 2015, tumaas nang 13.6% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang 12.3%.",
+   "en": "Since 2015, our TB rate rose 14%. The world's fell 12%.",
+   "fil": "Mula 2015, tumaas nang 14% ang antas ng TB sa atin. Sa buong mundo, bumaba ito nang 12%.",
    "sources": [
     "S1"
    ],
@@ -463,8 +463,8 @@
   {
    "id": "tx-dr",
    "topic": "treatment",
-   "en": "About 28,000 people developed drug-resistant TB in 2024, but only 7,549 were confirmed by a lab (27%).",
-   "fil": "Mga 28,000 katao ang nagkaroon ng drug-resistant TB noong 2024, pero 7,549 lang ang nakumpirma ng laboratoryo (27%).",
+   "en": "About 27,900 people developed drug-resistant TB in 2024, but only 7,549 were confirmed by a lab (27%).",
+   "fil": "Mga 27,900 katao ang nagkaroon ng drug-resistant TB noong 2024, pero 7,549 lang ang nakumpirma ng laboratoryo (27%).",
    "sources": [
     "S1"
    ],
@@ -670,8 +670,8 @@
   {
    "id": "target-endtb",
    "topic": "targets",
-   "en": "The world's 2025 milestone was to halve the TB rate and cut deaths by 75% from 2015. For the Philippines that meant 275 per 100,000 and about 7,000 deaths.",
-   "fil": "Ang pandaigdigang target para sa 2025 ay hatiin ang antas ng TB at bawasan nang 75% ang namamatay mula 2015. Para sa Pilipinas, 275 bawat 100,000 iyon at mga 7,000 na namatay.",
+   "en": "The world's 2025 milestone was to halve the TB rate and cut deaths by 75% from 2015. For the Philippines that meant 275 per 100,000 and about 7,500 deaths.",
+   "fil": "Ang pandaigdigang target para sa 2025 ay hatiin ang antas ng TB at bawasan nang 75% ang namamatay mula 2015. Para sa Pilipinas, 275 bawat 100,000 iyon at mga 7,500 na namatay.",
    "sources": [
     "S1"
    ],
