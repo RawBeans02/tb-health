@@ -21,18 +21,28 @@
   - Q3 premise corrected, Q2/Q4–Q8 reworded, new Q9–Q13, D23–D25.
 
   Results sent to the TB Health lead.
+- **4 Nov 2026: plan approved**, Q2/Q3 answered (`docs/decisions.md`, lead's file). PLAN.md marked approved on `plan/build-plan` (`ba3ee92`).
+- **4 Nov 2026: step 1 (scaffold) built** on `build/01-scaffold`, waiting for the lead's review:
+  - Astro 7.4.5 static (`trailingSlash: 'never'`, `build.format: 'file'`), Preact 11.1.1, TypeScript 6.0.3 strict, `security.csp` on (meta tag, hashes; img/font/connect `'self'` only, no OSM until Q5).
+  - `tokens.css` (all README tokens), `global.css` (reset, focus, links). Fonts through Astro's fonts API from the Fontsource packages, woff2 only, with metric-matched fallbacks.
+  - Icons copied to `public/icons/`; BaseLayout with the prototype's head tags; a placeholder `/`.
+  - `data/` copied from the handoff. `scripts/prepare-data.mjs` validates the data, writes the slimmed `public/data/facilities.json` and `src/generated/region-counts.json` (both git-ignored), with `--synthetic` for 2,100 fake rows. Place ids pass through unchanged as a **Q6 stub**. The gazetteer comes in step 3 with the ported core.
+  - Vitest (9 tests for prepare-data), Playwright (Chromium + WebKit, service workers blocked, fixed synthetic geolocation without permission), `scripts/serve-dist.mjs` (slashless files, 308 for `/x/` and `/x.html`, nearest `404.html`).
 - Node 22.23.4 installed through nvm for this folder only and pinned in `.nvmrc` (owner said yes via the Account Admin session, 30 Oct 2026). nvm's default alias (`16`) and the Homebrew/global Node were left unchanged, because the KitaMo builders use them. Don't change them.
 
 ## Next
-1. **Plan approved, 4 Nov 2026.** The owner approved `docs/PLAN.md` (as of `7ea78ff`) and answered Q2 and Q3; the lead recorded it in `docs/decisions.md` (`71fccf3`). That file is the lead's: read it, don't edit it. Where it and PLAN.md differ, it wins.
-2. Step 1 (scaffold) on branch `build/01-scaffold`, cut from `plan/build-plan`. When done, report to the lead: commits, build and empty-test-run output, the guard's peak-memory line, deviations. **Don't start step 2 until the lead has reviewed step 1.**
-3. Anything that depends on an open question (Q4–Q13) stops and goes to the lead rather than being chosen. Place-id derivation in `prepare-data.mjs` is Q6: stub it until Q6 is answered.
+1. **Wait for the lead's review of step 1.** Don't start step 2 until the lead says so. Pushes and owner questions go to the lead.
+2. Step 2 (shell + languages + 404) on `build/02-shell`, cut from `build/01-scaffold` once reviewed. Before its first browser test, install the missing Playwright browsers: `npx playwright install chromium webkit` (adds `webkit-2370` and `chromium-1248` to the shared `~/Library/Caches/ms-playwright`; the headless shell 1248 is already there). Log Q2a's toggle change in `docs/copy-overrides.md`.
+3. Step 2 note: Astro puts the CSP `<meta>` after the font `<style>` blocks in `<head>`, and a meta CSP only covers what comes after it. Put the pre-paint script after the CSP meta (or check where Astro places it) so it runs under the policy.
+4. Anything that depends on an open question (Q4–Q13) stops and goes to the lead rather than being chosen. Place-id derivation in `prepare-data.mjs` is Q6: stubbed until Q6 is answered.
 - Checkout: this checkout is mine and I own branch switching. The lead only edits `docs/decisions.md`, reviews with `git show`/`git diff`, and tells me before committing a decision by path on my current branch.
 - Git hygiene: stage commits by path (`git add <files>`), never `git add -A` or `git add .`, so the lead's files don't get swept in.
 
 ## How to run things
-- Every shell: `. ~/.nvm/nvm.sh && nvm use` (reads `.nvmrc`) before any node/npm command. Package manager is npm (ships with the pinned Node); leave the Homebrew pnpm alone.
-- Heavy jobs (build, Playwright, Lighthouse): `GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && npm run <script>'`.
+- Every shell: `. ~/.nvm/nvm.sh && nvm use` (reads `.nvmrc`) before any node/npm command. Package manager is npm; leave the Homebrew pnpm alone.
+- Fresh checkout: `npm ci` (the bundled npm 10.9.9 is fine for that). **Adding or updating packages: `npx -y npm@11 install …`**, because npm 10's installer crashes on this tree (`reading 'edgesOut'`). Pin exact versions.
+- Scripts: `npm run build` (prepare-data + astro build), `npm run build:synthetic` (2,100 fake facilities, for scale only; rebuild normally afterwards), `npm run check` (astro check), `npm test` (Vitest), `npm run test:e2e -- --project=chromium` (Playwright against `dist/`, build first), `npm run serve` (dist/ on http://127.0.0.1:4322).
+- Heavy jobs (check, build, tests, Playwright, Lighthouse), one guarded job each, one Playwright project per job: `GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && npm run <script>'`. Keep the guard's `peak … GB` line as evidence for each step.
 - View the prototype: `cd design/design_handoff_tb_ph/prototype && python3 -m http.server 8080` (it loads React and fonts from CDNs).
 
 ## Contacts
