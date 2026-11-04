@@ -21,6 +21,7 @@
   --teal-tint-22: rgba(30, 107, 112, 0.22); /* soft button hover */
   --teal-tint-14: rgba(30, 107, 112, 0.14); /* active tab pill in the phone tab bar */
   --on-teal: #FFFFFF;         /* text on Teal (primary button, "Offers this" chip) */
+  --on-ink: #FFFFFF;          /* text on Ink (info disc) */
   --tb-red: #C42032;          /* H1, "you are here", errors, invalid input border; never a button */
   --map-ground: #DCE6E5;      /* planner backdrop */
 

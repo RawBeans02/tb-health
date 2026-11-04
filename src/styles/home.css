@@ -1,0 +1,682 @@
+/* Home: the route planner (README:155–198). The island renders this markup; motion and
+   glass fallbacks are CSS so prerendered HTML needs no style attributes. */
+
+.planner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: -65px; /* under the glass header, so the map shows through it */
+  padding-top: 65px;
+}
+
+.planner-map {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--map-ground);
+}
+
+.planner-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.planner-map path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.planner-map .map-streets {
+  stroke: var(--surface);
+  stroke-width: 7;
+  opacity: 0.85;
+}
+
+.planner-map .map-casing {
+  stroke: var(--surface);
+  stroke-width: 42;
+  stroke-linejoin: round;
+}
+
+.planner-map .map-route {
+  stroke: var(--teal);
+  stroke-width: 24;
+  stroke-linejoin: round;
+}
+
+.map-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  width: clamp(48px, 6vw, 80px);
+  height: clamp(48px, 6vw, 80px);
+  background: var(--teal);
+  box-shadow: 0 0 0 8px var(--surface);
+}
+
+.map-dot--you {
+  left: 80%;
+  top: 9%;
+  width: 30px;
+  height: 30px;
+  background: var(--tb-red);
+  box-shadow: 0 0 0 7px var(--surface);
+}
+
+.map-dot--1 { left: 80%; top: 20%; }
+.map-dot--2 { left: 30%; top: 54%; }
+.map-dot--3 { left: 74%; top: 86%; }
+
+.planner-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: max(84px, calc(132px - 5vw)) clamp(12px, 4vw, 64px) clamp(28px, 5vw, 80px);
+}
+
+.planner-sheet {
+  max-width: 560px;
+  display: grid;
+  gap: 22px;
+  padding: clamp(20px, 4vw, 30px);
+  border-radius: var(--radius-sheet);
+  background: var(--sheet-glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur-sheet);
+  backdrop-filter: var(--glass-blur-sheet);
+  border: 1px solid var(--sheet-glass-edge);
+  box-shadow: var(--sheet-shadow);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .planner-sheet {
+    background: var(--surface);
+    border-color: var(--track);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .planner-sheet {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--surface);
+    border-color: var(--track);
+  }
+}
+
+.planner-block {
+  display: grid;
+  gap: 10px;
+}
+
+.planner-lede {
+  font-size: var(--text-19);
+  line-height: 1.4;
+}
+
+.field-label,
+.planner legend {
+  font-size: var(--text-17);
+  font-weight: 700;
+}
+
+.planner fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.planner legend {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.search {
+  position: relative;
+}
+
+.search svg {
+  stroke: var(--muted);
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search input {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 16px 0 48px;
+  border: 1.5px solid var(--control-edge);
+  border-radius: var(--radius-input);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-19);
+}
+
+.search input[aria-invalid='true'] {
+  border-color: var(--tb-red);
+}
+
+.locate {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 20px 0 16px;
+  border: 0;
+  border-radius: var(--radius-capsule);
+  background: var(--teal-tint-13);
+  color: var(--teal-deep);
+  font-size: var(--text-17);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.locate:hover {
+  background: var(--teal-tint-22);
+}
+
+.locate:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.locate-dot {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--tb-red);
+  box-shadow: 0 0 0 3px var(--surface);
+}
+
+.field-msg {
+  font-size: var(--text-17);
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.field-msg--error {
+  color: var(--tb-red);
+}
+
+.field-note {
+  font-size: var(--text-16);
+  line-height: 1.45;
+  color: var(--secondary);
+}
+
+/* "I need" rows: real radios, visually hidden; the row shows the focus ring. */
+.choice {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  cursor: pointer;
+}
+
+.choice input {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.choice-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.choice-text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 16px 10px 0;
+  font-size: var(--text-18);
+  line-height: 1.3;
+}
+
+.choice + .choice .choice-text {
+  border-top: 1px solid var(--separator); /* inset: text column only */
+}
+
+.choice.is-on .choice-text {
+  font-weight: 700;
+}
+
+.choice-check {
+  flex: none;
+  color: var(--teal);
+  font-size: var(--text-20);
+  font-weight: 700;
+}
+
+.route-glyph {
+  display: flex;
+  align-items: center;
+}
+
+.route-glyph span {
+  background: var(--control-edge);
+}
+
+.route-glyph .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.route-glyph .bar {
+  width: 6px;
+  height: 3px;
+}
+
+.choice--all.is-on .route-glyph span {
+  background: var(--teal);
+}
+
+.num-disc {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--control-edge);
+  background: var(--surface);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  font-size: var(--text-15);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.choice.is-included .num-disc {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: var(--on-teal);
+}
+
+.planner-actions {
+  display: grid;
+  gap: 6px;
+}
+
+.planner-actions .btn--primary {
+  width: 100%;
+  border: 0;
+  padding: 0 24px;
+  cursor: pointer;
+}
+
+.text-link {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 8px;
+  color: var(--teal-deep);
+  font-size: var(--text-18);
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+  color: var(--ink);
+}
+
+/* ---------- Results ---------- */
+
+.results {
+  max-width: var(--container);
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 56px) clamp(16px, 4vw, 64px) 8px;
+}
+
+.results-inner {
+  max-width: var(--reading);
+}
+
+.results-status {
+  font-size: var(--text-18);
+  color: var(--muted);
+}
+
+.results-error {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.results-error button {
+  border: 0;
+  cursor: pointer;
+}
+
+.no-match {
+  display: grid;
+  gap: 12px;
+}
+
+.h2 {
+  font-size: var(--text-h2-nomatch);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.route {
+  display: grid;
+  gap: 24px;
+}
+
+.route-heading {
+  font-size: var(--text-h2-route);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  max-width: 28em;
+}
+
+.results h2:focus {
+  outline: none;
+}
+
+.route-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.route-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 0 14px;
+  padding-bottom: 36px;
+}
+
+.route-step--origin {
+  padding-bottom: 28px;
+}
+
+.route-step--end {
+  padding-bottom: 0;
+}
+
+.rail,
+.rail-fill {
+  position: absolute;
+  left: 17px;
+  top: 18px;
+  bottom: -16px;
+  width: 6px;
+  border-radius: var(--radius-track);
+  background: var(--track);
+}
+
+.route-step--origin .rail,
+.route-step--origin .rail-fill {
+  top: 14px;
+}
+
+.rail-fill {
+  background: var(--teal);
+  transform-origin: top;
+  transition: transform 520ms cubic-bezier(0.3, 0.6, 0.2, 1);
+}
+
+/* Draw-in (README "Route draw-in"): segment i starts at i × 430ms; each stop disc fills
+   at (i + 1) × 430 − 80ms. */
+.route[data-drawn='false'] .rail-fill {
+  transform: scaleY(0);
+}
+
+.route-step[data-i='1'] .rail-fill { transition-delay: 430ms; }
+.route-step[data-i='2'] .rail-fill { transition-delay: 860ms; }
+.route-step[data-i='3'] .rail-fill { transition-delay: 1290ms; }
+
+.you-dot {
+  position: relative;
+  z-index: 2;
+  justify-self: center;
+  margin-top: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--tb-red);
+  box-shadow: 0 0 0 4px var(--canvas), 0 0 0 6px var(--tb-red);
+}
+
+.route-origin {
+  font-size: var(--text-18);
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.stop-disc {
+  position: relative;
+  z-index: 2;
+  justify-self: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--teal);
+  background: var(--teal);
+  color: var(--on-teal);
+  display: grid;
+  place-items: center;
+  font-size: var(--text-16);
+  font-weight: 700;
+  transition: background-color 260ms ease, color 260ms ease;
+}
+
+.route[data-drawn='false'] .stop-disc {
+  background: var(--surface);
+  color: var(--teal-deep);
+}
+
+.route-step[data-i='1'] .stop-disc { transition-delay: 350ms; }
+.route-step[data-i='2'] .stop-disc { transition-delay: 780ms; }
+.route-step[data-i='3'] .stop-disc { transition-delay: 1210ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-fill,
+  .stop-disc {
+    transition: none;
+  }
+}
+
+.stop-body {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.stop-title {
+  font-size: var(--text-h3-stop);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.stop-text {
+  font-size: var(--text-17);
+  line-height: 1.55;
+  color: var(--secondary);
+  max-width: 36em;
+}
+
+.facility {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 16px;
+}
+
+.facility-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 14px;
+}
+
+.facility-name {
+  font-size: var(--text-19);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.facility-name a {
+  color: var(--ink);
+  text-decoration-color: var(--link-underline);
+  text-underline-offset: 4px;
+}
+
+.facility-name a:hover {
+  color: var(--teal);
+}
+
+.facility-dist {
+  font-size: var(--text-16);
+  font-weight: 700;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.facility-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.facility-address {
+  font-size: var(--text-17);
+  line-height: 1.45;
+}
+
+.facility-hours {
+  font-size: var(--text-16);
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.facility-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding-top: 4px;
+}
+
+.facility-actions .btn--soft {
+  min-height: 46px;
+  padding: 0 18px;
+  font-size: var(--text-17);
+}
+
+.call-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 4px;
+  color: var(--teal-deep);
+  font-size: var(--text-17);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.call-link:hover {
+  text-decoration: underline;
+}
+
+.end-ring {
+  position: relative;
+  z-index: 2;
+  justify-self: center;
+  margin-top: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 7px solid var(--teal);
+  background: var(--canvas);
+}
+
+.end-body {
+  display: grid;
+  gap: 12px;
+}
+
+.bring-title {
+  font-size: var(--text-20);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.bring li {
+  padding: 13px 16px;
+  font-size: var(--text-17);
+  line-height: 1.45;
+}
+
+.route-notes {
+  display: grid;
+  gap: 8px;
+  padding-left: 54px;
+  font-size: var(--text-15);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 48em;
+}
+
+.route-notes a {
+  color: var(--muted);
+}
+
+.route-notes a:hover {
+  color: var(--ink);
+}
+
+/* ---------- Good to know ---------- */
+
+.reassure {
+  max-width: var(--container);
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(28px, 4vw, 44px) clamp(16px, 4vw, 64px) clamp(48px, 7vw, 80px);
+}
+
+.reassure-inner {
+  max-width: var(--reading);
+  display: grid;
+  gap: 12px;
+}
+
+.reassure .group li {
+  padding: 15px 18px;
+  font-size: var(--text-18);
+  line-height: 1.4;
+}
+
+.teaser {
+  padding: 0 18px;
+  font-size: var(--text-16);
+  line-height: 1.5;
+  color: var(--secondary);
+}
+
+.teaser a {
+  font-weight: 700;
+}

@@ -1,0 +1,26 @@
+---
+// Home: the route planner, the first full slice (PLAN §5 step 4). The island owns <main>;
+// the page switches language in place while a location fix is held (PLAN §4.2), so it
+// carries both languages' strings.
+import { TBPH_CHECK } from 'astro:env/server';
+import Planner from '../islands/Planner.tsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { care } from '../content/care.ts';
+import { home, homeSources } from '../content/home.ts';
+import { meta } from '../content/meta.ts';
+import { pick } from '../content/types.ts';
+import type { Lang } from '../lib/i18n.ts';
+import '../styles/home.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const strings = { en: { ...pick(home, 'en'), ...pick(care, 'en') }, fil: { ...pick(home, 'fil'), ...pick(care, 'fil') } };
+---
+<BaseLayout lang={lang} title={meta.homeTitle} description={meta.homeDescription} current="home" inPlace>
+  <main id="main" tabindex="-1">
+    <Planner client:load lang={lang} strings={strings} sources={homeSources} withCheck={TBPH_CHECK} />
+  </main>
+</BaseLayout>

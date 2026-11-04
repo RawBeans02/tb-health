@@ -62,3 +62,137 @@
   padding: 0 26px;
   font-size: var(--text-20);
 }
+
+.btn--soft.btn--md {
+  min-height: 48px;
+  padding: 0 20px;
+  font-size: var(--text-17);
+}
+
+/* ---------- White groups (README "Grouped list") ---------- */
+
+.group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-group);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.group > li + li {
+  border-top: 1px solid var(--separator);
+}
+
+/* A link row draws its separator inside its 52px, as the prototype does. */
+.group > .link-row-item {
+  border-top: 0;
+}
+
+.group > * + .link-row-item > .link-row {
+  border-top: 1px solid var(--separator);
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 16px;
+  color: var(--teal-deep);
+  font-size: var(--text-17);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link-row:hover {
+  background: var(--row-hover);
+  color: var(--ink);
+}
+
+.link-row-chevron {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--chevron);
+}
+
+/* ---------- Chips and badges ---------- */
+
+.chip,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 1.5px solid var(--teal);
+  border-radius: var(--radius-chip);
+  font-size: var(--text-15);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.chip {
+  gap: 7px;
+}
+
+.chip--yes {
+  background: var(--teal);
+  color: var(--on-teal); /* D3: white, not the v3 #F2F0EA */
+}
+
+.chip--referral {
+  color: var(--teal-deep);
+}
+
+.chip--unknown {
+  border: 1.5px dashed var(--muted);
+  color: var(--ink);
+}
+
+.chip-ring {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2.5px solid var(--teal);
+}
+
+.chip--unknown .chip-ring {
+  border: 2px dashed var(--muted);
+}
+
+.badge {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.badge--gov {
+  border-color: var(--teal);
+  color: var(--teal-deep);
+}
+
+/* ---------- Info line ---------- */
+
+.info-line {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 10px;
+  font-size: var(--text-17);
+  line-height: 1.5;
+  font-weight: 700;
+  max-width: 36em;
+}
+
+.info-disc {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+  display: grid;
+  place-items: center;
+  font-size: var(--text-14);
+  font-weight: 700;
+}

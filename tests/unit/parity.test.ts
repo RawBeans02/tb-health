@@ -58,6 +58,11 @@ describe('copy dictionaries', () => {
           const source =
             kind === 'pack' ? packLines[Number(where) - 1] : kind === 'readme' ? readmeLines[Number(where) - 1] : prototype(where);
           expect(source, `${ref} not found`).toBeDefined();
+          if (/\{(?!date\})\w+\}/.test(text)) {
+            // A template the prototype builds in code ('Hours: ' + h): each literal piece must be there.
+            for (const piece of text.split(/\{\w+\}/).map((p) => p.trim()).filter(Boolean)) expect(source).toContain(piece);
+            return;
+          }
           // {date} follows the data files, so any "30 October 2026"-style date matches it.
           const pattern = text.split('{date}').map(escape).join(String.raw`\d{1,2} \p{L}+ \d{4}`);
           expect(source).toMatch(new RegExp(pattern, 'u'));

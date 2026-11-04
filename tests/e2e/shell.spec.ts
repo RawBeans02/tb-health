@@ -1,6 +1,7 @@
 // Step 2: header, tab bar, footer, skip link, language links and 404s (PLAN §5).
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+import { chromeSnapshot } from './helpers.ts';
 
 const header = (page: Page) => page.locator('.site-header');
 const langLink = (page: Page, lang: 'en' | 'fil') => page.locator(`.site-header [data-lang-link="${lang}"]`);
@@ -168,6 +169,7 @@ test.describe('language links', () => {
     await page.goto('/fil');
     const fil = await chromeSnapshot(page);
     await page.goto('/');
+    await expect(page.locator('#tbph-places option').first()).toBeAttached(); // Home's island has hydrated
     const en = await chromeSnapshot(page);
 
     // An island holding state (e.g. a location fix on Home) sets this.
@@ -218,29 +220,3 @@ test.describe('404', () => {
     await expect(page.locator('h1')).toHaveText('Hindi namin mahanap ang pahinang iyon.');
   });
 });
-
-/** Everything outside <main> that a language switch changes, normalised for comparison. */
-function chromeSnapshot(page: Page) {
-  return page.evaluate(() => {
-    const walk = (el: Element): string => {
-      const attrs = [...el.attributes]
-        .map((a) => `${a.name}=${a.value}`)
-        .sort()
-        .join(' ');
-      const kids = [...el.childNodes]
-        .map((node) => (node.nodeType === Node.TEXT_NODE ? (node.textContent ?? '').trim() : node instanceof Element ? walk(node) : ''))
-        .filter(Boolean)
-        .join('');
-      return `<${el.localName} ${attrs}>${kids}</${el.localName}>`;
-    };
-    return {
-      lang: document.documentElement.lang,
-      title: document.title,
-      description: document.querySelector('meta[name="description"]')?.getAttribute('content'),
-      canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-      alternates: [...document.querySelectorAll('link[rel="alternate"]')].map((l) => `${l.getAttribute('hreflang')} ${l.getAttribute('href')}`),
-      header: walk(document.querySelector('.site-header')!),
-      footer: walk(document.querySelector('.site-footer')!),
-    };
-  });
-}
