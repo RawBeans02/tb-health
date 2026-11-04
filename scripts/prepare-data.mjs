@@ -4,6 +4,7 @@
 //
 //   node scripts/prepare-data.mjs              real facility file if present, else the 93-row sample
 //   node scripts/prepare-data.mjs --synthetic  ~2,100 obviously fake rows, for measuring scale only
+//   node scripts/prepare-data.mjs --worst-case the sample plus five fake worst-case rows (L2)
 //
 //   node scripts/prepare-data.mjs --accept-ids  also records this list's place ids in
 //                                               data/place-ids.json (after reviewing the report)
@@ -225,6 +226,48 @@ export function syntheticFacilities(sampleRows, count = SYNTHETIC_ROWS) {
   return rows.sort((a, b) => a.region_code.localeCompare(b.region_code, 'en', { numeric: true }));
 }
 
+// The worst cases the pages must hold (audit L2), as obviously fake rows added to the sample:
+// a very long hyphenated name with ñ and an apostrophe; phones with 'loc' and ';', a 7-digit
+// landline, an NCR 5xxx number and none at all; long hours; no coordinates. Never shipped.
+export function worstCaseFacilities(sampleRows) {
+  const ncr = sampleRows.find((row) => row.region_code === 'NCR') ?? sampleRows[0];
+  const other = sampleRows.find((row) => row.region_code !== 'NCR') ?? sampleRows[0];
+  const base = (row, n, patch) => ({
+    id: `SYN-WORST-${n}`,
+    name: `SYNTHETIC TEST CLINIC ${n}`,
+    sector: row.sector,
+    phone: '0000000000',
+    street: `${n} TEST STREET`,
+    city_municipality: row.city_municipality,
+    province_or_city_group: row.province_or_city_group,
+    region_code: row.region_code,
+    region: row.region,
+    accreditation_expiry: row.accreditation_expiry,
+    facility_kind: row.facility_kind,
+    svc_free_tb_medicines: 'yes',
+    svc_tb_test: 'onsite_or_referral',
+    svc_chest_xray: 'yes',
+    hours: '',
+    lat: row.lat,
+    lng: row.lng,
+    geo_precision: 'synthetic',
+    source_updated: row.source_updated,
+    ...patch,
+  });
+  return [
+    base(ncr, 1, {
+      name: "SYNTHETIC TEST SANTO NIÑO-DE'LA-PAZ MULTI-SPECIALTY TB-DOTS AND COMMUNITY HEALTH-AND-WELLNESS EXTENSION CLINIC",
+      street: '1234-B EXTRAORDINARILY-LONG-NAMED SYNTHETIC TEST STREET CORNER ANOTHER VERY LONG TEST AVENUE EXTENSION',
+      phone: '5000-0000 loc. 1234; 5000-0001 loc. 5678',
+      hours: 'Monday to Friday 7:00 AM to 5:00 PM; Saturday 8:00 AM to 12:00 NN; closed on Sundays and holidays except for synthetic test emergencies',
+    }),
+    base(other, 2, { phone: '000-0000' }),
+    base(ncr, 3, { phone: '5100-0000' }),
+    base(other, 4, { phone: '' }),
+    base(other, 5, { lat: null, lng: null }),
+  ];
+}
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
@@ -241,13 +284,14 @@ function kb(bytes) {
 }
 
 function main() {
-  const synthetic = process.argv.includes('--synthetic');
+  const worst = process.argv.includes('--worst-case');
+  const synthetic = process.argv.includes('--synthetic') || worst;
   const realPath = join(dataDir, 'tb-dots-facilities.json');
   const samplePath = join(dataDir, 'tb-dots-facilities-SAMPLE.json');
   const sample = !synthetic && !existsSync(realPath);
   const sourcePath = synthetic || sample ? samplePath : realPath;
   const source = readJson(sourcePath);
-  const rows = synthetic ? syntheticFacilities(source.facilities) : source.facilities;
+  const rows = worst ? [...source.facilities, ...worstCaseFacilities(source.facilities)] : synthetic ? syntheticFacilities(source.facilities) : source.facilities;
 
   const failures = [];
   if (!Array.isArray(rows) || rows.length === 0) failures.push('facility list is empty');

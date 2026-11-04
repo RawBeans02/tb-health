@@ -7,6 +7,7 @@ import {
   regionCounts,
   slim,
   syntheticFacilities,
+  worstCaseFacilities,
   validateAliases,
   validateClaims,
   validateFacilities,
@@ -139,5 +140,18 @@ describe('place ids (Q6)', () => {
     expect(validateAliases({ old: 'a' }, ids)).toEqual([]);
     expect(validateAliases({ old: 'gone' }, ids)).toEqual([expect.stringContaining('no place has that id')]);
     expect(validateAliases({ b: 'a' }, ids)).toEqual([expect.stringContaining('is a current place id')]);
+  });
+});
+
+describe('worstCaseFacilities (audit L2)', () => {
+  const rows = worstCaseFacilities(sample.facilities);
+
+  it('adds five valid, obviously fake rows with the hard cases', () => {
+    expect(rows).toHaveLength(5);
+    expect(validateFacilities([...sample.facilities, ...rows]).errors).toEqual([]);
+    for (const r of rows) expect(r.name).toMatch(/^SYNTHETIC TEST /);
+    expect(rows[0].name).toMatch(/Ñ.*'/);
+    expect(rows.map((r) => r.phone)).toEqual(['5000-0000 loc. 1234; 5000-0001 loc. 5678', '000-0000', '5100-0000', '', '0000000000']);
+    expect(rows[4].lat).toBeNull();
   });
 });

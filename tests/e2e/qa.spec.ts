@@ -1,11 +1,20 @@
 // Step 13: QA hardening (PLAN §5). The prototype's qa-harness.html checks as a matrix (9 pages ×
 // 4 widths × EN/FIL), then axe on every page and the main interactive states.
+import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
 
-const PLACE = '/place/bangued-rural-health-unit-abra?stop=2&need=all&near=Bangued';
-const PAGES = ['/', '/places', PLACE, '/check', '/learn', '/data', '/about', '/no-such-page', '/install'];
+const facilities = (JSON.parse(readFileSync('public/data/facilities.json', 'utf8')) as { facilities: { id: string; name: string }[] }).facilities;
+// The sample's Bangued page, or the first place when a synthetic fixture replaced the sample.
+const PLACE = facilities.some((r) => r.id === 'bangued-rural-health-unit-abra')
+  ? '/place/bangued-rural-health-unit-abra?stop=2&need=all&near=Bangued'
+  : `/place/${facilities[0].id}?stop=2&need=all`;
+// With the worst-case fixture built (npm run build:worst-case, audit L2), its few synthetic
+// place pages join the matrix; the 2,100-row scale fixture's don't.
+const synthetic = facilities.filter((r) => r.name.startsWith('SYNTHETIC'));
+const WORST = synthetic.length <= 5 ? synthetic.map((r) => `/place/${r.id}?stop=1`) : [];
+const PAGES = ['/', '/places', PLACE, '/check', '/learn', '/data', '/about', '/no-such-page', '/install', ...WORST];
 const WIDTHS = [320, 390, 768, 1280];
 const fil = (path: string) => (path === '/' ? '/fil' : `/fil${path}`);
 
