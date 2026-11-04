@@ -166,15 +166,16 @@
   font-weight: 700;
 }
 
-.map-popup-name {
+/* .map first: Leaflet's own link colour (.leaflet-container a) is otherwise more specific (B36). */
+.map .map-popup-name {
   font-weight: 700;
   font-size: var(--text-15);
-  color: var(--teal-deep);
+  color: var(--map-popup-link);
 }
 
-.map-popup-address {
+.map .map-popup-address {
   margin-top: 4px;
   font-size: var(--text-14);
-  color: var(--ink);
+  color: var(--map-popup-text);
 }
 

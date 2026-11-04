@@ -38,6 +38,11 @@
   --paper-2: #E8E4DA;
   --on-film: #FFFFFF;         /* text on Film (urgent screen) */
 
+  /* The map stays light in both colour schemes, like its markers (V2): never give these a
+     dark value. */
+  --map-popup-link: #175458;
+  --map-popup-text: #14212B;
+
   /* v3 colors still used in places the README names (toggle text, solid-fallback edges) */
   --paper: #F2F0EA;
   --field: #FBFAF6;

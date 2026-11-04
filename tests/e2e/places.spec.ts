@@ -433,3 +433,19 @@ test('long press: no selection on tabs, segments and the switch; content stays s
   for (const control of ['.tab-bar a', '.segmented button', '.switch']) expect(await select(control), control).toBe('none');
   for (const content of ['.footnotes p', '.facility-name a', 'main h1']) expect(await select(content), content).not.toBe('none');
 });
+
+test('a map popup keeps its colours, not Leaflet\'s link blue (audit B36)', async ({ page }) => {
+  await ready(page);
+  await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+  await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
+  // A popup's content as placesMap.ts builds it, inside the map, where Leaflet's
+  // `.leaflet-container a` applies.
+  await page.evaluate(() => {
+    const box = document.createElement('div');
+    box.className = 'leaflet-popup-content';
+    box.innerHTML = '<a class="map-popup-name" href="#">Name</a><div class="map-popup-address">Address</div>';
+    document.querySelector('.leaflet-container')!.append(box);
+  });
+  await expect(page.locator('.leaflet-popup-content .map-popup-name')).toHaveCSS('color', 'rgb(23, 84, 88)');
+  await expect(page.locator('.leaflet-popup-content .map-popup-address')).toHaveCSS('color', 'rgb(20, 33, 43)');
+});
