@@ -18,8 +18,12 @@ const today = new Date().toISOString().slice(0, 10);
 const KNOWN = [
   'Sakay.ph deep links [VERIFY] (Place, step 6). (DOH 1555 was verified by the owner, V4.)',
   'The name "TB PH" is a placeholder until stakeholders choose one (pack line 3).',
-  'WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11).',
+  'WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, datapage.method2.',
+  'Reuse terms for the WHO and PhilHealth data (licence and attribution wording) are not recorded yet.',
 ];
+
+// Strings that still mention the symptom check, which a build without Check (Q9) leaves in.
+const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription'];
 
 function isStr(value) {
   return value && typeof value === 'object' && 'en' in value && 'fil' in value && 'origin' in value && Array.isArray(value.src);
@@ -64,6 +68,10 @@ for (const flag of ['REVIEW', 'VERIFY', 'PLACEHOLDER']) {
 }
 const filReview = all.filter((s) => s.flags?.includes('FIL-REVIEW'));
 queues.push(`Filipino review: ${filReview.length} strings not from the pack (D10).`);
+queues.push(`Filipino register pass: ${all.filter((s) => s.origin === 'pack').length} pack strings, for one consistent register across pack and review copy.`);
+// V3: no em dashes in copy. Listed for the owner, never reworded here.
+const dashes = all.filter((s) => s.en.includes('\u2014') || s.fil.includes('\u2014'));
+if (dashes.length) decide.push(`Em dashes (V3), for the owner or the v7 wording: ${dashes.map((s) => s.id).join(', ')}.`);
 const overrides = all.filter((s) => s.origin === 'override');
 queues.push(`Copy overrides for the owner to confirm: ${overrides.length} strings (docs/copy-overrides.md).`);
 
@@ -97,6 +105,7 @@ if (!home) {
     blocking.push('Check is in the nav, but its clinical review is pending: finish the review, or build with TBPH_CHECK=false (Q9). Learn L6 [REVIEW] too.');
   } else {
     decide.push('Check is left out of this build (TBPH_CHECK=false, Q9). Learn L6 [REVIEW] still needs the clinical review.');
+    blocking.push(`Without Check, these strings still mention it; the owner rewords or drops them (Q9): ${CHECK_MENTIONS.join(', ')}.`);
   }
 }
 
