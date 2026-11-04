@@ -1,5 +1,17 @@
-// Step 9 (charts and TB in numbers): the Data page (PLAN §5).
+// Step 9: the Data page (PLAN §5): the dot story, the charts and TB in numbers.
+import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+
+/**
+ * Scrolls to a chart panel and waits for the charts island to hydrate: it loads when
+ * scrolled into view (client:visible), and the panels sit below the dot story.
+ */
+async function panel(page: Page, id: string) {
+  const section = page.locator(`#${id}`);
+  await section.scrollIntoViewIfNeeded();
+  await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+  return section;
+}
 
 test.describe('Data', () => {
   test('twenty chart panels, each with a labelled chart and a table on request', async ({ page }) => {
@@ -8,7 +20,7 @@ test.describe('Data', () => {
     await expect(panels).toHaveCount(20);
     for (const id of ['d1', 'd5', 'd14', 'd20']) await expect(page.locator(`#${id} h2`)).not.toBeEmpty();
     for (const svg of await page.locator('.chart svg').all()) await expect(svg).toHaveAttribute('aria-label', /.+/);
-    const d1 = page.locator('#d1');
+    const d1 = await panel(page, 'd1');
     const button = d1.getByRole('button', { name: 'View as table' });
     await expect(button).toHaveAttribute('aria-expanded', 'false');
     await button.click();
@@ -33,8 +45,7 @@ test.describe('Data', () => {
 
   test('d5 switches between estimated and notified cases', async ({ page }) => {
     await page.goto('/data');
-    const d5 = page.locator('#d5');
-    await d5.scrollIntoViewIfNeeded();
+    const d5 = await panel(page, 'd5');
     const toggle = d5.locator('.panel-toggle button');
     await expect(toggle.first()).toHaveAttribute('aria-pressed', 'true');
     const before = await d5.locator('.chart svg').first().innerHTML();
@@ -68,11 +79,130 @@ test.describe('Data', () => {
     }
   });
 
+  test('"Back to top" goes to the charts intro, below the dot story', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/data');
+    await page.locator('#d3').scrollIntoViewIfNeeded();
+    await page.locator('#d3').getByRole('link', { name: 'Back to top' }).click();
+    await expect(page.locator('#top')).toBeFocused();
+    await expect.poll(() => page.locator('#top').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBe(80);
+  });
+
   test('has no sideways scroll at 320px; wide tables scroll inside their region', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     await page.goto('/fil/data');
-    await page.locator('#d4').scrollIntoViewIfNeeded();
-    await page.locator('#d4').getByRole('button', { name: 'Ipakita bilang talaan' }).click();
+    await (await panel(page, 'd4')).getByRole('button', { name: 'Ipakita bilang talaan' }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  });
+});
+
+test.describe('Dot story', () => {
+  const canvas = (page: Page) => page.locator('#story canvas');
+  const legend = (page: Page) => page.locator('.story-legend > span');
+
+  /** Scrolls a beat's text to the middle of the window, past the trigger line. */
+  async function toBeat(page: Page, n: number) {
+    await page.locator(`#beat-${n} [data-beat]`).evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  }
+
+  /** A fingerprint of the canvas pixels, and how many are TB red and ink. */
+  function pixels(page: Page) {
+    return canvas(page).evaluate(async (c: HTMLCanvasElement) => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const data = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data;
+      let hash = 0;
+      let red = 0;
+      let ink = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        hash = (hash * 31 + data[i] + data[i + 1] * 7 + data[i + 2] * 13 + data[i + 3]) | 0;
+        if (data[i + 3] > 200 && data[i] > 180 && data[i + 1] < 60 && data[i + 2] < 70) red++;
+        if (data[i + 3] > 200 && data[i] < 30 && data[i + 1] < 45 && data[i + 2] < 55) ink++;
+      }
+      return { hash, red, ink };
+    });
+  }
+
+  test('opens on the field: beat 1 from the pack, prerendered, and a labelled canvas', async ({ page }) => {
+    await page.goto('/data');
+    const h1 = page.locator('main h1');
+    await expect(h1).toHaveText('In 2024, about 724,000 Filipinos fell ill with TB.');
+    await expect(h1).toHaveCSS('color', 'rgb(196, 32, 50)');
+    await expect(canvas(page)).toHaveAttribute('role', 'img');
+    await expect(canvas(page)).toHaveAttribute('aria-label', 'A field of 724 dots. Each dot is 1,000 people who fell ill with TB in 2024.');
+    await expect(legend(page)).toHaveText(['Fell ill', '1 dot = 1,000 people']);
+    await expect(page.locator('#beat-5 .visually-hidden li')).toHaveCount(11);
+    await expect(page.locator('#beat-5 .visually-hidden li').first()).toHaveText('Philippines: 625');
+    await expect(page.locator('#beat-6 .visually-hidden li')).toHaveText(['Philippines: +13.6%', 'World: −12.3%']);
+  });
+
+  test('each beat recolours the same field as its text scrolls in; reduced motion shows the end state at once', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/data');
+    await expect(canvas(page)).toHaveAttribute('aria-label', /^A field of 724 dots/);
+    expect((await pixels(page)).red).toBe(0);
+
+    await toBeat(page, 2);
+    await expect(canvas(page)).toHaveAttribute('aria-label', 'The same field. About two dots fall ill every day.');
+
+    await toBeat(page, 3);
+    await expect(canvas(page)).toHaveAttribute('aria-label', '179 of the 724 dots are hollow: people who were never found.');
+    await expect(legend(page)).toHaveText(['Fell ill', 'Never found', '1 dot = 1,000 people']);
+    const missed = await pixels(page);
+    expect(missed.red).toBeGreaterThan(500);
+    await page.waitForTimeout(1600);
+    expect((await pixels(page)).hash, 'nothing moves under reduced motion').toBe(missed.hash);
+
+    await toBeat(page, 4);
+    await expect(canvas(page)).toHaveAttribute('aria-label', '37 dots are solid ink: people who died.');
+    await expect(legend(page)).toHaveText(['Fell ill', 'Never found', 'Died', '1 dot = 1,000 people']);
+    expect((await pixels(page)).ink).toBeGreaterThan((missed.ink || 0) + 500);
+
+    await toBeat(page, 5);
+    await expect(canvas(page)).toHaveAttribute('aria-label', 'Bar chart of TB rates per 100,000 people in Southeast Asia, 2024. The Philippines is highest, at 625.');
+    await expect(page.locator('.story-legend')).toHaveCount(0);
+
+    await toBeat(page, 6);
+    await expect(canvas(page)).toHaveAttribute('aria-label', "Since 2015, the Philippines' TB rate rose 13.6%, while the world's fell 12.3%.");
+  });
+
+  test('animates between beats when motion is allowed', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/data');
+    await page.waitForTimeout(1600);
+    await toBeat(page, 3);
+    await expect(canvas(page)).toHaveAttribute('aria-label', /hollow/);
+    const early = await pixels(page);
+    await page.waitForTimeout(1600);
+    const late = await pixels(page);
+    expect(late.hash).not.toBe(early.hash);
+    expect(late.red).toBeGreaterThan(500);
+  });
+
+  test('stacks the stage above the text on a phone, with nothing hidden under it', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/data');
+    const stage = await page.locator('.story-stage').boundingBox();
+    const h1 = await page.locator('main h1').boundingBox();
+    expect(stage!.y).toBe(65);
+    expect(stage!.width).toBe(390);
+    expect(h1!.y).toBeGreaterThanOrEqual(stage!.y + stage!.height);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  });
+
+  test('ends on the turn: check, find care, and the sources, in both languages', async ({ page }) => {
+    for (const [path, check, find, home, h2] of [
+      ['/data', 'Check your symptoms', 'Find TB care near you', '/', 'TB is curable. Testing and treatment are free at public health centers.'],
+      ['/fil/data', 'Suriin ang iyong sintomas', 'Hanapin ang gamutan malapit sa iyo', '/fil', 'Nagagamot ang TB. Libre ang pagsusuri at gamutan sa mga pampublikong health center.'],
+    ] as const) {
+      await page.goto(path);
+      const turn = page.locator('#turn');
+      await expect(turn.locator('h2')).toHaveText(h2);
+      await expect(turn.getByRole('link', { name: check })).toHaveAttribute('href', path.replace('data', 'check'));
+      await expect(turn.getByRole('link', { name: find })).toHaveAttribute('href', home);
+      await expect(turn.locator('.turn-sources a')).toHaveAttribute('href', '#charts');
+    }
+    await expect(page.locator('.turn-sources')).toHaveText('Pinagmulan: WHO Global Tuberculosis Report 2025 (tantiya para sa 2024), DOH. Detalye sa pahinang Datos.');
+    await expect(canvas(page)).toHaveAttribute('aria-label', 'Isang hanay ng 724 tuldok. Bawat tuldok ay 1,000 taong nagkasakit ng TB noong 2024.');
   });
 });

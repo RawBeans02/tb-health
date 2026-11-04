@@ -1,17 +1,23 @@
 ---
-// The data (PLAN §5 step 9). The charts are one island, prerendered at a default width and
-// re-laid out at the real width (D13); everything else is static. Statistics and claims are
-// built in (D12). The dot story joins at the top in step 9d.
+// The data (PLAN §5 step 9). The dot story comes first: its text beats are static and its
+// stage is an island. The charts are one island, prerendered at a default width and re-laid
+// out at the real width (D13); everything else is static. Statistics and claims are built in
+// (D12).
+import { TBPH_CHECK } from 'astro:env/server';
 import DataCharts from '../islands/DataCharts.tsx';
+import DotStory from '../islands/DotStory.tsx';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import claims from '../../data/claims.json' with { type: 'json' };
+import stats from '../../data/tb-ph-data.json' with { type: 'json' };
 import regionCounts from '../generated/region-counts.json' with { type: 'json' };
 import { charts } from '../content/charts.ts';
 import { dataPage } from '../content/datapage.ts';
+import { dotStage, dotStory } from '../content/dotstory.ts';
 import { meta } from '../content/meta.ts';
 import { pick } from '../content/types.ts';
 import { readFacilities } from '../lib/build-data.ts';
-import type { Lang } from '../lib/i18n.ts';
+import { storyData } from '../lib/dotstory.ts';
+import { href, type Lang } from '../lib/i18n.ts';
 import { italics } from '../lib/learn.ts';
 import '../styles/data.css';
 
@@ -21,6 +27,10 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = pick(dataPage, lang);
+const ts = pick(dotStory, lang);
+const tStage = pick(dotStage, lang);
+const story = storyData(stats);
+const [sourcesBefore, sourcesAfter] = ts.b7_sources.split('{link}');
 const tx = pick(charts, lang);
 const facilities = readFacilities();
 const regions = {
@@ -36,6 +46,72 @@ const title = { en: `${dataPage.h2.en} — TB PH`, fil: `${dataPage.h2.fil} — 
 ---
 <BaseLayout lang={lang} title={title} description={meta.dataDescription} current="data">
   <main id="main" tabindex="-1">
+    <section id="story" class="story">
+      <DotStory client:visible lang={lang} d={story} tx={tStage} />
+      <div class="story-text">
+        <div id="beat-1" class="story-step" data-anchor>
+          <div class="story-beat story-beat--stack" data-beat="0">
+            <h1>{ts.b1_h1}</h1>
+            <p class="story-lead">{ts.b1_line}</p>
+            <p class="story-small">{ts.b1_small}</p>
+          </div>
+        </div>
+        <div id="beat-2" class="story-step" data-anchor>
+          <div class="story-beat" data-beat="1">
+            <p class="story-big">{ts.b2}</p>
+          </div>
+        </div>
+        <div id="beat-3" class="story-step" data-anchor>
+          <div class="story-beat story-beat--stack" data-beat="2">
+            <h2>{ts.b3_h2}</h2>
+            <p class="story-body">{ts.b3_line}</p>
+          </div>
+        </div>
+        <div id="beat-4" class="story-step" data-anchor>
+          <div class="story-beat" data-beat="3">
+            <h2>{ts.b4_h2}</h2>
+          </div>
+        </div>
+        <div id="beat-5" class="story-step" data-anchor>
+          <div class="story-beat" data-beat="4">
+            <h2>{ts.b5_h2}</h2>
+            <div class="visually-hidden">
+              <p>{ts.seaCaption}</p>
+              <ul>
+                {story.sea.map((c) => <li>{`${c.iso === 'PHL' ? tStage.ph : c.name}: ${c.rate.toLocaleString('en-US')}`}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div id="beat-6" class="story-step" data-anchor>
+          <div class="story-beat" data-beat="5">
+            <h2>{ts.b6_h2}</h2>
+            <div class="visually-hidden">
+              <p>{ts.change}</p>
+              <ul>
+                <li>{`${tStage.ph}: +${story.ph.toFixed(1)}%`}</li>
+                <li>{`${tStage.world}: −${Math.abs(story.world).toFixed(1)}%`}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="turn" class="turn" data-anchor>
+      <div class="turn-wrap">
+        <div class="turn-inner">
+          <h2>{ts.b7_h2}</h2>
+          <p class="story-lead">{ts.b7_line}</p>
+          <div class="turn-actions">
+            {TBPH_CHECK && <a class="btn btn--primary" href={href('check', lang)}>{ts.b7_check}</a>}
+            <a class="btn btn--soft" href={href('home', lang)}>{ts.b7_find}</a>
+          </div>
+          <p class="turn-sources">{sourcesBefore}<a href="#charts">{ts.b7_link}</a>{sourcesAfter}</p>
+        </div>
+      </div>
+    </section>
+
     <div id="charts" class="data">
       <div id="top" class="data-top" data-anchor tabindex="-1">
         <div class="data-intro">

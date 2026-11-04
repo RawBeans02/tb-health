@@ -4,9 +4,12 @@
 document.addEventListener('click', (event) => {
   const link = event.target instanceof Element ? event.target.closest('[data-to-top]') : null;
   if (!link) return;
+  const top = document.getElementById('top');
+  if (!top) return;
   event.preventDefault();
-  scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-  document.getElementById('top')?.focus({ preventScroll: true });
+  // To the charts' intro (below the dot story), clear of the sticky header.
+  scrollTo({ top: top.getBoundingClientRect().top + scrollY - 80, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  top.focus({ preventScroll: true });
 });
 
 const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-topic]')];

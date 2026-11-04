@@ -31,5 +31,9 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 - **Pack :321 and :328 (result A buttons):** "Find a TB-DOTS center" / "Hanapin ang TB-DOTS center".
 - **README:226 and the prototype (ship):** "Plan my route to a test" / "Planuhin ang daan papunta sa pagsusuri", the solid button on results A, B and C, leading to the planner with the whole route (`/?need=all`, or `/fil?need=all`).
 
+### `dotStory.b7_find`: "Find TB care near you" (step 9)
+- **Pack :81 and :84 (dot story, beat 7 buttons):** "Find a TB-DOTS center" / "Hanapin ang TB-DOTS center".
+- **README:236 and the prototype (ship):** "Find TB care near you" / "Hanapin ang gamutan malapit sa iyo", the soft button beside "Check your symptoms" at the end of the dot story. It leads to the planner (`/`, or `/fil`), like Learn's L5 button with the same words.
+
 ## Still to come (added with their steps)
 - Other 23 vs 30 October dates in page copy (steps 8–10).
