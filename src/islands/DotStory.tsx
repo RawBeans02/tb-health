@@ -44,9 +44,21 @@ export default function DotStory({ lang, d, tx }: Props) {
       measured = true;
       check();
     };
+    // Scroll work only while the story is near the screen (audit L3): off it, reading the
+    // beats' positions every frame would cost layout for nothing.
+    let near = true;
+    const story = box.closest<HTMLElement>('.story') ?? box;
+    const presence = new IntersectionObserver(
+      ([entry]) => {
+        near = entry.isIntersecting;
+        if (near) check();
+      },
+      { rootMargin: '200px 0px' },
+    );
+    presence.observe(story);
     let scrollFrame = 0;
     const onScroll = () => {
-      if (!scrollFrame) scrollFrame = requestAnimationFrame(() => ((scrollFrame = 0), check()));
+      if (near && !scrollFrame) scrollFrame = requestAnimationFrame(() => ((scrollFrame = 0), check()));
     };
     const snap = () => engine.go(current, true);
     const recolour = () => {
@@ -66,6 +78,7 @@ export default function DotStory({ lang, d, tx }: Props) {
 
     return () => {
       observer.disconnect();
+      presence.disconnect();
       removeEventListener('scroll', onScroll);
       removeEventListener('resize', onScroll);
       motion.removeEventListener('change', snap);
