@@ -24,9 +24,10 @@
 - Node 22.23.4 installed through nvm for this folder only and pinned in `.nvmrc` (owner said yes via the Account Admin session, 30 Oct 2026). nvm's default alias (`16`) and the Homebrew/global Node were left unchanged, because the KitaMo builders use them. Don't change them.
 
 ## Next
-1. Wait for the owner to approve `docs/PLAN.md` and answer §7.1 (Q2 and Q3 at least). Approval, answers and next tasks come from the **TB Health** lead session. Don't poll or schedule /loop wakeups: the lead messages when there's news.
-2. The lead records the owner's answers in `docs/decisions.md`. **That file is the lead's: read it, don't edit it.** Update PLAN.md to match the answers.
-3. Step 1 (scaffold) on branch `build/01-scaffold`, only after the lead says the owner approved. The lead will suggest working in a separate git worktree, so we aren't both editing this checkout.
+1. **Plan approved, 4 Nov 2026.** The owner approved `docs/PLAN.md` (as of `7ea78ff`) and answered Q2 and Q3; the lead recorded it in `docs/decisions.md` (`71fccf3`). That file is the lead's: read it, don't edit it. Where it and PLAN.md differ, it wins.
+2. Step 1 (scaffold) on branch `build/01-scaffold`, cut from `plan/build-plan`. When done, report to the lead: commits, build and empty-test-run output, the guard's peak-memory line, deviations. **Don't start step 2 until the lead has reviewed step 1.**
+3. Anything that depends on an open question (Q4–Q13) stops and goes to the lead rather than being chosen. Place-id derivation in `prepare-data.mjs` is Q6: stub it until Q6 is answered.
+- Checkout: this checkout is mine and I own branch switching. The lead only edits `docs/decisions.md`, reviews with `git show`/`git diff`, and tells me before committing a decision by path on my current branch.
 - Git hygiene: stage commits by path (`git add <files>`), never `git add -A` or `git add .`, so the lead's files don't get swept in.
 
 ## How to run things
@@ -35,14 +36,14 @@
 - View the prototype: `cd design/design_handoff_tb_ph/prototype && python3 -m http.server 8080` (it loads React and fonts from CDNs).
 
 ## Contacts
-- **Lead: the "TB Health" desktop session** in `~/Documents/tb-health`, at `uds:/tmp/cc-socks/22329.sock` (4 Nov 2026). It leads the project and talks to the owner directly. Send it review results, questions and status, and take tasks from it. Batch questions into one message.
-- **Account Admin:** only for Mac problems or pushes. Its address was `uds:/tmp/cc-socks/19695.sock` on 4 Nov 2026 (`2530.sock` is stale).
+- **Lead: the "TB Health" desktop session** in `~/Documents/tb-health`, at `uds:/tmp/cc-socks/22329.sock` (4 Nov 2026). It leads the project and talks to the owner directly. Send it review results, questions, status, **pushes and owner questions** (from 4 Nov 2026), and take tasks from it. Batch questions into one message.
+- **Account Admin:** only for Mac problems (pushes go through the lead from 4 Nov 2026). Its address was `uds:/tmp/cc-socks/19695.sock` on 4 Nov 2026 (`2530.sock` is stale).
 - Socket addresses change when a session restarts, so reply to the `from` address of each session's latest message. These sessions don't show in `ListAgents`. Never send TB Health questions to KitaMo sessions.
 - The gh account on this Mac has read access only, so pushes stay with the owner.
 - This builder is full-time on TB Health (the owner retired its KitaMo session, 4 Nov 2026). The KitaMo rules in `CLAUDE.md` still apply.
 
 ## Open questions
-- `docs/PLAN.md` §7.1 (revised 4 Nov 2026). The original Q2–Q8 were relayed to the owner by the Account Admin on 30 Oct 2026; the revised list goes through the TB Health lead.
-  - Before I start: Q2 language URLs (incl. toggle links and the saved-choice redirect), Q3 copy source (incl. who supplies the missing Filipino descriptions, and whether a newer content pack exists).
+- `docs/PLAN.md` §7.1. Q1–Q3 answered (Q2, Q3 on 4 Nov 2026, see `docs/decisions.md`). Open questions go through the TB Health lead, who asks the owner before the steps that need them:
   - Before specific steps: Q4 URL privacy and location (incl. bare place links, Place distance), Q5 OSM tiles + who writes the privacy text, Q6 facility data and ids, Q7 host/account/domain/deploy model, Q9 launching without Check, Q10 Check question title colour.
   - Before launch: Q8 full facility list (Nominatim, OSM credit), Q11 WHO 2026 refresh, Q12 lapsed accreditations, Q13 no-X-ray rule.
+- The owner supplies the Filipino descriptions for About, Data, Install, Learn and Place later (Q3). They are `owner` strings, blocking in `launch-check`; I write none.

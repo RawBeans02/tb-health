@@ -1,6 +1,6 @@
 # TB PH build plan: stack and steps
 
-Status: **proposal, waiting for the owner's approval.** No app code is written until the owner approves this plan and answers the blocking questions in §7.1.
+Status: **approved by the owner on 4 November 2026** (as of commit `7ea78ff`), with Q2 and Q3 answered. The owner's decisions are recorded in `docs/decisions.md`, which the TB Health lead keeps; where this plan and that file differ, `decisions.md` wins.
 Written 30 October 2026 by the Jr. Builder, from the v6 design handoff (`design/design_handoff_tb_ph/`). Updated 4 November 2026 after an independent review from five angles (stack facts, spec coverage, rules and privacy, sequencing and tests, owner questions), with every finding re-checked by a skeptic. §7.1 changed: Q2, Q3, Q4, Q5, Q6, Q7 and Q8 were reworded, and Q9–Q13 are new.
 
 ## 1. Summary
@@ -8,7 +8,7 @@ Written 30 October 2026 by the Jr. Builder, from the v6 design handoff (`design/
 - **Stack:** Astro 7 (static output) + Preact islands + TypeScript (strict) + plain CSS with design tokens. Self-hosted fonts. Workbox service worker generated after the build. Vitest for logic, Playwright + axe for the browser. Node 22 LTS, npm.
 - **Shape:** every page is prerendered HTML, in English at `/…` and Filipino at `/fil/…` (Q2). JavaScript runs only in the interactive parts: the route planner, the Places list and filters, the Place page, the symptom check, the dot story, the Data charts and a few small helpers.
 - **Order:** scaffold → shared shell (header, footer, languages, 404) → ported planner logic with tests → **Home route planner as the first end-to-end slice** → Places → Place → Check → Learn → Data → About and Install → phone app (PWA) → SEO and headers → QA hardening → release audit.
-- **Owner input needed:** 2 questions before I start (Q2, Q3), 7 before specific steps, 4 before launch (§7.1). Q1 (Node) is answered. Everything else has a stated default (§7.2) that I follow unless the owner says otherwise.
+- **Owner input needed:** 7 questions before specific steps, 4 before launch (§7.1). Q1 (Node), Q2 (languages) and Q3 (copy source) are answered. Everything else has a stated default (§7.2) that I follow unless the owner says otherwise.
 
 ## 2. What we're building
 
@@ -82,10 +82,10 @@ docs/                     PLAN.md, copy-overrides.md, later AUDIT-build.md (deci
 ```
 `design/` stays untouched as the reference. `support.js` and `qa-harness.html` are never ported; the harness checks become Playwright tests.
 
-### 4.2 Languages and URLs (recommended option; **Q2**)
+### 4.2 Languages and URLs (**Q2**, answered 4 Nov 2026)
 - **URLs.** English pages at `/…`, Filipino pages at `/fil/…`, both prerendered. Each has its own `<html lang>`, `<title>` and description, `hreflang` links and sitemap entries. There's no flash of English for Filipino readers, it works without JavaScript, and Filipino can be found in search.
 - **Links stay in the page's language.** Every internal link (static pages, islands, the service worker's offline page) comes from one `href(route, lang, params)` helper, a thin wrapper over Astro's locale URLs. Dictionaries never hold paths. A crawl of `dist/` fails the build if a `/fil/` page links to an English page or the reverse, except for the language toggle and `hreflang` tags.
-- **The toggle** becomes two links, "English" and "Filipino", each with `lang`/`hreflang` and `aria-current` on the current language. These replace README's two buttons with `aria-pressed` (README:131, :307), and that change needs the owner's OK (Q2). Clicking either one writes `tbph-lang` before switching. The link carries the current query and hash, so Home's `need`/`near` and Place's `stop`/`need` survive the switch.
+- **The toggle** becomes two links, "English" and "Filipino", each with `lang`/`hreflang` and `aria-current` on the current language. These replace README's two buttons with `aria-pressed` (README:131, :307); the owner approved the change (Q2a), and it is logged in `docs/copy-overrides.md`. Clicking either one writes `tbph-lang` before switching. The link carries the current query and hash, so Home's `need`/`near` and Place's `stop`/`need` survive the switch.
 - **Keeping the reader's place** (README:283). Before navigating, the page saves the current `[data-anchor]` id and offset in `sessionStorage` and deletes them once restored (§4.5 lists this).
 - **In-place switch only where state would be lost.** On these pages the toggle switches language without a navigation and updates the address with `history.replaceState`:
   - Check, where the answers are held;
@@ -93,9 +93,9 @@ docs/                     PLAN.md, copy-overrides.md, later AUDIT-build.md (deci
   - Home, but only while a location fix is held.
 
   Nothing is stored to carry that state across. On those pages the island owns the whole of `<main>`, and a small script swaps the header, footer and skip link from an inlined two-language dictionary (about 40 strings). It also updates every internal link, `<html lang>`, `<title>`, the description, the canonical URL and `hreflang`. These pages therefore carry both languages' copy, counted in §4.6. Place always navigates; how a location fix carries over there depends on Q4.
-- **The saved choice** (`tbph-lang`, as specced). *Recommended:* a pre-paint script on every English page sends a reader whose saved choice is Filipino to the `/fil/` twin, keeping the query and hash. This matches "remembered on the device" (prompt v2:54) and makes manifest shortcuts and shared English links open in Filipino for them. Crawlers have no storage, so they're unaffected. *The lighter option* applies the choice only on `/` and at app launch. Shortcuts, shared links and the 404 would then open in English for a Filipino reader.
+- **The saved choice** (`tbph-lang`, as specced). *Decided (Q2b):* a pre-paint script on every English page sends a reader whose saved choice is Filipino to the `/fil/` twin, keeping the query and hash. This matches "remembered on the device" (prompt v2:54) and makes manifest shortcuts and shared English links open in Filipino for them. Crawlers have no storage, so they're unaffected. (The lighter option, applying the choice only on `/` and at app launch, was not chosen.)
 - **The installed app** has one English manifest (`start_url: /`). Shortcuts point at English routes and reach Filipino through the same redirect. Both `/` and `/fil/` are precached, so a Filipino launch works offline.
-- **What the `/fil/` option costs**, honestly stated:
+- **What the `/fil/` option costs** (accepted by the owner, Q2c–d):
   - the toggle change above;
   - Filipino page titles and descriptions that don't exist yet (§4.3);
   - twice the place pages (about 4,200 at launch);
@@ -111,14 +111,14 @@ docs/                     PLAN.md, copy-overrides.md, later AUDIT-build.md (deci
   - `owner`: supplied by the owner or a translator.
 - **The builder writes no new copy.** Strings are copied **verbatim** from the content pack where it has them, and otherwise from the prototype. That includes pack §1 (global, footer, safety, data credit) and §5 (Places: intro, filters, count, sector badges, empty state, data note), which are tagged `pack`. Any string with no source at all is listed for the owner instead of being written. Examples are Filipino page descriptions with no Filipino sentence in the pack, or any "lapsed" label. `launch-check` treats those as blocking.
 - A **parity test** compares every `pack` string with `reference/content-and-data-pack.md` and fails on any difference, so medical copy can't drift during the port.
-- `docs/copy-overrides.md` records every place where the build uses README/prototype wording instead of the pack, with the pack line and the README line, for the owner to confirm (Q3):
+- `docs/copy-overrides.md` records every place where the build uses README/prototype wording instead of the pack, with the pack line and the README line, for the owner to confirm (approved in principle, Q3):
   - `/find` and "Find a TB-DOTS center" vs `/places` and "Find TB care";
   - "Get directions" opening `maps_url` vs "Commute directions";
   - "Call" / "Copy address" vs "Call before you go" / "Copy address for Sakay.ph";
   - "Plan my route to a test";
   - the 23 vs 30 October dates;
   - the toggle change (§4.2).
-- **Page titles and descriptions.** English as in the prototype. Filipino titles are built from existing Filipino H1s and nav labels. Filipino descriptions use only verbatim Filipino pack sentences: Check from pack :197–198, Places and Home from pack :395. The rest (About, Data, Install, Learn, Place) come from the owner (Q3).
+- **Page titles and descriptions.** English as in the prototype. Filipino titles are built from existing Filipino H1s and nav labels. Filipino descriptions use only verbatim Filipino pack sentences: Check from pack :197–198, Places and Home from pack :395. The rest (About, Data, Install, Learn, Place) come from the owner later (Q3). Until then they are listed as `owner` strings that block in `launch-check`, and I write none.
 - `scripts/launch-check.mjs` lists everything still open, and the build never resolves or rewords any of it:
   - clinical review pending for Check, and `[REVIEW]` on Learn L6;
   - DOH 1555 `[VERIFY]`;
@@ -175,7 +175,7 @@ Each step gets its own local branch (`build/NN-name`) and commits, staged by pat
 
 | # | Step | Delivers | Done when | Size |
 |---|---|---|---|---|
-| 0 | **Owner decisions + environment** | Answers to Q2–Q3. Node 22.23.4 via nvm + `.nvmrc`: done 30 Oct 2026 | Owner approves the plan | — |
+| 0 | **Owner decisions + environment** | Done. Node 22.23.4 via nvm + `.nvmrc` (30 Oct 2026); plan approved and Q2–Q3 answered (4 Nov 2026, `docs/decisions.md`) | Owner approves the plan | — |
 | 1 | **Scaffold** | Astro 7 + Preact + TS strict + npm; slashless file output; `security.csp` on; `tokens.css`, `global.css`; self-hosted fonts; icons and favicon/apple-touch tags; BaseLayout; `data/` copied from the handoff; `prepare-data.mjs` (incl. synthetic-fixture mode); Vitest; Playwright (one worker, service workers blocked by default, fixed synthetic or denied geolocation in every context, `dist/` served by a light static server that honours nested `404.html`); test and report folders in `.gitignore` | `npm run build` and an empty test run pass through `lowmem-run.sh` | S |
 | 2 | **Shell + languages + 404** | SiteHeader (glass + solid fallbacks, nav, toggle links, phone tab bar), SiteFooter, skip link, focus and link styles. i18n routing + `href` helper + link-language crawl. Pre-paint script: saved-choice redirect (Q2), PWA attributes (`data-standalone`, `data-online`, `data-platform`). Chrome-swap script for in-place pages. Dictionary format + parity test + `launch-check`. CSP-violation test fixture. Nav, tab bar and shortcuts driven by one route list (Q9). 404 and `/fil/404` | Breakpoints right in EN (1000px) and FIL (1180px). Glass turns solid under reduced transparency / more contrast / no blur support. Skip link works. Parity test green. `/x` and `/fil/x` give a 404 in the right language. Saved `fil` + `/?need=all#x` lands on `/fil/?need=all#x`. Link crawl clean. No CSP violations | M |
 | 3 | **Planner logic port** | `lib/core/*` from `tbph-core.js` with types; unit tests for every function (normalise, title case, phone links, services, gazetteer, place matching, route, distance, directions links); agreed fixes only (Q4); no-X-ray rule per Q13 | All core tests pass, including the cases the readers verified on the sample (82-row bug fixed only if approved) | M |
@@ -238,19 +238,10 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
 
 ### 7.1 Need an answer (with my recommendation)
 
-**Before I start**
+**Before I start** (all answered)
 - ~~**Q1. Node.**~~ Answered 30 Oct 2026: yes, Node 22 LTS through nvm for tb-health only, pinned in `.nvmrc`; nvm's default alias and the global/Homebrew Node untouched.
-- **Q2. Language URLs.** *Recommend* Filipino at `/fil/…` (§4.2). The alternative is one URL per page with the language swapped in the browser, as specced. With `/fil/`:
-  - (a) the toggle becomes two links with `aria-current` instead of README's buttons with `aria-pressed`;
-  - (b) the saved choice either sends Filipino readers from any English page to its Filipino twin (*recommended*), or applies only at `/` and app launch, so shortcuts and shared English links open in English for them;
-  - (c) Filipino page titles and descriptions are needed. I build titles from existing Filipino headings and descriptions only from verbatim Filipino pack sentences; you supply the rest (Q3);
-  - (d) Check, Places and Home switch in place, so they carry both languages' copy.
-- **Q3. Copy source.** The content pack has global copy (§1) and Places copy (§5), and I use those verbatim, parity-tested. It has no planner, Place, Install or 404 copy.
-  - OK to use the prototype's strings for those, verbatim and flagged for EN/FIL review?
-  - OK for README wording to win where it differs from the pack? Each case is listed in `docs/copy-overrides.md` (`/find` vs `/places`, "Get directions" vs "Commute directions", "Plan my route to a test", the dates…).
-  - The stop explanations ("Get a chest X-ray…", "usually in 6 months") would be flagged `[REVIEW]` with Learn L6.
-  - Who supplies the Filipino descriptions for About, Data, Install, Learn and Place, which have no Filipino source?
-  - Is there a newer content pack? Design prompt v2 cites `tb-ph-content-and-data.md` with a planner section, and it isn't in the handoff.
+- ~~**Q2. Language URLs.**~~ Answered 4 Nov 2026 (`docs/decisions.md`): Filipino at `/fil/…`; (a) the toggle becomes two links with `aria-current`, logged in `docs/copy-overrides.md`; (b) the saved choice sends a Filipino reader from every English page to its `/fil/` twin, keeping query and hash; (c) and (d) accepted as costs.
+- ~~**Q3. Copy source.**~~ Answered 4 Nov 2026 (`docs/decisions.md`): approved as proposed. Pack copy verbatim and parity-tested; prototype strings where the pack has none, flagged for EN/FIL review; README wins over the pack, each case in `docs/copy-overrides.md`; the stop explanations flagged `[REVIEW]` with L6. There is no newer content pack: build from the handoff's `content-and-data-pack.md`. The owner supplies the Filipino descriptions for About, Data, Install, Learn and Place later; they are `owner` strings that block in `launch-check`, and I write none. D10 and D11 apply.
 
 **Before a specific step**
 - **Q4. Privacy in URLs and location (step 4).** *Recommend:*
@@ -289,8 +280,8 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
 - **D7** Konsulta (Learn) vs YAKAP (planner, claims): each ships verbatim from its source and is flagged for the content owner. I don't choose.
 - **D8** *Moved to Q9.* Check is built in full with "Medical review: [partner clinicians — pending]" visible; L6 gets a tracked flag, not new visible copy.
 - **D9** Placeholders and `[VERIFY]` stay visible as designed; `launch-check` lists them; you decide when to launch.
-- **D10** If Q3 = yes: Filipino strings not in the pack ship as in the prototype, flagged for the native-speaker review.
-- **D11** If Q3 = yes: Check results A–C say "Plan my route to a test" (README) and link to `/?need=all` (EN) or `/fil/?need=all` (FIL). If Q3 = no, they use the pack's "Find a TB-DOTS center".
+- **D10** (Q3 = yes, applies) Filipino strings not in the pack ship as in the prototype, flagged for the native-speaker review.
+- **D11** (Q3 = yes, applies) Check results A–C say "Plan my route to a test" (README) and link to `/?need=all` (EN) or `/fil/?need=all` (FIL).
 - **D12** Statistics and claims are built into the pages, not fetched at runtime (§4.4).
 - **D13** Charts are prerendered, then re-laid out in the browser (prototype parity at every width).
 - **D14** Dot story: "scattered" layout (prototype default); canvas uses TB red `#C42032` instead of the leftover old coral.
