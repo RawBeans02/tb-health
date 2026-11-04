@@ -15,6 +15,7 @@
     "check": "astro check && tsc -p tsconfig.sw.json",
     "check-links": "node scripts/check-links.mjs",
     "launch-check": "node scripts/launch-check.mjs",
+    "post-deploy-check": "node scripts/post-deploy-check.mjs",
     "serve": "node scripts/serve-dist.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
