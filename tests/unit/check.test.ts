@@ -86,7 +86,7 @@ describe('stale answers never leak across paths', () => {
   it('unticking contact drops the drug-resistance answer', () => {
     const a = toggleMulti(adult({ risk: ['contact', 'dr_contact', 'hiv'] }), 'risk', 'contact');
     expect(a.risk).toEqual(['hiv']);
-    expect(evaluate({ ...a, risk: [] })).toBe('D');
+    expect(evaluate(a)).toBe('C'); // what's left still counts (B43)
   });
 });
 
@@ -118,5 +118,33 @@ describe('cardRows', () => {
   it('marks what a child was not asked', () => {
     const rows = cardRows(child({ sym: ['none'], recent: 'yes' }), t);
     expect(rows.map((r) => r.value)).toEqual(['4 November 2026', 'who:child', 'None', 'Not asked', 'Yes', 'Not asked', 'None', 'title D']);
+  });
+});
+
+describe('the child path and add-on notes (audit B43)', () => {
+  it('a child with a household contact gets C, with the child note', () => {
+    const a = child({ risk: ['contact'] });
+    expect(evaluate(a)).toBe('C');
+    expect(notes(a, 'C')).toEqual(['child']);
+  });
+
+  it('the urgent screen carries no notes, for a child too', () => {
+    const a = child({ danger: ['convulsions'], risk: ['contact'] });
+    expect(evaluate(a)).toBe('urgent');
+    expect(notes(a, 'urgent')).toEqual([]);
+  });
+
+  it("an adult's 'not sure' about an X-ray adds its note on C and on D", () => {
+    const c = adult({ xray: 'unsure', risk: ['diabetes'] });
+    expect(evaluate(c)).toBe('C');
+    expect(notes(c, 'C')).toEqual(['xray_unsure']);
+    const d = adult({ xray: 'unsure' });
+    expect(evaluate(d)).toBe('D');
+    expect(notes(d, 'D')).toEqual(['xray_unsure']);
+  });
+
+  it("Back from 'recent' goes to the symptoms for a child, to blood for an adult", () => {
+    expect(before(child(), 'recent')).toBe('sym');
+    expect(before(adult(), 'recent')).toBe('blood');
   });
 });
