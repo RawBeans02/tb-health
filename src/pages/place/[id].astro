@@ -1,0 +1,7 @@
+---
+import Place from '../../views/Place.astro';
+import { placePaths } from '../../lib/build-data.ts';
+
+export const getStaticPaths = placePaths;
+---
+<Place lang="en" row={Astro.props.row} canonicalId={Astro.props.canonicalId} />

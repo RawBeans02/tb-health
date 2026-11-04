@@ -29,6 +29,26 @@
   max-width: 34em;
 }
 
+/* Section heading on inner pages (README "v4 page frame"). */
+.h2 {
+  font-size: var(--text-h2-nomatch);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Footnotes under lists (Home's route, Places, Place). */
+.footnote,
+.footnotes {
+  font-size: var(--text-15);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.footnotes {
+  display: grid;
+  gap: 8px;
+  max-width: 48em;
+}
 /* Buttons are capsules. One solid (primary) per screen; soft for the rest. */
 .btn {
   display: inline-flex;
@@ -704,4 +724,12 @@ html[data-online='false'] .offline-line {
   border: 0;
   background: none;
   cursor: pointer;
+}
+
+/* The hidden textarea copyText() falls back to. */
+.copy-buffer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
 }

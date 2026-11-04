@@ -160,15 +160,3 @@
   color: var(--ink);
 }
 
-.footnote,
-.footnotes {
-  font-size: var(--text-15);
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.footnotes {
-  display: grid;
-  gap: 8px;
-  max-width: 48em;
-}

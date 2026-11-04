@@ -27,12 +27,14 @@ interface Props {
   notFound?: boolean;
   /** Check, Places, Home: the language can switch without a navigation (PLAN §4.2). */
   inPlace?: boolean;
+  /** English path to name as canonical when it isn't this page's (an alias of a place, Q6). */
+  canonicalPath?: string;
 }
 
-const { lang, title, description, current = '', notFound = false, inPlace = false } = Astro.props;
+const { lang, title, description, current = '', notFound = false, inPlace = false, canonicalPath } = Astro.props;
 const features: Features = { check: TBPH_CHECK };
 const site = Astro.site!; // placeholder domain until Q7 (launch-check flags it)
-const path = toLang(pagePath(Astro.url.pathname), 'en');
+const path = canonicalPath ?? toLang(pagePath(Astro.url.pathname), 'en');
 const togglePath = notFound ? '/' : path;
 // Astro hashes the scripts it bundles, not is:inline ones.
 Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(prepaint).digest('base64')}`);

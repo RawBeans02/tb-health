@@ -23,7 +23,10 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 - **README:144 and the prototype footer (ships):** "… Last updated 30 October 2026." / "… Huling update: 30 Oktubre 2026."
 - The date isn't typed into the string: it is the newest `generated` date in `data/tb-ph-data.json` and `data/claims.json`, so it follows the data. The pack's 23 October and the README's 30 October were each the newest data-file date at the time; since the owner's new `claims.json` (V5, 4 November 2026) the footer reads 4 November 2026.
 
+### `care.commute`, `care.call`, `care.sakay`: place actions (steps 4–6)
+- **Pack :406–408 (Places card buttons):** "Call" / "Tumawag", "Get directions" / "Paano pumunta", "Copy address" / "Kopyahin ang address".
+- **README:193, :208, :217 and the prototype (ship):** "Call before you go" / "Tumawag bago pumunta" (a text link), "Commute directions" / "Paano mag-commute" (Google Maps transit directions in a new tab, with Walk and Drive beside it on the Place page), and "Copy address for Sakay.ph" / "Kopyahin ang address para sa Sakay.ph" (copies the address, then opens sakay.ph). The Sakay.ph link itself stays `[VERIFY]`.
+
 ## Still to come (added with their steps)
-- Place actions: "Get directions" opening Google Maps vs the pack's "Commute directions"; "Call" / "Copy address" vs "Call before you go" / "Copy address for Sakay.ph" (steps 4–6).
 - Check results A–C: "Plan my route to a test" (README) (step 7, D11).
 - Other 23 vs 30 October dates in page copy (steps 8–10).

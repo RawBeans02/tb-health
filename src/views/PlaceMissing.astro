@@ -1,0 +1,26 @@
+---
+// /place/{unknown} and /fil/place/{unknown}: the host serves this nearest 404.html with a
+// 404 status (README:220).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { care } from '../content/care.ts';
+import { meta } from '../content/meta.ts';
+import { place } from '../content/place.ts';
+import { href, type Lang } from '../lib/i18n.ts';
+import '../styles/place.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+<BaseLayout lang={lang} title={meta.notFoundTitle} current="home" notFound>
+  <main id="main" tabindex="-1">
+    <div class="frame frame--back">
+      <div class="place-missing">
+        <h1 class="place-name">{place.missing[lang]}</h1>
+        <a class="btn btn--primary" href={href('places', lang)}>{care.seeMore[lang]}</a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

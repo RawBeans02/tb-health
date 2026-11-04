@@ -13,7 +13,6 @@ export const places = {
     395,
   ),
   offline: ui("You're offline. Showing the saved list of centers.", 'Wala kang koneksiyon. Ipinapakita ang naka-save na listahan ng mga center.', file),
-  backRoute: ui('Back to your route', 'Bumalik sa iyong daan', 'tbph-core.js'),
   filters: ui('Filters', 'Mga filter', file),
   filtersCount: {
     en: 'Filters ({n})',

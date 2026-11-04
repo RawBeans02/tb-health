@@ -16,7 +16,7 @@ import { langOf, pagePath, toLang } from '../src/lib/i18n.ts';
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 
 // English paths of pages not built yet; remove each as its step lands.
-const PENDING = new Set(['/place', '/check', '/learn', '/data', '/about', '/install']);
+const PENDING = new Set(['/check', '/learn', '/data', '/about', '/install']);
 const withoutCheck = process.env.TBPH_CHECK === 'false';
 
 function htmlFiles(dir) {
@@ -73,7 +73,7 @@ for (const file of htmlFiles(dist)) {
     if (isPage && attrs.hreflang === undefined && langOf(path) !== pageLang) {
       errors.push(`${page} (${pageLang}): links to ${href}, a ${langOf(path)} page`);
     }
-    const english = isPage ? toLang(path, 'en').replace(/^\/place\/.*/, '/place') : path;
+    const english = isPage ? toLang(path, 'en') : path;
     if (withoutCheck && english === '/check') {
       errors.push(`${page}: links to ${href}, but this build leaves Check out (TBPH_CHECK=false)`);
       continue;
