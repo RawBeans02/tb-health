@@ -212,3 +212,31 @@ test.describe('language', () => {
     for (const link of await page.locator('.facility-name a').all()) expect(await link.getAttribute('href')).toMatch(/^\/fil\/place\//);
   });
 });
+
+test.describe('map layers (audit B4)', () => {
+  test('stay under the tab bar and the Filters sheet', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    await expect(page.locator('.leaflet-container')).toBeVisible();
+    // Scroll so the map runs under the tab bar.
+    const tab = page.locator('.tab-bar a').first();
+    const tabBox = (await tab.boundingBox())!;
+    await page.evaluate((y) => {
+      const map = document.querySelector('.map-frame')!.getBoundingClientRect();
+      scrollBy(0, map.bottom - y - 20);
+    }, tabBox.y + tabBox.height);
+    const center = (await tab.boundingBox())!;
+    const hit = await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest('.tab-bar a') !== null, { x: center.x + center.width / 2, y: center.y + center.height / 2 });
+    expect(hit).toBe(true);
+
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    const sheet = page.getByRole('dialog', { name: 'Filters' });
+    await expect(sheet).toBeVisible();
+    // Polled: the sheet slides in.
+    await expect.poll(async () => {
+      const s = (await sheet.boundingBox())!;
+      return page.evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('[role="dialog"]'), { x: s.x + s.width / 2, y: s.y + 40 });
+    }).toBe(true);
+  });
+});

@@ -129,6 +129,9 @@
 
 .map-frame {
   position: relative;
+  /* Leaflet's panes and controls (z-index up to 1000) stay inside the frame, under the tab
+     bar and the Filters sheet (audit B4), as the planner does. */
+  isolation: isolate;
   border-radius: var(--radius-group);
   overflow: hidden;
   background: var(--surface);
