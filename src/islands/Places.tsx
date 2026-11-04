@@ -70,6 +70,7 @@ export default function Places(props: Props) {
   const mapRetryRef = useRef<HTMLButtonElement>(null);
   const firstNewRow = useRef<number | null>(null);
   const retrying = useRef<'' | 'list' | 'map'>('');
+  const nearRef = useRef<HTMLInputElement>(null);
   const myLocation = useMemo(() => [props.strings.en.myLoc, props.strings.fil.myLoc], [props.strings]);
 
   function fetchList() {
@@ -200,11 +201,14 @@ export default function Places(props: Props) {
         setGps(fix);
         setFrom(t.myLoc);
         setByDistance(true);
+        // The button was disabled while locating, which drops focus to the page.
+        if (document.activeElement === document.body) nearRef.current?.focus();
       },
       () => {
         setLocating(false);
         setDenied(true);
         setGps(null);
+        nearRef.current?.focus(); // as Home does
       },
     );
   }
@@ -300,6 +304,7 @@ export default function Places(props: Props) {
                 locLabel={t.useLoc}
                 locating={locating}
                 onLocate={useLocation}
+                inputRef={nearRef}
                 message={denied ? { text: t.denied, error: false } : null}
               />
               <div class="field">

@@ -71,7 +71,7 @@ export function LocationField(props: {
   invalid?: boolean;
   /** Message under the button, and whether it's an error (TB red, role="alert"). */
   message?: { text: string; error: boolean } | null;
-  /** Home's note; the message and note ids describe the field. */
+  /** Home's note, which also describes the field. */
   note?: string;
 }) {
   const msgId = `${props.id}-msg`;
@@ -95,7 +95,7 @@ export function LocationField(props: {
           placeholder={props.placeholder}
           list="tbph-places"
           autocomplete="off"
-          aria-describedby={props.note ? `${msgId} ${noteId}` : undefined}
+          aria-describedby={props.note ? `${msgId} ${noteId}` : msgId}
           aria-invalid={props.note ? (props.invalid ? 'true' : 'false') : undefined}
         />
       </div>
@@ -108,17 +108,10 @@ export function LocationField(props: {
         <span class="locate-dot" aria-hidden="true" />
         <span>{props.locLabel}</span>
       </button>
-      {props.note !== undefined ? (
-        <p id={msgId} class={`field-msg${props.message?.error ? ' field-msg--error' : ''}`} role={props.message?.error ? 'alert' : 'status'} hidden={!props.message}>
-          {props.message?.text ?? ''}
-        </p>
-      ) : (
-        props.message && (
-          <p class="field-msg" role="status">
-            {props.message.text}
-          </p>
-        )
-      )}
+      {/* Always mounted, so screen readers hear a message the moment it is written (audit B9). */}
+      <p id={msgId} class={`field-msg${props.message?.error ? ' field-msg--error' : ''}`} role={props.message?.error ? 'alert' : 'status'}>
+        {props.message?.text ?? ''}
+      </p>
       {props.note !== undefined && (
         <p id={noteId} class="field-note">
           {props.note}

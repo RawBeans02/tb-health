@@ -344,6 +344,11 @@
   color: var(--tb-red);
 }
 
+/* An empty message stays in the page for screen readers but takes no room (no grid gap). */
+.field-msg:empty {
+  position: absolute;
+}
+
 .field-note {
   font-size: var(--text-16);
   line-height: 1.45;

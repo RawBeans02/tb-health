@@ -282,3 +282,18 @@ test.describe('focus after updates (audit B8)', () => {
     });
   });
 });
+
+test.describe('location (audit B9)', () => {
+  test('denied: says so in a status the field points to, and returns focus to the field', async ({ page }) => {
+    await ready(page);
+    const field = page.locator('#near');
+    const msg = page.locator('#near-msg');
+    await expect(msg).toBeAttached(); // mounted before anything is said
+    await expect(msg).toHaveText('');
+    await expect(field).toHaveAttribute('aria-describedby', 'near-msg');
+    await page.getByRole('button', { name: 'Use my location' }).click();
+    await expect(msg).toHaveText('No problem. Type your barangay or city instead.');
+    await expect(msg).toHaveAttribute('role', 'status');
+    await expect(field).toBeFocused();
+  });
+});
