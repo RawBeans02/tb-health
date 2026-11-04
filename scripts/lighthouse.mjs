@@ -1,13 +1,15 @@
 #!/usr/bin/env node
-// Lighthouse on the built site (PLAN §4.6, step 13), mobile settings, one page at a time.
+// Lighthouse on the built site (PLAN §4.6, step 13), mobile settings (or `--desktop`, Lighthouse's
+// desktop preset: audit B66), one page at a time.
 // Run it on its own guarded job, after a production-mode build (the noindex header of other
 // builds would cost the SEO score):
 //   SITE_URL=https://tbph.example.org TBPH_PRODUCTION=true npm run build
-//   GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && node scripts/lighthouse.mjs [page …]'
+//   GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && node scripts/lighthouse.mjs [--desktop] [page …]'
 // With no pages it runs the list below; on a busy machine, pass a few at a time.
 // Lighthouse runs through npx at a pinned version (not a project dependency) and attaches to
 // a Chromium this script launches through Playwright (never the Mac's own Chrome), so a stop
-// by the memory guard closes the browser too. Reports go to lighthouse-report/.
+// by the memory guard closes the browser too. Reports go to lighthouse-report/ (desktop ones
+// end in .desktop.json).
 // Fails when a page misses a budget:
 // every category ≥ 90, Accessibility 100, LCP ≤ 2.5 s, CLS ≤ 0.1.
 
@@ -19,7 +21,9 @@ import { chromium } from '@playwright/test';
 const LIGHTHOUSE = 'lighthouse@13.5.0';
 const PORT = 4323;
 const ALL = ['/', '/places', '/place/bangued-rural-health-unit-abra', '/check', '/learn', '/data', '/about', '/install', '/fil', '/fil/places'];
-const PAGES = process.argv.length > 2 ? process.argv.slice(2) : ALL;
+const DESKTOP = process.argv.includes('--desktop');
+const ARGS = process.argv.slice(2).filter((a) => a !== '--desktop');
+const PAGES = ARGS.length ? ARGS : ALL;
 const root = fileURLToPath(new URL('..', import.meta.url));
 const out = `${root}lighthouse-report`;
 mkdirSync(out, { recursive: true });
@@ -48,8 +52,8 @@ const failures = [];
 try {
   for (const page of PAGES) {
     const name = page === '/' ? 'home' : page.slice(1).replace(/\//g, '_');
-    const report = `${out}/${name}.json`;
-    const status = await run('npx', ['-y', LIGHTHOUSE, `http://127.0.0.1:${PORT}${page}`, `--port=${DEBUG_PORT}`, '--output=json', `--output-path=${report}`, '--quiet']);
+    const report = `${out}/${name}${DESKTOP ? '.desktop' : ''}.json`;
+    const status = await run('npx', ['-y', LIGHTHOUSE, `http://127.0.0.1:${PORT}${page}`, `--port=${DEBUG_PORT}`, '--output=json', `--output-path=${report}`, '--quiet', ...(DESKTOP ? ['--preset=desktop'] : [])]);
     if (status !== 0) {
       failures.push(`${page}: Lighthouse exited ${status}`);
       continue;

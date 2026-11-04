@@ -64,6 +64,15 @@
   gap: 20px;
 }
 
+/* While the list loads, the results keep a screen's height, so the footer starts below the
+   fold instead of being pushed down when the rows arrive (desktop CLS 0.116, audit B66).
+   Their rows stay packed at the top; stretched, they would move the field when the list
+   arrives. */
+.places-results:has(> .results-status) {
+  min-height: 100vh;
+  align-content: start;
+}
+
 .places-search {
   display: grid;
   gap: 16px;
