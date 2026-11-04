@@ -291,7 +291,8 @@ function main() {
   const sample = !synthetic && !existsSync(realPath);
   const sourcePath = synthetic || sample ? samplePath : realPath;
   const source = readJson(sourcePath);
-  const rows = worst ? [...source.facilities, ...worstCaseFacilities(source.facilities)] : synthetic ? syntheticFacilities(source.facilities) : source.facilities;
+  // The worst-case rows go first, so the Places list shows them (B51).
+  const rows = worst ? [...worstCaseFacilities(source.facilities), ...source.facilities] : synthetic ? syntheticFacilities(source.facilities) : source.facilities;
 
   const failures = [];
   if (!Array.isArray(rows) || rows.length === 0) failures.push('facility list is empty');

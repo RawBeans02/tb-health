@@ -90,6 +90,34 @@ test.describe('qa-harness matrix', () => {
   });
 });
 
+// Places with one result and with none, reached through the filters (B51): the phone
+// widths use the Filters sheet, 1280px the side panel.
+test.describe('qa-harness matrix: Places with one result and with none', () => {
+  for (const lang of ['en', 'fil'] as const) {
+    for (const width of [320, 390, 1280]) {
+      for (const [state, query] of [['one result', 'Bangued Rural'], ['no result', 'zzzz']] as const) {
+        test(`${lang} ${state} at ${width}px`, async ({ page }) => {
+          await page.setViewportSize({ width, height: 820 });
+          await page.goto(lang === 'fil' ? '/fil/places' : '/places', { waitUntil: 'networkidle' });
+          const wide = width >= 1080;
+          if (!wide) await page.locator('.filters-button').click();
+          await page.locator(wide ? '#panel-q' : '#sheet-q').fill(query);
+          if (!wide) await page.locator('.sheet-done').click();
+          await expect(page.locator('[role="dialog"]')).toHaveCount(0);
+          if (state === 'one result') await expect(page.locator('.places-results .facility')).toHaveCount(1);
+          else await expect(page.locator('.empty-panel')).toBeVisible();
+          const r = await probe(page);
+          expect(r.sideways, 'sideways scroll').toBeLessThanOrEqual(0);
+          expect(await outsideProblems(page, 'main *'), 'off the screen or cut off').toEqual([]);
+          expect(r.h1, 'one H1').toBe(1);
+          expect(r.small, 'targets under 44px').toEqual([]);
+          expect(r.tiny, 'text under 14px').toEqual([]);
+        });
+      }
+    }
+  }
+});
+
 /** WCAG 2.2 AA rules, as axe tags them. */
 async function axe(page: Page) {
   const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
