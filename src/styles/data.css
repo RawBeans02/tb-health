@@ -3,7 +3,7 @@
 .data {
   max-width: var(--container);
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 72px) clamp(16px, 4vw, 64px) clamp(48px, 7vw, 80px);
+  padding: clamp(40px, 6vw, 72px) max(clamp(16px, 4vw, 64px), env(safe-area-inset-right)) clamp(48px, 7vw, 80px) max(clamp(16px, 4vw, 64px), env(safe-area-inset-left));
   display: grid;
   gap: 20px;
 }
@@ -595,7 +595,7 @@
 .turn-wrap {
   max-width: var(--container-wide);
   margin: 0 auto;
-  padding: 0 clamp(20px, 5vw, 64px);
+  padding: 0 max(clamp(20px, 5vw, 64px), env(safe-area-inset-right)) 0 max(clamp(20px, 5vw, 64px), env(safe-area-inset-left));
 }
 
 .turn-inner {

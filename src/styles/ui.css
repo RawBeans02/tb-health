@@ -1,10 +1,14 @@
+/* Side gutters are max(gutter, env(safe-area-inset-left/right)) here and in the page
+   stylesheets: clear of a notch or Dynamic Island in landscape, unchanged elsewhere (audit B5).
+   Backgrounds stay full-bleed. */
+
 /* Shared page-frame classes (README "Shared: v4 page frame", "Components"). The shared
    Preact parts in src/ui (step 4 onward) render these same classes. */
 
 .frame {
   max-width: var(--container);
   margin: 0 auto;
-  padding: clamp(40px, 7vw, 88px) clamp(16px, 4vw, 64px) clamp(48px, 7vw, 80px);
+  padding: clamp(40px, 7vw, 88px) max(clamp(16px, 4vw, 64px), env(safe-area-inset-right)) clamp(48px, 7vw, 80px) max(clamp(16px, 4vw, 64px), env(safe-area-inset-left));
 }
 
 /* Pages that start with a back link (Places, Place, Check). Page stylesheets can load
@@ -629,7 +633,7 @@
 
 .sheet-grab {
   flex: none;
-  padding: 8px 16px 4px;
+  padding: 8px max(16px, env(safe-area-inset-right)) 4px max(16px, env(safe-area-inset-left));
   touch-action: none;
 }
 
@@ -684,7 +688,7 @@
   display: grid;
   gap: 18px;
   align-content: start;
-  padding: 8px 16px calc(24px + env(safe-area-inset-bottom));
+  padding: 8px max(16px, env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
 }
 
 /* ---------- Page bits shared by inner pages ---------- */
