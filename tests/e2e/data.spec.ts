@@ -213,11 +213,21 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
   });
 
   /** In the viewport, below the sticky header; for a chart, once the charts have hydrated. */
-  async function inView(page: Page, selector: string, charts = !selector.includes('claim-')) {
-    if (charts) await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
-    await expect
-      .poll(() => page.locator(selector).evaluate((el) => { const r = el.getBoundingClientRect(); return r.top >= 60 && r.top < innerHeight - 40; }))
-      .toBe(true);
+  /**
+   * In the viewport, below the sticky header. `charts`: wait for the charts to hydrate first;
+   * 'if-near': a claim link far below the charts may never hydrate them, so wait up to 2 s,
+   * then check the row holds still (B53).
+   */
+  async function inView(page: Page, selector: string, charts: boolean | 'if-near' = !selector.includes('claim-')) {
+    const island = page.locator('astro-island:has(section.panel)');
+    if (charts === true) await expect(island).not.toHaveAttribute('ssr');
+    if (charts === 'if-near') await expect(island).not.toHaveAttribute('ssr', { timeout: 2000 }).catch(() => {});
+    const placed = () => page.locator(selector).evaluate((el) => { const r = el.getBoundingClientRect(); return r.top >= 60 && r.top < innerHeight - 40; });
+    await expect.poll(placed).toBe(true);
+    if (charts === 'if-near') {
+      await page.waitForTimeout(500);
+      expect(await placed()).toBe(true);
+    }
   }
 
   for (const hash of ['d12', 'd16']) {
@@ -232,7 +242,7 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
 
   test('/data#claim-… lands on the claim row and focuses it', async ({ page }) => {
     await page.goto('/data#claim-burden-cases');
-    await inView(page, '#claim-burden-cases');
+    await inView(page, '#claim-burden-cases', 'if-near'); // after the charts' relayout, if any (B53)
     await expect(page.locator('#claim-burden-cases')).toBeFocused();
   });
 
@@ -240,7 +250,7 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await page.goto('/learn');
     await page.locator('a[href="/data#claim-burden-deaths"]').first().click();
     await expect(page).toHaveURL(/\/data#claim-burden-deaths$/);
-    await inView(page, '#claim-burden-deaths');
+    await inView(page, '#claim-burden-deaths', 'if-near'); // after the charts' relayout, if any (B53)
     await expect(page.locator('#claim-burden-deaths')).toBeFocused();
   });
 
