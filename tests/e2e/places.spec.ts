@@ -453,6 +453,18 @@ test.describe('place field keyboard (audit B31)', () => {
     await expect(near).not.toBeFocused();
   });
 
+  test("an IME's Enter (keyCode 229) keeps the field and its keyboard (B54)", async ({ page }) => {
+    await ready(page);
+    const near = page.locator('#near');
+    await near.focus();
+    await near.evaluate((el) => {
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(event, 'keyCode', { value: 229 });
+      el.dispatchEvent(event);
+    });
+    await expect(near).toBeFocused();
+  });
+
   test('Enter is "go" on Home', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#from')).toHaveAttribute('enterkeyhint', 'go');

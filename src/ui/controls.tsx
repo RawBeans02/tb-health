@@ -102,7 +102,9 @@ export function LocationField(props: {
           spellcheck={false}
           enterkeyhint={props.enter}
           onKeyDown={(e) => {
-            if (props.enter === 'done' && e.key === 'Enter' && !e.isComposing) e.currentTarget.blur();
+            // Not the Enter that ends an IME composition: WebKit sends it as keyCode 229 after
+            // isComposing has gone false (B54).
+            if (props.enter === 'done' && e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) e.currentTarget.blur();
           }}
           aria-describedby={props.note ? `${msgId} ${noteId}` : msgId}
           aria-invalid={props.note ? (props.invalid ? 'true' : 'false') : undefined}
