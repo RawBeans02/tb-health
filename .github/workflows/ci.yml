@@ -37,6 +37,8 @@ jobs:
         run: npx playwright test --project=webkit
       - name: End-to-end, service worker
         run: npx playwright test --project=pwa
+      - name: Phone smoke set (iPhone 13, Pixel 7)
+        run: npx playwright test --project=iphone --project=pixel
       - name: Build without Check and smoke-test it (Q9)
         run: npm run test:no-check
       - name: Keep the Playwright report when something fails
