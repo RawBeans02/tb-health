@@ -96,6 +96,10 @@ Q7 (host and domain), Q8 (full clinic list), Q11 (WHO 2026 report), Q12 (lapsed 
 
 ### Q9. Launching without Check (asked ahead of step 7)
 - **Yes: the site may go live without `/check`** if the clinical review isn't done by launch. Check is still built in full. One build-time switch leaves it out of the nav, the phone tab bar, the manifest shortcuts and the sitemap; the tab bar then shows the remaining tabs.
+- *Lead's reading, 4 Nov 2026, for the owner to overrule:* "without `/check`" means the page isn't published at all. With the switch off:
+  - `/check` and `/fil/check` aren't built, so they get the 404, and the service worker doesn't precache them;
+  - every standalone link or button to Check in page content (the 404's "Check symptoms" button, and later Home and Learn) is dropped by the same switch;
+  - where dropping a link would leave a sentence that still mentions the check, the builder lists it for the owner and doesn't reword it.
 
 ### Q10. Check question titles (asked ahead of step 7)
 - **TB red, as specced** in the README (not Ink as AUDIT-v6 suggests).
