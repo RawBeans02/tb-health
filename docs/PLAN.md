@@ -223,7 +223,7 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
 - the prototype comparison, Chromium only;
 - Lighthouse on its own (`node scripts/lighthouse.mjs [page …]`, a few pages per job on a busy machine, on a `SITE_URL=… TBPH_PRODUCTION=true` build so the noindex header doesn't cost SEO).
 
-CI (D22) runs the same jobs in `.github/workflows/ci.yml` when the owner starts it.
+CI (D22, `.github/workflows/ci.yml`, when the owner starts it) runs `npm ci`, `npm audit --omit=dev`, the type check, the unit tests, the build, Playwright in the chromium, webkit and pwa projects, the iphone and pixel phone set, and `npm run test:no-check`. It doesn't run the worst-case and synthetic fixtures, the prototype comparison or Lighthouse.
 
 `playwright.config` reads the guard's `E2E_WORKERS`. The build runs under the guard's 1.5 GB heap, which the synthetic fixture measures. Guard exits 97/98/99 mean "retry later", not a test failure, and each step's evidence records the guard's peak memory line.
 
@@ -304,7 +304,7 @@ CI (D22) runs the same jobs in `.github/workflows/ci.yml` when the owner starts 
   - Install at `/install`;
   - page-specific specs win over the general frame spec (e.g. Learn H2 size);
   - the global button sizes apply (e.g. Learn L5 buttons 58/46px).
-- **D22** CI: a GitHub Actions file (build + tests) with a manual trigger only. It runs on GitHub's machines and your Actions minutes, and only when you start it. There's no external link checking without your OK, since it calls other sites. *Built at step 13 (audit B27):* `.github/workflows/ci.yml`, workflow_dispatch only: `npm ci` from the lockfile, `npm audit --omit=dev` (it sends the dependency list to the npm registry), type check, unit tests, the build, Playwright in Chromium, WebKit and the service-worker project, and the Check-off build with its smoke test. Its first run (from the Actions tab, once the file is on `main`: GitHub runs a workflow_dispatch workflow only from the default branch) and the audit result are step 14 evidence.
+- **D22** CI: a GitHub Actions file (build + tests) with a manual trigger only. It runs on GitHub's machines and your Actions minutes, and only when you start it. There's no external link checking without your OK, since it calls other sites. *Built at step 13 (audit B27):* `.github/workflows/ci.yml`, workflow_dispatch only: `npm ci` from the lockfile, `npm audit --omit=dev` (it sends the dependency list to the npm registry), type check, unit tests, the build, Playwright in Chromium, WebKit and the service-worker project, the iphone and pixel phone set, and the Check-off build with its smoke test. Its first run (from the Actions tab, once the file is on `main`: GitHub runs a workflow_dispatch workflow only from the default branch) and the audit result are step 14 evidence.
 - **D23** Settled by the spec or reducing third parties:
   - self-hosted fonts (README:89);
   - Leaflet bundled from npm instead of unpkg;
