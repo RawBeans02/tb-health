@@ -1,6 +1,7 @@
 // Step 7: the symptom check (PLAN §5). Synthetic answers only.
 import { readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
+import { check } from '../../src/content/check.ts';
 import { expect, test } from './fixtures.ts';
 
 const h1 = (page: Page) => page.locator('main h1');
@@ -219,4 +220,45 @@ test.describe('the summary', () => {
     expect(await page.evaluate(() => (window as unknown as { shared: string[] }).shared)).toEqual(['tbph-summary.png image/png']);
     await context.close();
   });
+});
+
+test.describe('an unanswered question (audit B3)', () => {
+  // The adult risk step and the child symptoms step: long lists, so the error starts below the fold.
+  const paths = {
+    adultRisk: [check.opt_who_self, check.none, check.opt_symAdult_cough, check.no, check.opt_xray_no],
+    childSymptoms: [check.opt_who_child, check.none],
+  };
+
+  for (const lang of ['en', 'fil'] as const) {
+    for (const [name, steps] of Object.entries(paths)) {
+      test(`${name} in ${lang}: the error comes into view above Next and describes the group`, async ({ page }) => {
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.goto(lang === 'fil' ? '/fil/check' : '/check');
+        await page.getByRole('button', { name: check.start[lang] }).click();
+        for (const step of steps) {
+          const title = await h1(page).textContent();
+          await page.locator('.check-choice', { hasText: step[lang] }).first().click();
+          await next(page).click();
+          // Each question scrolls to the top and focuses its title once shown.
+          await expect(h1(page)).not.toHaveText(title!);
+          await expect(h1(page)).toBeFocused();
+        }
+        await next(page).click();
+        const error = page.locator('#q-error');
+        await expect(error).toHaveAttribute('role', 'alert');
+        const bar = (await page.locator('.next-bar').boundingBox())!;
+        await expect.poll(async () => {
+          const box = (await error.boundingBox())!;
+          return box.y >= 0 && box.y + box.height <= bar.y;
+        }).toBe(true);
+        await expect(page.locator('.question-options')).toHaveAttribute('aria-describedby', 'q-hint q-error');
+
+        // A second failed tap replaces the alert, so it is announced again.
+        await error.evaluate((el) => el.setAttribute('data-first', ''));
+        await next(page).click();
+        await expect(page.locator('#q-error')).toBeVisible();
+        await expect(page.locator('#q-error[data-first]')).toHaveCount(0);
+      });
+    }
+  }
 });

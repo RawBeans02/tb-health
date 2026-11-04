@@ -243,6 +243,21 @@
   line-height: 1.45;
   font-weight: 700;
   color: var(--tb-red);
+  /* Scrolled into view 10px clear of the Next bar (78px) and, on phones, the tab bar
+     below it (84px). */
+  scroll-margin-bottom: calc(172px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 62.5em) {
+  html[lang='en'] .question-error {
+    scroll-margin-bottom: 88px;
+  }
+}
+
+@media (min-width: 73.75em) {
+  html[lang='fil'] .question-error {
+    scroll-margin-bottom: 88px;
+  }
 }
 
 /* Next stays in reach: above the floating tab bar on phones, at the bottom on desktop. */

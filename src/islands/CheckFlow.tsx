@@ -2,7 +2,7 @@
 // <main> and always switches language in place, so answers survive (PLAN §4.2). Answers
 // live only in this component's memory: nothing is stored, sent, logged or put in the URL,
 // and steps add no history entries (D19). [REVIEW]: clinical review pending.
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { check } from '../content/check.ts';
 import { fill } from '../content/types.ts';
 import { after, answered, before, blank, cardRows, evaluate, MULTI, notes, optionsFor, pickSingle, sequence, toggleMulti, type Answers, type MultiStep, type SingleStep, type Step } from '../lib/check/flow.ts';
@@ -24,7 +24,8 @@ export default function CheckFlow(props: Props) {
   const t = props.strings[lang];
   const [view, setView] = useState<View>('intro');
   const [a, setA] = useState<Answers>(blank);
-  const [error, setError] = useState(false);
+  // Failed Next taps on this question: each one re-mounts the alert so it is announced again.
+  const [error, setError] = useState(0);
   const [saved, setSaved] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
@@ -53,7 +54,7 @@ export default function CheckFlow(props: Props) {
 
   function go(next: View) {
     moved.current = true;
-    setError(false);
+    setError(0);
     setSaved(false);
     setView(next);
   }
@@ -63,7 +64,7 @@ export default function CheckFlow(props: Props) {
   function onNext() {
     if (view === 'intro' || view === 'result') return;
     if (!answered(a, view)) {
-      setError(true);
+      setError((n) => n + 1);
       return;
     }
     go(after(a, view));
@@ -129,7 +130,7 @@ export default function CheckFlow(props: Props) {
 
           {view !== 'intro' && view !== 'result' && <Question view={view} a={a} t={t} lang={lang} error={error} heading={heading} onBack={() => go(before(a, view))} onNext={onNext} setA={(next) => {
             setA(next);
-            setError(false);
+            setError(0);
           }} />}
 
           {result === 'urgent' && (
@@ -260,7 +261,7 @@ interface QuestionProps {
   a: Answers;
   t: CheckStrings;
   lang: Lang;
-  error: boolean;
+  error: number;
   heading: { current: HTMLHeadingElement | null };
   onBack: () => void;
   onNext: () => void;
@@ -285,6 +286,12 @@ function Question({ view, a, t, error, heading, onBack, onNext, setA }: Question
   const isOn = (key: string) => (Array.isArray(value) ? value.includes(key) : value === key);
   const pick = (key: string) => setA(multi ? toggleMulti(a, view as MultiStep, key) : pickSingle(a, view as SingleStep, key));
   const last = index === steps.length - 1;
+
+  // The error sits under the options, often below the fold: bring it into view before it
+  // is painted (check.css keeps it clear of the Next bar and tab bar).
+  useLayoutEffect(() => {
+    if (error) document.getElementById('q-error')?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  }, [error]);
 
   return (
     <div class="question">
@@ -311,7 +318,7 @@ function Question({ view, a, t, error, heading, onBack, onNext, setA }: Question
           {multi ? t.all : t.one}
         </p>
       </div>
-      <div role={multi ? 'group' : 'radiogroup'} aria-labelledby="q-title" aria-describedby="q-hint" class="question-options">
+      <div role={multi ? 'group' : 'radiogroup'} aria-labelledby="q-title" aria-describedby={error ? 'q-hint q-error' : 'q-hint'} class="question-options">
         <div class="group">
           {choices.map((c) => (
             <Choice key={c.key} name={`q-${view}`} multi={multi} on={isOn(c.key)} label={c.label} indent={c.key === 'dr_contact'} onPick={() => pick(c.key)} />
@@ -323,8 +330,8 @@ function Question({ view, a, t, error, heading, onBack, onNext, setA }: Question
           </div>
         )}
       </div>
-      {error && (
-        <p class="question-error" role="alert">
+      {error > 0 && (
+        <p key={error} id="q-error" class="question-error" role="alert">
           {multi ? t.errMulti : t.errOne}
         </p>
       )}
