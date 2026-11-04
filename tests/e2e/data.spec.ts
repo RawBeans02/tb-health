@@ -266,3 +266,12 @@ test("the Methods chevron has the contents chevron's style (audit B34)", async (
   await page.goto('/learn');
   await expect(page.locator('.toc-narrow .toc-chevron')).toHaveCSS('font-size', '26px');
 });
+
+test('the estimated or notified toggle has its own name (audit B35)', async ({ page }) => {
+  for (const [path, name] of [['/data', 'Show estimated or notified cases'], ['/fil/data', 'Ipakita ang tantiya o naiulat na kaso']]) {
+    await page.goto(path);
+    await page.locator('#d5').scrollIntoViewIfNeeded();
+    await expect(page.locator('astro-island:has(section.panel)')).not.toHaveAttribute('ssr');
+    await expect(page.locator('#d5 [role="group"]')).toHaveAccessibleName(name);
+  }
+});

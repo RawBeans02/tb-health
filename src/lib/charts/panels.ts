@@ -39,6 +39,8 @@ export interface Panel {
   tables?: Table[];
   stats?: { v: string; l: string; s?: string; color?: string }[];
   toggle?: { label: string; on: boolean; pick: () => void }[];
+  /** The toggle group's own name (README:239); the chart title otherwise (audit B35). */
+  toggleLabel?: string;
   claimRows?: { text: string; meta: string; src: any }[];
   link2?: { href: string; label: string } | null;
   [key: string]: unknown;

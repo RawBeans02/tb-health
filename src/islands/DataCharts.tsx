@@ -74,7 +74,7 @@ function PanelView({ p, title, tx, top, open, toggle, measure }: { p: Panel; tit
       <h2 id={`${p.id}-h`}>{title}</h2>
       {p.takeaway && <p class="panel-takeaway">{p.takeaway}</p>}
       {p.toggle && p.toggle.length > 0 && (
-        <div class="segmented panel-toggle" role="group" aria-label={title}>
+        <div class="segmented panel-toggle" role="group" aria-label={p.toggleLabel ?? title}>
           {p.toggle.map((o) => (
             <button key={o.label} type="button" aria-pressed={o.on ? 'true' : 'false'} onClick={o.pick}>
               {o.label}
