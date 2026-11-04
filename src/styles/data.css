@@ -419,6 +419,15 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Phones size the stage against the small viewport (browser toolbar shown), so it doesn't
+   change when the toolbar hides (audit B19; not dvh, which would resize while scrolling). A
+   custom property can't fall back line by line, hence @supports. */
+@supports (height: 1svh) {
+  .story {
+    --stage-h: max(300px, min(52svh, 115vw));
+  }
+}
+
 @media (min-width: 62.5em) {
   html[lang='en'] .story {
     --nav-h: 0px;
@@ -501,6 +510,7 @@
 
 .story-step {
   min-height: calc(max(240px, 100vh - 65px - var(--nav-h) - var(--stage-h)) + 140px);
+  min-height: calc(max(240px, 100svh - 65px - var(--nav-h) - var(--stage-h)) + 140px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
