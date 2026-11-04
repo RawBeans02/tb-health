@@ -297,3 +297,21 @@ test.describe('location (audit B9)', () => {
     await expect(field).toBeFocused();
   });
 });
+
+test.describe('map motion (audit B12)', () => {
+  test('with reduced motion: no fade or zoom animation, and refits land at once', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    const map = page.locator('.leaflet-container');
+    await expect(map).toBeVisible();
+    await expect(map).not.toHaveClass(/leaflet-fade-anim/);
+    await expect(map).not.toHaveClass(/leaflet-zoom-anim/);
+    // Narrow, then broaden quickly: the map refits each time, with nothing left animating.
+    const search = page.getByRole('searchbox').or(page.locator('#near'));
+    await search.first().fill('Baguio');
+    await search.first().fill('');
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
+    await expect(page.locator('.leaflet-zoom-anim, .leaflet-pan-anim')).toHaveCount(0);
+  });
+});

@@ -91,8 +91,10 @@ function tileLayerClass(L: LeafletApi) {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
-  // Canvas markers: every located center is drawn, even at 2,000+ (audit B7).
-  const map = L.map(el, { scrollWheelZoom: false, preferCanvas: true });
+  // Canvas markers: every located center is drawn, even at 2,000+ (audit B7). With reduced
+  // motion, no zoom, fade or marker animation (audit B12).
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const map = L.map(el, { scrollWheelZoom: false, preferCanvas: true, zoomAnimation: !still, fadeAnimation: !still, markerZoomAnimation: !still });
   const Tiles = tileLayerClass(L) as unknown as typeof L.TileLayer;
   new Tiles('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -132,8 +134,9 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
         L.circleMarker([origin.lat, origin.lng], { radius: 10, color: MARKER.stroke, weight: 3, fillColor: MARKER.you, fillOpacity: 1 }).addTo(layer);
         points.push([origin.lat, origin.lng]);
       }
-      if (points.length) map.fitBounds(points, { padding: [36, 36], maxZoom: 13 });
-      else map.setView(PH_CENTRE, 5);
+      // Instant: a refit while the last one animates could stop short of the new markers.
+      if (points.length) map.fitBounds(points, { padding: [36, 36], maxZoom: 13, animate: false });
+      else map.setView(PH_CENTRE, 5, { animate: false });
       setTimeout(() => map.invalidateSize(), 60);
     },
     destroy() {
