@@ -39,6 +39,15 @@ describe('buildPanels', () => {
     }
   }
 
+  it('every table has a column template in data.css (no inline grid templates under the CSP)', () => {
+    const css = readFileSync('src/styles/data.css', 'utf8');
+    for (const lang of ['en', 'fil'] as const) {
+      for (const p of buildPanels(data, lang, 640, true, state(), pick(charts, lang))) {
+        for (const t of p.tables ?? []) expect(css, `${p.id}: .dtable--n${t.n}`).toContain(`.dtable--n${t.n} [role='row']`);
+      }
+    }
+  });
+
   it('d5 shows estimates or notifications as the toggle says', () => {
     const est = buildPanels(data, 'en', 640, true, state({ pyr: 'est' }), pick(charts, 'en')).find((p) => p.id === 'd5')!;
     const not = buildPanels(data, 'en', 640, true, state({ pyr: 'not' }), pick(charts, 'en')).find((p) => p.id === 'd5')!;

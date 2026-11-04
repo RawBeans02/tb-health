@@ -1,0 +1,111 @@
+---
+// The data (PLAN §5 step 9). The charts are one island, prerendered at a default width and
+// re-laid out at the real width (D13); everything else is static. Statistics and claims are
+// built in (D12). The dot story joins at the top in step 9d.
+import DataCharts from '../islands/DataCharts.tsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import claims from '../../data/claims.json' with { type: 'json' };
+import regionCounts from '../generated/region-counts.json' with { type: 'json' };
+import { charts } from '../content/charts.ts';
+import { dataPage } from '../content/datapage.ts';
+import { meta } from '../content/meta.ts';
+import { pick } from '../content/types.ts';
+import { readFacilities } from '../lib/build-data.ts';
+import type { Lang } from '../lib/i18n.ts';
+import { italics } from '../lib/learn.ts';
+import '../styles/data.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = pick(dataPage, lang);
+const tx = pick(charts, lang);
+const facilities = readFacilities();
+const regions = {
+  n: facilities.meta.count,
+  sample: facilities.meta.sample,
+  names: Object.fromEntries(regionCounts.map((r) => [r.code, r.region])),
+  counts: Object.fromEntries(regionCounts.map((r) => [r.code, r.total])),
+};
+const ids = Array.from({ length: 20 }, (_, i) => `d${i + 1}`);
+const topics = ['burden', 'detection', 'who', 'drivers', 'testing', 'treatment', 'prevention', 'cost', 'funding', 'targets', 'regional'] as const;
+const sources = claims.sources as Record<string, { title: string; url: string }>;
+const title = { en: `${dataPage.h2.en} — TB PH`, fil: `${dataPage.h2.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+---
+<BaseLayout lang={lang} title={title} description={meta.dataDescription} current="data">
+  <main id="main" tabindex="-1">
+    <div id="charts" class="data">
+      <div id="top" class="data-top" data-anchor tabindex="-1">
+        <div class="data-intro">
+          <h2>{t.h2}</h2>
+          <p>{t.intro}</p>
+        </div>
+        <nav class="data-index" aria-labelledby="idx-h">
+          <h2 id="idx-h">{t.onPage}</h2>
+          <ul class="group" role="list">
+            {ids.map((id) => <li><a class="link-row" href={`#${id}`}><span>{tx[`${id}_title` as keyof typeof tx]}</span><span class="link-row-chevron" aria-hidden="true">›</span></a></li>)}
+            <li><a class="link-row" href="#numbers"><span>{t.inNumbers}</span><span class="link-row-chevron" aria-hidden="true">›</span></a></li>
+          </ul>
+        </nav>
+        <details id="methods" class="group data-methods" data-anchor>
+          <summary><span>{t.methods}</span><span class="toc-chevron" aria-hidden="true">›</span></summary>
+          <ul>
+            {[t.method1, t.method2, t.method3, t.method4, t.method5, t.method6].map((m) => <li>{italics(m).map((r) => (r.italic ? <i>{r.text}</i> : r.text))}</li>)}
+          </ul>
+        </details>
+      </div>
+
+      <DataCharts client:visible lang={lang} tx={tx} top={t.top} regions={regions} />
+
+      <section id="numbers" class="numbers" data-anchor aria-labelledby="numbers-h">
+        <h2 id="numbers-h">{t.inNumbers}</h2>
+        <p class="numbers-lead">{t.inNumbersLead}</p>
+        <div class="segmented numbers-topics" role="group" aria-label={t.topic}>
+          {['all', ...topics].map((k) => <button type="button" data-topic={k} aria-pressed={k === 'all' ? 'true' : 'false'}>{t[`topic_${k}` as keyof typeof t]}</button>)}
+        </div>
+        <div class="field numbers-select">
+          <label class="field-label" for="topic">{t.topic}</label>
+          <span class="select">
+            <select id="topic">
+              {['all', ...topics].map((k) => <option value={k}>{t[`topic_${k}` as keyof typeof t]}</option>)}
+            </select>
+          </span>
+        </div>
+        {
+          topics.map((k) => (
+            <div class="numbers-group" data-group={k}>
+              <h3>{t[`topic_${k}` as keyof typeof t]}</h3>
+              <ul class="group inset-group" role="list">
+                {claims.claims
+                  .filter((c) => c.topic === k)
+                  .map((c) => (
+                    <li id={`claim-${c.id}`} tabindex="-1">
+                      <div class="numbers-row">
+                        <p>{c[lang]}</p>
+                        <p class="numbers-meta">
+                          <span>{c.kind}</span>, {c.year}.{' '}
+                          {c.sources.map((sid, i) => (
+                            <>
+                              <a href={sources[sid].url}>{sources[sid].title}</a>
+                              {i < c.sources.length - 1 ? '; ' : ''}
+                            </>
+                          ))}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ))
+        }
+        <a class="panel-link" href="#top" data-to-top>{t.top}</a>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import '../scripts/data.ts';
+</script>
