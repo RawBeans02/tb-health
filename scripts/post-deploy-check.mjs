@@ -15,6 +15,7 @@
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { isMain } from './is-main.mjs';
 
 const TIMEOUT = 15_000;
 
@@ -143,7 +144,7 @@ async function main() {
   console.log(`post-deploy-check: ${origin} matches dist/: ${checked} responses, ${pages.length + 4} pages identical, no cookies, every response's headers exactly as dist/_headers sets them, 404s right (${production ? 'production' : 'not production: noindex'}).`);
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (isMain(import.meta.url)) {
   await main().catch((error) => {
     console.error(`post-deploy-check: failed: ${error.message}`);
     process.exit(3);

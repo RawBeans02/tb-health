@@ -1,5 +1,6 @@
 // The symptom check's decision logic (pack §4) as decision tables. Synthetic answers only.
 import { describe, expect, it } from 'vitest';
+import { check } from '../../src/content/check.ts';
 import { after, before, blank, cardRows, evaluate, notes, optionsFor, pickSingle, sequence, toggleMulti, type Answers, type CardText } from '../../src/lib/check/flow.ts';
 
 const adult = (patch: Partial<Answers> = {}): Answers => ({ ...blank(), who: 'self', danger: ['none'], sym: ['none'], blood: 'no', recent: 'no', xray: 'no', risk: ['none'], ...patch });
@@ -146,5 +147,15 @@ describe('the child path and add-on notes (audit B43)', () => {
   it("Back from 'recent' goes to the symptoms for a child, to blood for an adult", () => {
     expect(before(child(), 'recent')).toBe('sym');
     expect(before(adult(), 'recent')).toBe('blood');
+  });
+});
+
+describe("Check's copy waits on the clinical review (audit B74)", () => {
+  // Pinned like Learn's L6: a refactor that drops these flags would clear launch-check's
+  // check-review without the review.
+  it('flags every question, option, result and note, and the footer, [REVIEW]', () => {
+    const medical = Object.entries(check).filter(([key]) => /^(intro(Title|Body)|q_|opt_|res_(urgent|[A-D])_(title|body|call|step\d)$|note_|foot$)/.test(key));
+    expect(medical).toHaveLength(68);
+    for (const [key, str] of medical) expect(str.flags, key).toContain('REVIEW');
   });
 });

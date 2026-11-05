@@ -14,7 +14,10 @@
 // be accepted or isn't open.
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { headersFile } from '../src/lib/headers.ts';
+import { isMain } from './is-main.mjs';
 
 const root = new URL('../', import.meta.url);
 const path = (p) => fileURLToPath(new URL(p, root));
@@ -24,7 +27,7 @@ const path = (p) => fileURLToPath(new URL(p, root));
 const KNOWN = [
   'Sakay.ph deep links [VERIFY] (Place, step 6). (DOH 1555 was verified by the owner, V4.)',
   'The name "TB PH" is a placeholder until stakeholders choose one (pack line 3).',
-  'WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, datapage.method2.',
+  'WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, dataPage.method2.',
   'Reuse terms for the WHO and PhilHealth data (licence and attribution wording) are not recorded yet.',
 ];
 
@@ -34,12 +37,18 @@ const KNOWN = [
 // list, updated when the owner answers Q9 (B61).
 const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'home.bring3', 'notFound.lead'];
 
-/**
- * The blocking keys the owner may accept for a release. The rest (privacy-row, synthetic,
- * no-build, no-data, no-headers, domain, not-production) can't be.
- */
+// Strings only Check's pages use, besides its own dictionary: a build without Check ships none.
+const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription'];
+
+// The Check footer's reviewer placeholder, open until the clinical review is recorded.
+const REVIEWER_PLACEHOLDERS = ['[partner clinicians — pending]', '[mga katuwang na doktor — nakabinbin]'];
+
 const PRIVACY_ROW = 'about.privacyServices';
 
+/**
+ * The blocking keys the owner may accept for a release. The rest (privacy-row, synthetic,
+ * no-build, no-data, no-headers, headers, check-pages, domain, not-production) can't be.
+ */
 export const ACCEPTABLE = ['check-review', 'sample', 'owner-strings', 'review', 'verify', 'placeholders', 'check-mentions'];
 
 /** `--release` and `--accept=key,key`; anything else is an error. */
@@ -53,25 +62,52 @@ export function parseArgs(argv) {
   return args;
 }
 
+/** Today's date in the Philippines, YYYY-MM-DD. */
+export function manilaToday(now = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila' }).format(now);
+}
+
+/** The last build as the gate reads it: null pieces where dist/ has none. */
+export function readBuild(dist) {
+  const read = (p) => (existsSync(join(dist, p)) ? readFileSync(join(dist, p), 'utf8') : null);
+  const home = read('index.html');
+  const json = read('data/facilities.json');
+  return {
+    build: home === null ? null : { home, check: { en: existsSync(join(dist, 'check.html')), fil: existsSync(join(dist, 'fil', 'check.html')) }, headers: read('_headers') },
+    facilities: json === null ? null : JSON.parse(json),
+  };
+}
+
+/** The views that build a page title with an em dash (" — TB PH"), for the V3 list. */
+export function viewTitleDashes(viewsDir) {
+  return readdirSync(viewsDir)
+    .filter((f) => f.endsWith('.astro') && readFileSync(join(viewsDir, f), 'utf8').includes('— TB PH'))
+    .map((f) => f.replace(/\.astro$/, ''))
+    .sort();
+}
+
 /**
  * What is open, from what the script read (audit B62: pure, so every key is unit-tested).
- *   strings     every copy string: { id, en, fil, origin, src, flags }
- *   build       null when dist/ holds no build, else { home: dist/index.html,
- *               checkBuilt: dist/check.html exists, headers: dist/_headers or null }
- *   facilities  dist/data/facilities.json, or null
- *   today       YYYY-MM-DD
+ *   strings        every copy string: { id, en, fil, origin, src, flags }
+ *   build          readBuild()'s build: null when dist/ holds no build, else { home: dist/index.html,
+ *                  check: { en, fil }: which check.html pages exist, headers: dist/_headers or null }
+ *   facilities     dist/data/facilities.json, or null
+ *   today          YYYY-MM-DD
+ *   checkMentions  the strings that still mention Check (CHECK_MENTIONS)
+ *   titleDashes    the views whose page titles carry an em dash (viewTitleDashes)
  */
-export function assess({ strings, build, facilities, today }) {
+export function assess({ strings, build, facilities, today, checkMentions = CHECK_MENTIONS, titleDashes = /** @type {string[]} */ ([]) }) {
   const blocking = [];
   const decide = [...KNOWN];
   const queues = [];
   const block = (key, text) => blocking.push({ key, text });
 
   // A build without Check (Q9) ships none of Check's strings, so they're in no list (B61).
-  // With no build yet, Check is in, as it is by default.
-  const checkBuilt = build ? build.checkBuilt : true;
-  const shipped = checkBuilt ? strings : strings.filter((s) => !s.id.startsWith('check.'));
+  // With no build yet, Check is in, as it is by default; with one language's page only, it
+  // counts as in, and the split blocks.
+  const checkBuilt = build ? build.check.en || build.check.fil : true;
   const isCheck = (s) => s.id.startsWith('check.');
+  const shipped = checkBuilt ? strings : strings.filter((s) => !isCheck(s) && !CHECK_ONLY.includes(s.id));
 
   // Copy. The privacy row is its own block, which can't be accepted: without it About doesn't
   // say who else sees what (RA 10173's transparency; the lead's ruling, B73).
@@ -102,8 +138,9 @@ export function assess({ strings, build, facilities, today }) {
   // has the reviewer placeholder. The flags come off only when the owner records the review.
   if (checkBuilt) {
     const review = shipped.filter((s) => isCheck(s) && s.flags?.includes('REVIEW')).length;
-    const reviewer = shipped.filter((s) => isCheck(s) && s.flags?.includes('PLACEHOLDER')).map((s) => s.id);
-    const left = [review && `${review} check string${review > 1 ? 's' : ''} still carry [REVIEW]`, reviewer.length && `the reviewer placeholder is still in (${reviewer.join(', ')})`].filter(Boolean);
+    const placeholderText = (s) => REVIEWER_PLACEHOLDERS.some((p) => s.en.includes(p) || s.fil.includes(p));
+    const reviewer = shipped.filter((s) => isCheck(s) && (s.flags?.includes('PLACEHOLDER') || placeholderText(s))).map((s) => s.id);
+    const left = [review && `${review} check string${review > 1 ? 's still carry' : ' still carries'} [REVIEW]`, reviewer.length && `the reviewer placeholder is still in (${reviewer.join(', ')})`].filter(Boolean);
     if (left.length) block('check-review', `Check is in the build, but its clinical review is pending: ${left.join('; ')}. Record the review, or build with TBPH_CHECK=false (Q9).`);
   }
   const filReview = shipped.filter((s) => s.flags?.includes('FIL-REVIEW'));
@@ -111,7 +148,8 @@ export function assess({ strings, build, facilities, today }) {
   queues.push(`Filipino register pass: ${shipped.filter((s) => s.origin === 'pack').length} pack strings, for one consistent register across pack and review copy.`);
   // V3: no em dashes in copy. Listed for the owner, never reworded here.
   const dashes = shipped.filter((s) => s.en.includes('—') || s.fil.includes('—'));
-  if (dashes.length) decide.push(`Em dashes (V3), for the owner or the v7 wording: ${dashes.map((s) => s.id).join(', ')}.`);
+  const titles = titleDashes.length ? `; and the page titles built in src/views (" — TB PH"): ${titleDashes.join(', ')}` : '';
+  if (dashes.length || titles) decide.push(`Em dashes (V3), for the owner or the v7 wording: ${dashes.map((s) => s.id).join(', ')}${titles}.`);
   const overrides = shipped.filter((s) => s.origin === 'override');
   queues.push(`Copy overrides for the owner to confirm: ${overrides.length} strings (docs/copy-overrides.md).`);
 
@@ -138,12 +176,15 @@ export function assess({ strings, build, facilities, today }) {
     if (!canonical || /\.example\b/.test(new URL(canonical).hostname)) {
       block('domain', `Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks host and domain (Q7).`);
     }
+    if (build.check.en !== build.check.fil) block('check-pages', `Only ${build.check.en ? '/check' : '/fil/check'} is in dist/: Check is in one language only. Rebuild with npm run build.`);
     if (!checkBuilt) {
       decide.push('Check is left out of this build (TBPH_CHECK=false, Q9).');
-      block('check-mentions', `Without Check, these strings still mention it; the owner rewords or drops them (Q9): ${CHECK_MENTIONS.join(', ')}.`);
+      if (checkMentions.length) block('check-mentions', `Without Check, these strings still mention it; the owner rewords or drops them (Q9): ${checkMentions.join(', ')}.`);
     }
+    // The headers must be exactly what build-headers writes for production.
     if (build.headers === null) block('no-headers', 'dist/_headers is missing: the security headers would not be sent. Rebuild with npm run build.');
-    else if (/X-Robots-Tag: noindex/.test(build.headers)) block('not-production', 'This build is marked noindex: build the release with TBPH_PRODUCTION=true and SITE_URL.');
+    else if (build.headers === headersFile(false)) block('not-production', 'This build is marked noindex: build the release with TBPH_PRODUCTION=true and SITE_URL.');
+    else if (build.headers !== headersFile(true)) block('headers', "dist/_headers isn't what build-headers writes for production (src/lib/headers.ts): rebuild with TBPH_PRODUCTION=true and SITE_URL.");
   }
 
   return { blocking, decide, queues };
@@ -176,18 +217,14 @@ async function readStrings() {
   return out;
 }
 
-const read = (p) => (existsSync(path(p)) ? readFileSync(path(p), 'utf8') : null);
-
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.error) {
     console.error(`launch-check: ${args.error}. Usage: launch-check [--release] [--accept=key,key]`);
     process.exit(2);
   }
-  const home = read('dist/index.html');
-  const build = home === null ? null : { home, checkBuilt: existsSync(path('dist/check.html')), headers: read('dist/_headers') };
-  const json = read('dist/data/facilities.json');
-  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities: json && JSON.parse(json), today: new Date().toISOString().slice(0, 10) });
+  const { build, facilities } = readBuild(path('dist/'));
+  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/')) });
   const result = applyAccept(blocking, args.accept);
   if (result.error) {
     console.error(`launch-check: ${result.error}.`);
@@ -215,4 +252,4 @@ async function main() {
   }
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) await main();
+if (isMain(import.meta.url)) await main();

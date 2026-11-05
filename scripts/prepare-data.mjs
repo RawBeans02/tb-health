@@ -27,6 +27,7 @@ import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { prepare } from '../src/lib/core/facility.ts';
 import { buildGazetteer } from '../src/lib/core/geo.ts';
 import { norm } from '../src/lib/core/text.ts';
+import { isMain } from './is-main.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataDir = join(root, 'data');
@@ -377,4 +378,4 @@ function reportIds(rows, aliases) {
   }
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
+if (isMain(import.meta.url)) main();

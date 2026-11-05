@@ -1,27 +1,39 @@
-// The release gate's decision (audit B59–B62): each blocking key's trigger, what the owner
-// may accept, the exit-2 refusals, a build without Check, and check-review clearing once the
-// clinical review is recorded. Synthetic strings and builds only.
-import { describe, expect, it } from 'vitest';
-import { ACCEPTABLE, applyAccept, assess, parseArgs } from '../../scripts/launch-check.mjs';
+// The release gate's decision (audit B59–B62, B73, B74): each blocking key's trigger, what
+// the owner may accept, the exit-2 refusals, a build without Check, check-review clearing once
+// the clinical review is recorded, reading dist/, and the script's exit codes. Synthetic
+// strings and builds only.
+import { spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
+import { headersFile } from '../../src/lib/headers.ts';
+import { PLACEHOLDER_SITE } from '../../src/lib/site.ts';
+import { ACCEPTABLE, applyAccept, assess, manilaToday, parseArgs, readBuild, viewTitleDashes } from '../../scripts/launch-check.mjs';
 
 type Str = { id: string; en: string; fil: string; origin: string; src: string[]; flags?: string[] };
 const str = (id: string, flags?: string[], extra: Partial<Str> = {}): Str => ({ id, en: 'Text', fil: 'Teksto', origin: 'pack', src: ['pack', 'pack'], flags, ...extra });
 
-const HOME = '<link rel="canonical" href="https://tb.example.org/">';
-const LIVE = '<link rel="canonical" href="https://tbph.org/">';
-const HEADERS = '/*\n  Strict-Transport-Security: max-age=31536000\n';
+const canonical = (origin: string) => `<link rel="canonical" href="${origin}/">`;
+const HOME = canonical(PLACEHOLDER_SITE);
+const LIVE = canonical('https://tbph.org');
+const HEADERS = headersFile(true);
+const BOTH = { en: true, fil: true };
+const NONE = { en: false, fil: false };
 const facilities = (meta: object = {}) => ({ meta: { count: 3, ...meta }, facilities: [{ accreditation_expiry: '2027-06-30', source_updated: '2026-10-01' }] });
 
 type Input = {
   strings: Str[];
-  build: { home: string; checkBuilt: boolean; headers: string | null } | null;
+  build: { home: string; check: { en: boolean; fil: boolean }; headers: string | null } | null;
   facilities: ReturnType<typeof facilities> | null;
   today: string;
+  checkMentions?: string[];
+  titleDashes?: string[];
 };
 
 /** A release-ready build: real domain, production headers, real data, Check reviewed. */
 const ready = (over: Partial<Input> = {}) =>
-  assess({ strings: [str('nav.home'), str('check.q1')], build: { home: LIVE, checkBuilt: true, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', ...over } satisfies Input);
+  assess({ strings: [str('nav.home'), str('check.q1')], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', ...over } satisfies Input);
 const keys = (r: { blocking: { key: string }[] }) => r.blocking.map((b) => b.key);
 
 describe('assess: each key and its trigger', () => {
@@ -67,23 +79,118 @@ describe('assess: each key and its trigger', () => {
   });
 
   it('domain: the placeholder address', () => {
-    expect(keys(ready({ build: { home: HOME, checkBuilt: true, headers: HEADERS } }))).toEqual(['domain']);
-    expect(keys(ready({ build: { home: '<title>x</title>', checkBuilt: true, headers: HEADERS } }))).toEqual(['domain']);
+    expect(keys(ready({ build: { home: HOME, check: BOTH, headers: HEADERS } }))).toEqual(['domain']);
+    expect(keys(ready({ build: { home: '<title>x</title>', check: BOTH, headers: HEADERS } }))).toEqual(['domain']);
   });
 
-  it('not-production: the noindex header; no-headers: dist/_headers missing', () => {
-    expect(keys(ready({ build: { home: LIVE, checkBuilt: true, headers: `${HEADERS}  X-Robots-Tag: noindex\n` } }))).toEqual(['not-production']);
-    expect(keys(ready({ build: { home: LIVE, checkBuilt: true, headers: null } }))).toEqual(['no-headers']);
+  it('not-production: the noindex header; no-headers: dist/_headers missing; headers: anything but the production file (B74)', () => {
+    expect(keys(ready({ build: { home: LIVE, check: BOTH, headers: headersFile(false) } }))).toEqual(['not-production']);
+    expect(keys(ready({ build: { home: LIVE, check: BOTH, headers: null } }))).toEqual(['no-headers']);
+    expect(keys(ready({ build: { home: LIVE, check: BOTH, headers: HEADERS.replace('max-age=31536000', 'max-age=0') } }))).toEqual(['headers']);
+    expect(keys(ready({ build: { home: LIVE, check: BOTH, headers: '' } }))).toEqual(['headers']);
+  });
+
+  it('check-pages: Check in one language only blocks, and its review still counts (B74)', () => {
+    const r = ready({ strings: [str('check.q1', ['REVIEW'])], build: { home: LIVE, check: { en: true, fil: false }, headers: HEADERS } });
+    expect(keys(r)).toEqual(['check-review', 'check-pages']);
+    expect(r.blocking[0].text).toContain('1 check string still carries [REVIEW]');
+  });
+
+  it("check-review: the footer's bracketed reviewer placeholder counts even without its flag (B74)", () => {
+    const foot = (en: string, fil: string) => str('check.foot', undefined, { en, fil });
+    expect(keys(ready({ strings: [foot('Medical review: [partner clinicians — pending].', 'Medical review: Dr. A.')] }))).toEqual(['check-review']);
+    expect(keys(ready({ strings: [foot('Medical review: Dr. A.', 'Medical review: [mga katuwang na doktor — nakabinbin].')] }))).toEqual(['check-review']);
+    expect(keys(ready({ strings: [foot('Medical review: Dr. A.', 'Medical review: Dr. A.')] }))).toEqual([]);
+  });
+
+  it('lists the em dashes in strings and in the page titles the views build (B74)', () => {
+    const r = ready({ strings: [str('home.lede', undefined, { en: 'A — B' })], titleDashes: ['About', 'Learn'] });
+    expect(r.decide.find((d) => d.startsWith('Em dashes'))).toBe('Em dashes (V3), for the owner or the v7 wording: home.lede; and the page titles built in src/views (" — TB PH"): About, Learn.');
+    expect(viewTitleDashes('src/views')).toEqual(['About', 'Data', 'Install', 'Learn', 'Place']);
+  });
+
+  it("names dataPage.method2 as the dictionary spells it (B74)", () => {
+    expect(ready().decide.join(' ')).toContain('dataPage.method2');
+  });
+});
+
+describe('dates and reading dist/ (B74)', () => {
+  it("dates the accreditations by the Philippines' calendar", () => {
+    expect(manilaToday(new Date('2026-11-05T15:59:00Z'))).toBe('2026-11-05');
+    expect(manilaToday(new Date('2026-11-05T16:00:00Z'))).toBe('2026-11-06');
+  });
+
+  const dirs: string[] = [];
+  afterAll(() => dirs.forEach((d) => rmSync(d, { recursive: true, force: true })));
+  const dist = (files: Record<string, string>) => {
+    const d = mkdtempSync(join(tmpdir(), 'tbph-gate-'));
+    dirs.push(d);
+    for (const [name, text] of Object.entries(files)) {
+      mkdirSync(join(d, name, '..'), { recursive: true });
+      writeFileSync(join(d, name), text);
+    }
+    return d;
+  };
+  const data = (meta: object) => JSON.stringify(facilities(meta));
+
+  it('reads the build, both Check pages, _headers and the facility list', () => {
+    const { build, facilities: list } = readBuild(dist({ 'index.html': LIVE, 'check.html': '', 'fil/check.html': '', _headers: HEADERS, 'data/facilities.json': data({ sample: true }) }));
+    expect(build).toEqual({ home: LIVE, check: BOTH, headers: HEADERS });
+    expect(list?.meta.sample).toBe(true);
+  });
+
+  it('reads a build without Check, without _headers, with synthetic data, and no build at all', () => {
+    const r = readBuild(dist({ 'index.html': LIVE, 'data/facilities.json': data({ synthetic: true }) }));
+    expect(r.build).toEqual({ home: LIVE, check: NONE, headers: null });
+    expect(keys(assess({ strings: [], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'check-mentions', 'no-headers']);
+    expect(readBuild(dist({}))).toEqual({ build: null, facilities: null });
+  });
+});
+
+describe('the script: exit codes, also run through a symlink (B74)', () => {
+  const run = (script: string, ...args: string[]) => spawnSync(process.execPath, [script, ...args], { encoding: 'utf8' }).status;
+
+  it('exits 2 on an unknown argument and on a key that can never be accepted', () => {
+    expect(run('scripts/launch-check.mjs', '--bogus')).toBe(2);
+    expect(run('scripts/launch-check.mjs', '--release', '--accept=domain')).toBe(2);
+  });
+
+  it('exits 1 while anything blocks, and 0 for a report', () => {
+    // The repo's own state always blocks: the sample list, or no build at all.
+    expect(run('scripts/launch-check.mjs', '--release')).toBe(1);
+    expect(run('scripts/launch-check.mjs')).toBe(0);
+  });
+
+  it('runs main() through a symlinked path', () => {
+    const d = mkdtempSync(join(tmpdir(), 'tbph-link-'));
+    try {
+      symlinkSync(join(process.cwd(), 'scripts/launch-check.mjs'), join(d, 'lc.mjs'));
+      symlinkSync(join(process.cwd(), 'scripts/post-deploy-check.mjs'), join(d, 'pdc.mjs'));
+      expect(run(join(d, 'lc.mjs'), '--bogus')).toBe(2);
+      expect(run(join(d, 'pdc.mjs'))).toBe(2); // no origin: the usage line
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
   });
 });
 
 describe('assess: a build without Check', () => {
   const strings = [str('nav.home'), str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B' })];
-  const off = assess({ strings, build: { home: LIVE, checkBuilt: false, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+  const off = assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
 
   it('blocks check-mentions, not check-review', () => {
     expect(keys(off)).toEqual(['check-mentions']);
     expect(off.decide).toContain('Check is left out of this build (TBPH_CHECK=false, Q9).');
+  });
+
+  it('blocks check-mentions only while its list has strings (B74)', () => {
+    expect(keys(assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', checkMentions: [] }))).toEqual([]);
+  });
+
+  it("leaves Check's page title and description out too (B74)", () => {
+    const meta = [str('meta.checkTitle', undefined, { en: 'Check — TB PH' }), str('meta.checkDescription', ['FIL-REVIEW'])];
+    const r = assess({ strings: [...strings, ...meta], build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(JSON.stringify(r)).not.toMatch(/meta\.check/);
   });
 
   it("leaves Check's strings out of every list", () => {
@@ -92,7 +199,7 @@ describe('assess: a build without Check', () => {
   });
 
   it('is told apart from a build with Check by dist/check.html alone, not the nav markup', () => {
-    const on = assess({ strings, build: { home: LIVE, checkBuilt: true, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    const on = assess({ strings, build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
     expect(keys(on)).toEqual(['check-review']);
   });
 });
@@ -115,7 +222,7 @@ describe('parseArgs and applyAccept: the exit-2 refusals', () => {
   });
 
   it('refuses the keys that can never be accepted', () => {
-    for (const key of ['privacy-row', 'synthetic', 'no-build', 'no-data', 'no-headers', 'domain', 'not-production']) {
+    for (const key of ['privacy-row', 'synthetic', 'no-build', 'no-data', 'no-headers', 'headers', 'check-pages', 'domain', 'not-production']) {
       expect(ACCEPTABLE).not.toContain(key);
       expect(applyAccept([...blocking, { key, text: '' }], [key])).toHaveProperty('error');
     }

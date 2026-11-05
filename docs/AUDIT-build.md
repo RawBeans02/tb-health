@@ -18,7 +18,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
   - [placeholders] About's lede, partners, medical review, accessibility and contact rows. (The check card's footer counts under [check-review].)
   - [sample] the 93-row sample facility list (Q8).
   - [domain] the placeholder domain (Q7), and [not-production] until the release is built with `TBPH_PRODUCTION=true`.
-  - The owner may accept only their own calls (check-review, sample, owner-strings, review, verify, placeholders, check-mentions). The privacy row, synthetic data, no build, no facility list, a missing `_headers`, the placeholder domain and a noindex build can't be accepted; naming one, an unknown key or an unknown argument exits 2 (B59, B60). The gate reads the data and the Check switch from `dist/` (B59) and is unit-tested (B62).
+  - The owner may accept only their own calls (check-review, sample, owner-strings, review, verify, placeholders, check-mentions). The privacy row, synthetic data, no build, no facility list, a missing `_headers` or one that differs from the production file, Check in one language only, the placeholder domain and a noindex build can't be accepted; naming one, an unknown key or an unknown argument exits 2 (B59, B60). The gate reads the data and the Check switch from `dist/` (B59) and is unit-tested (B62).
 - **Accepted exceptions / N/A rationale:** as in the interim audit's "N/A rationale by SOT section", plus: push notifications, accounts, payments and store submission remain N/A; the PWA (step 11) and the SEO and headers work (step 12) now exist and are assessed below.
 
 ## Release decision
