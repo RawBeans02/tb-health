@@ -34,7 +34,12 @@ const KNOWN = [
 // list, updated when the owner answers Q9 (B61).
 const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'home.bring3', 'notFound.lead'];
 
-/** The blocking keys the owner may accept for a release. The rest (synthetic, no-build, no-data, no-headers, domain, not-production) can't be. */
+/**
+ * The blocking keys the owner may accept for a release. The rest (privacy-row, synthetic,
+ * no-build, no-data, no-headers, domain, not-production) can't be.
+ */
+const PRIVACY_ROW = 'about.privacyServices';
+
 export const ACCEPTABLE = ['check-review', 'sample', 'owner-strings', 'review', 'verify', 'placeholders', 'check-mentions'];
 
 /** `--release` and `--accept=key,key`; anything else is an error. */
@@ -68,8 +73,12 @@ export function assess({ strings, build, facilities, today }) {
   const shipped = checkBuilt ? strings : strings.filter((s) => !s.id.startsWith('check.'));
   const isCheck = (s) => s.id.startsWith('check.');
 
-  // Copy
-  const ownerMissing = shipped.filter((s) => (s.src[0] === 'owner' && !s.en) || (s.src[1] === 'owner' && !s.fil));
+  // Copy. The privacy row is its own block, which can't be accepted: without it About doesn't
+  // say who else sees what (RA 10173's transparency; the lead's ruling, B73).
+  const missing = (s) => (s.src[0] === 'owner' && !s.en) || (s.src[1] === 'owner' && !s.fil);
+  const privacyRow = shipped.find((s) => s.id === PRIVACY_ROW);
+  if (privacyRow && missing(privacyRow)) block('privacy-row', `The privacy row (${PRIVACY_ROW}, Q5) isn't in yet: About doesn't say who else sees what (the host, OpenStreetMap, Google Maps). It can't be accepted (RA 10173).`);
+  const ownerMissing = shipped.filter((s) => s.id !== PRIVACY_ROW && missing(s));
   if (ownerMissing.length) block('owner-strings', `Strings the owner supplies, not in yet (${ownerMissing.length}): ${ownerMissing.map((s) => s.id).join(', ')}.`);
 
   // Flagged copy blocks a release: [REVIEW] waits on the clinical review, [VERIFY] on a check,

@@ -49,7 +49,7 @@ export const about = {
     origin: 'owner',
     src: ['owner', 'owner'],
     note:
-      "The owner writes this row (Q5). It replaces the prototype's row naming Google Fonts, which the site doesn't use, and is not shown until supplied. What it has to cover, as the site works now: the fonts are served by TB PH itself; the host sees each visitor's IP address, browser and the pages requested; OpenStreetMap is contacted only if the map is opened, and then sees the IP address and the area viewed (around the reader if they used their location); directions hand off to Google Maps or Sakay.ph, which then see the chosen place; calls go through the phone.",
+      "The owner writes this row (Q5). It replaces the prototype's row naming Google Fonts, which the site doesn't use, and is not shown until supplied. What it has to cover, as the site works now: the fonts are served by TB PH itself; the host sees each visitor's IP address, browser and the pages requested; OpenStreetMap is contacted only if the map is opened, and then sees the IP address and the area viewed (around the reader if they used their location); directions hand off to Google Maps, which then sees the chosen place; for Sakay.ph the site copies the address and opens sakay.ph, which sees it only if the reader pastes it there; calls go through the phone.",
   },
 
   updates: ui('Data and updates', 'Datos at mga update', file),

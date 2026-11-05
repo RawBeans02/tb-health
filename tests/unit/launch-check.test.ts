@@ -30,7 +30,14 @@ describe('assess: each key and its trigger', () => {
   });
 
   it('owner-strings: a string the owner supplies is still empty', () => {
-    expect(keys(ready({ strings: [str('about.privacyServices', undefined, { en: '', fil: '', origin: 'owner', src: ['owner', 'owner'] })] }))).toEqual(['owner-strings']);
+    expect(keys(ready({ strings: [str('meta.aboutDescription', undefined, { fil: '', src: ['pack', 'owner'] })] }))).toEqual(['owner-strings']);
+  });
+
+  it('privacy-row: the privacy row blocks on its own while it is empty, and clears once supplied (B73)', () => {
+    const row = (en: string, fil: string) => str('about.privacyServices', undefined, { en, fil, origin: 'owner', src: ['owner', 'owner'] });
+    expect(keys(ready({ strings: [row('', '')] }))).toEqual(['privacy-row']);
+    expect(keys(ready({ strings: [row('Our host sees…', '')] }))).toEqual(['privacy-row']);
+    expect(keys(ready({ strings: [row('Our host sees…', 'Nakikita ng host…')] }))).toEqual([]);
   });
 
   it('review, verify and placeholders: flagged copy outside Check', () => {
@@ -108,7 +115,7 @@ describe('parseArgs and applyAccept: the exit-2 refusals', () => {
   });
 
   it('refuses the keys that can never be accepted', () => {
-    for (const key of ['synthetic', 'no-build', 'no-data', 'no-headers', 'domain', 'not-production']) {
+    for (const key of ['privacy-row', 'synthetic', 'no-build', 'no-data', 'no-headers', 'domain', 'not-production']) {
       expect(ACCEPTABLE).not.toContain(key);
       expect(applyAccept([...blocking, { key, text: '' }], [key])).toHaveProperty('error');
     }
