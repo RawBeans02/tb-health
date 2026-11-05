@@ -217,9 +217,11 @@ export function stack(o: Opts): Chart {
 }
 export function bullets(o: Opts): Chart {
   // A value that doesn't fit beside its label goes on the line below it, and that item grows
-  // by a line (B78).
+  // by a line (B78). Measured with the plain estimate: for these bold strings the bold one runs
+  // about 6% wide (getComputedTextLength: "TB rate per 100,000" 153.6, "2024: 625" 80.1),
+  // which moved the value where it fits (B81).
   const th = o.th, itemH = 112, lineH = 22;
-  const own = o.items.map((it: any) => textWidth(it.label, 16, true) + 12 + textWidth(it.now, 16, true) > o.w);
+  const own = o.items.map((it: any) => textWidth(it.label, 16) + 12 + textWidth(it.now, 16) > o.w);
   const h = o.items.length * itemH + own.filter(Boolean).length * lineH;
   const S = G(o.w, h, o.alt);
   let y0 = 0;

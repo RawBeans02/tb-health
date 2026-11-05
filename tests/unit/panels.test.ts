@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { charts } from '../../src/content/charts.ts';
 import { pick } from '../../src/content/types.ts';
-import { buildPanels, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
+import { buildPanels, COLORS, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
 import { textWidth, wrapText } from '../../src/lib/charts/primitives.ts';
 
 const data = JSON.parse(readFileSync('data/tb-ph-data.json', 'utf8'));
@@ -152,22 +152,27 @@ describe('no overlapping chart text on a phone (audit B78)', () => {
     return [from, from + width];
   };
 
+  /** Vertical lines in the gridline colour. */
+  const gridlines = (c: { paths: { d: string; stroke: string }[] }) => c.paths.filter((p) => p.stroke === COLORS.rule && /^M([\d.]+) [\d.]+L\1 [\d.]+$/.test(p.d)).length;
+
   it('drops an axis label that would start within 4px of the last one, and keeps every gridline (d6, d17)', () => {
+    // 252 and 322 are the charts' widths on 320 and 390px phones.
     for (const lang of ['en', 'fil'] as const) {
-      for (const w of [290, 360]) {
+      for (const w of [252, 290, 322, 360]) {
         for (const p of narrow(lang, w).filter((p) => ['d6', 'd17'].includes(p.id))) {
           const c = p.svgs![0];
           const axis = c.texts.filter((t) => t.fs === 13).map(span).sort((a, b) => a[0] - b[0]);
           for (let i = 1; i < axis.length; i++) expect(axis[i][0], `${lang} ${w} ${p.id}`).toBeGreaterThanOrEqual(axis[i - 1][1] + 4);
+          expect(gridlines(c), `${lang} ${w} ${p.id} gridlines`).toBe(p.id === 'd6' ? 5 : 4);
         }
       }
     }
-    // d17 at 290px: two labels left, five gridlines still drawn.
+    // d17 at 290px: two labels left, all four gridlines still drawn.
     const d17 = narrow('en', 290).find((p) => p.id === 'd17')!.svgs![0];
     expect(d17.texts.filter((t) => t.fs === 13).map((t) => t.s)).toEqual(['US$0M', 'US$100M']);
   });
 
-  it("puts a bullet's value on its own line when it doesn't fit beside its label (d15)", () => {
+  it("puts a bullet's value on its own line only where label and value would touch (d15, B81)", () => {
     const d15 = (lang: 'en' | 'fil', w: number) => narrow(lang, w).find((p) => p.id === 'd15')!.svgs![0];
     const own = (lang: 'en' | 'fil', w: number) => {
       const c = d15(lang, w);
@@ -175,9 +180,12 @@ describe('no overlapping chart text on a phone (audit B78)', () => {
       const labels = c.texts.filter((t) => t.x === 0 && t.fs === 16);
       return values.map((v, i) => v.y > labels[i].y);
     };
-    expect(own('en', 290)).toEqual([false, false]);
-    expect(own('fil', 290)).toEqual([true, false]);
-    expect(d15('fil', 290).h).toBe(d15('en', 290).h + 22);
+    // Measured in Chromium and WebKit: EN needs 246px for its first row, FIL 302-304px.
+    expect(own('en', 252)).toEqual([false, false]);
+    expect(own('fil', 252)).toEqual([true, false]);
+    expect(own('fil', 292)).toEqual([true, false]);
+    expect(own('fil', 307)).toEqual([false, false]);
+    expect(d15('fil', 292).h).toBe(d15('en', 292).h + 22);
   });
 });
 
