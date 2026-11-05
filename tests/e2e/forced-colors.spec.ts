@@ -17,8 +17,10 @@ function systemColours(page: Page) {
     const highlight = { bg: getComputedStyle(probe).backgroundColor, fg: getComputedStyle(probe).color };
     probe.style.cssText = 'forced-color-adjust: none; background: Canvas';
     const canvas = getComputedStyle(probe).backgroundColor;
+    probe.style.cssText = 'forced-color-adjust: none; color: CanvasText';
+    const canvasText = getComputedStyle(probe).color;
     probe.remove();
-    return { highlight, canvas };
+    return { highlight, canvas, canvasText };
   });
 }
 
@@ -43,3 +45,15 @@ test('selected segment, current tab and current language are Highlight; the swit
   await expect(sw).toHaveAttribute('aria-checked', 'false');
   expect((await colours(track)).bg).toBe(system.canvas);
 });
+
+test("a focused selected item's ring is CanvasText, not the author's ink (B77)", async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active', colorScheme: 'dark' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/places', { waitUntil: 'networkidle' });
+  const system = await systemColours(page);
+  for (const selected of [page.getByRole('group', { name: 'View' }).locator('button[aria-pressed="true"]'), page.locator('.tab-bar a[aria-current]'), page.locator('.site-header .lang-toggle a[aria-current]')]) {
+    await selected.focus();
+    expect(await selected.evaluate((el) => getComputedStyle(el).outlineColor)).toBe(system.canvasText);
+  }
+});
+

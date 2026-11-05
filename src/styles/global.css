@@ -146,6 +146,8 @@ a {
     forced-color-adjust: none;
     background: Highlight;
     color: HighlightText;
+    /* Their focus ring too: kept from the author's ink, it nearly vanished on a dark Canvas (B77). */
+    outline-color: CanvasText;
   }
 
   html .switch-track,
