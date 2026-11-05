@@ -830,3 +830,103 @@ A read-only review of 0ef9d9e..147fba6: B44-B68 and the gate fix 8dfe088. An adv
     That keeps the approved look wherever the labels fit.
 - **Acceptance:** The screenshots are in the resume, and the QA matrix finds no overlapping text.
 - **Sources:** review of the fixes, finding layout-2 (refuted as a design call; the lead rules overlapping text a defect)
+
+## Review of the fixes B69-B78 (5 November 2026)
+
+A read-only review of 147fba6..75ce0d1. An adversarial verifier checked all 25 findings. It confirmed 22 and refuted 3, and none was High. The docs reviewer checked HANDOVER's wrangler commands against developers.cloudflare.com. The lead looked at the B78 screenshots: the overlaps are gone, and every gridline stays. The rules in "How to work" apply.
+
+- **Done as asked:** B69, B70, B73, B74, B75, B77, and B72's release-check script. The gate passes no build it must block, and blocks no valid production build.
+- **Partly done:** B71 and the final-gate record (B80), B72's HANDOVER (B79), B76 (B84) and B78 (B81). B82 and B83 tighten the gate and the B69 and B77 tests.
+- **Owner decision:** Q7 is answered. The host is Cloudflare Pages, in a TB Health-only account (decisions.md, 5 Nov). The domain is still open.
+- **Lead ruling:** the monthly chart (d3), 2px taller so its month labels stay inside, is accepted.
+
+### B79. Finish the release path in HANDOVER (Medium)
+
+- **Files:** docs/HANDOVER.md, docs/PLAN.md, docs/AUDIT-build.md, package.json (if Astro's telemetry needs it)
+- **Fix:**
+  - **A fresh folder each release.** A second release run from the project folder fails to clone into the existing tb-health-release folder. The next pasted line then `cd`s into the old clone, and the old commit ships. Post-deploy-check passes too, because it compares against that same old dist/. Use one line, with a dated folder outside the project, so a failed clone stops it: for example `D=~/Documents/tb-health-release-$(date +%Y%m%d-%H%M) && git clone … "$D" && cd "$D" && … && npm ci`. Old release folders go to the Trash with `/usr/bin/trash`.
+  - **Check the account at every release, not once.** The login is stored in a file every session of this macOS user reads, and CLOUDFLARE_API_TOKEN or the CLOUDFLARE_API_KEY and CLOUDFLARE_EMAIL pair override it. Before each deploy: `unset CLOUDFLARE_API_TOKEN CLOUDFLARE_API_KEY CLOUDFLARE_EMAIL CLOUDFLARE_ACCOUNT_ID && npx wrangler@4.151.3 whoami`, and stop unless it shows the TB Health account. Name the API key and email pair in the setup step too. In PLAN's Q7, say "login" where it says the owner holds a token, so the two agree.
+  - **Telemetry:**
+    - Put the disclosure above setup step 1.
+    - Set `WRANGLER_SEND_METRICS=false` on every wrangler command in HANDOVER, or export it once at the top of the release shell.
+    - Don't use `wrangler telemetry disable`. It's global for this macOS user, so it would change the KitaMo builders' setting too.
+    - Check Astro 7's docs: if its telemetry is on by default, set `ASTRO_TELEMETRY_DISABLED=1` in the project's npm scripts (not `astro telemetry disable`, which is global for the same reason), and disclose it with npm audit and wrangler.
+  - **The accept list:** show the whole one-line command with it in place, for example `… && npm run release-check -- --accept=sample && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy …`.
+  - **A clean clone builds what's committed.** Say that the real facility list (Q8) has to be committed to `main` before a release, or the release builds the sample.
+  - **Ctrl-C during the guarded build:** lowmem-run puts the job in its own process group, and its exit trap only removes the lock. So Ctrl-C ends the guard and frees the lock while the build keeps running. Say so in HANDOVER: wait for the build to end before starting another heavy job. Don't change lowmem-run.sh: it came with the project setup, so ask the lead first.
+  - **The owner-only list:** add the v7 import, or the owner's decision to launch on v6.
+  - **Q7:** record the owner's answer. HANDOVER's "the recommended answer to Q7" becomes the decision. AUDIT-build's verdict waits on the domain, not the host. PLAN §7.1 marks Q7's host as answered.
+- **Acceptance:** Pasting the release block twice, on two different days or minutes, builds the newer commit each time. Every wrangler command carries the account check and no telemetry. PLAN, HANDOVER and AUDIT-build agree on Q7.
+- **Sources:** review of the B69-B78 fixes, findings docs-1, docs-2, docs-8 and docs-9; the docs reviewer's notes; the owner's Q7 answer
+
+### B80. Make AUDIT-build's remaining figures and ratings match (Medium)
+
+- **Files:** docs/AUDIT-build.md
+- **Fix:**
+  - **SEO:** wherever it says "SEO 100" or "100 … everywhere" (lines 57, 60, 119, 209), say "SEO 100 on the ten measured pages; 92 on /fil/data, with no Filipino description until Q3". Don't count SEO towards the Performance row's Verified while Q3 is open. The SEO row says "the ten pages below".
+  - **Partial, naming the open item:**
+    - Broken links: the 28 outside sources aren't fetched until the owner's OK (L8, B64);
+    - the Lighthouse audit rule: "on a production-mode stand-in build, before B68 except the rechecks; rerun on the release build and the deployed site";
+    - Reliability (O6, O21) and Jakob's Law 2 (O7).
+  - **Tests / CI:** "verified locally; the first GitHub run waits for the merge to main (D22)", not a runtime check.
+  - **Wording:**
+    - "one source a second (HEAD, then GET at once after a 4xx or 5xx)", here and in the script's comment;
+    - Mobile menu cites only O3;
+    - the audit record's "Branch / commit" names the gate's commit and the docs commit;
+    - B78's probe flags two labels whose boxes cross by more than a third of a line's height;
+    - text size is tested in Chromium only, so B76's "WebKit passed" applies to the other specs.
+- **Acceptance:** No row or rule says Verified while an open owner item undercuts it, and every SEO figure agrees.
+- **Sources:** review of the B69-B78 fixes, findings docs-3 to docs-6 and docs-11 to docs-14; the docs and charts reviewers' notes
+
+### B81. Keep d15's value on one line wherever it fits (Medium)
+
+- **Files:** src/lib/charts/primitives.ts, tests/unit/panels.test.ts
+- **Fix:**
+  - The bullet rule uses the bold estimate (×1.06) plus 12px. Your own measurement shows that estimate runs about 6% wide for these strings, so the value drops to its own line where it fits. That happens in English at 320px and in Filipino at 375px, and it changes the approved one-line look and adds 22px.
+  - Calibrate the rule; without the bold factor it matches the measured 290px. Confirm with getComputedTextLength() in a browser.
+  - Pin the chart widths 252 (EN on one line, FIL on its own line), 292 (FIL on its own line) and 307 (FIL on one line).
+  - **B78's unit test:**
+    - count the gridlines (four for d17, five for d6);
+    - fix the "five gridlines" comment;
+    - add the real phone chart widths, 252 and 322.
+- **Acceptance:** The value moves only where label and value would touch. The unit test pins those widths and the gridline counts.
+- **Sources:** review of the B69-B78 fixes, findings charts-1 and charts-6
+
+### B82. Close the gate's last gaps (Low)
+
+- **Files:** scripts/launch-check.mjs, tests/unit/launch-check.test.ts
+- **Fix:**
+  - **privacy-row by id:**
+    - pin `about.privacyServices` with a test against the real dictionaries, as check.test.ts pins Check's flags;
+    - have assess() raise privacy-row when the id isn't found at all, so a renamed row can't drop into the acceptable owner-strings.
+  - **The reviewer-placeholder check:** match without the em dash, for example `/\[(partner clinicians|mga katuwang na doktor)\b[^\]]*\]/`, because the V3 pass will reword that dash. Add a case with the dash replaced.
+  - **The V3 em-dash list:**
+    - also cover PlaceShell.tsx's runtime title (`${name} — TB PH`);
+    - ignore comments when counting view titles.
+  - **Check detection:** tie it to `build.format: 'file'` with a comment and a test.
+  - **The exit-1 test:** run it on a temporary dist/, not the checkout's own, so a checkout holding a clean production build doesn't fail it.
+- **Acceptance:** A unit test for each change.
+- **Sources:** review of the B69-B78 fixes, findings gate-1 and gate-2; the gate reviewer's notes
+
+### B83. Make the B69 and B77 tests prove their fixes (Low)
+
+- **Files:** tests/e2e/shell.spec.ts, tests/e2e/forced-colors.spec.ts
+- **Fix:**
+  - **The back-forward check:** it passes with or without the pageshow refresh, because the twin's links were already right. Check the source page instead: after the switch, go back and expect its Filipino link to end with the hash. To make it independent of bfcache, set a stale href in the page, dispatch `new PageTransitionEvent('pageshow', { persisted: true })`, and expect refresh() to restore it.
+  - **Waits:** replace the 300 ms sleep after load with a condition: the hash back in the address, then two animation frames.
+  - **The skip link:** add its case (`#main`, which has tabindex -1, so a fragment jump would move focus there). #accessibility and #l2 have no tabindex, so the focus check can't fail on them.
+  - **B77:** also assert `outlineStyle` is solid, so the ring is really drawn, and cover `.toc-wide a[aria-current]`.
+- **Acceptance:** Each check fails with its fix reverted (record the runs).
+- **Sources:** review of the B69-B78 fixes, findings behaviour-1 and behaviour-2; the behaviour reviewer's notes
+
+### B84. Probe /data after its charts settle (Low)
+
+- **Files:** tests/e2e/textsize.spec.ts, tests/e2e/probes.ts, tests/e2e/qa.spec.ts
+- **Fix:**
+  - **textsize.spec:** in overflow(), await chartsSettled() before the scroll check and outsideProblems. Or make outsideProblems await it itself.
+  - **chartsSettled():**
+    - also wait until #d1's viewBox width equals the measured panel width (max 240), because at 1280px the 928px prerender already fits and the wait passes before the relayout;
+    - its doc comment says it scrolls #d1 into view.
+  - **The one-result query:** pick it with the app's own matching (norm and contains from src/lib/core/text.ts, over name + city + province), so exactly one row matches.
+- **Acceptance:** The QA and text-size runs on /data probe the phone layout. The one-result case matches exactly one row on the sample and synthetic builds.
+- **Sources:** review of the B69-B78 fixes, findings charts-3, charts-4 and charts-5
