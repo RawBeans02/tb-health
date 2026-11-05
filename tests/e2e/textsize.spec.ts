@@ -3,7 +3,7 @@
 // default font size is set through the DevTools protocol.
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
-import { outsideProblems, svgTextOutside } from './probes.ts';
+import { chartsSettled, outsideProblems, svgTextOutside } from './probes.ts';
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'sets the default font size through CDP');
 
@@ -16,6 +16,7 @@ async function defaultFontSize(page: Page, px: number) {
 
 /** Sideways scroll, content off the screen or cut off by a clipping box, text wider than its box, and chart labels outside their chart (B50). */
 async function overflow(page: Page) {
+  await chartsSettled(page); // on Data, the layout the charts end in (B84)
   const scroll = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   return [...(scroll > 0 ? [`page scrolls sideways by ${scroll}px`] : []), ...(await outsideProblems(page)), ...(await svgTextOutside(page))];
 }

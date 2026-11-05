@@ -4,12 +4,16 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+import { buildDataset } from '../../src/lib/core/data.ts';
+import { filterPlaces, NO_FILTERS } from '../../src/lib/core/places.ts';
 import { chartsSettled, outsideProblems, svgTextOutside } from './probes.ts';
 
 // The build under test, not public/ (a later prepare-data may have rewritten that).
-const facilities = (JSON.parse(readFileSync('dist/data/facilities.json', 'utf8')) as { facilities: { id: string; name: string }[] }).facilities;
-// A name that is the whole of one row's name and part of no other: one result (B76).
-const ONE = facilities.find((r) => facilities.every((o) => o === r || !o.name.toLowerCase().includes(r.name.toLowerCase())))!.name;
+const file = JSON.parse(readFileSync('dist/data/facilities.json', 'utf8'));
+const facilities = file.facilities as { id: string; name: string }[];
+// A place name the Places search matches to exactly one row, by the app's own matching (B84).
+const list = buildDataset(file).list;
+const ONE = list.find((p) => filterPlaces(list, { ...NO_FILTERS, q: p.name }, null, false).rows.length === 1)!.name;
 // The sample's Bangued page, or the first place when a synthetic fixture replaced the sample.
 const PLACE = facilities.some((r) => r.id === 'bangued-rural-health-unit-abra')
   ? '/place/bangued-rural-health-unit-abra?stop=2&need=all&near=Bangued'

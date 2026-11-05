@@ -8,7 +8,8 @@ import type { Page } from '@playwright/test';
  * are checked by svgTextOutside(); visually hidden parts, the Leaflet map and decorative
  * (aria-hidden) parts that carry no text are left out (B76: hidden text still shows).
  */
-export function outsideProblems(page: Page, scope = 'main *, .site-header *, .tab-bar *') {
+export async function outsideProblems(page: Page, scope = 'main *, .site-header *, .tab-bar *') {
+  await chartsSettled(page); // on Data, probe the layout the charts end in (B84)
   return page.evaluate((scope) => {
     const w = innerWidth;
     const out: string[] = [];
@@ -47,17 +48,25 @@ export function outsideProblems(page: Page, scope = 'main *, .site-header *, .ta
 }
 
 /**
- * On Data: waits until the charts have hydrated and been laid out again at the page's width
- * (each chart's viewBox as wide as it is drawn). Elsewhere it returns at once.
+ * On Data: scrolls #d1 into view (the charts hydrate when near), then waits until they have
+ * hydrated and been laid out again at the page's width: #d1 drawn at the width the island
+ * measures (at least 240px), and each chart's viewBox as wide as it is drawn. At 1280px the
+ * 928px prerender already fits, so the second test alone would pass before the relayout
+ * (B84). Elsewhere it returns at once.
  */
 export async function chartsSettled(page: Page) {
   if (!(await page.locator('section.panel').count())) return;
   await page.locator('#d1').scrollIntoViewIfNeeded();
   await page.waitForFunction(() => !document.querySelector('astro-island:has(section.panel)')?.hasAttribute('ssr'));
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
-  await page.waitForFunction(() =>
-    [...document.querySelectorAll<SVGSVGElement>('section.panel svg[viewBox]')].every((svg) => Math.abs(svg.viewBox.baseVal.width - svg.getBoundingClientRect().width) < 1),
-  );
+  await page.waitForFunction(() => {
+    const measured = Math.max(240, Math.round(document.querySelector('.panel-measure')!.getBoundingClientRect().width));
+    const d1 = document.querySelector<SVGSVGElement>('#d1 svg[viewBox]');
+    return (
+      d1?.viewBox.baseVal.width === measured &&
+      [...document.querySelectorAll<SVGSVGElement>('section.panel svg[viewBox]')].every((svg) => Math.abs(svg.viewBox.baseVal.width - svg.getBoundingClientRect().width) < 1)
+    );
+  });
 }
 
 /**
