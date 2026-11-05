@@ -20,9 +20,6 @@ jobs:
           cache: npm
       - name: Install from the lockfile
         run: npm ci
-      # Sends the dependency list to the npm registry to look up advisories.
-      - name: Dependency audit (shipped dependencies)
-        run: npm audit --omit=dev
       - name: Type check
         run: npm run check
       - name: Unit tests
@@ -41,6 +38,12 @@ jobs:
         run: npx playwright test --project=iphone --project=pixel
       - name: Build without Check and smoke-test it (Q9)
         run: npm run test:no-check
+      # Sends the dependency list to the npm registry to look up advisories. Its result depends on
+      # the registry's list on the day, not on the code, so it runs after the tests, and also when
+      # one failed (B90): a new advisory can't skip the test evidence. Any advisory fails the job.
+      - name: Dependency audit (shipped dependencies)
+        if: ${{ !cancelled() }}
+        run: npm audit --omit=dev
       - name: Keep the Playwright report when something fails
         if: failure()
         uses: actions/upload-artifact@v4
