@@ -22,12 +22,18 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 
 ## Release decision
 
-- **Release status:** **BLOCKED for production** until the owner answers Q7 (host and domain) and the open items launch-check lists above: Check's clinical review (or a launch without Check, Q9), Learn L6 and the route stops; the owner's strings and placeholders; the full facility list (Q8). The build itself has no known blocking defect: every gate passes (see Evidence). Only the owner's own calls can be accepted (`--accept=<key>`, B60); the placeholder domain and a non-production build can't.
+- **Release status:** **BLOCKED for production** until the owner answers Q7 (host and domain) and the open items launch-check lists above: Check's clinical review (or a launch without Check, Q9), Learn L6 and the route stops; the owner's strings and placeholders; the full facility list (Q8); and the v7 import (V1–V3: dark mode and the v7 wording; L1, L9, B22), or the owner's decision to launch on v6. The build itself has no known blocking defect: every gate passes (see Evidence). Only the owner's own calls can be accepted (`--accept=<key>`, B60); the placeholder domain and a non-production build can't.
 - **Risks if it launched as it stands:**
   - unreviewed medical content: the symptom check's questions and results, Learn L6 and the route-stop lines;
   - the 93-row sample list: few centers, approximate pins, X-ray unknown everywhere, no hours;
   - no privacy row for the outside services yet (Q5), and no qualified review under RA 10173;
   - the placeholder address, which the installed app and every canonical and sitemap URL would carry;
+  - the saved or printed card's risk-factor rows, such as HIV, pending the clinical review (O11);
+  - the Filipino strings without the native-speaker review (D10);
+  - the reuse terms for the WHO data and the PhilHealth list not recorded (O12);
+  - the 28 cited outside sources never fetched (L8);
+  - lapsed accreditations shown as listed (Q12, D24);
+  - no dark mode until the v7 import (V2);
   - the device-only checks not yet done (VoiceOver, TalkBack, real installs, landscape insets);
   - the accepted risks below.
 - **Accepted risks (pending the owner):** see "Accepted risks" below.
@@ -43,19 +49,19 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Audience / positioning clarity | Partial | Unchanged: Home names the job; About's lede and partners are placeholders [placeholders]. |
 | Empty-state / first-value activation | Partial | Loading, error, empty and no-match states, all keyboard-reachable (B8). O1 open. |
 | System handoff / in-context flow quality | Partial | tel: links +632 for every NCR number (B20), 44px actions on phones (phone.spec), Sakay copy-then-open. Open: O10, O14, O22; Sakay [VERIFY]. |
-| Familiar interaction patterns | Verified (automated) / Runtime check | System Back closes the Filters sheet (B15), robust drag (B30), back links that say where they go (B18), no stuck hover on touch (B29), no long-press callout on controls (B32). Tests: places.spec, home.spec, phone.spec. Device-only: Android Back on the sheet (B15), long-press callouts (B32), stuck hover after a call (B29), the sheet swipe on an iPhone (B30). |
-| Responsive/mobile behavior | Verified (automated) / Runtime check | QA matrix: 9 pages × 320/390/768/1280 × EN/FIL in Chromium and WebKit, no sideways scroll, nothing off-screen or cut off, one H1, 44px targets, 14px text (qa.spec, probes B50); worst-case content and 2,100 rows pass it (L2); side safe areas (B5), svh stage (B19), tab bar measured (B14), phone profiles (B42). Device-only: landscape insets (B5), the toolbar and svh (B19). Accepted: Check tab label at 320px (O3). |
-| Accessibility | Verified (automated) / Runtime check | axe WCAG 2.2 AA on every page EN/FIL at 390/1280 and four interactive states (qa.spec); focus ring never clipped (focus.spec, B1); text follows the browser size to 200% (textsize.spec, B2); forced colours (B11); error in view and described (B3); announcements (B28); token contrast (contrast.test). Still by hand: VoiceOver, TalkBack, Safari keyboard (owner list). |
+| Familiar interaction patterns | Partial | System Back closes the Filters sheet (B15), robust drag (B30), back links that say where they go (B18), no stuck hover on touch (B29), no long-press callout on controls (B32). Tests: places.spec, home.spec, phone.spec. Open for the owner: back links don't return people to their route or filtered list (O7). Device-only: Android Back on the sheet (B15), long-press callouts (B32), stuck hover after a call (B29), the sheet swipe on an iPhone (B30). |
+| Responsive/mobile behavior | Partial | QA matrix: 9 pages × 320/390/768/1280 × EN/FIL in Chromium and WebKit, no sideways scroll, nothing off-screen or cut off, one H1, 44px targets, 14px text (qa.spec, probes B50); worst-case content and 2,100 rows pass it (L2); side safe areas (B5), svh stage (B19), tab bar measured before first paint (B14, B68), phone profiles (B42). Open for the owner: the tab labels wrap and "Check symptoms" overflows at 320px (O3, offered as an accepted risk, not yet accepted); the Type filter splits "Government" and "Pampubliko" mid-word (O4). Device-only: landscape insets (B5), the toolbar and svh (B19). |
+| Accessibility | Partial | axe WCAG 2.2 AA on every page EN/FIL at 390/1280 and four interactive states (qa.spec); focus ring never clipped (focus.spec, B1); text follows the browser size to 200% (textsize.spec, B2); forced colours (B11, B44); error in view and described (B3); announcements (B28); token contrast (contrast.test). Open for the owner: stacked bars told apart by colour alone (O2), the map controls' small targets and English names (O13), directions opening a new tab unannounced (O14), and the accessibility statement's [email] placeholder. Still by hand: VoiceOver, TalkBack, Safari keyboard (owner list). |
 | Website technical SEO | Partial | Titles, descriptions, canonical, hreflang, Open Graph, sitemap and robots (step 12); every sitemap, canonical and hreflang URL answers 200 without a redirect (seo.spec); check-links resolves 800 canonical and hreflang links (B41). Open: Filipino descriptions [owner-strings], og:image:alt (owner copy), structured data (D17), the real domain (Q7). |
-| SEO audit tooling / agent-assisted verification | Partial | seo.spec, check-links, the sitemap test and Lighthouse SEO 100 on a production-mode build. Open: Search Console on the production domain after launch (owner list). |
+| SEO audit tooling / agent-assisted verification | Partial | seo.spec, check-links, the sitemap test and Lighthouse SEO 100 on a production-mode stand-in build. Open: Search Console on the production domain after launch (owner list). |
 | Domain / DNS / email-deliverability setup | Missing | Blocked on Q7 [domain]. No email sent, so SPF/DKIM/DMARC N/A. |
-| Frontend quality metrics | Verified (automated) / Runtime check | Real 404s in both languages, print (card only), copy feedback, data dates, sticky bars never cover targets or focus (bars.spec, B10); each metric in the appendix. Device-only: printing a check result. |
-| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode build, compressed like the host, mobile and desktop (B66): every page 99–100 performance and 100 in the other categories; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05; TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). |
+| Frontend quality metrics | Partial | Real 404s in both languages, print (card only), copy feedback, data dates, sticky bars never cover targets or focus (bars.spec, B10); each metric in the appendix. Open: no dark mode until v7 (V2), hover and pressed states (O5), the tab bar's wrapping labels (O3). Device-only: printing a check result. |
+| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode stand-in build (a stand-in address, `TBPH_PRODUCTION=true`), compressed like the host, mobile and desktop (B66): every page 99–100 performance and 100 in the other categories; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05 (Install 0.059 while its install prompt shows); TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). |
 | Authentication / authorization | N/A | No accounts, backend or admin. |
-| Data integrity / sensitive fields | Partial | Every located center on the map (B7), +632 tel links (B20), hatch patterns (B21), the Q11 dot-count tripwire, no silent sample fallback; synthetic and worst-case fixtures only. Open: the 93-row sample ships until the real list (Q8): launch-check blocks [sample]. |
-| API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1.13 MB), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
+| Data integrity / sensitive fields | Partial | Every located center on the map (B7), +632 tel links (B20), hatch patterns (B21), the Q11 dot-count tripwire, no silent sample fallback; synthetic and worst-case fixtures only. Open: the 93-row sample ships until the real list (Q8): launch-check blocks [sample]; whether the saved card lists risk factors such as HIV waits on the clinical review (O11). |
+| API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1,144 KB), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
 | Infrastructure spend / abuse guardrails | N/A | Static host, no paid APIs; OSM tiles only when the map is opened. |
-| Privacy / retention / deletion | Partial | privacy.spec (L4): pages contact only our origin, the map adds only OSM, no coordinates in storage or URLs; no Cache Storage key carries a query (pwa.spec); nothing stored after Check's Start (check.spec); Referrer-Policy in `_headers`. Open: the privacy row (Q5) [owner-strings] and the "never saved" lines beside Save, Share and Print (C9); the back-forward cache on a shared phone (runtime); legal adequacy under RA 10173 needs qualified advice. |
+| Privacy / retention / deletion | Partial | privacy.spec (L4): pages contact only our origin, the map adds only OSM, no coordinates in storage or URLs; no Cache Storage key carries a query (pwa.spec); nothing stored after Check's Start (check.spec); Referrer-Policy in `_headers`. Open: the privacy row (Q5) [owner-strings]; whether the saved or printed card lists risk factors such as HIV (O11, sensitive health information); the "never saved" lines beside Save, Share and Print (C9); the back-forward cache on a shared phone (runtime); legal adequacy under RA 10173 needs qualified advice. |
 | Cancellation / unsubscribe / dark-pattern review | N/A | Nothing to subscribe to. |
 | Child/age-related compliance | N/A | Unchanged (interim). |
 | Reliability / retries / failure handling | Verified | Try again on list and map with focus kept (B8), submits kept through errors (B16), malformed hashes ignored (B37), offline after one visit with the place shell and offline page (pwa.spec, L10). |
@@ -91,22 +97,22 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - **Phone numbers** (B20): every NCR number of 8 or more digits dials as +632 plus its first 8 digits (README:289), not only those starting with certain digits.
 - **Distances** (B40): 1,000 km and more get a thousands separator ("about 1,234 km").
 - **Announcements** (B28): a visually hidden status line announces a new route and the page title after an in-place language switch, and a single-service route's rows go H2 then H3 (no H4 skip). No new copy.
-- **Two chart fixes the stricter probes found** (B50): the narrow bar charts' "0" axis label (d6, d16 and d17's axis) is held at the chart's edge instead of being half cut off at 320 and 390px, and d17's Filipino legend wraps instead of running 19px past a 252px chart.
+- **Two chart fixes the stricter probes found** (B50): on charts under 560px wide (d6, d16 and d17's axis) the "0" axis label now starts at x=0 instead of being centred on it, about 4px to the right. Centred, it was drawn into the panel's padding (the svg has `overflow: visible`), not cut off. d17's Filipino legend did run 19px past a 252px chart; it now wraps.
 
 ## Accepted risks (pending the owner)
 
 - The bold "Check symptoms" tab label overflows its slot by 6px at 320px, also at the default size (O3, short labels).
 - Lighthouse CLS 0.059 on Install: the one-tap install button appears when the browser offers it (by design, under the 0.1 budget).
 - Safari takes the first Enter in the place field while its suggestion list is open (native; B31).
-- Charts keep light colours in dark mode until v7 (B22).
+- No dark mode until the v7 import (V2).
 - HSTS without includeSubDomains until the domain is known (Q7).
 - Places' footnotes move down when the list arrives below them: CLS 0.031 on mobile, up to 0.050 on desktop, within the 0.1 budget (B66).
 
 ## Evidence
 
 - **Final gate (step 13, `build/13-qa`):** unit 2,167; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,131 KB; JS per page ≤ 31.1 KB gzip (Data 49.7 KB of 120); facilities.json 6.9 KB Brotli (29.8 KB at 2,100 rows); check-links 4,796 links + 800 head links; chromium 346; webkit 227 (+119 Chromium-only skips); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages). Step 14's gate (`build/14-release`, after the B14 ruling): the same counts, all passing.
-- **Final gate (step 14, after the review fixes B44–B68):** unit 2,194; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,144 KB; JS per page ≤ 31.6 KB gzip (Data 50.5 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 365; webkit 246 (+119 Chromium-only skips; one test was flaky under load and fixed: it now waits for the Check result's own focus, and its specs passed twice over); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files). On a Check-off build, launch-check swaps [check-review] for [check-mentions] and lists no check strings. Guard peak 6.6 GB. The gate also found that B45 had left the twin's address without its hash; fixed (B45 follow-up).
-- **Lighthouse** (13.5.0, production-mode build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.81 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Rechecked on mobile after B68's inline script: `/` and `/fil` 100, `/fil/places` 99, CLS 0. Per page in the appendix.
+- **Final gate (step 14, after the review fixes B44–B68; code at 544802d, tests at 8dfe088):** unit 2,194; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,144 KB; JS per page ≤ 31.6 KB gzip (Data 50.5 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 365; webkit 246 (+119 Chromium-only skips; one test was flaky under load and fixed: it now waits for the Check result's own focus, and its specs passed twice over); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files). On a Check-off build, launch-check swaps [check-review] for [check-mentions] and lists no check strings. Guard peak 6.6 GB. The gate also found that B45 had left the twin's address without its hash; fixed (B45 follow-up).
+- **Lighthouse** (13.5.0, production-mode stand-in build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.81 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Rechecked on mobile after B68's inline script: `/` and `/fil` 100, `/fil/places` 99, CLS 0. Per page in the appendix.
 - **Scale:** 2,100 synthetic rows: 4,222 pages built in 4.5 s (whole build 11 s, 496 MB largest process); all 2,100 markers drawn 327 ms after Map at 4× CPU; Places list shown 490 ms after navigation at 4× CPU.
 - **Check routing:** the interim audit's two independent comparisons (215,197 combinations; 0 mismatches) plus the child-path unit tests (B43).
 - **Outside links:** `node scripts/outside-links.mjs`: 28 sources on 23 sites (page links and the islands' props, such as Home's route sources: B64), 558 directions links; not fetched (owner's OK needed). With `--fetch` it sends HEAD, then GET after any answer that isn't 2xx or 3xx, one request a second with a 15 s timeout and a plain project User-Agent, and reports redirects without following them.
@@ -157,18 +163,18 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 
 | Rule | Status | Evidence or N/A reason |
 |---|---|---|
-| Hick's Law, rules 1–5 (no irrelevant options, one primary-looking button, hide unneeded options, the main action first, one primary action per screen) | ✅ | The approved prototype's hierarchy, recreated and compared screen by screen (PLAN §5, visual check): one filled primary button per screen, secondary actions soft or plain; Places' filters in a sheet on phones; Check shows one question at a time. Open design calls O2–O7 are the owner's. |
+| Hick's Law, rules 1–5 (no irrelevant options, one primary-looking button, hide unneeded options, the main action first, one primary action per screen) | 🟡 | The approved prototype's hierarchy, recreated and compared screen by screen (PLAN §5, visual check): one filled primary button per screen, secondary actions soft or plain; Places' filters in a sheet on phones; Check shows one question at a time. Open: every route lists the same three centers under all three stops (O8, needs Q8); the other design calls O2–O7 are the owner's. |
 | Jakob's Law 1: swipe down to refresh | ⭕ | No feed to refresh; the browser's own pull-to-refresh is left alone. |
 | Jakob's Law 2: swipe to go back | ✅ 🔍 | The browser's back gesture is never captured; Back closes the Filters sheet (B15). Android Back on the sheet is a runtime check. |
 | Jakob's Law 3: Create/Add in the middle | ⭕ | Nothing to create. |
 | Jakob's Law 4: Home far left, Profile far right | ✅ | Home is the first tab; no Profile (no accounts). |
 | Jakob's Law 5: at most about five tabs | ✅ | Four tabs: Home, Check, Learn, Data. |
-| Empty states as activation flows | ✅ | Places' empty and no-match states say why and offer Clear filters; Home's no-location and no-match states (B8, B16); O1 (barangays) open. No analytics, by design, so the empty-to-first-value path isn't measured. |
+| Empty states as activation flows | 🟡 | Places' empty and no-match states say why and offer Clear filters; Home's no-location and no-match states (B8, B16). Open: a typed barangay or landmark meets a dead end (O1). No analytics, by design, so the empty-to-first-value path isn't measured. |
 | Notification permission after value | ⭕ | No push notifications. |
 | Mascot or character | ⭕ | The approved design has none, and a mascot would be a design change for the owner on a site about a serious illness. |
 | Home-screen widgets | ⭕ | A web app can't place a home-screen widget on iOS or Android; there is no native app. |
 | High-frequency actions in context | 🟡 | Calls, directions and Sakay hand off to the system or the other site with a status line; see "System handoff" above (O10, O14, O22, Sakay [VERIFY]). |
-| The "vibe-coded" visual fingerprint | ✅ | The prototype's own design system (tokens, Newsreader and Atkinson Hyperlegible, TB red), recreated pixel-accurately; none of the 20 tells added. |
+| The "vibe-coded" visual fingerprint | 🟡 | The prototype's own design system (tokens, Newsreader and Atkinson Hyperlegible, TB red), recreated pixel-accurately. Open: em dashes in copy (V3, C5; launch-check lists them) and Home's frosted card in the content layer (O27). |
 
 ### Website / SEO / Technical Launch Checklist
 
@@ -177,7 +183,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | sitemap.xml | ✅ | Built for the domain, both languages, every place; leaves out `/offline` and the `/place` shells; every URL answers 200 without a redirect (seo.spec). |
 | robots.txt | ✅ | Built for the domain, names the sitemap (step 12). |
 | No unintended noindex | ✅ | Noindex only in a non-production `_headers`; launch-check blocks [not-production]; the post-deploy check fails a production page that says noindex. |
-| Meta titles | ✅ | Every page in both languages (seo.spec). |
+| Meta titles | 🟡 | Every page in both languages (seo.spec). Open: their " — TB PH" em dashes (V3, C5). |
 | Meta descriptions | 🟡 | English everywhere; Filipino for About, Data, Install, Learn and Place waits on the owner (Q3) [owner-strings]. |
 | Canonical tags | ✅ | Without state params; check-links resolves 800 canonical and hreflang links (B41). |
 | Heading hierarchy | ✅ | axe on every page; the H2-to-H4 skip fixed (B28). |
@@ -193,7 +199,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | HTTPS | 🔍 | HSTS in `_headers`; the host serves HTTPS. The post-deploy check reads HSTS on every response. |
 | Backlink strategy | ❌ | Not a build task: the owner's outreach once the domain is chosen (Q7). |
 | Google Search Console | ❌ | After launch, on the owner's list (release step 5). |
-| Mobile responsiveness | ✅ 🔍 | The QA matrix (see "Responsive/mobile behavior"); landscape insets and the phone toolbar are runtime checks. |
+| Mobile responsiveness | 🟡 🔍 | The QA matrix (see "Responsive/mobile behavior"). Open: tab labels wrapping and overflowing at 320px (O3), the Type filter's mid-word split (O4). Landscape insets and the phone toolbar are runtime checks. |
 | Search discovery: production domain crawlable, URLs inspected | 🔍 | Needs the domain (Q7) and Search Console. Metadata is deliberate (titles and descriptions per page, §4.3). |
 | Agent-assisted SEO tooling | ✅ ⭕ | The SEO checks run on `dist/` built like production (seo.spec, check-links, Lighthouse SEO 100); every change goes through branches and tests. No SEO service, keyword data, credentials or Search Console data is connected. |
 | Domain, app and email subdomains | 🟡 ⭕ | One static site on one domain, no app or API subdomains; the domain waits on Q7. No email is sent, so SPF, DKIM and DMARC are N/A. |
@@ -202,10 +208,10 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 
 | Metric | Status | Evidence or N/A reason |
 |---|---|---|
-| Dark mode | 🟡 | Waits on the v7 design; charts keep light colours meanwhile (B22). |
+| Dark mode | ❌ | No dark mode until the v7 import (V2). |
 | Sticky header | ✅ | Never covers an anchor or the focused control (scroll-padding; bars.spec, B10); keyboard reachable. |
-| Mobile menu | ✅ | The phone tab bar replaces a menu (README), labelled, never covering targets (B14). |
-| Hover states | ✅ | Hover only on hover-capable fine pointers (B29); focus-visible rings everywhere, never clipped (focus.spec, B1). |
+| Mobile menu | 🟡 | The phone tab bar replaces a menu (README), labelled, never covering targets (B14). Open: its labels wrap to two or three lines and "Check symptoms" overflows at 320px (O3, O4). |
+| Hover states | 🟡 | Hover only on hover-capable fine pointers (B29); focus-visible rings everywhere, never clipped (focus.spec, B1). Open: hover and pressed states missing on several controls (O5). |
 | Scroll progress bar | ⭕ | No long read where position matters; Check counts its questions. |
 | Back-to-top | ⭕ | Not in the design; Data and Learn have "On this page" links. |
 | Loading states | ✅ | Places list and map, Home's route, Data's charts: loading, error with Try again, empty and no-match, focus kept (B8, B16). |
@@ -229,7 +235,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 |---|---|---|
 | Images compressed | ✅ | No photos; SVG icons; PNGs within budget. |
 | Lazy-load non-critical images | ✅ | No content images; map tiles load only when the map is opened; Data's charts hydrate as they come near (client:visible). |
-| Code split | ✅ | One island per page; Leaflet loads only with the map; JS per page ≤ 31.1 KB gzip, Data 49.7 KB of 120 (check-budgets). |
+| Code split | ✅ | One island per page, two on Data (the dot story and the charts); Leaflet loads only with the map; JS per page ≤ 31.6 KB gzip, Data 50.5 KB of 120 (check-budgets). |
 | Cache API responses | ✅ | `facilities.json` revalidated on every visit, runtime caches per release, nothing user-specific (L6, pwa.spec). |
 | CDN | 🔍 | Cloudflare Pages' edge after Q7; the post-deploy check reads the cache headers back. |
 | Minify JS and CSS | ✅ | Astro's production build; `sw.js` bundled and minified by Rolldown. |
@@ -247,7 +253,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 
 ### Lighthouse / web performance release gate
 
-Lighthouse 13.5.0 on a production-mode build (`SITE_URL=https://tbph.example.org TBPH_PRODUCTION=true`), served compressed like the host; reports in `lighthouse-report/` (not committed). Mobile reports from 4 November (Places pages rerun 5 November after the B66 fix); desktop 5 November.
+Lighthouse 13.5.0 on a production-mode stand-in build (`SITE_URL=https://tbph.example.org TBPH_PRODUCTION=true`), served compressed like the host; reports in `lighthouse-report/` (not committed). Mobile reports from 4 November (Places pages rerun 5 November after the B66 fix); desktop 5 November.
 
 | Item | Status | Result |
 |---|---|---|
@@ -257,9 +263,9 @@ Lighthouse 13.5.0 on a production-mode build (`SITE_URL=https://tbph.example.org
 | SEO | ✅ | 100 everywhere |
 | LCP | ✅ | Mobile 1.21–1.81 s, desktop 0.32–0.41 s |
 | INP | 🔍 | Needs a real device; lab TBT below |
-| CLS | ✅ | Mobile ≤ 0.031 (Install 0.059 when the browser offers to install), desktop ≤ 0.050 |
+| CLS | ✅ | ≤ 0.05 on mobile and desktop (Install 0.059 while its install prompt shows) |
 | TBT | ✅ | Mobile 0–62 ms, desktop 0 ms |
-| Main and route bundle sizes | ✅ | check-budgets every build: JS ≤ 31.1 KB gzip per page, Data 49.7 KB |
+| Main and route bundle sizes | ✅ | check-budgets every build: JS ≤ 31.6 KB gzip per page, Data 50.5 KB |
 | Request counts and transfer sizes | ✅ | Per page below |
 | Console errors and warnings | ✅ | None in any report; every e2e test fails on a console error or CSP violation |
 | Network failures, 4xx and 5xx | ✅ | None in any report; check-links every build |
