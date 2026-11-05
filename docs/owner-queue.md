@@ -1,6 +1,6 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons.
+Kept by the TB Health lead. Updated 5 November 2026 (after the review of the fixes B44-B68). Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons.
 
 ## Decide now
 
@@ -19,11 +19,12 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 
 ## Wording only you can write (EN and FIL)
 
-- **The privacy row** (`about.privacyServices`, Q5). It must cover:
+- **The privacy row** (`about.privacyServices`, Q5). The site can't launch publicly without it: the release check blocks until it's written, because the Data Privacy Act (RA 10173) expects visitors to be told who else sees what. It must cover:
   - fonts are served by TB PH itself;
   - the web host sees IP address, browser and pages visited;
   - OpenStreetMap sees IP and the map area, and only if the map is opened;
-  - directions hand off to Google Maps (or Sakay.ph), which then see the chosen place;
+  - directions hand off to Google Maps, which then sees the chosen place;
+  - for Sakay.ph, the site copies the address and opens sakay.ph, which sees the place only if the reader pastes it there;
   - calls go through the phone.
 - **Filipino page descriptions** for About, Data, Install, Learn and Place (Q3), and description templates for place pages (C10).
 - **If you accept them:**
@@ -47,7 +48,7 @@ Kept by the TB Health lead. Updated 5 November 2026. Answer in chat in any order
 
 ## Waiting on something else
 
-- **The v7 design** (`TB-PH-project.zip`): not on the Mac yet. Dark mode and the v7 wording wait for it.
+- **The v7 design** (`TB-PH-project.zip`): not on the Mac yet. Dark mode and the v7 wording wait for it, and so does the public launch, unless you decide to launch on the current design (v6) without them.
 - **Q8. The full clinic list** (a pipeline run with your OK), then O8 (the same centers repeated under every stop).
 - **Q11** (WHO 2026 report) and **Q12** (lapsed accreditations; default D24 applies until you decide).
 - **O12.** Record the reuse terms for the WHO data and the PhilHealth list, before step 14.
