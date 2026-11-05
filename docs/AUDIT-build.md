@@ -60,13 +60,13 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode stand-in build (a stand-in address, `TBPH_PRODUCTION=true`), compressed like the host, mobile and desktop (B66): every page 99–100 performance and 100 in the other categories; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05 (Install 0.059 while its install prompt shows); TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). |
 | Authentication / authorization | N/A | No accounts, backend or admin. |
 | Data integrity / sensitive fields | Partial | Every located center on the map (B7), +632 tel links (B20), hatch patterns (B21), the Q11 dot-count tripwire, no silent sample fallback; synthetic and worst-case fixtures only. Open: the 93-row sample ships until the real list (Q8): launch-check blocks [sample]; whether the saved card lists risk factors such as HIV waits on the clinical review (O11). |
-| API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1,144 KB), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
+| API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1,145 KB), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
 | Infrastructure spend / abuse guardrails | N/A | Static host, no paid APIs; OSM tiles only when the map is opened. |
 | Privacy / retention / deletion | Partial | privacy.spec (L4): pages contact only our origin, the map adds only OSM, no coordinates in storage or URLs; no Cache Storage key carries a query (pwa.spec); nothing stored after Check's Start (check.spec); Referrer-Policy in `_headers`. Open: the privacy row (Q5) [privacy-row]; whether the saved or printed card lists risk factors such as HIV (O11, sensitive health information); the "never saved" lines beside Save, Share and Print (C9); the back-forward cache on a shared phone (runtime); legal adequacy under RA 10173 needs qualified advice. |
 | Cancellation / unsubscribe / dark-pattern review | N/A | Nothing to subscribe to. |
 | Child/age-related compliance | N/A | Unchanged (interim). |
 | Reliability / retries / failure handling | Verified | Try again on list and map with focus kept (B8), submits kept through errors (B16), malformed hashes ignored (B37), offline after one visit with the place shell and offline page (pwa.spec, L10). |
-| Tests / CI / regression coverage | Verified (automated) / Runtime check | 2,194 unit tests; e2e on chromium (365), webkit (246), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run, after the merge to `main` (GitHub runs a manual workflow only from the default branch). |
+| Tests / CI / regression coverage | Verified (automated) / Runtime check | 2,212 unit tests; e2e on chromium (368), webkit (248), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Pending: the owner's first CI run, after the merge to `main` (GitHub runs a manual workflow only from the default branch). |
 | Agent model/provider routing & fallback safety | N/A | No AI at runtime. |
 | Release-build verification | Verified (automated) / Runtime check | Tests run on `dist/` served like the host; the Check-off variant is built and tested (B26); `launch-check --release` is the gate, reading `dist/` and unit-tested (B59–B62); the post-deploy check reads the live site back (no cookies, HTML identical to `dist/`, every response's headers exactly as `dist/_headers` sets them, the 404s in both languages; unit-tested, B63). It hasn't run against a host yet: it runs after the first deploy. |
 | App Store / platform compliance | N/A | No store; installable PWA (manifest, service worker) tested in step 11. |
@@ -114,21 +114,23 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 ## Evidence
 
 - **Final gate (step 13, `build/13-qa`):** unit 2,167; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,131 KB; JS per page ≤ 31.1 KB gzip (Data 49.7 KB of 120); facilities.json 6.9 KB Brotli (29.8 KB at 2,100 rows); check-links 4,796 links + 800 head links; chromium 346; webkit 227 (+119 Chromium-only skips); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages). Step 14's gate (`build/14-release`, after the B14 ruling): the same counts, all passing.
-- **Final gate (step 14, after the review fixes B44–B68; code at 544802d, tests at 8dfe088):** unit 2,194; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,144 KB; JS per page ≤ 31.6 KB gzip (Data 50.5 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 365; webkit 246 (+119 Chromium-only skips; one test was flaky under load and fixed: it now waits for the Check result's own focus, and its specs passed twice over); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files). On a Check-off build, launch-check swaps [check-review] for [check-mentions] and lists no check strings. Guard peak 6.6 GB. The gate also found that B45 had left the twin's address without its hash; fixed (B45 follow-up).
-- **Lighthouse** (13.5.0, production-mode stand-in build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.81 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Rechecked on mobile after B68's inline script: `/` and `/fil` 100, `/fil/places` 99, CLS 0. Per page in the appendix.
+- **First gate after the review fixes B44–B68 (code at 544802d, tests at 8dfe088):** unit 2,194; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,144 KB; JS per page ≤ 31.6 KB gzip (Data 50.5 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 365; webkit 246 (+119 Chromium-only skips; one test was flaky under load and fixed: it now waits for the Check result's own focus, and its specs passed twice over); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files). On a Check-off build, launch-check swaps [check-review] for [check-mentions] and lists no check strings. Guard peak 6.6 GB. The gate also found that B45 had left the twin's address without its hash; fixed (B45 follow-up).
+- **Final gate (step 14, after the fix review's B69–B78; at 9d3ee61):** unit 2,212; `astro check` 0 errors 0 warnings; build 208 pages; precache 60 files 1,145 KB; JS per page ≤ 31.8 KB gzip (Data 50.7 KB of 120); facilities.json 6.9 KB Brotli; check-links 4,796 links + 800 head links; chromium 368; webkit 248 (+120 Chromium-only skips); pwa 10; iphone 5; pixel 5; no-check 3 (206 pages, 58 precached files, 1,062 KB). Guard peak 6.6 GB.
+- **Lighthouse** (13.5.0, production-mode stand-in build, `scripts/lighthouse.mjs`, mobile and `--desktop`): every page 99–100 performance on mobile and 100 on desktop, 100 in accessibility, best practices and SEO everywhere; LCP 1.21–1.81 s mobile, 0.32–0.41 s desktop; CLS ≤ 0.031 mobile (Install 0.059 when the browser offers to install), ≤ 0.050 desktop after the B66 fix; TBT 0–62 ms; no failed requests or console errors. Rechecked on mobile after B68's inline script: `/` and `/fil` 100, `/fil/places` 99, CLS 0. `/data` rechecked after B76 and B78's chart changes: mobile 99, desktop 100, CLS 0. `/fil/data` scores 92 for SEO (no meta description): the Filipino descriptions for About, Data, Install, Learn and Place wait on the owner (Q3), so those pages would score the same until then. Per page in the appendix.
 - **Scale:** 2,100 synthetic rows: 4,222 pages built in 4.5 s (whole build 11 s, 496 MB largest process); all 2,100 markers drawn 327 ms after Map at 4× CPU; Places list shown 490 ms after navigation at 4× CPU.
 - **Check routing:** the interim audit's two independent comparisons (215,197 combinations; 0 mismatches) plus the child-path unit tests (B43).
 - **Outside links:** `node scripts/outside-links.mjs`: 28 sources on 23 sites (page links and the islands' props, such as Home's route sources: B64), 558 directions links; not fetched (owner's OK needed). With `--fetch` it sends HEAD, then GET after any answer that isn't 2xx or 3xx, one request a second with a 15 s timeout and a plain project User-Agent, and reports redirects without following them.
 
 ## launch-check report
 
-The whole report (`npm run launch-check`, B65) on the tip's normal build: the sample list, the placeholder domain, not production, Check in. A production build with the real address drops [domain] and [not-production]; a build without Check swaps [check-review] for [check-mentions] and leaves Check's strings out of every list.
+The whole report (`npm run launch-check`, B65) on the final gate's normal build (9d3ee61): the sample list, the placeholder domain, not production, Check in. A production build with the real address drops [domain] and [not-production]; a build without Check swaps [check-review] for [check-mentions] and leaves Check's strings out of every list.
 
 ```
 launch-check: what is still open before launch (PLAN §4.3). The build resolves none of it.
 
-Blocking (7)
-  - [owner-strings] Strings the owner supplies, not in yet (6): about.privacyServices, meta.aboutDescription, meta.dataDescription, meta.installDescription, meta.learnDescription, meta.placeDescription.
+Blocking (8)
+  - [privacy-row] The privacy row (about.privacyServices, Q5) isn't in yet: About doesn't say who else sees what (the host, OpenStreetMap, Google Maps). It can't be accepted (RA 10173).
+  - [owner-strings] Strings the owner supplies, not in yet (5): meta.aboutDescription, meta.dataDescription, meta.installDescription, meta.learnDescription, meta.placeDescription.
   - [review] [REVIEW] strings that wait on the clinical review: care.stopTitle_xray, care.stopTitle_test, care.stopTitle_meds, care.stopText_xray, care.stopText_test, care.stopText_meds; learn: 7 strings.
   - [placeholders] [PLACEHOLDER] strings that stand in for owner content: about.lede, about.partnersRow, about.reviewText, about.a11yText, about.contactRow.
   - [check-review] Check is in the build, but its clinical review is pending: 68 check strings still carry [REVIEW]; the reviewer placeholder is still in (check.foot). Record the review, or build with TBPH_CHECK=false (Q9).
@@ -139,9 +141,9 @@ Blocking (7)
 For the owner to decide or check (7)
   - Sakay.ph deep links [VERIFY] (Place, step 6). (DOH 1555 was verified by the owner, V4.)
   - The name "TB PH" is a placeholder until stakeholders choose one (pack line 3).
-  - WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, datapage.method2.
+  - WHO 2026 report: launch on the 2025 report (2024 data) or refresh first (Q11). Copy that names the report or its year moves with it: about.updatesText, dataPage.method2.
   - Reuse terms for the WHO and PhilHealth data (licence and attribution wording) are not recorded yet.
-  - Em dashes (V3), for the owner or the v7 wording: care.gov, care.priv, care.noHours, charts.d13_2, check.introBody, check.res_C_title, check.res_D_body, check.foot, check.cardTitle, chrome.safety, dotStory.b2, dotStory.b4_h2, home.lede, learn.l2_p1, learn.l5_h, learn.l5_ol2, learn.l6_p5, learn.l8_ul1, learn.l9_p2, meta.homeTitle, meta.placesTitle, meta.checkTitle, meta.notFoundTitle, meta.offlineTitle.
+  - Em dashes (V3), for the owner or the v7 wording: care.gov, care.priv, care.noHours, charts.d13_2, check.introBody, check.res_C_title, check.res_D_body, check.foot, check.cardTitle, chrome.safety, dotStory.b2, dotStory.b4_h2, home.lede, learn.l2_p1, learn.l5_h, learn.l5_ol2, learn.l6_p5, learn.l8_ul1, learn.l9_p2, meta.homeTitle, meta.placesTitle, meta.checkTitle, meta.notFoundTitle, meta.offlineTitle; and the page titles built in src/views (" — TB PH"): About, Data, Install, Learn, Place.
   - Accreditations: 3 lapsed, 73 more end by 2026-12-31; shown as listed until Q12 (D24).
   - Facility list dated 2026-09-30 (PhilHealth update); who runs the monthly refresh is open.
 
@@ -238,7 +240,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 |---|---|---|
 | Images compressed | ✅ | No photos; SVG icons; PNGs within budget. |
 | Lazy-load non-critical images | ✅ | No content images; map tiles load only when the map is opened; Data's charts hydrate as they come near (client:visible). |
-| Code split | ✅ | One island per page, two on Data (the dot story and the charts); Leaflet loads only with the map; JS per page ≤ 31.6 KB gzip, Data 50.5 KB of 120 (check-budgets). |
+| Code split | ✅ | One island per page, two on Data (the dot story and the charts); Leaflet loads only with the map; JS per page ≤ 31.8 KB gzip, Data 50.7 KB of 120 (check-budgets). |
 | Cache API responses | ✅ | `facilities.json` revalidated on every visit, runtime caches per release, nothing user-specific (L6, pwa.spec). |
 | CDN | 🔍 | Cloudflare Pages' edge after Q7; the post-deploy check reads the cache headers back. |
 | Minify JS and CSS | ✅ | Astro's production build; `sw.js` bundled and minified by Rolldown. |
@@ -263,12 +265,12 @@ Lighthouse 13.5.0 on a production-mode stand-in build (`SITE_URL=https://tbph.ex
 | Performance | ✅ | Mobile 99–100, desktop 100 |
 | Accessibility | ✅ | 100 everywhere |
 | Best Practices | ✅ | 100 everywhere |
-| SEO | ✅ | 100 everywhere |
+| SEO | 🟡 | 100 on the ten pages above; `/fil/data` 92 (no meta description) until the Filipino descriptions (Q3) |
 | LCP | ✅ | Mobile 1.21–1.81 s, desktop 0.32–0.41 s |
 | INP | 🔍 | Needs a real device; lab TBT below |
 | CLS | ✅ | ≤ 0.05 on mobile and desktop (Install 0.059 while its install prompt shows) |
 | TBT | ✅ | Mobile 0–62 ms, desktop 0 ms |
-| Main and route bundle sizes | ✅ | check-budgets every build: JS ≤ 31.6 KB gzip per page, Data 50.5 KB |
+| Main and route bundle sizes | ✅ | check-budgets every build: JS ≤ 31.8 KB gzip per page, Data 50.7 KB |
 | Request counts and transfer sizes | ✅ | Per page below |
 | Console errors and warnings | ✅ | None in any report; every e2e test fails on a console error or CSP violation |
 | Network failures, 4xx and 5xx | ✅ | None in any report; check-links every build |
