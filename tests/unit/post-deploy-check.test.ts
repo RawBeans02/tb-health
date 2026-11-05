@@ -1,8 +1,11 @@
 // The post-deploy check's header comparison (audit B63): each page and file type gets exactly
 // the headers dist/_headers gives it, so a weakened value fails where a pattern would pass.
-import { describe, expect, it } from 'vitest';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
 import { headersFile } from '../../src/lib/headers.ts';
-import { expectedHeaders, headerProblems, parseHeaders } from '../../scripts/post-deploy-check.mjs';
+import { checkSite, expectedHeaders, headerProblems, parseHeaders, parseOrigin } from '../../scripts/post-deploy-check.mjs';
 
 const rules = parseHeaders(headersFile(true));
 const SECURITY = ['strict-transport-security', 'content-security-policy', 'permissions-policy', 'x-content-type-options', 'referrer-policy'];
@@ -57,5 +60,44 @@ describe('headerProblems', () => {
   it('fails a cookie, and a noindex on production', () => {
     expect(headerProblems('/', expectedHeaders(rules, '/'), served('/', { 'set-cookie': 'a=1' }), true)).toEqual(['/: sets a cookie']);
     expect(headerProblems('/', expectedHeaders(rules, '/'), served('/', { 'x-robots-tag': 'noindex' }), true)).toEqual(['/: a production deploy says noindex']);
+  });
+});
+
+describe('parseOrigin (B75)', () => {
+  it('takes an http: or https: address as its origin, and nothing else', () => {
+    expect(parseOrigin('https://tbph.org/some/page')).toBe('https://tbph.org');
+    expect(parseOrigin('http://127.0.0.1:4322')).toBe('http://127.0.0.1:4322');
+    for (const bad of [undefined, '', 'tbph.org', 'ftp://tbph.org', 'file:///etc/passwd', 'javascript:alert(1)']) expect(parseOrigin(bad), String(bad)).toBeNull();
+  });
+});
+
+describe('checkSite: five failures in a row (B75)', () => {
+  const dirs: string[] = [];
+  afterAll(() => dirs.forEach((d) => rmSync(d, { recursive: true, force: true })));
+  /** A small dist/: two pages in the sitemap, one script, one icon. */
+  const dist = () => {
+    const d = mkdtempSync(join(tmpdir(), 'tbph-pdc-'));
+    dirs.push(d);
+    mkdirSync(join(d, 'icons'));
+    writeFileSync(join(d, 'index.html'), '<script src="/_astro/app.js"></script>');
+    writeFileSync(join(d, '_headers'), headersFile(true));
+    writeFileSync(join(d, 'sitemap.xml'), '<loc>https://tbph.org/</loc><loc>https://tbph.org/places</loc>');
+    writeFileSync(join(d, 'icons', 'a.png'), '');
+    return d;
+  };
+
+  it('stops sending requests but keeps the problems and errors found so far', async () => {
+    let calls = 0;
+    // The first request answers with a cookie (a problem); every later one fails.
+    const fetchImpl = (async () => {
+      if (++calls === 1) return new Response('x', { headers: { 'set-cookie': 'a=1' } });
+      throw new TypeError('fetch failed', { cause: { code: 'ECONNREFUSED' } });
+    }) as unknown as typeof fetch;
+    const result = await checkSite('https://tbph.org', dist(), fetchImpl);
+    expect(calls).toBe(6);
+    expect(result.errors).toHaveLength(5);
+    expect(result.errors[0]).toBe('/places: ECONNREFUSED');
+    expect(result.problems).toContain('/: sets a cookie');
+    expect(result.stopped).toMatch(/stopped answering/);
   });
 });

@@ -6,6 +6,8 @@
 // sites, so it runs only with the owner's OK, and dead sources go to the content owner
 // (never rewritten here). It doesn't follow redirects, so no other host is contacted; it
 // reports where they point. Directions links (one per place) are counted, not fetched.
+// Not in the inventory: links only scripts make, such as the map's OpenStreetMap attribution
+// and Sakay.ph's target, which the Place page opens from JS.
 //
 //   node scripts/outside-links.mjs           the inventory, offline
 //   node scripts/outside-links.mjs --fetch   also checks each source (owner's OK first)
@@ -64,8 +66,8 @@ for (const [host, n] of [...byHost].sort((a, b) => b[1] - a[1])) console.log(`  
 if (!process.argv.includes('--fetch')) process.exit(0);
 
 // --fetch: one request per source, a second apart, each with a timeout and a plain project
-// User-Agent. HEAD first, then GET after any HEAD answer that isn't 2xx or 3xx (some sites
-// refuse HEAD). Redirects aren't followed: their target is reported instead.
+// User-Agent. HEAD first, then GET. Redirects aren't followed: their target is reported
+// instead. A failure names its cause (ENOTFOUND, ECONNRESET, CERT_…).
 const request = (href, method) => fetch(href, { method, redirect: 'manual', headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT) });
 const dead = [];
 const moved = [];
@@ -73,11 +75,21 @@ for (const [href, pages] of sources) {
   const on = `(on ${[...pages].slice(0, 3).join(', ')}${pages.size > 3 ? ', …' : ''})`;
   let response = null;
   let failure = '';
+  const why = (error) => (error.name === 'TimeoutError' ? `no answer in ${TIMEOUT / 1000} s` : (error.cause?.code ?? error.message));
   try {
     response = await request(href, 'HEAD');
-    if (response.status >= 400) response = await request(href, 'GET');
   } catch (error) {
-    failure = error.name === 'TimeoutError' ? `no answer in ${TIMEOUT / 1000} s` : 'no answer';
+    failure = why(error);
+  }
+  // Some sites refuse HEAD: GET after any HEAD answer that isn't 2xx or 3xx, and report the
+  // GET's own result.
+  if (response && response.status >= 400) {
+    try {
+      response = await request(href, 'GET');
+    } catch (error) {
+      response = null;
+      failure = why(error);
+    }
   }
   if (!response || response.status >= 400) dead.push(`${response?.status ?? failure}  ${href}  ${on}`);
   else if (response.status >= 300) moved.push(`${response.status} to ${response.headers.get('location') ?? '?'}  ${href}  ${on}`);

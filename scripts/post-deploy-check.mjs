@@ -7,13 +7,14 @@
 //     pattern would let an HSTS max-age of 0 pass), and a production deploy no noindex;
 //   - an unknown address gets a 404 in its language, and /check and /fil/check one in a
 //     build without Check.
-// Exit 1: problems found. Exit 2: no origin given. Exit 3: the host couldn't be reached, a
+// Exit 1: problems found. Exit 2: no http: or https: origin given. Exit 3: the host couldn't be reached, a
 // request timed out, or the script failed, so the check is incomplete.
 //
 //   node scripts/post-deploy-check.mjs https://the-live-site.example
 //   (the local server works too: node scripts/post-deploy-check.mjs http://127.0.0.1:4322)
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isMain } from './is-main.mjs';
 
@@ -57,34 +58,40 @@ export function headerProblems(path, expected, live, production) {
   return out;
 }
 
-async function main() {
-  const dist = fileURLToPath(new URL('../dist/', import.meta.url));
-  const origin = process.argv[2] ? new URL(process.argv[2]).origin : null;
-  if (!origin) {
-    console.error('post-deploy-check: give the deployed origin, e.g. https://example.org');
-    process.exit(2);
+/** The origin to check, from the first argument: http: or https: only, else null. */
+export function parseOrigin(arg) {
+  try {
+    const url = new URL(arg);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.origin : null;
+  } catch {
+    return null;
   }
-  const built = (file) => readFileSync(`${dist}${file}`, 'utf8');
+}
+
+/**
+ * Reads the live site back against `dist`. Each request has its own timeout and error; five
+ * failures in a row stop the requests (the host isn't answering), keeping what was found.
+ */
+export async function checkSite(origin, dist, fetchImpl = fetch) {
+  const built = (file) => readFileSync(join(dist, file), 'utf8');
   const builtFile = (path) => (path === '/' ? 'index.html' : `${path.slice(1)}.html`);
 
   const home = built('index.html');
-  const canonical = /<link rel="canonical" href="([^"]+)"/.exec(home)?.[1];
-  if (canonical && new URL(canonical).origin !== origin) console.warn(`post-deploy-check: warning: checking ${origin}, but this build's canonical origin is ${new URL(canonical).origin}.`);
-
   const headersText = built('_headers');
   const rules = parseHeaders(headersText);
   const production = !/X-Robots-Tag: noindex/.test(headersText);
-  const withCheck = existsSync(`${dist}check.html`);
+  const withCheck = existsSync(join(dist, 'check.html'));
 
   const problems = [];
   const errors = [];
+  let stopped = '';
   let checked = 0;
   let failedInRow = 0;
-  // One request, read in full, with its own timeout and error; its headers checked against
-  // _headers. Five failures in a row stop the run: the host isn't answering.
+  // One request, read in full, its headers checked against _headers.
   async function get(path) {
+    if (stopped) return null;
     try {
-      const response = await fetch(new URL(path, origin), { redirect: 'manual', signal: AbortSignal.timeout(TIMEOUT) });
+      const response = await fetchImpl(new URL(path, origin), { redirect: 'manual', signal: AbortSignal.timeout(TIMEOUT) });
       const text = await response.text();
       checked++;
       failedInRow = 0;
@@ -92,7 +99,7 @@ async function main() {
       return { status: response.status, location: response.headers.get('location'), text };
     } catch (error) {
       errors.push(`${path}: ${error.name === 'TimeoutError' ? `no answer in ${TIMEOUT / 1000} s` : (error.cause?.code ?? error.message)}`);
-      if (++failedInRow === 5) throw new Error(`${origin} stopped answering (${errors.slice(-5).join('; ')})`);
+      if (++failedInRow === 5) stopped = `${origin} stopped answering: five requests in a row failed, so the rest weren't sent`;
       return null;
     }
   }
@@ -110,7 +117,7 @@ async function main() {
   // Files: one of each kind _headers names.
   const asset = /\/_astro\/[^"]+\.js/.exec(home)?.[0];
   if (!asset) throw new Error('dist/index.html loads no /_astro/ script');
-  const icon = readdirSync(`${dist}icons`).find((f) => f.endsWith('.png'));
+  const icon = readdirSync(join(dist, 'icons')).find((f) => f.endsWith('.png'));
   for (const path of [asset, `/icons/${icon}`, '/data/facilities.json', '/manifest.webmanifest', '/sw.js']) {
     const response = await get(path);
     if (response && response.status !== 200) problems.push(`${path}: ${response.status}, not 200`);
@@ -131,8 +138,23 @@ async function main() {
     else if (response.text !== built(file)) problems.push(`${path}: not the page in dist/${file}`);
   }
 
+  return { problems, errors, stopped, checked, pages: pages.length + 4, production };
+}
+
+async function main() {
+  const dist = fileURLToPath(new URL('../dist/', import.meta.url));
+  const origin = parseOrigin(process.argv[2]);
+  if (!origin) {
+    console.error('post-deploy-check: give the deployed origin, http: or https:, e.g. https://example.org');
+    process.exit(2);
+  }
+  const canonical = /<link rel="canonical" href="([^"]+)"/.exec(readFileSync(join(dist, 'index.html'), 'utf8'))?.[1];
+  if (canonical && new URL(canonical).origin !== origin) console.warn(`post-deploy-check: warning: checking ${origin}, but this build's canonical origin is ${new URL(canonical).origin}.`);
+
+  const { problems, errors, stopped, checked, pages, production } = await checkSite(origin, dist);
   for (const problem of problems) console.error(`post-deploy-check: ${problem}`);
   for (const error of errors) console.error(`post-deploy-check: couldn't check ${error}`);
+  if (stopped) console.error(`post-deploy-check: ${stopped}.`);
   if (errors.length) {
     console.error(`post-deploy-check: incomplete: ${errors.length} request(s) failed on ${origin}${problems.length ? `, and ${problems.length} problem(s) found` : ''}.`);
     process.exit(3);
@@ -141,7 +163,7 @@ async function main() {
     console.error(`post-deploy-check: ${problems.length} problem(s) on ${origin}.`);
     process.exit(1);
   }
-  console.log(`post-deploy-check: ${origin} matches dist/: ${checked} responses, ${pages.length + 4} pages identical, no cookies, every response's headers exactly as dist/_headers sets them, 404s right (${production ? 'production' : 'not production: noindex'}).`);
+  console.log(`post-deploy-check: ${origin} matches dist/: ${checked} responses, ${pages} pages identical, no cookies, every response's headers exactly as dist/_headers sets them, 404s right (${production ? 'production' : 'not production: noindex'}).`);
 }
 
 if (isMain(import.meta.url)) {

@@ -57,8 +57,9 @@ function nearest404(urlPath) {
 }
 
 // dist/_headers as Cloudflare Pages and Netlify read it: a path pattern (`*` matches
-// anything), then its headers indented below. Every matching rule applies. Read per request,
-// since a rebuild rewrites it while the server runs.
+// anything), then its headers indented below. Every matching rule applies, and a header two
+// rules set is joined with a comma, as Cloudflare does. Read per request, since a rebuild
+// rewrites it while the server runs.
 function headersFor(urlPath) {
   const file = join(root, '_headers');
   if (!isFile(file)) return {};
@@ -71,7 +72,9 @@ function headersFor(urlPath) {
       applies = new RegExp(`^${pattern}$`).test(urlPath);
     } else if (applies) {
       const colon = line.indexOf(':');
-      out[line.slice(0, colon).trim()] = line.slice(colon + 1).trim();
+      const name = line.slice(0, colon).trim();
+      const value = line.slice(colon + 1).trim();
+      out[name] = out[name] ? `${out[name]}, ${value}` : value;
     }
   }
   return out;
