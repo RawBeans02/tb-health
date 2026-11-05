@@ -65,9 +65,9 @@ for (const [host, n] of [...byHost].sort((a, b) => b[1] - a[1])) console.log(`  
 
 if (!process.argv.includes('--fetch')) process.exit(0);
 
-// --fetch: one request per source, a second apart, each with a timeout and a plain project
-// User-Agent. HEAD first, then GET. Redirects aren't followed: their target is reported
-// instead. A failure names its cause (ENOTFOUND, ECONNRESET, CERT_…).
+// --fetch: one source a second (HEAD, then GET at once after a 4xx or 5xx), each request with
+// a timeout and a plain project User-Agent. Redirects aren't followed: their target is
+// reported instead. A failure names its cause (ENOTFOUND, ECONNRESET, CERT_…).
 const request = (href, method) => fetch(href, { method, redirect: 'manual', headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT) });
 const dead = [];
 const moved = [];
