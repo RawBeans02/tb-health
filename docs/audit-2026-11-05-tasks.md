@@ -930,3 +930,14 @@ A read-only review of 147fba6..75ce0d1. An adversarial verifier checked all 25 f
   - **The one-result query:** pick it with the app's own matching (norm and contains from src/lib/core/text.ts, over name + city + province), so exactly one row matches.
 - **Acceptance:** The QA and text-size runs on /data probe the phone layout. The one-result case matches exactly one row on the sample and synthetic builds.
 - **Sources:** review of the B69-B78 fixes, findings charts-3, charts-4 and charts-5
+
+### B85. Say which Node to use when the wrong one runs (Low)
+
+- **Files:** package.json, a new scripts/check-node.mjs
+- **Fix:**
+  - On Node 20, the Mac's Homebrew default, `npm run dev` fails with `ERR_UNKNOWN_FILE_EXTENSION` on src/lib/core/facility.ts. Only Node 22.18 or later strips TypeScript types. The owner's preview hit this on 5 Nov 2026.
+  - Add `"engines": { "node": ">=22.18" }`.
+  - Run a tiny check first in dev, build, check and the release scripts: `node scripts/check-node.mjs && …`. When `process.versions.node` is older, it prints "TB Health needs Node 22 (see .nvmrc): run nvm use" and exits 1.
+  - The check has to be its own file, with no imports: a check at the top of prepare-data.mjs would run only after its static .ts imports had already failed.
+- **Acceptance:** `npm run dev` under Node 20 prints that line and exits 1. Under Node 22 nothing changes.
+- **Sources:** the owner's preview, 5 Nov 2026
