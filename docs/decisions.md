@@ -4,6 +4,16 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 5 November 2026 (owner, in chat with the lead)
+
+### Q7. Host: Cloudflare Pages (the domain is still open)
+- **Cloudflare Pages, in a Cloudflare account used only for TB Health**, which the owner controls. The owner answered "Yes, Cloudflare" to the lead's question "Host TB Health on Cloudflare Pages, in an account used only for TB Health?" No KitaMo account, project or token is used.
+- *Lead's reading, 5 Nov 2026, for the owner to overrule:*
+  - Deploys are HANDOVER's direct upload with wrangler, run by the owner from a clean checkout of `main` (B72). No Git integration and no automatic previews.
+  - Until the real domain is chosen, test deploys use the project's free `*.pages.dev` address.
+  - The owner creates the Cloudflare account and runs HANDOVER's one-time setup. Neither the builder nor the lead holds Cloudflare credentials.
+- **Still open:** the real domain. It's needed before launch, because it fixes the installed app's address, and HSTS then gets `includeSubDomains`.
+
 ## 4 November 2026, third batch (owner, written to the lead)
 
 Why: PLAN.md was written from the v6 handoff. The owner asked for more changes after v6, and they're in the v7 prototype (`TB-PH-project.zip`, 4 Nov 2026). **Where v6 and v7 differ, v7 wins.**
