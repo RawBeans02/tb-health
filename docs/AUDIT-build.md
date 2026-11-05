@@ -6,7 +6,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 
 - **Project / Build:** TB PH
 - **Platform:** Web (static PWA, Astro 7 + Preact islands)
-- **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the planned host (Cloudflare Pages, HANDOVER's one release path: B58) serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
+- **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the chosen host (Cloudflare Pages, Q7, 5 Nov 2026) serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
 - **Branch / commit:** `build/14-release` (from `build/13-qa`). Steps 1–13 and the audit tasks are on the branches before it.
 - **Audit date:** 5 November 2026
 - **Auditor:** Jr. Builder (self-audit, with evidence below). The TB Health lead reviewed steps 13 and 14 independently; its fix items (B44–B68) are in. The code fixes carry tests, except that B52's map-refit test couldn't fail until B70 rewrote it.
@@ -23,7 +23,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 
 ## Release decision
 
-- **Release status:** **BLOCKED for production** until the owner answers Q7 (host and domain) and the open items launch-check lists above: Check's clinical review (or a launch without Check, Q9), Learn L6 and the route stops; the owner's strings and placeholders; the full facility list (Q8); and the v7 import (V1–V3: dark mode and the v7 wording; L1, L9, B22), or the owner's decision to launch on v6. The build itself has no known blocking defect: every gate passes (see Evidence). Only the owner's own calls can be accepted (`--accept=<key>`, B60); the placeholder domain and a non-production build can't.
+- **Release status:** **BLOCKED for production** until the owner chooses the domain (Q7: the host, Cloudflare Pages, is decided) and the open items launch-check lists above: Check's clinical review (or a launch without Check, Q9), Learn L6 and the route stops; the owner's strings and placeholders; the full facility list (Q8); and the v7 import (V1–V3: dark mode and the v7 wording; L1, L9, B22), or the owner's decision to launch on v6. The build itself has no known blocking defect: every gate passes (see Evidence). Only the owner's own calls can be accepted (`--accept=<key>`, B60); the placeholder domain and a non-production build can't.
 - **Risks if it launched as it stands:**
   - unreviewed medical content: the symptom check's questions and results, Learn L6 and the route-stop lines;
   - the 93-row sample list: few centers, approximate pins, X-ray unknown everywhere, no hours;

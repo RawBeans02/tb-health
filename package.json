@@ -7,12 +7,12 @@
     "node": ">=22.23.4"
   },
   "scripts": {
-    "dev": "node scripts/prepare-data.mjs && astro dev",
+    "dev": "node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "prepare-data": "node scripts/prepare-data.mjs",
-    "build": "node scripts/prepare-data.mjs && astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
-    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
-    "build:worst-case": "node scripts/prepare-data.mjs --worst-case && astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
-    "check": "node scripts/prepare-data.mjs && astro check && tsc -p tsconfig.sw.json",
+    "build": "node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
+    "build:synthetic": "node scripts/prepare-data.mjs --synthetic && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
+    "build:worst-case": "node scripts/prepare-data.mjs --worst-case && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs",
+    "check": "node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro check && tsc -p tsconfig.sw.json",
     "check-links": "node scripts/check-links.mjs",
     "launch-check": "node scripts/launch-check.mjs",
     "release-check": "node scripts/launch-check.mjs --release",

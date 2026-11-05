@@ -174,7 +174,7 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   } else {
     const canonical = /<link rel="canonical" href="([^"]+)"/.exec(build.home)?.[1] ?? '';
     if (!canonical || /\.example\b/.test(new URL(canonical).hostname)) {
-      block('domain', `Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks host and domain (Q7).`);
+      block('domain', `Domain is a placeholder (${canonical ? new URL(canonical).origin : 'none'}): build with SITE_URL once the owner picks the domain (Q7).`);
     }
     if (build.check.en !== build.check.fil) block('check-pages', `Only ${build.check.en ? '/check' : '/fil/check'} is in dist/: Check is in one language only. Rebuild with npm run build.`);
     if (!checkBuilt) {
