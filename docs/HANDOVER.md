@@ -26,7 +26,9 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
 
 ## Release
 
-The host is Cloudflare Pages, in a Cloudflare account used only for TB Health (Q7, decided 5 November 2026). The domain is still open: until it's chosen, test deploys use the project's free `https://<your-project>.pages.dev` address.
+The host is Cloudflare Pages, in a Cloudflare account used only for TB Health (Q7, decided 5 November 2026). The domain is still open.
+
+**The launch and test copies.** A deploy with `--branch=main` is **the public launch**: the production site, at the domain once one is attached, and until then at `https://<your-project>.pages.dev`, open to search engines. Run it only when launching ("Each release" below). To try the site on Cloudflare first, make a **test copy** ("Test copies" below): a non-production build deployed as a preview at `https://test.<your-project>.pages.dev`, which search engines are told not to index.
 
 **What the release tools send.** Besides the upload itself:
 - **Wrangler** sends anonymous usage data to Cloudflare unless `WRANGLER_SEND_METRICS=false` (its docs: the default is `true`). Every wrangler command below sets it; set it on any other wrangler command you run. Don't use `wrangler telemetry disable`: it changes the setting for every project of this macOS user, KitaMo's builders included.
@@ -35,9 +37,18 @@ The host is Cloudflare Pages, in a Cloudflare account used only for TB Health (Q
 
 ### One-time setup
 
-1. `WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 login`, into the TB Health account, never KitaMo's.
-2. Check the account, as at every release (step 2 below): `unset CLOUDFLARE_API_TOKEN CLOUDFLARE_API_KEY CLOUDFLARE_EMAIL CLOUDFLARE_ACCOUNT_ID && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 whoami` must show the TB Health account. The login is stored in a file every session of this macOS user reads, and an exported `CLOUDFLARE_API_TOKEN`, or the `CLOUDFLARE_API_KEY` and `CLOUDFLARE_EMAIL` pair, takes priority over it (wrangler's docs).
-3. `WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages project create <your-project> --production-branch=main`. With the production branch set to `main`, `--branch=main` deploys to production and any other branch name makes a preview. If you skip this step, the first deploy asks for the production branch instead: enter `main`.
+1. **An API token, not a login.** In the TB Health Cloudflare account (never KitaMo's), create an API token with only **Account › Cloudflare Pages › Edit**, the permission Cloudflare's Direct Upload docs give. Their docs don't say what `wrangler whoami` needs to name the account; if it can't, add **Account › Account Settings › Read** (read only) and nothing more. Note the account ID (the dashboard shows it in the API section of an account or zone overview).
+   Don't use wrangler's own login command: it stores the login in a file every session of this macOS user reads, so it would replace any other project's Cloudflare login, KitaMo's included, and theirs would replace ours.
+2. **Store the token in this Mac's Keychain yourself.** The final `-w` makes it ask for the token, so it never shows in the shell history:
+   ```
+   security add-generic-password -a "$USER" -s tbhealth-cloudflare -w
+   ```
+   Every wrangler command below reads it for that command only, and pins the account with `CLOUDFLARE_ACCOUNT_ID`. If the Keychain has no token, the line stops before wrangler runs, so wrangler can't fall back to another login. The token and the account ID go in no file in the repo. Below, put the account ID in place of `<account-id>`.
+3. **Create the project**, with `main` as its production branch:
+   ```
+   T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages project create <your-project> --production-branch=main; unset T
+   ```
+   With the production branch set to `main`, `--branch=main` deploys to production and any other branch name makes a preview.
 
 ### Each release
 
@@ -45,37 +56,48 @@ A release builds what's committed to `main`. **The real facility list (Q8) has t
 
 Run the steps in one Terminal window, in order. Each is one line, so a failed part stops the rest.
 
-1. **A fresh clone in a new dated folder**, never the builder's working folder or an earlier release folder (another session's build or tests can rewrite `dist/`, uncommitted edits would ship, and an old folder holds an old commit):
+1. **A fresh clone of `main` in a new dated folder**, never the builder's working folder or an earlier release folder (another session's build or tests can rewrite `dist/`, uncommitted edits would ship, and an old folder holds an old commit):
    ```
-   D=~/Documents/tb-health-release-$(date +%Y%m%d-%H%M%S) && git clone https://github.com/RawBeans02/tb-health.git "$D" && cd "$D" && git log --oneline -1 && . ~/.nvm/nvm.sh && nvm use && npm ci
+   D=~/Documents/tb-health-release-$(date +%Y%m%d-%H%M%S) && git clone --branch main https://github.com/RawBeans02/tb-health.git "$D" && cd "$D" && git --no-pager log --oneline -1 && . ~/.nvm/nvm.sh && nvm use && npm ci
    ```
    It prints the commit it will release. Old release folders go to the Trash: `/usr/bin/trash ~/Documents/tb-health-release-<date>`.
 2. **Check the account:**
    ```
-   unset CLOUDFLARE_API_TOKEN CLOUDFLARE_API_KEY CLOUDFLARE_EMAIL CLOUDFLARE_ACCOUNT_ID && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 whoami
+   unset LAUNCH_CHECK_DIST && T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 whoami; unset T
    ```
    Stop unless it shows the TB Health account.
-3. **Build, gate and deploy**, so the upload is the build the gate just passed. The line starts by checking it runs in this release's folder:
+3. **Build, gate and deploy: the public launch.** The upload is the build the gate just passed, and the line checks the account again itself, so a second Terminal tab or a skipped step 2 can't deploy with another account's token. It starts by checking it runs in this release's folder:
    ```
-   [ "$PWD" = "$D" ] && SITE_URL=https://your-domain.example TBPH_PRODUCTION=true GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main
+   [ "$PWD" = "$D" ] && SITE_URL=https://your-domain.example TBPH_PRODUCTION=true GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check && T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main; unset T
    ```
    With items you accept (step 4), for example the sample list:
    ```
-   [ "$PWD" = "$D" ] && SITE_URL=https://your-domain.example TBPH_PRODUCTION=true GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check -- --accept=sample && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main
+   [ "$PWD" = "$D" ] && SITE_URL=https://your-domain.example TBPH_PRODUCTION=true GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check -- --accept=sample && T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main; unset T
    ```
-   - Put the real address in place of `https://your-domain.example` (the gate blocks any `.example` address). Until the domain is chosen, a test deploy uses `https://<your-project>.pages.dev`.
+   - Put the real address in place of `https://your-domain.example` (the gate blocks any `.example` address). Before a domain is attached, the launch address is `https://<your-project>.pages.dev`.
    - To launch without the check, add `TBPH_CHECK=false` before `GUARD_NO_DOCKER=1` (Q9).
    - Only the build runs under the memory guard. The guard runs its job in the background, so a wrangler prompt inside it would stop the job and keep holding the machine-wide lock. If the guard exits 97, 98 or 99, the Mac was busy: run the line again.
-   - **Ctrl-C during the build** ends the guard and frees its lock, but the build keeps running in the background (the guard starts it in its own process group). Wait until it has finished (`pgrep -f "astro build"` prints nothing) before you start another heavy job or run the line again.
+   - **Ctrl-C during the build** ends the guard and frees its lock, but the build keeps running in the background (the guard starts it in its own process group) and can still write into this folder's `dist/`. Start again from step 1, in a new folder. Wait until the old build has finished (`pgrep -f "astro build"` prints nothing) before you do.
    - `npm run release-check` is the gate (`launch-check --release`). Wrangler uploads `dist/` as built, without rebuilding, and Cloudflare reads `dist/_headers` as is.
 4. **If the gate stops**, it lists what's open, and nothing is uploaded. You may accept only your own calls, and only keys the gate lists as open, with `-- --accept=<key>,<key>` after `npm run release-check`, as in the second line above (naming any other key exits 2; without the `--`, npm drops the list and the gate still blocks). The keys you can accept: `check-review`, `sample`, `owner-strings`, `review`, `verify`, `placeholders` and `check-mentions`. The rest can't be accepted: the privacy row (Q5: without it About doesn't say who else sees what, which RA 10173 requires; the lead's ruling), synthetic data, no build, no facility list, a missing `_headers` or one that isn't exactly the production file, Check in one language only, the placeholder address and a noindex build. The gate prints what you accepted with the release. Send that list to the TB Health lead, who records it in `docs/decisions.md`.
-5. **Previews are public.** Anyone who has a preview link can open it. A build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, which only keeps it out of search, and only on a host that reads `_headers`. Share preview links only with reviewers.
+5. **Previews are public.** Anyone who has a preview link can open it (Cloudflare's docs: deployment URLs are public by default). Cloudflare sends `X-Robots-Tag: noindex` on every preview, which only keeps it out of search. Share preview links only with reviewers.
 6. **Check the live site** from the same release folder: `npm run post-deploy-check -- https://your-domain.example` (the address you deployed to). It reads every page back and compares it with `dist/`: identical HTML (no injected scripts), no cookies, every response's headers exactly as `dist/_headers` sets them, and the 404s in both languages. Turn off any host feature it flags (analytics beacons, email obfuscation, script optimisers, bot challenges).
    - Exit 1: it found problems, listed above it.
    - Exit 3: the check is incomplete. Run it again if the host didn't answer; otherwise fix the cause on its "couldn't check" or "failed:" lines.
-   - If every page differs from `dist/`, first make sure `dist/` is still the build you deployed. Then run `WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deployment list --project-name=<your-project>` and look for your deploy listed as Preview instead of Production.
+   - If every page differs from `dist/`, first make sure `dist/` is still the build you deployed. Then list the deployments and look for yours listed as Preview instead of Production:
+     ```
+     T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deployment list --project-name=<your-project>; unset T
+     ```
    - It warns if the address you give isn't the one the build was made for.
 7. **Search Console:** add the site, submit `https://your-domain.example/sitemap.xml` (the real address), and check that Google sees the Filipino pages as `fil` alternates.
+
+### Test copies
+
+A test copy is a non-production build deployed as a preview, at `https://test.<your-project>.pages.dev`: it carries noindex, and Cloudflare adds its own to every preview. It needs no release gate and no accept list (`npm run launch-check` shows what's open), and it can't reach the production branch. Do steps 1 and 2 of "Each release", then:
+```
+[ "$PWD" = "$D" ] && SITE_URL=https://test.<your-project>.pages.dev GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && T=$(security find-generic-password -s tbhealth-cloudflare -w) && env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=test; unset T
+```
+`npm run post-deploy-check -- https://test.<your-project>.pages.dev` works on a test copy too, but it flags the preview's noindex header by design: Cloudflare's header comes on top of the one in `dist/_headers`.
 
 ## Other hosts (not set up)
 
@@ -95,4 +117,4 @@ The audit's runtime checks need a real iPhone and Android phone (and the install
 ## Keeping it current
 
 - New facility data or a WHO report: rebuild; the dot-count tripwire (Q11) and the data guards stop a build whose numbers no longer match the copy.
-- Every deploy: steps 1–6 of "Each release" above, in a new release folder.
+- Every launch deploy: steps 1–6 of "Each release" above, in a new release folder. Test copies: "Test copies" above.
