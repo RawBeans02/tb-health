@@ -941,3 +941,58 @@ A read-only review of 147fba6..75ce0d1. An adversarial verifier checked all 25 f
   - The check has to be its own file, with no imports: a check at the top of prepare-data.mjs would run only after its static .ts imports had already failed.
 - **Acceptance:** `npm run dev` under Node 20 prints that line and exits 1. Under Node 22 nothing changes.
 - **Sources:** the owner's preview, 5 Nov 2026
+
+## Review of the fixes B79-B85 (5 November 2026)
+
+A read-only review of 75ce0d1..16c4f36. An adversarial verifier checked 11 findings. It confirmed 8 (one Medium, seven Low) and refuted 3. All seven items are done as asked.
+- The reviewers checked HANDOVER's shell lines in zsh and bash 3.2 with stubs.
+- They checked wrangler's and Astro's facts against developers.cloudflare.com and astro.build.
+- B85's floor of 22.23.4 instead of 22.18 is accepted: @astrojs/preact 6.1.1 needs it, and .nvmrc pins it.
+
+### B86. Keep test copies out of search, and keep Cloudflare's login out of other projects (Medium)
+
+- **Files:** docs/HANDOVER.md, docs/PLAN.md, docs/AUDIT-build.md
+- **Fix:**
+  - **Test copies.** HANDOVER calls a pages.dev deploy a test, but the only command it gives is the production line: `TBPH_PRODUCTION=true` and `--branch=main`. That makes the project's production site at `<project>.pages.dev`, with no noindex, an open robots.txt, a sitemap and self-canonicals. So a "test" would be the public, indexable TB PH, with the sample list and whatever was accepted.
+    - Give test copies their own line: a build without `TBPH_PRODUCTION` (it carries noindex) deployed with `--branch=test`. That's a preview, at `https://test.<project>.pages.dev`; check the address format and Cloudflare's own noindex on previews against its docs.
+    - A test copy needs no release gate and no accept list. `npm run launch-check` shows what's open.
+    - Say that post-deploy-check flags the noindex on a preview by design.
+    - Say plainly that a `--branch=main` deploy is the public launch. If no domain is attached yet, that's `<project>.pages.dev`. Run it only when launching.
+  - **Credentials (lead ruling, replaces the `wrangler login` setup).** `wrangler login` stores its login in a file that every session of this macOS user reads, KitaMo's included. Logging in for TB Health would replace any other project's Cloudflare login, and the other way round. Do it the way pushes already work (`GH_TOKEN=… git push`):
+    - The owner creates a Cloudflare API token in the TB Health account with only the permissions Pages needs. Check them in Cloudflare's docs: Pages Edit, plus whatever whoami needs to name the account.
+    - The owner stores it in the Mac's Keychain themselves: `security add-generic-password -a "$USER" -s tbhealth-cloudflare -w`, where a final `-w` makes it prompt.
+    - Every wrangler command in HANDOVER passes it for that command only: `CLOUDFLARE_API_TOKEN=$(security find-generic-password -s tbhealth-cloudflare -w)`.
+    - Every wrangler command also pins the account with `CLOUDFLARE_ACCOUNT_ID=<TB Health account ID>`, which Cloudflare documents as always respected.
+    - Never run `wrangler login`.
+    - Keep the whoami check at each release. Also unset the deprecated CF_API_TOKEN, CF_API_KEY, CF_EMAIL and CF_ACCOUNT_ID.
+    - The token and the account ID go in no file in the repo.
+    - PLAN's Q7 goes back to "a token held by you" (B79 had made it "login").
+  - **The deploy line carries the check itself.** Put the unset and the pinned account on the deploy line too, not only in step 2. A second Terminal tab, or a skipped step 2, then can't deploy with another account's token.
+- **Acceptance:** HANDOVER has no `wrangler login`. Every wrangler command carries the token from the Keychain, the pinned account and `WRANGLER_SEND_METRICS=false`. A test copy can't reach the production branch, and the public launch is named as such.
+- **Sources:** review of the B79-B85 fixes, findings release-1 and release-3; the release reviewer's notes (the global login file, auth profiles)
+
+### B87. Small records and guards (Low)
+
+- **Files:** package.json, scripts/launch-check.mjs, scripts/check-node.mjs, docs/HANDOVER.md, docs/AUDIT-build.md, tests/e2e/qa.spec.ts, _handoff/JR-RESUME.md
+- **Fix:**
+  - **LAUNCH_CHECK_DIST:**
+    - release-check ignores it: `… && LAUNCH_CHECK_DIST= node scripts/launch-check.mjs --release`;
+    - main() prints the folder it judged to stderr whenever the variable is set;
+    - add it to the unset list.
+  - **check-node:**
+    - its message names the floor ("needs Node 22.23.4 or later");
+    - prepare-data and check-links run it first too, since both import .ts;
+    - the records say which scripts run it, not "every script".
+  - **Step 1:**
+    - `git --no-pager log --oneline -1`, so a pager can't stop the chain;
+    - `git clone --branch main`, so the branch is explicit.
+  - **Ctrl-C:** say that after stopping a guarded build you start again from step 1, in a new folder. The stopped build keeps running and could still write into the old folder's dist/. Don't change lowmem-run.sh.
+  - **AUDIT-build:**
+    - Search Console is release step 7;
+    - the lead's fix items that are in now run to B87;
+    - the CDN line's "after Q7" becomes "after the first deploy".
+  - **JR-RESUME:** item 6 records Q7's host as decided.
+  - **B83:** repeat the pageshow revert run with all three cases, and record it.
+  - **qa.spec:** throw a clear message if no row qualifies for the one-result query.
+- **Acceptance:** Unit tests for the release-check override and the check-node message. The records match the code.
+- **Sources:** review of the B79-B85 fixes, findings gate-1, gate-3, gate-4, release-4, release-6 and release-7; the reviewers' notes
