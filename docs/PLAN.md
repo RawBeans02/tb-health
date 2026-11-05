@@ -246,7 +246,7 @@ CI (D22, `.github/workflows/ci.yml`, when the owner starts it) runs `npm ci`, `n
 | Prototype edge cases (one-letter search returns 82 rows, "QC" doesn't match, a stale location fix is reused, Retry re-prompts) | Fixed only with the owner's OK (Q4); otherwise ported as-is and listed |
 | The service worker hides network mocks or adds requests in tests | Service workers blocked in the default test projects; SW behaviour tested in its own project |
 | The CSP blocks something late | CSP on from step 1, with a violation check on every test page |
-| Unreviewed Check reachable on a public preview | Deploy model in Q7; noindex on non-production; `launch-check` override needed for production |
+| Unreviewed Check reachable on a public preview | Test copies are previews (`--branch=test`, HANDOVER): public to anyone who has or guesses the address, and noindex (ours and Cloudflare's). Share them only with reviewers, turn on the project's preview access policy, or build them with `TBPH_CHECK=false`. Only a `--branch=main` deploy is the launch, and it goes through the gate, where Check's review blocks unless the owner accepts it |
 | The WHO 2026 report will likely appear **during** the build (due late 2026) | Q11 asks whether to launch on 2024 data or refresh first; the dot-count tripwire catches a partial refresh |
 
 ## 7. Questions for the owner
