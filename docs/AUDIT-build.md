@@ -99,6 +99,7 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - **Distances** (B40): 1,000 km and more get a thousands separator ("about 1,234 km").
 - **Announcements** (B28): a visually hidden status line announces a new route and the page title after an in-place language switch, and a single-service route's rows go H2 then H3 (no H4 skip). No new copy.
 - **Two chart fixes the stricter probes found** (B50): on charts under 560px wide (d6, d16 and d17's axis) the "0" axis label now starts at x=0 instead of being centred on it, about 4px to the right. Centred, it was drawn into the panel's padding (the svg has `overflow: visible`), not cut off. d17's Filipino legend did run 19px past a 252px chart; it now wraps.
+- **d3's monthly chart is 2px taller** (B76): the stricter probe found its month labels' text boxes (the "p" of "Apr") running 2px past the chart's bottom. The labels stay where the prototype has them; the chart runs 2px further.
 
 ## Accepted risks (pending the owner)
 

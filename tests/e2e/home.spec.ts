@@ -286,6 +286,8 @@ test.describe('facility list errors (Q6)', () => {
       await route.fulfill({ status: 503, body: '' });
     });
     await page.goto('/');
+    // The Planner hydrates before the list arrives (it's held): fill only once it listens.
+    await expect(page.locator('astro-island[component-url*="Planner"]')).not.toHaveAttribute('ssr');
     await field(page).fill('Quezon City');
     await submit(page).click();
     await expect(page.locator('.results-status')).toBeVisible();

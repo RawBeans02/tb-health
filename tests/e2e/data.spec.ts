@@ -1,6 +1,7 @@
 // Step 9: the Data page (PLAN §5): the dot story, the charts and TB in numbers.
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
+import { chartsSettled } from './probes.ts';
 
 /**
  * Scrolls to a chart panel and waits for the charts island to hydrate: it loads when
@@ -242,7 +243,7 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
 
   test('/data#claim-… lands on the claim row and focuses it', async ({ page }) => {
     await page.goto('/data#claim-burden-cases');
-    await inView(page, '#claim-burden-cases', 'if-near'); // after the charts' relayout, if any (B53)
+    await inView(page, '#claim-burden-cases', true); // near the charts: they hydrate, and it waits for them (B76)
     await expect(page.locator('#claim-burden-cases')).toBeFocused();
   });
 
@@ -250,7 +251,9 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await page.goto('/learn');
     await page.locator('a[href="/data#claim-burden-deaths"]').first().click();
     await expect(page).toHaveURL(/\/data#claim-burden-deaths$/);
-    await inView(page, '#claim-burden-deaths', 'if-near'); // after the charts' relayout, if any (B53)
+    // This claim sits far below the charts, which may never come near enough to hydrate, so
+    // the wait for them is capped (B53, B76).
+    await inView(page, '#claim-burden-deaths', 'if-near');
     await expect(page.locator('#claim-burden-deaths')).toBeFocused();
   });
 
@@ -258,8 +261,8 @@ test.describe('deep links on a phone (audit B6, B37)', () => {
     await page.goto('/data');
     await page.locator('.data-index a[href="#d5"]').click();
     await inView(page, '#d5');
+    await chartsSettled(page); // laid out again at this width before placing #d14 (B76)
     await page.locator('#d14').evaluate((el) => scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' }));
-    await page.waitForTimeout(300);
     // A tap on the visible header link (Playwright's click would first scroll it into view).
     await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
     // The address keeps the hash (Q2a), put back without the jump to it.

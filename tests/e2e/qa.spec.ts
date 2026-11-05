@@ -4,9 +4,12 @@ import { readFileSync } from 'node:fs';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
-import { outsideProblems, svgTextOutside } from './probes.ts';
+import { chartsSettled, outsideProblems, svgTextOutside } from './probes.ts';
 
-const facilities = (JSON.parse(readFileSync('public/data/facilities.json', 'utf8')) as { facilities: { id: string; name: string }[] }).facilities;
+// The build under test, not public/ (a later prepare-data may have rewritten that).
+const facilities = (JSON.parse(readFileSync('dist/data/facilities.json', 'utf8')) as { facilities: { id: string; name: string }[] }).facilities;
+// A name that is the whole of one row's name and part of no other: one result (B76).
+const ONE = facilities.find((r) => facilities.every((o) => o === r || !o.name.toLowerCase().includes(r.name.toLowerCase())))!.name;
 // The sample's Bangued page, or the first place when a synthetic fixture replaced the sample.
 const PLACE = facilities.some((r) => r.id === 'bangued-rural-health-unit-abra')
   ? '/place/bangued-rural-health-unit-abra?stop=2&need=all&near=Bangued'
@@ -77,6 +80,7 @@ test.describe('qa-harness matrix', () => {
       test(`at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 820 });
         await page.goto(path, { waitUntil: 'networkidle' });
+        await chartsSettled(page); // Data's charts lay out again once hydrated (B76)
         const r = await probe(page);
         expect(r.sideways, 'sideways scroll').toBeLessThanOrEqual(0);
         expect(await outsideProblems(page, 'main *'), 'off the screen or cut off').toEqual([]);
@@ -95,7 +99,7 @@ test.describe('qa-harness matrix', () => {
 test.describe('qa-harness matrix: Places with one result and with none', () => {
   for (const lang of ['en', 'fil'] as const) {
     for (const width of [320, 390, 1280]) {
-      for (const [state, query] of [['one result', 'Bangued Rural'], ['no result', 'zzzz']] as const) {
+      for (const [state, query] of [['one result', ONE], ['no result', 'zzzz']] as const) {
         test(`${lang} ${state} at ${width}px`, async ({ page }) => {
           await page.setViewportSize({ width, height: 820 });
           await page.goto(lang === 'fil' ? '/fil/places' : '/places', { waitUntil: 'networkidle' });

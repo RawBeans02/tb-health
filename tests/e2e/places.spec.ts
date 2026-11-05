@@ -250,8 +250,9 @@ test.describe('map markers (audit B7)', () => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/places');
     const file = await page.evaluate(async () => (await (await fetch('/data/facilities.json')).json()) as { facilities: { lat: unknown; svc_chest_xray?: string }[] });
+    // The heading counts every row; the map, only those with a location (B76).
     const located = file.facilities.filter((r) => typeof r.lat === 'number').length;
-    await expect(count(page)).toHaveText(`${located.toLocaleString('en-US')} centers`);
+    await expect(count(page)).toHaveText(`${file.facilities.length.toLocaleString('en-US')} centers`);
     let t = Date.now();
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
     await expect(page.locator('.map')).toHaveAttribute('data-markers', String(located));
@@ -395,7 +396,7 @@ test.describe('system Back (audit B15)', () => {
 });
 
 test.describe('sheet drag (audit B30)', () => {
-  test.skip(({ browserName }) => browserName !== 'chromium', 'touch events through CDP');
+  test.skip(({ browserName }) => browserName !== 'chromium', "Chromium only: the drags go through CDP's Input.dispatchTouchEvent, which WebKit lacks. The iphone project closes the sheet with Done instead, and the swipe on an iPhone stays a runtime check (B30).");
 
   /** A phone with the Filters sheet open; `touch` sends raw touch events; `at` is the grabber. */
   async function openSheet(browser: Browser) {

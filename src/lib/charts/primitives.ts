@@ -172,7 +172,7 @@ export function pyramid(o: Opts): Chart {
   return S.done();
 }
 export function monthly(o: Opts): Chart {
-  const th = o.th, small = o.w < 560, fs = small ? 13 : 14, L = 50, R = 6, top = 36, rowH = small ? 44 : 58, gapY = 14, n = o.rows.length, h = top + n * (rowH + gapY) + 16;
+  const th = o.th, small = o.w < 560, fs = small ? 13 : 14, L = 50, R = 6, top = 36, rowH = small ? 44 : 58, gapY = 14, n = o.rows.length, h = top + n * (rowH + gapY) + 18;
   const S = G(o.w, h, o.alt), colW = (o.w - L - R) / 12, bw = Math.max(3, colW * 0.7);
   S.rect(0, 6, 24, 14, 'url(#dhatch)', th.dot, 1); S.text(32, 13, o.provLabel, { fs, fill: th.ink });
   o.rows.forEach((rw: any, i: number) => {
@@ -186,7 +186,9 @@ export function monthly(o: Opts): Chart {
       if (isMin) { S.line(bx + bw / 2, y0 + 12, bx + bw / 2, base - bh - 3, th.ink, 1.25); S.text(bx + bw / 2 + 6, y0 + 4, o.min.label, { fs, fw: 700, fill: th.ink }); }
     });
   });
-  [0, 3, 6, 9].forEach((m: any) => S.text(L + m * colW + colW / 2, h - 2, o.months[m], { a: 'middle', b: 'auto', fs: 13, fill: th.muted }));
+  // The month labels sit where the prototype has them; the chart runs 2px further, so their
+  // descenders ("Apr") stay inside it (B76's probe).
+  [0, 3, 6, 9].forEach((m: any) => S.text(L + m * colW + colW / 2, h - 4, o.months[m], { a: 'middle', b: 'auto', fs: 13, fill: th.muted }));
   return S.done();
 }
 export function stack(o: Opts): Chart {

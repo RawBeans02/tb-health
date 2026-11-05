@@ -5,15 +5,17 @@ import type { Page } from '@playwright/test';
  * Elements that spill out of what holds them: past the screen's sides, or past an ancestor
  * that clips (overflow hidden or clip), where they would be cut off; and text wider than its
  * own box. Only scrollers (overflow auto or scroll) may hold wider content. Chart internals
- * are checked by svgTextOutside(); decorative (aria-hidden) and visually hidden parts and the
- * Leaflet map are left out.
+ * are checked by svgTextOutside(); visually hidden parts, the Leaflet map and decorative
+ * (aria-hidden) parts that carry no text are left out (B76: hidden text still shows).
  */
 export function outsideProblems(page: Page, scope = 'main *, .site-header *, .tab-bar *') {
   return page.evaluate((scope) => {
     const w = innerWidth;
     const out: string[] = [];
     for (const el of document.querySelectorAll<HTMLElement>(scope)) {
-      if (el.closest('svg, .visually-hidden, .leaflet-container, [aria-hidden="true"]')) continue;
+      if (el.closest('svg, .visually-hidden, .leaflet-container')) continue;
+      const hidden = el.closest('[aria-hidden="true"]');
+      if (hidden && !(hidden.textContent ?? '').trim()) continue;
       const r = el.getBoundingClientRect();
       if (r.width <= 2 || r.height <= 2) continue;
       const cs = getComputedStyle(el);
@@ -44,12 +46,24 @@ export function outsideProblems(page: Page, scope = 'main *, .site-header *, .ta
   }, scope);
 }
 
-/** Chart labels (SVG text) outside their chart, once the charts have hydrated on Data. */
-export async function svgTextOutside(page: Page) {
-  if (!(await page.locator('section.panel').count())) return [];
+/**
+ * On Data: waits until the charts have hydrated and been laid out again at the page's width
+ * (each chart's viewBox as wide as it is drawn). Elsewhere it returns at once.
+ */
+export async function chartsSettled(page: Page) {
+  if (!(await page.locator('section.panel').count())) return;
   await page.locator('#d1').scrollIntoViewIfNeeded();
   await page.waitForFunction(() => !document.querySelector('astro-island:has(section.panel)')?.hasAttribute('ssr'));
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll<SVGSVGElement>('section.panel svg[viewBox]')].every((svg) => Math.abs(svg.viewBox.baseVal.width - svg.getBoundingClientRect().width) < 1),
+  );
+}
+
+/** Chart labels (SVG text) outside their chart, on any side, once the charts have settled on Data. */
+export async function svgTextOutside(page: Page) {
+  if (!(await page.locator('section.panel').count())) return [];
+  await chartsSettled(page);
   return page.evaluate(() => {
     const out: string[] = [];
     for (const svg of document.querySelectorAll<SVGSVGElement>('section.panel svg[viewBox]')) {
@@ -57,7 +71,10 @@ export async function svgTextOutside(page: Page) {
       for (const t of svg.querySelectorAll('text')) {
         const r = t.getBoundingClientRect();
         if (r.width === 0) continue;
-        if (r.left < box.left - 1 || r.right > box.right + 1) out.push(`${svg.closest('section.panel')!.id} "${(t.textContent ?? '').slice(0, 30)}" ${Math.round(r.left - box.left)}..${Math.round(r.right - box.left)} of ${Math.round(box.width)}`);
+        const id = svg.closest('section.panel')!.id;
+        const text = (t.textContent ?? '').slice(0, 30);
+        if (r.left < box.left - 1 || r.right > box.right + 1) out.push(`${id} "${text}" ${Math.round(r.left - box.left)}..${Math.round(r.right - box.left)} of ${Math.round(box.width)} wide`);
+        if (r.top < box.top - 1 || r.bottom > box.bottom + 1) out.push(`${id} "${text}" ${Math.round(r.top - box.top)}..${Math.round(r.bottom - box.top)} of ${Math.round(box.height)} high`);
       }
     }
     return out;

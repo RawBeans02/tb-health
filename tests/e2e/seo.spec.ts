@@ -7,7 +7,7 @@ import { expect, test } from './fixtures.ts';
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'requests only: one project is enough');
 
-const ids = (JSON.parse(readFileSync('public/data/facilities.json', 'utf8')) as { facilities: { id: string }[] }).facilities.map((f) => f.id);
+const ids = (JSON.parse(readFileSync('dist/data/facilities.json', 'utf8')) as { facilities: { id: string }[] }).facilities.map((f) => f.id);
 
 /** GET without following redirects. */
 async function get(request: APIRequestContext, path: string) {
