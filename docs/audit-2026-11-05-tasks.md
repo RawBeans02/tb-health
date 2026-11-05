@@ -996,3 +996,51 @@ A read-only review of 75ce0d1..16c4f36. An adversarial verifier checked 11 findi
   - **qa.spec:** throw a clear message if no row qualifies for the one-result query.
 - **Acceptance:** Unit tests for the release-check override and the check-node message. The records match the code.
 - **Sources:** review of the B79-B85 fixes, findings gate-1, gate-3, gate-4, release-4, release-6 and release-7; the reviewers' notes
+
+## Review of the fixes B86-B87 (5 November 2026)
+
+A read-only review of 16c4f36..e8812b5. The reviewers ran HANDOVER's lines in zsh 5.9 and bash 3.2 against stub `security` and `npx` commands with a fake token, and simulated Ctrl-C with expect. Nothing touched the real Keychain, wrangler or the network.
+- A verifier checked 13 findings: three Medium, one of them still to be settled by a real run.
+- B87 is done. B86 needs B88 before the owner stores a real token.
+- The scripts and docs agree everywhere else.
+
+### B88. Tighten the Cloudflare token lines before the owner uses them (Medium)
+
+- **Files:** docs/HANDOVER.md, docs/PLAN.md, docs/AUDIT-build.md
+- **Fix:**
+  - **One form for every wrangler line**, in a subshell so nothing outlives it:
+    `( T=$(security find-generic-password -s tbhealth-cloudflare -w) && [ -n "$T" ] && CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false WRANGLER_SEND_ERROR_REPORTS=false env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CLOUDFLARE_API_BASE_URL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID -u CF_API_BASE_URL npx wrangler@4.151.3 … )`
+    - The assignments before `env` keep the token out of env's argument list. `ps` shows argument lists to every local account.
+    - `[ -n "$T" ]` stops on an empty Keychain item. Otherwise wrangler would treat the empty token as none and fall back to a stored or new login.
+    - In the subshell, T is gone even after Ctrl-C in zsh, which skips a trailing `; unset T`. The line also returns wrangler's exit status, not unset's.
+    - Error reports are off, and the API base-URL variables are cleared. Check `WRANGLER_SEND_ERROR_REPORTS` and `CLOUDFLARE_API_BASE_URL` in Cloudflare's docs first, and add them to "What the release tools send".
+  - **Setup:**
+    - **A warm-up with no token first:** `WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 --version`. That answers npx's "Ok to proceed?" and runs the package install with no token in the environment.
+    - **The token form:** Account Resources: Include, the TB Health account only. Permission: Account › Cloudflare Pages › Edit, plus Account Settings: Read only if whoami can't name the account.
+    - **Storing it:** the prompt asks twice ("password data for new item", then "retype"). Paste the Cloudflare token both times, not the Mac password. To replace it later, add `-U`. Afterwards copy something else, so the token leaves the clipboard; Universal Clipboard shares it with nearby Apple devices.
+    - **Say plainly who can read it.** Any program running as this Mac user can read the stored token, as it can gh's. The builder and lead sessions never ask for it, and only the release lines read it. For a prompt on every read, create the item with `-T ""`. Then every release needs someone at the Mac to click Allow, so it can't be run over Remote Control.
+    - **Where the account ID is:** Workers & Pages › Account details, or search "Copy account ID" from Account home. An account with no domain has no zone Overview.
+    - **A whoami step** between storing the token and creating the project. Stop unless it names the TB Health account, with the same ID as in the lines.
+    - **The address `pages project create` prints.** The pages.dev subdomain is the project name only when that's free; otherwise Cloudflare adds characters. Use that subdomain wherever HANDOVER says `<your-project>.pages.dev`, and `test.<that subdomain>` for test copies. `--project-name` keeps the project name.
+  - **Test copies:**
+    - Start the test build with `TBPH_PRODUCTION=`, so an exported value can't make it a production build.
+    - Say the preview is public to anyone who has its address or guesses it, and it can carry the unreviewed Check. Share it only with reviewers, or turn on the project's preview access policy in the dashboard. Cloudflare Access is free for small teams but needs its own setup.
+    - Update PLAN's risk row "Unreviewed Check reachable on a public preview" to match.
+- **Acceptance:** Stub runs in zsh and bash 3.2 show:
+  - no argument list carries the token;
+  - an empty or missing item stops before npx;
+  - T isn't set in the shell after Ctrl-C;
+  - the line returns wrangler's exit status.
+
+  The records (PLAN, AUDIT-build) match HANDOVER.
+- **Sources:** review of the B86-B87 fixes, findings release-1 to release-10; the release reviewer's notes (Keychain access, warm-up, base URL)
+
+### B89. Small script fixes (Low)
+
+- **Files:** scripts/check-node.mjs, tests/unit/check-node.test.ts, tests/unit/launch-check.test.ts
+- **Fix:**
+  - **check-node's comparison:** compare the core version only (`process.versions.node.split('-')[0]`), so a prerelease below the floor stops. Add '22.23.0-pre' to the stop list and '22.23.10' to the pass list.
+  - **check-node's comment:** post-deploy-check runs it as a release script; it imports no TypeScript.
+  - **The release-check test:** also assert a positive, that stdout has "launch-check: what is still open before launch". Then the test can't pass when launch-check never ran.
+- **Acceptance:** The unit tests above.
+- **Sources:** review of the B86-B87 fixes, findings scripts-1, scripts-2 and scripts-3
