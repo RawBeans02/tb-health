@@ -216,6 +216,7 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
       const direct = spawnSync(process.execPath, ['scripts/launch-check.mjs'], { encoding: 'utf8', env });
       expect(direct.stderr).toContain(`judging the build in ${d}`);
       const release = spawnSync('npm', ['run', '--silent', 'release-check'], { encoding: 'utf8', env });
+      expect(release.stdout).toContain('launch-check: what is still open before launch'); // it ran
       expect(release.stderr).not.toContain('judging the build in');
     } finally {
       rmSync(d, { recursive: true, force: true });

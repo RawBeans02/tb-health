@@ -17,12 +17,12 @@ function run(node: string) {
 
 describe('check-node', () => {
   it('stops an older Node, naming the floor and the fix', () => {
-    for (const node of ['16.20.2', '20.18.0', '22.18.0', '22.23.3']) {
+    for (const node of ['16.20.2', '20.18.0', '22.18.0', '22.23.3', '22.23.0-pre']) {
       expect(run(node), node).toEqual({ code: 1, message: `TB Health needs Node 22.23.4 or later (see .nvmrc): run nvm use. This is Node ${node}.` });
     }
   });
 
   it('lets 22.23.4 and later through', () => {
-    for (const node of ['22.23.4', '22.24.0', '23.11.0', '24.1.0']) expect(run(node), node).toEqual({ code: null, message: '' });
+    for (const node of ['22.23.4', '22.23.10', '22.24.0', '23.11.0', '24.1.0', '24.0.0-nightly2026']) expect(run(node), node).toEqual({ code: null, message: '' });
   });
 });
