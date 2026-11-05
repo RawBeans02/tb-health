@@ -1044,3 +1044,67 @@ A read-only review of 16c4f36..e8812b5. The reviewers ran HANDOVER's lines in zs
   - **The release-check test:** also assert a positive, that stdout has "launch-check: what is still open before launch". Then the test can't pass when launch-check never ran.
 - **Acceptance:** The unit tests above.
 - **Sources:** review of the B86-B87 fixes, findings scripts-1, scripts-2 and scripts-3
+
+## CI pre-flight after the merge to main (5 November 2026)
+
+The owner pushed builds 06–14 and moved `main` to 359d6a5 as a fast-forward. GitHub refused the first two CI runs (42047181969 and 42049823367) before any step started: "The job was not started because your account is locked due to a billing issue." That is a billing state on the owner's GitHub account, not the code. The owner is clearing it (owner-queue, "The first CI run").
+
+Meanwhile a read-only pre-flight looked for anything that would fail only on GitHub's Linux runner: case-sensitive files, a clean clone, UTC, no macOS tools, Linux browsers. Three checkers read the code at 359d6a5. A researcher read GitHub's and Playwright's docs, changelogs and release notes. A verifier tested each checker's findings, and another fact-checked the research. Nothing was run on Linux.
+- 4 findings: 1 confirmed (B90) and 3 refuted (the precache budget, the report upload after a timeout, WebKit's Alt+Tab on Linux).
+- Fine as they are:
+  - the lockfile has the linux-x64 builds of every native package at the pinned versions;
+  - no file-name case or clean-clone problems;
+  - Node 22.23.4 is in both runner images' tool cache;
+  - Playwright 1.64.1 supports Ubuntu 26.04 with its own browser builds and package lists;
+  - there are no pixel-snapshot tests;
+  - the @v4 actions still run, forced onto Node 24 with a warning.
+- Some Linux WebKit behaviour can only be settled by a real run. It's listed under "Watch on the first run".
+
+### B90. Run the dependency audit after the tests (Medium)
+
+- **Files:** .github/workflows/ci.yml, docs/PLAN.md (the CI paragraph and D22), docs/AUDIT-build.md if it gives the order
+- **Fix:**
+  - Move the "Dependency audit (shipped dependencies)" step and its comment from after `npm ci` to after "Build without Check and smoke-test it (Q9)", before the report upload.
+  - Give it `if: ${{ !cancelled() }}`, so it still runs when a test step failed.
+  - Keep `--omit=dev` and npm's default level. An advisory still fails the job; changing the level is the owner's call.
+- **Why:** `npm audit` exits 1 on any advisory, and its result depends on the registry's advisory list on the day, not on our code. As step 4 it skips the type check, the unit tests, the build and every browser test, so one new advisory would leave the first run with no test evidence.
+- **Acceptance:**
+  - The YAML parses, for example with the `yaml` package already in node_modules, and lists the steps in the new order.
+  - PLAN's CI paragraph and D22 give the same order.
+- **Sources:** CI pre-flight, finding DS1 (confirmed)
+
+### B91. Pin the runner and use the actions' Node 24 versions (Low)
+
+- **Files:** .github/workflows/ci.yml, docs/PLAN.md (D22)
+- **Fix:**
+  - **`runs-on: ubuntu-24.04`.** GitHub is moving `ubuntu-latest` to Ubuntu 26.04 between 19 October and 19 November 2026, so two runs can land on different images. Moving to `ubuntu-26.04` later is a deliberate one-line change; Playwright 1.64.1 supports both.
+  - **`actions/checkout@v7`, `actions/setup-node@v7` and `actions/upload-artifact@v7`.** Node 20 left GitHub's runners on 23 September 2026. The @v4 actions still run, forced onto Node 24 with a warning. The inputs this file uses are unchanged in v7.
+  - **`persist-credentials: false` on checkout.** No step needs git credentials, so the token shouldn't stay on disk while `npm ci` runs install scripts.
+  - **The header comment and D22.** Standard GitHub-hosted runners are free for a public repository and use no Actions minutes. Say that instead of "on the owner's Actions minutes".
+- **Acceptance:**
+  - The YAML parses, and each action is at @v7 with the same inputs.
+  - On the first run after this, the log shows Ubuntu 24.04 and no Node 20 warning.
+- **Sources:** CI pre-flight research, Q2 to Q4, fact-checked against GitHub's changelog and docs and the actions' release notes
+
+### B92. Records (Low)
+
+- **Files:** _handoff/JR-RESUME.md, docs/AUDIT-build.md
+- **Fix:**
+  - **JR-RESUME:**
+    - builds 06–14 are on GitHub, and `main` is at 359d6a5 (5 November);
+    - CI waits on the owner's GitHub billing lock;
+    - what's next.
+  - **AUDIT-build:** the CI evidence for step 14 is still pending, and why.
+  - **Next to the precache budget:** the precache is at 60 of 60 entries, so one more file in dist/_astro fails the build. The v7 work (dark mode) may add one. If it does, raise it with the lead rather than changing the budget.
+- **Sources:** CI pre-flight, finding DS2 (refuted as a CI fault, kept as a record)
+
+### Watch on the first run (nothing to change now)
+
+These were only ever seen in macOS WebKit. If a WebKit step fails on Linux, look here first:
+- **fixtures.ts:13-14.** The WebKit CSP-quirk patterns were captured from macOS WebKit's `<select>` internals. Linux WebKit may word its messages differently, and any message that doesn't match fails the test.
+- **data.spec.ts:189.** `stage.width` is 390 only if scrollbars overlay the page.
+- **home.spec.ts:378-383.** This test needs `(hover: hover) and (pointer: fine)` to match in a desktop context.
+- **shell.spec.ts:107 and places.spec.ts:144.** These press Alt+Tab in WebKit. On Linux, Alt doesn't change what Tab reaches (WebKit only does that on Apple platforms), so they should pass. If they don't, read `document.activeElement` in the trace before changing the key.
+- **Plain-Tab loops in WebKit** (focus.spec.ts:38-46, bars.spec.ts:128-137). On Linux these also reach links, which macOS WebKit skips. Chromium already covers those stops.
+- **Tight text-layout margins:** qa.spec.ts:90-96, textsize.spec.ts:47, the ±1px chart-label check, and bars.spec.ts:55-76 (no font swap in the first 30 frames). Linux has no Arial, so the metric-matched `local("Arial")` fallback isn't there.
+- **"Browsers for Playwright".** This step can crawl on GitHub's slow Azure apt mirror (runner-images issue 14823). If it does, re-run the job.
