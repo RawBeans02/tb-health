@@ -373,6 +373,13 @@ From the interim build audit (docs/audit-2026-11-05.md), snapshot 6f759ff. Every
 - Real device: OSM tile requests after Use my location, a province filter and Map (tiles requested and the Referer sent).
 - Check-off build: any /check link rendered only by islands after hydration, which check-links can't see.
 - An iPad-width (768 to 1024px) layout pass in EN and FIL.
+- iPhone landscape: the dot story's canvas labels (the beat 5 and 6 titles, the slope chart's left labels) clear the side insets (B49).
+- Android Chrome: Done or Enter in the Places field closes the keyboard (B54).
+- VoiceOver swipe-scrolling on /data after a language switch: charts-ready doesn't pull the reader back, because swipes send no touch events (B6, B17, B45).
+- Places map: a filter refit that lands during the reader's own animated zoom (zoom buttons, double-tap) still happens (B12).
+- First Cloudflare deploy: `curl -sI` on /, /sw.js and /fil/place/x. The _headers values replace Cloudflare's defaults (no doubled nosniff, Referrer-Policy or X-Robots-Tag), _headers applies to 404s too, and the custom domain has no zone-level HSTS or Managed Transforms adding headers of their own.
+- A slow cold load (cache off, Slow 4G) at 390 and 768px in Filipino: any layout shift when the web font swaps and the tab labels rewrap (B68).
+- Desktop Lighthouse of /places with the list made to fail: the size of the error-path shift (B66).
 
 ## Review of steps 13 and 14 (5 November 2026)
 
@@ -636,3 +643,190 @@ The step 14 review confirmed 21 of 28 findings and refuted one, which B48 had al
   If anything shifts, measure the bar before first paint with a small inline script right after the tab bar, its hash added through Astro.csp the way BaseLayout does for prepaint. Keep tabbar.ts for later changes.
 - **Acceptance:** The result is recorded in the resume, and any shift is fixed.
 - **Sources:** review of step 14, finding 0
+
+## Review of the fixes B44-B68 (5 November 2026)
+
+A read-only review of 0ef9d9e..147fba6: B44-B68 and the gate fix 8dfe088. An adversarial verifier checked all 35 findings. It confirmed 30 (two of them the same B12 problem), refuted 4, and left 1 for a browser to settle. The lead settled that one (B69) with a probe in Chromium and WebKit. The rules in "How to work" apply.
+
+- **Done as asked:** B44, B46-B49, B51, B54-B61, B63-B65, B67 and B68. The worst-case rows can't reach a release: any such build carries `meta.synthetic`, which the gate blocks and `--accept` refuses.
+- **Partly done:** B45 (B69), B50's probes and B53 (B76), B52's B12 test (B70), B62 (B74), and B66 with the verdict (B71).
+- **Lead rulings:**
+  - B66's loading min-height on Places is accepted. It changes only the loading state, and the result looks the same.
+  - Overlapping chart text is a defect, even where the prototype has it (B78).
+  - The privacy row can't be accepted away (B73).
+
+### B69. Put the hash back in the address only after load (High)
+
+- **Files:** src/lib/anchor.ts, src/scripts/lang.ts, a new e2e test
+- **Fix:** 544802d's `replaceState` runs while the module scripts run, before parsing ends. At the end of parsing, Chromium and WebKit scroll to the fragment of the document's current address. So the reader lands on the source page's hash target, not on the saved place.
+  - The lead's probe at 390px, in both engines: with the hash written during module-script time, the page ended on the old target. With it written after the load event, the place held, and the address still had the hash.
+  - Only /data recovers, when `tbph:charts-ready` re-applies the place (if it fires).
+  - Every switch made from an address with a hash is affected: after the skip link (`#main`, which also moves focus), Learn's contents links, the footer's Accessibility link (`/about#accessibility`) and Data's "On this page".
+  - Write the hash back after the load event, or at once if `document.readyState` is `complete`. Then call `refresh()`, so the language links carry it. Also call `refresh()` on `pageshow`.
+- **Acceptance:** Write the test first and confirm it fails at 147fba6. At 390px in Chromium and WebKit:
+  - Go to /about through the footer's Accessibility link, and to /learn through a contents link. Scroll so a later section sits at 120px, switch language and wait for load. The section's top stays within 2px of 120, focus hasn't moved, and the address ends with the hash.
+  - The B45 /data test and Q2a's shell test still pass.
+  - After a back-forward return, the language links carry the hash.
+- **Sources:** review of the fixes, findings behaviour-1 and behaviour-3; the lead's probe (scratchpad, not in the repo)
+
+### B70. Make the B12 refit test able to fail (Medium)
+
+- **Files:** tests/e2e/places.spec.ts, docs/AUDIT-build.md
+- **Fix:**
+  - The test switches between "Bangued" (one row, fitted at maxZoom 13) and every row (about zoom 6). That jump is more than Leaflet's zoomAnimationThreshold of 4. So Leaflet resets the view instantly, with or without `animate: false`, and the path that drops a refit never runs.
+  - Drive two refits that Leaflet would animate: fits no more than 4 zoom levels apart and within a screen of each other, with the second inside the 250 ms zoom animation. Two neighbouring NCR cities would do, or Region "Cordillera (CAR)" and then all. Drop the 800 ms sleep.
+- **Acceptance:** The test fails with `animate: false` removed from placesMap.ts (record that run) and passes with it. AUDIT-build.md:12 no longer says every item came with its test.
+- **Sources:** review of the fixes, findings behaviour-2, tests-1 and docs-7
+
+### B71. Make AUDIT-build's verdict and ratings match the open items (Medium)
+
+- **Files:** docs/AUDIT-build.md
+- **Fix:**
+  - **Release status:** add "the v7 import (V1-V3: dark mode and the v7 wording; L1, L9, B22), or the owner's decision to launch on v6".
+  - **Dark mode:** rate it Missing. Replace "charts keep light colours meanwhile" and the accepted risk "Charts keep light colours in dark mode until v7" with "No dark mode until the v7 import (V2)".
+  - **Risks if it launched as it stands:** add:
+    - the Filipino strings without the native-speaker review (D10);
+    - the unrecorded reuse terms (O12);
+    - the outside links never fetched (L8);
+    - the lapsed accreditations shown as listed (Q12, D24);
+    - the saved card's risk-factor rows, such as HIV, pending the clinical review (O11).
+  - **Appendix:** rules that an open owner item undercuts become Partial, naming the item:
+    - Hick's Law (O8);
+    - Empty states (O1);
+    - Hover states (O5);
+    - the fingerprint row (the em dashes under V3 and C5; O27);
+    - Mobile menu and Mobile responsiveness (O3, O4).
+  - **Master rows:**
+    - Familiar interaction patterns (O7) and Responsive become Partial. Responsive's "Accepted" (O3) is still pending the owner, and O4 is open.
+    - Accessibility names O2, O13, O14 and the statement's [email] placeholder.
+    - Privacy and Data integrity name the card's risk-factor row.
+  - **Line 12:** the code fixes carry tests, except as B70 says.
+  - **Figures:** take them from the step 14 gate:
+    - CLS ≤ 0.05 (Install 0.059 while its prompt shows);
+    - JS ≤ 31.6 KB (Data 50.5 KB);
+    - precache 60 files, 1,144 KB;
+    - one island per page, two on Data;
+    - Lighthouse "on a production-mode stand-in build";
+    - the rest of the figures in finding docs-8.
+  - **B50's record:** the "0" label was drawn into the panel's padding (the svg has `overflow: visible`), not cut off. The fix moves it about 4px, from centred to starting at x=0, on charts under 560px. d17's Filipino legend overflow was real.
+  - **Gate:** record the commit the step 14 gate ran on, not only the branch.
+- **Acceptance:** No row or appendix rule says Verified while an open owner item undercuts it. The release status names the v7 import. The figures match the gate.
+- **Sources:** review of the fixes, findings docs-1, docs-2, docs-3, docs-7 and docs-8; the layout and docs reviewers' notes
+
+### B72. Make the release path safe on the shared Mac (Medium)
+
+- **Files:** docs/HANDOVER.md, package.json
+- **Fix:**
+  - **Release from a clean checkout** of the commit being released, never from the builder's working checkout: a fresh worktree or clone of `main`, then `npm ci`. Another session's build or test run can rewrite dist/ between the gate and the upload, and uncommitted edits would ship.
+  - **Put only the build under the guard:** `SITE_URL=… TBPH_PRODUCTION=true [TBPH_CHECK=false] GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check [-- --accept=…] && npx wrangler@4.151.3 pages deploy dist --project-name=<project> --branch=main`. lowmem-run starts its job in the background (`set -m; … &`), so a wrangler prompt inside it would stop the job and keep holding the machine-wide lock.
+  - **Add `"release-check": "node scripts/launch-check.mjs --release"`.** Then a dropped `--` loses only the accept list, and the gate still blocks.
+  - **One-time setup** before the first release:
+    1. `npx wrangler@4.151.3 login`;
+    2. `npx wrangler@4.151.3 whoami` shows the TB Health account (an exported CLOUDFLARE_API_TOKEN overrides the login on a shared Mac, so unset it);
+    3. `npx wrangler@4.151.3 pages project create <project> --production-branch=main`. That removes the production-branch prompt; keep B67's note as the fallback.
+
+    Check these commands and flags against Cloudflare's wrangler docs before writing them.
+  - **Wrangler's usage telemetry:** say, from the docs, whether 4.151.3 sends it by default and how to turn it off (for example `WRANGLER_SEND_METRICS=false` in the release command), the way HANDOVER discloses npm audit.
+  - **Placeholder:** use one the gate blocks, `https://your-domain.example`, not `https://your.address`.
+  - **Step 3:** preview links are public to anyone who has them. noindex only keeps them out of search, and only on a host that reads _headers. Share them only with reviewers.
+  - **Step 4:** exit 3 means the check is incomplete: run it again if the host didn't answer, and otherwise fix the cause on the "failed:" lines. Accept only keys the gate lists as open, since naming another exits 2. If every page differs, first make sure dist/ is still the build that was deployed.
+- **Acceptance:** HANDOVER's commands work as written from a clean checkout. `npm run release-check` exits 1 on the current build and 2 with `-- --bogus`.
+- **Sources:** review of the fixes, findings docs-4, docs-6, docs-9, gate-1 and gate-3; the gate and docs reviewers' notes
+
+### B73. Give the privacy row its own block, one that can't be accepted (Medium)
+
+- **Files:** scripts/launch-check.mjs, tests/unit/launch-check.test.ts, docs/HANDOVER.md, the note in src/content/about.ts
+- **Fix:**
+  - owner-strings covers `about.privacyServices` (Q5) together with the Filipino descriptions, and About leaves the row out while it's empty (About.astro:20). So accepting owner-strings for the descriptions would launch without saying who else sees what: the host, OpenStreetMap and Google Maps. RA 10173's transparency rule needs that said.
+  - Move `about.privacyServices` into its own block, privacy-row, and leave it out of ACCEPTABLE. This is the lead's call; the owner can overrule it.
+  - Correct the about.ts note:
+    - Google Maps sees the chosen place.
+    - For Sakay.ph, the site copies the address and opens sakay.ph, which sees it only if the reader pastes it there.
+
+    The lead's owner-queue wording was wrong, and is corrected.
+- **Acceptance:** Unit tests: privacy-row blocks while the row is empty and clears once it's supplied, and `--accept=privacy-row` exits 2.
+- **Sources:** the gate and docs reviewers' notes
+
+### B74. Harden the gate's checks (Low)
+
+- **Files:** scripts/launch-check.mjs, scripts/post-deploy-check.mjs, scripts/prepare-data.mjs, tests/unit/launch-check.test.ts, a Check content test
+- **Fix:**
+  - **check-review:**
+    - Also count as open any check.* string whose en or fil text still has the bracketed placeholder ("[partner clinicians — pending]", "[mga katuwang na doktor — nakabinbin]").
+    - Pin Check's [REVIEW] flags in a unit test, as learn.test.ts pins L6's, so a refactor can't clear the gate unnoticed.
+  - **Headers:** compare dist/_headers exactly with `headersFile(true)`, not only its presence. Any difference blocks and can't be accepted.
+  - **Check detection:** read both dist/check.html and dist/fil/check.html, and block if they disagree.
+  - **check-mentions:** block only while its list isn't empty.
+  - **In a build without Check:** also drop `meta.checkTitle` and `meta.checkDescription` from the lists.
+  - **The em-dash list:** also cover the five page titles built in views with " — TB PH" (About, Place, Data, Install, Learn).
+  - **Small fixes:**
+    - KNOWN's `datapage.method2` becomes `dataPage.method2`;
+    - "1 check string still carries";
+    - `today` is the Asia/Manila date.
+  - **Test main():**
+    - export `readBuild(distDir)` and test it on a temporary folder: with and without check.html and _headers, and with sample and synthetic meta;
+    - add one spawnSync test each for exit 2 (`--bogus`, `--accept=domain`) and exit 1;
+    - build the not-production and domain cases from `headersFile(false)` and `PLACEHOLDER_SITE`.
+  - **The main-module guard** in launch-check, post-deploy-check and prepare-data compares `realpathSync(process.argv[1])` with `fileURLToPath(import.meta.url)`. Through a symlinked path it now skips main() and exits 0.
+- **Acceptance:** A unit test for each change.
+- **Sources:** review of the fixes, findings gate-2, gate-4, gate-5, gate-6, gate-7 and postdeploy-3; the gate and docs reviewers' notes
+
+### B75. Make post-deploy-check and outside-links report fully (Low)
+
+- **Files:** scripts/post-deploy-check.mjs, scripts/outside-links.mjs, scripts/serve-dist.mjs, tests/unit/post-deploy-check.test.ts
+- **Fix:**
+  - **Five failures in a row:** stop requesting, but still print the problems and errors found so far, and exit 3.
+  - **The origin argument:** accept only http: and https:. Otherwise print the usage line and exit 2.
+  - **outside-links --fetch:**
+    - When HEAD answers 400 or more and the GET then fails, report the GET's failure.
+    - Report `error.cause.code` (ENOTFOUND, ECONNRESET, CERT_…) instead of "no answer".
+  - **outside-links header comment:** the OSM attribution and the sakay.ph target come from JS and aren't in the inventory.
+  - **serve-dist.mjs:** join a header set by two matching rules, as Cloudflare does. Now the last rule wins.
+  - **The resume:** record how the local HSTS max-age=0 failure was produced. Editing dist/_headers can't produce it, because the check reads the same file the server sends.
+- **Acceptance:** Unit tests for the stop and for the origin check.
+- **Sources:** review of the fixes, findings postdeploy-1, postdeploy-2 and postdeploy-4; the post-deploy reviewer's notes
+
+### B76. Make the tests wait for the right thing and probe what they should (Low)
+
+- **Files:** tests/e2e/home.spec.ts, data.spec.ts, probes.ts, qa.spec.ts, seo.spec.ts, places.spec.ts, vitest.config.ts, docs/PLAN.md
+- **Fix:**
+  - **home.spec, B47's second test:** wait for hydration (the Planner island without `ssr`) before filling the field.
+  - **data.spec, the B45 test:** wait for the charts' relayout (each viewBox width equals its rendered width) before scrolling, and drop the 300 ms sleep.
+  - **data.spec, the claim deep links:** #claim-burden-cases waits for hydration with no cap (`charts: true`). Keep the capped wait only for #claim-burden-deaths, and say why there.
+  - **probes.ts:**
+    - skip aria-hidden subtrees only when they carry no text;
+    - check SVG text above and below its svg too;
+    - on /data, run outsideProblems after the charts hydrate and lay out.
+  - **qa.spec and seo.spec:** read dist/data/facilities.json, not public/.
+  - **places.spec, the marker test:**
+    - compare the heading with all rows and data-markers with the located rows;
+    - add a synthetic-build run of it to PLAN §5's fixture runs.
+  - **qa.spec, the one-result query:** take it from the build's own data.
+  - **vitest.config.ts:** `passWithNoTests: false`.
+  - **The B30 skip:** update its reason.
+- **Acceptance:** Each test still passes, and fails with its fix reverted where it guards one.
+- **Sources:** review of the fixes, findings tests-2 to tests-9; the tests reviewer's notes
+
+### B77. Show the focus ring on selected items in forced colours (Low)
+
+- **Files:** src/styles/global.css, tests/e2e/forced-colors.spec.ts
+- **Fix:** The forced-colours rule sets `forced-color-adjust: none` on the selected segment, the current tab, the current language and the current contents link. So their focus ring keeps the author Ink (#14212B) on a black or #202020 Canvas, about 1.3:1. Add `outline-color: CanvasText` to that rule. This dates from B11, not B44.
+- **Acceptance:** In forced-colours emulation, a focused selected item's outline-color equals a CanvasText probe's.
+- **Sources:** review of the fixes, finding layout-1 (refuted as out of B44's scope; the defect holds)
+
+### B78. Check the chart axis labels at phone widths (Low)
+
+- **Files:** src/lib/charts/primitives.ts and tests/e2e/probes.ts, only if the check shows overlap
+- **Fix:**
+  - The review estimates, from the code's text-width estimate:
+    - d17's "US$50M", "US$100M" and "US$150M" overlap by about 7-11px at 390px and 18-30px at 320px;
+    - d6's labels overlap by 9-13px at 320px;
+    - d15's bullet label can run into its value.
+  - Screenshot /data d6, d15 and d17 at 320 and 390px in EN and FIL. If labels overlap:
+    - drop any axis label that would start within 4px of the previous one, and keep every gridline;
+    - put a bullet's value on its own line when it doesn't fit;
+    - add a check for overlapping text boxes in one svg to the probe.
+
+    That keeps the approved look wherever the labels fit.
+- **Acceptance:** The screenshots are in the resume, and the QA matrix finds no overlapping text.
+- **Sources:** review of the fixes, finding layout-2 (refuted as a design call; the lead rules overlapping text a defect)
