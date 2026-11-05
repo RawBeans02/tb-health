@@ -6,11 +6,11 @@ Kept by the TB Health lead. Updated 5 November 2026 (after the review of the fix
 
 1. **Q7. The web address (domain).** The host is decided: Cloudflare Pages, in a TB Health-only account you control (`docs/decisions.md`, 5 Nov). Still open is the real domain. It's needed before the public launch, because an installed app is tied to its address. Until then, test copies use the free `*.pages.dev` address. The builder reads the address from one setting (`SITE_URL`), so your answer is a config change. Once the domain is known, HSTS also gets `includeSubDomains`.
    - **When you're ready:** create the Cloudflare account yourself (with an email that isn't KitaMo's). Then follow HANDOVER's one-time setup:
-     - make an API token for the account and save it in the Mac's Keychain (you type it in yourself; nobody else sees it);
+     - make an API token for the account and save it in the Mac's Keychain. You paste it in yourself, in Terminal. No session will ask you for it, and only the release commands read it. Like your GitHub key, any program running as your Mac user could read it.
      - check the account;
      - create the project.
 
-     The lead sends you the exact commands once the builder has finished B86. Test copies go to a separate preview address that search engines skip; only the launch goes to the main address.
+     The lead sends you the exact commands once the builder has finished B88. Test copies go to a separate preview address that search engines skip; only the launch goes to the main address.
 2. **O1. Typed barangays and landmarks hit a dead end.** The field asks for a barangay, but the site only knows cities and provinces. Recommended: the field's hint asks for a city or province (you write the new hint in EN and FIL), and the no-match state links to the full list. Revisit after the full clinic list (Q8).
 3. **O11. Four symptom-check cases for the clinical reviewers.** The code follows the content pack exactly, and two independent checks found no routing difference. In four cases, though, the pack's own wording conflicts, e.g. "No signs of TB right now" for someone who reported current symptoms. Recommended: add them to the clinical review list.
    - **Also for the clinical review:** whether the saved or printed summary card should list risk factors such as HIV. That is sensitive health information under the Data Privacy Act (RA 10173).

@@ -11,7 +11,7 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 - *Lead's reading, 5 Nov 2026, for the owner to overrule:*
   - Deploys are HANDOVER's direct upload with wrangler, run by the owner from a clean checkout of `main` (B72). No Git integration and no automatic previews.
   - Until launch, test copies are preview deploys: non-production builds with noindex, on a branch other than `main`, at a `*.pages.dev` address. A deploy to `main` is the public launch (B86).
-  - The owner creates the Cloudflare account and an API token for it, and keeps the token in the Mac's Keychain. Wrangler gets it per command, like `GH_TOKEN` for pushes. There is no global `wrangler login`, because other projects on this Mac share that login (B86). Neither the builder nor the lead holds Cloudflare credentials.
+  - The owner creates the Cloudflare account and an API token for it, and keeps the token in the Mac's Keychain. Wrangler gets it per command, like `GH_TOKEN` for pushes. There is no global `wrangler login`, because other projects on this Mac share that login (B86). The builder and lead sessions never ask for the token or use it. Only the release lines the owner runs read it. Like gh's token, it can be read by any program running as this Mac user (B88).
 - **Still open:** the real domain. It's needed before launch, because it fixes the installed app's address, and HSTS then gets `includeSubDomains`.
 
 ## 4 November 2026, third batch (owner, written to the lead)
