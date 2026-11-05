@@ -3,10 +3,11 @@
 // the clinical review is recorded, reading dist/, and the script's exit codes. Synthetic
 // strings and builds only.
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
+import { about } from '../../src/content/about.ts';
 import { headersFile } from '../../src/lib/headers.ts';
 import { PLACEHOLDER_SITE } from '../../src/lib/site.ts';
 import { ACCEPTABLE, applyAccept, assess, manilaToday, parseArgs, readBuild, viewTitleDashes } from '../../scripts/launch-check.mjs';
@@ -32,8 +33,13 @@ type Input = {
 };
 
 /** A release-ready build: real domain, production headers, real data, Check reviewed. */
+/** The privacy row, supplied: every release-ready string list carries it (B82: a missing row blocks). */
+const ROW = str('about.privacyServices', undefined, { en: 'Our host sees…', fil: 'Nakikita ng host…', origin: 'owner', src: ['owner', 'owner'] });
+const withRow = (strings: Str[]) => (strings.some((s) => s.id === ROW.id) ? strings : [...strings, ROW]);
+
+/** A release-ready build: real domain, production headers, real data, Check reviewed. */
 const ready = (over: Partial<Input> = {}) =>
-  assess({ strings: [str('nav.home'), str('check.q1')], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', ...over } satisfies Input);
+  assess({ build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', ...over, strings: withRow(over.strings ?? [str('nav.home'), str('check.q1')]) } satisfies Input);
 const keys = (r: { blocking: { key: string }[] }) => r.blocking.map((b) => b.key);
 
 describe('assess: each key and its trigger', () => {
@@ -50,6 +56,16 @@ describe('assess: each key and its trigger', () => {
     expect(keys(ready({ strings: [row('', '')] }))).toEqual(['privacy-row']);
     expect(keys(ready({ strings: [row('Our host sees…', '')] }))).toEqual(['privacy-row']);
     expect(keys(ready({ strings: [row('Our host sees…', 'Nakikita ng host…')] }))).toEqual([]);
+  });
+
+  it("privacy-row: a row that isn't in the dictionaries at all blocks too, never as owner-strings (B82)", () => {
+    const r = assess({ strings: [str('about.privacyRow', undefined, { en: '', fil: '', origin: 'owner', src: ['owner', 'owner'] })], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(keys(r)).toEqual(['privacy-row', 'owner-strings']);
+    expect(r.blocking[0].text).toContain("isn't in the dictionaries");
+  });
+
+  it('privacy-row: the id the gate looks for is the real dictionary row, which the owner supplies (B82)', () => {
+    expect(about.privacyServices).toMatchObject({ origin: 'owner', src: ['owner', 'owner'] });
   });
 
   it('review, verify and placeholders: flagged copy outside Check', () => {
@@ -103,10 +119,31 @@ describe('assess: each key and its trigger', () => {
     expect(keys(ready({ strings: [foot('Medical review: Dr. A.', 'Medical review: Dr. A.')] }))).toEqual([]);
   });
 
+  it('check-review: the reviewer placeholder still counts once V3 rewords its dash (B82)', () => {
+    const foot = (en: string) => str('check.foot', undefined, { en, fil: 'Medical review: Dr. A.' });
+    expect(keys(ready({ strings: [foot('Medical review: [partner clinicians, pending].')] }))).toEqual(['check-review']);
+    expect(keys(ready({ strings: [foot('Medical review: [partner clinicians: pending]')] }))).toEqual(['check-review']);
+  });
+
   it('lists the em dashes in strings and in the page titles the views build (B74)', () => {
     const r = ready({ strings: [str('home.lede', undefined, { en: 'A — B' })], titleDashes: ['About', 'Learn'] });
-    expect(r.decide.find((d) => d.startsWith('Em dashes'))).toBe('Em dashes (V3), for the owner or the v7 wording: home.lede; and the page titles built in src/views (" — TB PH"): About, Learn.');
-    expect(viewTitleDashes('src/views')).toEqual(['About', 'Data', 'Install', 'Learn', 'Place']);
+    expect(r.decide.find((d) => d.startsWith('Em dashes'))).toBe('Em dashes (V3), for the owner or the v7 wording: home.lede; and the page titles built in src/views and src/islands (" — TB PH"): About, Learn.');
+    expect(viewTitleDashes('src/views', 'src/islands')).toEqual(['About', 'Data', 'Install', 'Learn', 'Place', 'PlaceShell']);
+  });
+
+  it('counts a title only in code, not in a comment (B82)', () => {
+    const d = mkdtempSync(join(tmpdir(), 'tbph-views-'));
+    try {
+      writeFileSync(join(d, 'A.astro'), "---\n// \"Home — TB PH\", from the prototype\nconst title = 'Home';\n---\n<!-- About — TB PH -->");
+      writeFileSync(join(d, 'B.tsx'), "/* Page — TB PH */ const url = 'https://x.org'; document.title = `${name} — TB PH`;");
+      expect(viewTitleDashes(d)).toEqual(['B']);
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
+  });
+
+  it("reads Check's pages as check.html: the build writes files, not folders (B82)", () => {
+    expect(readFileSync('astro.config.mjs', 'utf8')).toMatch(/build:\s*\{\s*format:\s*'file'\s*\}/);
   });
 
   it("names dataPage.method2 as the dictionary spells it (B74)", () => {
@@ -142,7 +179,7 @@ describe('dates and reading dist/ (B74)', () => {
   it('reads a build without Check, without _headers, with synthetic data, and no build at all', () => {
     const r = readBuild(dist({ 'index.html': LIVE, 'data/facilities.json': data({ synthetic: true }) }));
     expect(r.build).toEqual({ home: LIVE, check: NONE, headers: null });
-    expect(keys(assess({ strings: [], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'check-mentions', 'no-headers']);
+    expect(keys(assess({ strings: [ROW], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'check-mentions', 'no-headers']);
     expect(readBuild(dist({}))).toEqual({ build: null, facilities: null });
   });
 });
@@ -155,10 +192,21 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
     expect(run('scripts/launch-check.mjs', '--release', '--accept=domain')).toBe(2);
   });
 
-  it('exits 1 while anything blocks, and 0 for a report', () => {
-    // The repo's own state always blocks: the sample list, or no build at all.
-    expect(run('scripts/launch-check.mjs', '--release')).toBe(1);
-    expect(run('scripts/launch-check.mjs')).toBe(0);
+  it('exits 1 while anything blocks, and 0 for a report, on a build of its own (B82)', () => {
+    // A temporary dist/ with synthetic data, which always blocks, so the checkout's own build
+    // (a clean production one, say) can't change the answer.
+    const d = mkdtempSync(join(tmpdir(), 'tbph-gate-'));
+    try {
+      mkdirSync(join(d, 'data'));
+      writeFileSync(join(d, 'index.html'), LIVE);
+      writeFileSync(join(d, '_headers'), HEADERS);
+      writeFileSync(join(d, 'data', 'facilities.json'), JSON.stringify(facilities({ synthetic: true })));
+      const status = (...args: string[]) => spawnSync(process.execPath, ['scripts/launch-check.mjs', ...args], { encoding: 'utf8', env: { ...process.env, LAUNCH_CHECK_DIST: d } }).status;
+      expect(status('--release')).toBe(1);
+      expect(status()).toBe(0);
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
   });
 
   it('runs main() through a symlinked path', () => {
@@ -175,7 +223,7 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
 });
 
 describe('assess: a build without Check', () => {
-  const strings = [str('nav.home'), str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B' })];
+  const strings = [str('nav.home'), ROW, str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B' })];
   const off = assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
 
   it('blocks check-mentions, not check-review', () => {

@@ -40,8 +40,9 @@ const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 
 // Strings only Check's pages use, besides its own dictionary: a build without Check ships none.
 const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription'];
 
-// The Check footer's reviewer placeholder, open until the clinical review is recorded.
-const REVIEWER_PLACEHOLDERS = ['[partner clinicians — pending]', '[mga katuwang na doktor — nakabinbin]'];
+// The Check footer's reviewer placeholder, open until the clinical review is recorded. Matched
+// by its words, not its dash, which the V3 pass will reword (B82).
+const REVIEWER_PLACEHOLDER = /\[(partner clinicians|mga katuwang na doktor)\b[^\]]*\]/;
 
 const PRIVACY_ROW = 'about.privacyServices';
 
@@ -67,7 +68,11 @@ export function manilaToday(now = new Date()) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila' }).format(now);
 }
 
-/** The last build as the gate reads it: null pieces where dist/ has none. */
+/**
+ * The last build as the gate reads it: null pieces where dist/ has none. Check's pages are
+ * check.html and fil/check.html because astro.config.mjs builds with build.format 'file'
+ * (a unit test pins it): with 'directory' they'd be check/index.html.
+ */
 export function readBuild(dist) {
   const read = (p) => (existsSync(join(dist, p)) ? readFileSync(join(dist, p), 'utf8') : null);
   const home = read('index.html');
@@ -78,11 +83,15 @@ export function readBuild(dist) {
   };
 }
 
-/** The views that build a page title with an em dash (" — TB PH"), for the V3 list. */
-export function viewTitleDashes(viewsDir) {
-  return readdirSync(viewsDir)
-    .filter((f) => f.endsWith('.astro') && readFileSync(join(viewsDir, f), 'utf8').includes('— TB PH'))
-    .map((f) => f.replace(/\.astro$/, ''))
+/**
+ * The views and islands that build a page title with an em dash (" — TB PH"), for the V3
+ * list: Astro views, and islands that set document.title at runtime (PlaceShell). Comments
+ * don't count (B82).
+ */
+export function viewTitleDashes(...dirs) {
+  const code = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/<!--[\s\S]*?-->/g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+  return dirs
+    .flatMap((dir) => readdirSync(dir).filter((f) => /\.(astro|tsx)$/.test(f) && code(readFileSync(join(dir, f), 'utf8')).includes('— TB PH')).map((f) => f.replace(/\.(astro|tsx)$/, '')))
     .sort();
 }
 
@@ -112,8 +121,10 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   // Copy. The privacy row is its own block, which can't be accepted: without it About doesn't
   // say who else sees what (RA 10173's transparency; the lead's ruling, B73).
   const missing = (s) => (s.src[0] === 'owner' && !s.en) || (s.src[1] === 'owner' && !s.fil);
+  // A renamed row, not found at all, blocks too, so it can't slip into owner-strings (B82).
   const privacyRow = shipped.find((s) => s.id === PRIVACY_ROW);
-  if (privacyRow && missing(privacyRow)) block('privacy-row', `The privacy row (${PRIVACY_ROW}, Q5) isn't in yet: About doesn't say who else sees what (the host, OpenStreetMap, Google Maps). It can't be accepted (RA 10173).`);
+  if (!privacyRow) block('privacy-row', `The privacy row (${PRIVACY_ROW}, Q5) isn't in the dictionaries: About can't say who else sees what. It can't be accepted (RA 10173).`);
+  else if (missing(privacyRow)) block('privacy-row', `The privacy row (${PRIVACY_ROW}, Q5) isn't in yet: About doesn't say who else sees what (the host, OpenStreetMap, Google Maps). It can't be accepted (RA 10173).`);
   const ownerMissing = shipped.filter((s) => s.id !== PRIVACY_ROW && missing(s));
   if (ownerMissing.length) block('owner-strings', `Strings the owner supplies, not in yet (${ownerMissing.length}): ${ownerMissing.map((s) => s.id).join(', ')}.`);
 
@@ -138,7 +149,7 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   // has the reviewer placeholder. The flags come off only when the owner records the review.
   if (checkBuilt) {
     const review = shipped.filter((s) => isCheck(s) && s.flags?.includes('REVIEW')).length;
-    const placeholderText = (s) => REVIEWER_PLACEHOLDERS.some((p) => s.en.includes(p) || s.fil.includes(p));
+    const placeholderText = (s) => REVIEWER_PLACEHOLDER.test(s.en) || REVIEWER_PLACEHOLDER.test(s.fil);
     const reviewer = shipped.filter((s) => isCheck(s) && (s.flags?.includes('PLACEHOLDER') || placeholderText(s))).map((s) => s.id);
     const left = [review && `${review} check string${review > 1 ? 's still carry' : ' still carries'} [REVIEW]`, reviewer.length && `the reviewer placeholder is still in (${reviewer.join(', ')})`].filter(Boolean);
     if (left.length) block('check-review', `Check is in the build, but its clinical review is pending: ${left.join('; ')}. Record the review, or build with TBPH_CHECK=false (Q9).`);
@@ -148,7 +159,7 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   queues.push(`Filipino register pass: ${shipped.filter((s) => s.origin === 'pack').length} pack strings, for one consistent register across pack and review copy.`);
   // V3: no em dashes in copy. Listed for the owner, never reworded here.
   const dashes = shipped.filter((s) => s.en.includes('—') || s.fil.includes('—'));
-  const titles = titleDashes.length ? `; and the page titles built in src/views (" — TB PH"): ${titleDashes.join(', ')}` : '';
+  const titles = titleDashes.length ? `; and the page titles built in src/views and src/islands (" — TB PH"): ${titleDashes.join(', ')}` : '';
   if (dashes.length || titles) decide.push(`Em dashes (V3), for the owner or the v7 wording: ${dashes.map((s) => s.id).join(', ')}${titles}.`);
   const overrides = shipped.filter((s) => s.origin === 'override');
   queues.push(`Copy overrides for the owner to confirm: ${overrides.length} strings (docs/copy-overrides.md).`);
@@ -223,8 +234,9 @@ async function main() {
     console.error(`launch-check: ${args.error}. Usage: launch-check [--release] [--accept=key,key]`);
     process.exit(2);
   }
-  const { build, facilities } = readBuild(path('dist/'));
-  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/')) });
+  // LAUNCH_CHECK_DIST points the gate at another build: the unit tests use a temporary one.
+  const { build, facilities } = readBuild(process.env.LAUNCH_CHECK_DIST || path('dist/'));
+  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/'), path('src/islands/')) });
   const result = applyAccept(blocking, args.accept);
   if (result.error) {
     console.error(`launch-check: ${result.error}.`);
