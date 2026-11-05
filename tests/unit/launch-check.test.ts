@@ -209,6 +209,19 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
     }
   });
 
+  it('says which folder it judged when LAUNCH_CHECK_DIST is set, and release-check ignores it (B87)', () => {
+    const d = mkdtempSync(join(tmpdir(), 'tbph-gate-'));
+    try {
+      const env = { ...process.env, LAUNCH_CHECK_DIST: d };
+      const direct = spawnSync(process.execPath, ['scripts/launch-check.mjs'], { encoding: 'utf8', env });
+      expect(direct.stderr).toContain(`judging the build in ${d}`);
+      const release = spawnSync('npm', ['run', '--silent', 'release-check'], { encoding: 'utf8', env });
+      expect(release.stderr).not.toContain('judging the build in');
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
+  });
+
   it('runs main() through a symlinked path', () => {
     const d = mkdtempSync(join(tmpdir(), 'tbph-link-'));
     try {

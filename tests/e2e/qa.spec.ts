@@ -13,7 +13,8 @@ const file = JSON.parse(readFileSync('dist/data/facilities.json', 'utf8'));
 const facilities = file.facilities as { id: string; name: string }[];
 // A place name the Places search matches to exactly one row, by the app's own matching (B84).
 const list = buildDataset(file).list;
-const ONE = list.find((p) => filterPlaces(list, { ...NO_FILTERS, q: p.name }, null, false).rows.length === 1)!.name;
+const ONE = list.find((p) => filterPlaces(list, { ...NO_FILTERS, q: p.name }, null, false).rows.length === 1)?.name;
+if (!ONE) throw new Error("qa.spec: no place name in dist/data/facilities.json matches exactly one row, so the one-result Places state can't be reached by a search (B87).");
 // The sample's Bangued page, or the first place when a synthetic fixture replaced the sample.
 const PLACE = facilities.some((r) => r.id === 'bangued-rural-health-unit-abra')
   ? '/place/bangued-rural-health-unit-abra?stop=2&need=all&near=Bangued'

@@ -235,7 +235,10 @@ async function main() {
     process.exit(2);
   }
   // LAUNCH_CHECK_DIST points the gate at another build: the unit tests use a temporary one.
-  const { build, facilities } = readBuild(process.env.LAUNCH_CHECK_DIST || path('dist/'));
+  // npm run release-check empties it, so a release always judges this checkout's dist/ (B87).
+  const override = process.env.LAUNCH_CHECK_DIST;
+  if (override) console.error(`launch-check: judging the build in ${override} (LAUNCH_CHECK_DIST), not dist/.`);
+  const { build, facilities } = readBuild(override || path('dist/'));
   const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/'), path('src/islands/')) });
   const result = applyAccept(blocking, args.accept);
   if (result.error) {
