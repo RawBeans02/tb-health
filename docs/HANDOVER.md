@@ -21,22 +21,41 @@ Steps 1–14 are on local branches, each cut from the one before: `build/01-scaf
 - [ ] **Reuse terms** for the WHO data and the PhilHealth list (O12).
 - [ ] **Real-device installs** of the app on an iPhone and an Android phone.
 - [ ] **VoiceOver, TalkBack and a Safari keyboard pass** (see Device checks below).
-- [ ] **Search Console**, after launch (release step 5).
+- [ ] **Search Console**, after launch (release step 6).
 
 ## Release
 
-1. **Build, gate and deploy in one command**, so the upload is the build the gate just passed:
+### One-time setup
+
+1. `npx wrangler@4.151.3 login`, into the Cloudflare account that belongs to TB Health only, never KitaMo's.
+2. `npx wrangler@4.151.3 whoami` must show that account. An exported `CLOUDFLARE_API_TOKEN` takes priority over the login (wrangler's docs), so on this shared Mac run `unset CLOUDFLARE_API_TOKEN` first.
+3. `npx wrangler@4.151.3 pages project create <your-project> --production-branch=main`. With the production branch set to `main`, `--branch=main` deploys to production and any other branch name makes a preview. If you skip this step, the first deploy asks for the production branch instead: enter `main`.
+
+Wrangler sends anonymous usage data to Cloudflare unless told not to (`WRANGLER_SEND_METRICS` defaults to `true`, per its docs). The release command below sets `WRANGLER_SEND_METRICS=false`; `npx wrangler@4.151.3 telemetry disable` turns it off on this Mac for good.
+
+### Each release
+
+1. **Start from a clean checkout of `main`**, never the builder's working folder: another session's build or tests can rewrite `dist/` between the gate and the upload, and uncommitted edits would ship.
    ```
-   SITE_URL=https://your.address TBPH_PRODUCTION=true npm run build && npm run launch-check -- --release && npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main
+   git clone https://github.com/RawBeans02/tb-health.git tb-health-release
+   cd tb-health-release && . ~/.nvm/nvm.sh && nvm use && npm ci
    ```
-   - To launch without the check, put `TBPH_CHECK=false` before `npm run build` (Q9).
-   - A production build refuses the placeholder address.
-   - Log in once first with `npx wrangler@4.151.3 login`. Use a Cloudflare Pages project that belongs to TB Health only, never KitaMo's. Cloudflare Pages is the one release path set up (the recommended answer to Q7). Wrangler uploads `dist/` as built, without rebuilding, and Cloudflare reads `dist/_headers` as is.
-   - **The first deploy asks for the production branch** (so does `npx wrangler@4.151.3 pages project create`, if you create the project first). Enter `main`. Then `--branch=main` deploys to production; any other branch name makes a preview.
-2. **If the gate stops**, it lists what's open, and nothing is uploaded. You may accept only your own calls, by naming them after `--release`, for example `--release --accept=sample`: `check-review`, `sample`, `owner-strings`, `review`, `verify`, `placeholders` and `check-mentions`. The rest can't be accepted: synthetic data, no build, no facility list, a missing `_headers`, the placeholder address and a noindex build. The gate prints what you accepted with the release. Send that list to the TB Health lead, who records it in `docs/decisions.md`.
-3. **Keep previews private.** A build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, but only a host that reads `_headers` sends it on.
-4. **Check the live site:** `npm run post-deploy-check -- https://your.address`. It reads every page back and compares it with `dist/`: identical HTML (no injected scripts), no cookies, every response's headers exactly as `dist/_headers` sets them, and the 404s in both languages. Turn off any host feature it flags (analytics beacons, email obfuscation, script optimisers, bot challenges). Exit 1 means it found problems; exit 3 means the host didn't answer or a request timed out, so run it again. If it says every page differs from `dist/`, the upload probably went to a preview: run `npx wrangler@4.151.3 pages deployment list --project-name=<your-project>` and look for your deploy listed as Preview instead of Production. It warns if the address you give isn't the one the build was made for.
-5. **Search Console:** add the site, submit `https://your.address/sitemap.xml`, and check that Google sees the Filipino pages as `fil` alternates.
+2. **Build, gate and deploy in one command**, so the upload is the build the gate just passed:
+   ```
+   SITE_URL=https://your-domain.example TBPH_PRODUCTION=true GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && npm run release-check && WRANGLER_SEND_METRICS=false npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=main
+   ```
+   - Put the real address in place of `https://your-domain.example`; the gate blocks any `.example` address.
+   - To launch without the check, add `TBPH_CHECK=false` before `GUARD_NO_DOCKER=1` (Q9).
+   - Only the build runs under the memory guard. The guard runs its job in the background, so a wrangler prompt inside it would stop the job and keep holding the machine-wide lock. If the guard exits 97, 98 or 99, the Mac was busy: run the command again.
+   - `npm run release-check` is the gate (`launch-check --release`). Wrangler uploads `dist/` as built, without rebuilding, and Cloudflare reads `dist/_headers` as is.
+3. **If the gate stops**, it lists what's open, and nothing is uploaded. You may accept only your own calls, and only keys the gate lists as open, for example `npm run release-check -- --accept=sample` (naming any other key exits 2; without the `--`, npm drops the list and the gate still blocks). The keys you can accept: `check-review`, `sample`, `owner-strings`, `review`, `verify`, `placeholders` and `check-mentions`. The rest can't be accepted: synthetic data, no build, no facility list, a missing `_headers`, the placeholder address and a noindex build. The gate prints what you accepted with the release. Send that list to the TB Health lead, who records it in `docs/decisions.md`.
+4. **Previews are public.** Anyone who has a preview link can open it. A build without `TBPH_PRODUCTION=true` sends `X-Robots-Tag: noindex`, which only keeps it out of search, and only on a host that reads `_headers`. Share preview links only with reviewers.
+5. **Check the live site** from the same checkout: `npm run post-deploy-check -- https://your-domain.example` (the real address). It reads every page back and compares it with `dist/`: identical HTML (no injected scripts), no cookies, every response's headers exactly as `dist/_headers` sets them, and the 404s in both languages. Turn off any host feature it flags (analytics beacons, email obfuscation, script optimisers, bot challenges).
+   - Exit 1: it found problems, listed above it.
+   - Exit 3: the check is incomplete. Run it again if the host didn't answer; otherwise fix the cause on its "couldn't check" or "failed:" lines.
+   - If every page differs from `dist/`, first make sure `dist/` is still the build you deployed. Then run `npx wrangler@4.151.3 pages deployment list --project-name=<your-project>` and look for your deploy listed as Preview instead of Production.
+   - It warns if the address you give isn't the one the build was made for.
+6. **Search Console:** add the site, submit `https://your-domain.example/sitemap.xml` (the real address), and check that Google sees the Filipino pages as `fil` alternates.
 
 ## Other hosts (not set up)
 
@@ -56,4 +75,4 @@ The audit's runtime checks need a real iPhone and Android phone (and the install
 ## Keeping it current
 
 - New facility data or a WHO report: rebuild; the dot-count tripwire (Q11) and the data guards stop a build whose numbers no longer match the copy.
-- Every deploy: steps 1–4 above.
+- Every deploy: steps 1–5 of "Each release" above.
