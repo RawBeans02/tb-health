@@ -155,6 +155,38 @@ test.describe('language links', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   });
 
+  // A switch from an address with a hash (B69): the twin opens without it, so the browser's
+  // jump can't beat the saved place, and gets it back only after load. Written earlier, at
+  // the end of parsing the browser would scroll to it after all.
+  for (const [name, start, follow, later, hash] of [
+    ["About, from the footer's Accessibility link", '/', '.site-footer a[href="/about#accessibility"]', '#numbers', '#accessibility'],
+    ["Learn, from a contents link", '/learn', '.toc-narrow a[href="#l2"]', '#l6', '#l2'],
+  ] as const) {
+    test(`${name}: a switch keeps the place and the hash, and focus doesn't move (B69)`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(start);
+      if (start === '/learn') await page.locator('.toc-narrow summary').click();
+      await page.locator(follow).click();
+      await page.waitForURL((url) => url.hash === hash);
+      await page.locator(later).evaluate((el) => scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' }));
+      await expect.poll(async () => Math.abs((await page.locator(later).boundingBox())!.y - 120)).toBeLessThanOrEqual(1);
+      const before = (await page.locator(later).boundingBox())!.y;
+      await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
+      await page.waitForURL((url) => url.pathname.startsWith('/fil/'), { waitUntil: 'load' });
+      await page.waitForTimeout(300);
+      expect(Math.abs((await page.locator(later).boundingBox())!.y - before)).toBeLessThanOrEqual(2);
+      expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+      expect(new URL(page.url()).hash).toBe(hash);
+      await expect(langLink(page, 'en')).toHaveAttribute('href', new RegExp(`${hash}$`));
+
+      // After a back-forward return, the language links still carry the hash.
+      await page.goto('/fil/install');
+      await page.goBack({ waitUntil: 'load' });
+      expect(new URL(page.url()).hash).toBe(hash);
+      await expect(langLink(page, 'en')).toHaveAttribute('href', new RegExp(`${hash}$`));
+    });
+  }
+
   test('a saved Filipino choice sends English pages to their twin, keeping query and hash (Q2b)', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#tbph-places option').first()).toBeAttached(); // Home's list has loaded

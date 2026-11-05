@@ -2,7 +2,9 @@
 // element whose top is above 35% of the viewport, and where it sat. A navigation carries
 // it in sessionStorage for one page load, then deletes it (PLAN §4.5). The address's hash
 // travels with it: the twin link leaves it off, so the browser's own jump to it can't beat
-// the saved place (B45), and the twin puts it back in its address without scrolling (Q2a).
+// the saved place (B45), and the twin puts it back in its address without scrolling (Q2a),
+// after the load event: written earlier, the browser would still scroll to it when parsing
+// ends (B69).
 
 const KEY = 'tbph-anchor';
 
@@ -56,8 +58,11 @@ export function hasRestoredAnchor(): boolean {
   return restored !== null;
 }
 
-/** On load: applies and deletes a saved anchor meant for this page. */
-export function restoreAnchor(): void {
+/**
+ * On load: applies and deletes a saved anchor meant for this page. `onHash` runs once the
+ * address has its hash back.
+ */
+export function restoreAnchor(onHash?: () => void): void {
   let saved: string | null;
   try {
     saved = sessionStorage.getItem(KEY);
@@ -71,7 +76,14 @@ export function restoreAnchor(): void {
     if (path === location.pathname && typeof id === 'string' && typeof top === 'number') {
       restored = { id, top };
       keepAnchor(restored);
-      if (typeof hash === 'string' && hash.startsWith('#') && !location.hash) history.replaceState(history.state, '', location.pathname + location.search + hash);
+      if (typeof hash === 'string' && hash.startsWith('#')) {
+        const putBack = () => {
+          if (!location.hash) history.replaceState(history.state, '', location.pathname + location.search + hash);
+          onHash?.();
+        };
+        if (document.readyState === 'complete') putBack();
+        else addEventListener('load', putBack, { once: true });
+      }
       for (const type of ['wheel', 'touchstart', 'keydown', 'mousedown']) addEventListener(type, () => (restored = null), { once: true, passive: true });
     }
   } catch {

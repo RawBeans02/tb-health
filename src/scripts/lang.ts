@@ -44,7 +44,7 @@ function onActivate(event: MouseEvent): void {
   }
   // With the reader's place saved, the twin opens without the hash: the browser's own jump to
   // it (say #d5, from "On this page") would otherwise beat the saved place (B45). The twin
-  // puts the hash back in its address once the place is restored (restoreAnchor).
+  // puts the hash back in its address after load (restoreAnchor, B69).
   if (saveAnchor(toLang(location.pathname, lang), location.hash)) link.setAttribute('href', toLang(location.pathname, lang) + location.search);
 }
 
@@ -53,6 +53,7 @@ document.addEventListener('auxclick', onActivate);
 window.addEventListener('hashchange', refresh);
 window.addEventListener('popstate', refresh);
 document.addEventListener('tbph:lang', refresh);
+window.addEventListener('pageshow', refresh); // a back-forward return keeps the links as they were
 refresh();
-restoreAnchor();
+restoreAnchor(refresh);
 document.addEventListener('tbph:charts-ready', reapplyAnchor);
