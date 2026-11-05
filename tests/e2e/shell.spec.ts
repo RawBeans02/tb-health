@@ -157,33 +157,39 @@ test.describe('language links', () => {
 
   // A switch from an address with a hash (B69): the twin opens without it, so the browser's
   // jump can't beat the saved place, and gets it back only after load. Written earlier, at
-  // the end of parsing the browser would scroll to it after all.
+  // the end of parsing the browser would scroll to it after all, and to #main (tabindex -1)
+  // it would move focus too (B83).
   for (const [name, start, follow, later, hash] of [
     ["About, from the footer's Accessibility link", '/', '.site-footer a[href="/about#accessibility"]', '#numbers', '#accessibility'],
-    ["Learn, from a contents link", '/learn', '.toc-narrow a[href="#l2"]', '#l6', '#l2'],
+    ['Learn, from a contents link', '/learn', '.toc-narrow a[href="#l2"]', '#l6', '#l2'],
+    ['About, from the skip link', '/about', '.skip-link', '#numbers', '#main'],
   ] as const) {
     test(`${name}: a switch keeps the place and the hash, and focus doesn't move (B69)`, async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto(start);
-      if (start === '/learn') await page.locator('.toc-narrow summary').click();
-      await page.locator(follow).click();
+      await page.locator(follow).evaluate((link: HTMLElement) => link.click());
       await page.waitForURL((url) => url.hash === hash);
+      await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
       await page.locator(later).evaluate((el) => scrollBy({ top: el.getBoundingClientRect().top - 120, behavior: 'instant' }));
       await expect.poll(async () => Math.abs((await page.locator(later).boundingBox())!.y - 120)).toBeLessThanOrEqual(1);
       const before = (await page.locator(later).boundingBox())!.y;
       await page.locator('.site-header [data-lang-link="fil"]').evaluate((link: HTMLElement) => link.click());
       await page.waitForURL((url) => url.pathname.startsWith('/fil/'), { waitUntil: 'load' });
-      await page.waitForTimeout(300);
-      expect(Math.abs((await page.locator(later).boundingBox())!.y - before)).toBeLessThanOrEqual(2);
+      // The hash is back in the address, and two frames have passed.
+      await expect.poll(() => new URL(page.url()).hash).toBe(hash);
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
-      expect(new URL(page.url()).hash).toBe(hash);
+      expect(Math.abs((await page.locator(later).boundingBox())!.y - before)).toBeLessThanOrEqual(2);
       await expect(langLink(page, 'en')).toHaveAttribute('href', new RegExp(`${hash}$`));
 
-      // After a back-forward return, the language links still carry the hash.
-      await page.goto('/fil/install');
+      // Back on the source page, its Filipino link carries the hash again. Independent of the
+      // back-forward cache: a stale link, then a pageshow from the cache, which refreshes it.
       await page.goBack({ waitUntil: 'load' });
       expect(new URL(page.url()).hash).toBe(hash);
-      await expect(langLink(page, 'en')).toHaveAttribute('href', new RegExp(`${hash}$`));
+      await expect(langLink(page, 'fil')).toHaveAttribute('href', new RegExp(`${hash}$`));
+      await langLink(page, 'fil').evaluate((link) => link.setAttribute('href', '/stale'));
+      await page.evaluate(() => dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+      await expect(langLink(page, 'fil')).toHaveAttribute('href', new RegExp(`${hash}$`));
     });
   }
 

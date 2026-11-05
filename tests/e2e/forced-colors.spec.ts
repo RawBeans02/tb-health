@@ -46,14 +46,23 @@ test('selected segment, current tab and current language are Highlight; the swit
   expect((await colours(track)).bg).toBe(system.canvas);
 });
 
-test("a focused selected item's ring is CanvasText, not the author's ink (B77)", async ({ page }) => {
+test("a focused selected item's ring is drawn in CanvasText, not the author's ink (B77, B83)", async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', colorScheme: 'dark' });
+  const ring = (el: Locator) => el.evaluate((e) => ({ color: getComputedStyle(e).outlineColor, style: getComputedStyle(e).outlineStyle }));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/places', { waitUntil: 'networkidle' });
   const system = await systemColours(page);
+  await page.keyboard.press('Tab'); // keyboard focus, so :focus-visible draws the ring
   for (const selected of [page.getByRole('group', { name: 'View' }).locator('button[aria-pressed="true"]'), page.locator('.tab-bar a[aria-current]'), page.locator('.site-header .lang-toggle a[aria-current]')]) {
     await selected.focus();
-    expect(await selected.evaluate((el) => getComputedStyle(el).outlineColor)).toBe(system.canvasText);
+    expect(await ring(selected)).toEqual({ color: system.canvasText, style: 'solid' });
   }
+  // Learn's current contents link, in the wide layout.
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/learn', { waitUntil: 'networkidle' });
+  const current = page.locator('.toc-wide a[aria-current]');
+  await expect(current).toHaveCount(1);
+  await page.keyboard.press('Tab');
+  await current.focus();
+  expect(await ring(current)).toEqual({ color: system.canvasText, style: 'solid' });
 });
-
