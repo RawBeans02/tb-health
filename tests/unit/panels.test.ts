@@ -143,3 +143,41 @@ describe('chart labels on a phone (audit B50)', () => {
     expect(legendLines('fil', 290)).toBeGreaterThan(4);
   });
 });
+
+describe('no overlapping chart text on a phone (audit B78)', () => {
+  const narrow = (lang: 'en' | 'fil', w: number) => buildPanels(data, lang, w, false, state(), pick(charts, lang));
+  const span = (t: { s: string; fs: number; x: number; anchor?: string; fw?: number }) => {
+    const width = textWidth(t.s, t.fs, (t.fw ?? 400) >= 700);
+    const from = t.anchor === 'middle' ? t.x - width / 2 : t.anchor === 'end' ? t.x - width : t.x;
+    return [from, from + width];
+  };
+
+  it('drops an axis label that would start within 4px of the last one, and keeps every gridline (d6, d17)', () => {
+    for (const lang of ['en', 'fil'] as const) {
+      for (const w of [290, 360]) {
+        for (const p of narrow(lang, w).filter((p) => ['d6', 'd17'].includes(p.id))) {
+          const c = p.svgs![0];
+          const axis = c.texts.filter((t) => t.fs === 13).map(span).sort((a, b) => a[0] - b[0]);
+          for (let i = 1; i < axis.length; i++) expect(axis[i][0], `${lang} ${w} ${p.id}`).toBeGreaterThanOrEqual(axis[i - 1][1] + 4);
+        }
+      }
+    }
+    // d17 at 290px: two labels left, five gridlines still drawn.
+    const d17 = narrow('en', 290).find((p) => p.id === 'd17')!.svgs![0];
+    expect(d17.texts.filter((t) => t.fs === 13).map((t) => t.s)).toEqual(['US$0M', 'US$100M']);
+  });
+
+  it("puts a bullet's value on its own line when it doesn't fit beside its label (d15)", () => {
+    const d15 = (lang: 'en' | 'fil', w: number) => narrow(lang, w).find((p) => p.id === 'd15')!.svgs![0];
+    const own = (lang: 'en' | 'fil', w: number) => {
+      const c = d15(lang, w);
+      const values = c.texts.filter((t) => t.anchor === 'end' && t.fw === 700);
+      const labels = c.texts.filter((t) => t.x === 0 && t.fs === 16);
+      return values.map((v, i) => v.y > labels[i].y);
+    };
+    expect(own('en', 290)).toEqual([false, false]);
+    expect(own('fil', 290)).toEqual([true, false]);
+    expect(d15('fil', 290).h).toBe(d15('en', 290).h + 22);
+  });
+});
+

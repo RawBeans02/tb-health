@@ -100,6 +100,7 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - **Announcements** (B28): a visually hidden status line announces a new route and the page title after an in-place language switch, and a single-service route's rows go H2 then H3 (no H4 skip). No new copy.
 - **Two chart fixes the stricter probes found** (B50): on charts under 560px wide (d6, d16 and d17's axis) the "0" axis label now starts at x=0 instead of being centred on it, about 4px to the right. Centred, it was drawn into the panel's padding (the svg has `overflow: visible`), not cut off. d17's Filipino legend did run 19px past a 252px chart; it now wraps.
 - **d3's monthly chart is 2px taller** (B76): the stricter probe found its month labels' text boxes (the "p" of "Apr") running 2px past the chart's bottom. The labels stay where the prototype has them; the chart runs 2px further.
+- **No overlapping chart text on phones** (B78, the lead's ruling that overlap is a defect, even where the prototype has it). Measured at 320 and 390px: d6's axis numbers overlapped by 9–13px at 320px, d17's "US$…M" labels by 19–31px at 320px and 7–11px at 390px, and d15's Filipino label ran 38px into "2024: 625" at 320px. Now an axis label that would start within 4px of the last one is dropped (every gridline stays), and a bullet's value that doesn't fit beside its label takes the line below (that item 22px taller). Where the labels fit, nothing changes. The QA probe now fails on any two labels in one chart that overlap.
 
 ## Accepted risks (pending the owner)
 

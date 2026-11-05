@@ -60,7 +60,12 @@ export async function chartsSettled(page: Page) {
   );
 }
 
-/** Chart labels (SVG text) outside their chart, on any side, once the charts have settled on Data. */
+/**
+ * Chart labels (SVG text) outside their chart, on any side, or overlapping another label in
+ * the same chart (B78), once the charts have settled on Data. Two labels overlap when their
+ * boxes cross by more than a third of the shorter one's height: the lines of one wrapped
+ * label only graze.
+ */
 export async function svgTextOutside(page: Page) {
   if (!(await page.locator('section.panel').count())) return [];
   await chartsSettled(page);
@@ -76,6 +81,14 @@ export async function svgTextOutside(page: Page) {
         if (r.left < box.left - 1 || r.right > box.right + 1) out.push(`${id} "${text}" ${Math.round(r.left - box.left)}..${Math.round(r.right - box.left)} of ${Math.round(box.width)} wide`);
         if (r.top < box.top - 1 || r.bottom > box.bottom + 1) out.push(`${id} "${text}" ${Math.round(r.top - box.top)}..${Math.round(r.bottom - box.top)} of ${Math.round(box.height)} high`);
       }
+      const labels = [...svg.querySelectorAll('text')].map((t) => ({ text: (t.textContent ?? '').slice(0, 30), r: t.getBoundingClientRect() })).filter((l) => l.r.width > 0);
+      labels.forEach((a, i) =>
+        labels.slice(i + 1).forEach((b) => {
+          const across = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left);
+          const down = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
+          if (across > 0.5 && down > Math.min(a.r.height, b.r.height) / 3) out.push(`${svg.closest('section.panel')!.id} "${a.text}" overlaps "${b.text}" by ${Math.round(across)}px`);
+        }),
+      );
     }
     return out;
   });

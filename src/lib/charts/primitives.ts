@@ -84,6 +84,20 @@ function axisAnchor(x: number, text: string, fs: number, w: number): { x: number
   return { x, a: 'middle' };
 }
 
+/**
+ * Keeps axis labels apart, left to right: true when a label placed at `at` starts 4px or more
+ * after the last one kept. The others are dropped; their gridlines stay (B78).
+ */
+function axisSpacer(fs: number) {
+  let end = -Infinity;
+  return (at: { x: number; a: 'middle' | undefined | 'end' }, text: string) => {
+    const tw = textWidth(text, fs), start = at.a === 'middle' ? at.x - tw / 2 : at.a === 'end' ? at.x - tw : at.x;
+    if (start < end + 4) return false;
+    end = start + tw;
+    return true;
+  };
+}
+
 /** Words on as many lines as `max` px needs (by textWidth); one line when they fit. */
 export function wrapText(text: string, fs: number, max: number): string[] {
   if (textWidth(text, fs) <= max) return [text];
@@ -141,7 +155,8 @@ export function hbars(o: Opts): Chart {
   const th = o.th, fs = 15, above = o.w < 560, L = above ? 0 : (o.labelW || 170), R = o.R || 96;
   const rowH = above ? 52 : (o.rowH || 36), barH = 16, top = 6, n = o.rows.length, axisH = o.axis ? 30 : 0, h = top + n * rowH + axisH + 4;
   const S = G(o.w, h, o.alt), x = (v: number) => L + v / o.max * (o.w - L - R);
-  if (o.axis) o.axis.forEach((v: any) => { const label = o.af ? o.af(v) : fmt(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(at.x, top + n * rowH + 18, label, { a: at.a, fs: 13, fill: th.muted }); });
+  const fits = axisSpacer(13);
+  if (o.axis) o.axis.forEach((v: any) => { const label = o.af ? o.af(v) : fmt(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); if (fits(at, label)) S.text(at.x, top + n * rowH + 18, label, { a: at.a, fs: 13, fill: th.muted }); });
   o.rows.forEach((rw: any, i: number) => {
     const y0 = top + i * rowH, by = above ? y0 + 26 : y0 + (rowH - barH) / 2, cy = by + barH / 2;
     if (above) S.text(0, y0 + 11, rw.label, { fs: 15, fw: rw.bold ? 700 : 400, fill: th.ink });
@@ -201,15 +216,21 @@ export function stack(o: Opts): Chart {
   return S.done(o.title);
 }
 export function bullets(o: Opts): Chart {
-  const th = o.th, itemH = 112, h = o.items.length * itemH;
+  // A value that doesn't fit beside its label goes on the line below it, and that item grows
+  // by a line (B78).
+  const th = o.th, itemH = 112, lineH = 22;
+  const own = o.items.map((it: any) => textWidth(it.label, 16, true) + 12 + textWidth(it.now, 16, true) > o.w);
+  const h = o.items.length * itemH + own.filter(Boolean).length * lineH;
   const S = G(o.w, h, o.alt);
+  let y0 = 0;
   o.items.forEach((it: any, k: number) => {
-    const y0 = k * itemH, by = y0 + 50, bh = 18, x = (v: number) => v / it.max * o.w;
+    const extra = own[k] ? lineH : 0, by = y0 + 50 + extra, bh = 18, x = (v: number) => v / it.max * o.w;
     S.text(0, y0 + 10, it.label, { fs: 16, fw: 700, fill: th.ink });
-    S.text(o.w, y0 + 10, it.now, { a: 'end', fs: 16, fw: 700, fill: th.ink });
+    S.text(o.w, y0 + 10 + extra, it.now, { a: 'end', fs: 16, fw: 700, fill: th.ink });
     S.rect(0, by, o.w, bh, '#E3E6E8');
     S.rect(0, by, x(it.v), bh, th.coral);
     it.marks.forEach((m: any) => { const mx = x(m.v), tw = m.text.length * 8.2, x0 = mx + 6 + tw <= o.w ? mx + 6 : (mx - 6 - tw >= 0 ? mx - 6 - tw : 0); S.line(mx, by - 8, mx, by + bh + 8, th.ink, 2.5); S.text(x0, m.below ? by + bh + 20 : by - 16, m.text, { fs: 14, fw: 700, fill: th.ink }); });
+    y0 += itemH + extra;
   });
   return S.done();
 }
@@ -232,7 +253,8 @@ export function fstack(o: Opts): Chart {
     it.lines.forEach((line: string, k: number) => S.text(24, yy + k * 18, line, { fs: 15, fill: th.ink }));
     yy += 24 + (it.lines.length - 1) * 18;
   });
-  o.axis.forEach((v: any) => { const label = o.af(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); S.text(at.x, top + n * rowH + 16, label, { a: at.a, fs: 13, fill: th.muted }); });
+  const fits = axisSpacer(13);
+  o.axis.forEach((v: any) => { const label = o.af(v), at = axisAnchor(x(v), label, 13, o.w); S.line(x(v), top, x(v), top + n * rowH, th.rule, 1); if (fits(at, label)) S.text(at.x, top + n * rowH + 16, label, { a: at.a, fs: 13, fill: th.muted }); });
   o.rows.forEach((r: any, i: number) => {
     const cy = top + i * rowH + rowH / 2; let x0 = L0;
     S.text(0, cy, r.label, { fs, fill: th.muted });
