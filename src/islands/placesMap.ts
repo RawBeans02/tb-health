@@ -102,10 +102,13 @@ export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
   }).addTo(map);
   const layer = L.layerGroup().addTo(map);
   let signature = '';
-  // Whether the view holds every marker once it settles (tests read it: canvas markers
-  // aren't elements, and a refit cut short would leave some out, B12).
+  // Whether the view holds every marker once it settles, and whether it is still moving
+  // (tests read them: canvas markers aren't elements, and a refit cut short would leave some
+  // out, B12, B70).
   let shown: Leaflet.LatLngTuple[] = [];
+  map.on('movestart', () => (el.dataset.moving = 'true'));
   map.on('moveend', () => {
+    delete el.dataset.moving;
     el.dataset.fit = String(!shown.length || map.getBounds().contains(L.latLngBounds(shown)));
   });
 

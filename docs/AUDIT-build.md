@@ -9,7 +9,7 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
 - **Environment audited:** `dist/` served by `scripts/serve-dist.mjs` the way the planned host (Cloudflare Pages, HANDOVER's one release path: B58) serves it (nested 404s, the `_headers` rules, Brotli/gzip), in Chromium and WebKit desktop profiles, iPhone 13 and Pixel 7 profiles, and Chromium with the service worker on. No deployed host yet (Q7), so host behaviour is a post-deploy check.
 - **Branch / commit:** `build/14-release` (from `build/13-qa`). Steps 1–13 and the audit tasks are on the branches before it.
 - **Audit date:** 5 November 2026
-- **Auditor:** Jr. Builder (self-audit, with evidence below). The TB Health lead reviewed steps 13 and 14 independently; its fix items (B44–B68) are in, each with its test.
+- **Auditor:** Jr. Builder (self-audit, with evidence below). The TB Health lead reviewed steps 13 and 14 independently; its fix items (B44–B68) are in. The code fixes carry tests, except that B52's map-refit test couldn't fail until B70 rewrote it.
 - **Blocking findings** (`npm run launch-check -- --release`, keys in brackets):
   - [check-review] Check ships, but its clinical review is pending: 68 check strings carry [REVIEW] and the footer's reviewer placeholder is in. It clears when the review is recorded (B61). Or build with `TBPH_CHECK=false`, which turns it into [check-mentions]: the strings launch-check lists that still mention the check.
   - [review] Learn L6 and the six route-stop strings wait on the clinical review.

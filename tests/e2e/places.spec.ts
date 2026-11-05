@@ -307,19 +307,38 @@ test.describe('location (audit B9)', () => {
 });
 
 test.describe('map motion (audit B12)', () => {
-  test('quick narrowing then broadening: the map ends showing every marker', async ({ page }) => {
+  test('a refit made while the last one would still be animating lands: the map ends showing every marker (B70)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await ready(page);
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
-    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
-    // A narrow search, then cleared at once, three times over.
-    for (let i = 0; i < 3; i++) {
-      await page.locator('#panel-q').fill('Bangued');
-      await page.locator('#panel-q').fill('');
-    }
-    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
-    await page.waitForTimeout(800); // anything still moving settles
-    await expect(page.locator('.map')).toHaveAttribute('data-fit', 'true');
+    const map = page.locator('.map');
+    await expect(map).toHaveAttribute('data-markers', '93');
+    await expect(map).not.toHaveAttribute('data-moving');
+    // Cordillera, then every region 50 ms later. The two fits are under Leaflet's 4-level
+    // zoom animation threshold, so an animated first fit would still be running (250 ms) and
+    // Leaflet would drop the second. Resolves once the second fit has been asked for.
+    await page.locator('#panel-region').evaluate(
+      (select: HTMLSelectElement) =>
+        new Promise<void>((resolve) => {
+          const box = document.querySelector<HTMLElement>('.map')!;
+          const seen: string[] = [];
+          new MutationObserver((_, observer) => {
+            seen.push(box.dataset.markers ?? '');
+            if (seen.includes('8') && box.dataset.markers === '93') {
+              observer.disconnect();
+              resolve();
+            }
+          }).observe(box, { attributeFilter: ['data-markers'] });
+          const pick = (value: string) => {
+            select.value = value;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+          };
+          pick([...select.options].find((o) => o.text.startsWith('Cordillera'))!.value);
+          setTimeout(() => pick(''), 50);
+        }),
+    );
+    await expect(map).not.toHaveAttribute('data-moving');
+    await expect(map).toHaveAttribute('data-fit', 'true');
   });
 
   test('with reduced motion: no fade or zoom animation, and refits land at once', async ({ page }) => {
