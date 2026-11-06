@@ -1,6 +1,6 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 5 November 2026 (after the merge to `main`). Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons.
+Kept by the TB Health lead. Updated 6 November 2026 (launch no longer needs GitHub Actions). Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons.
 
 ## Decide now
 
@@ -63,6 +63,3 @@ Kept by the TB Health lead. Updated 5 November 2026 (after the merge to `main`).
 - **Type sizes (D1):** the build uses the exact sizes the design specifies. Merging them into a smaller set later is a one-file change. Recommended: keep them as they are for launch.
 - **Keeping the clinic list fresh:** who refreshes the list each month, and the oldest list date you'll accept. launch-check shows the current date.
 - **Sakay.ph:** the site copies the address and opens sakay.ph, so no deep link ships. The deep links stay [VERIFY] until someone confirms Sakay's link format.
-- **The first CI run (D22).** `main` has everything since 5 November. GitHub refused the first two runs before any step started: "The job was not started because your account is locked due to a billing issue." That's a billing state on the RawBeans02 account, not the code, and nothing in the workflow can get around it.
-  - **To unlock it:** on GitHub, open Settings › Billing and licensing › Payment information and update the payment method. That makes GitHub retry the charge or card check, and the account unlocks by itself once it succeeds; a payment can take up to 24 hours. If the page shows nothing to fix, ask GitHub Support to review the lock. (GitHub Docs, "Unlocking a locked account".)
-  - **Then** start "CI" from the Actions tab, or with the command the lead gave you. It never runs on its own. Standard runners are free for a public repository, so it uses no Actions minutes. One step, `npm audit`, sends the list of dependencies to the npm registry, the same registry `npm install` already uses. The run's result is step 14 evidence.

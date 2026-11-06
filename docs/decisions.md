@@ -4,6 +4,20 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 6 November 2026 (owner, in chat with the lead)
+
+### D22. Linux tests without GitHub Actions (amends D22)
+- **The release audit doesn't wait for GitHub Actions.** The owner answered "Yes, skip Actions" to the lead's question "Should the release audit use the builder's Docker run instead of GitHub's CI?"
+- **Why:** GitHub refused all five CI runs before any step started (42047181969, 42049823367, 42130658469, 42161612422 and 42169442426, 5–6 Nov). The cause was a billing hold on the GitHub account, not the code. Nothing else in TB Health uses Actions: pushes are plain git, and deploys go from the Mac to Cloudflare Pages (Q7).
+- **The test evidence for step 14:**
+  - the builder's full run on the Mac (the b941275 gate);
+  - `ci.yml`'s steps, in its order, run on Linux in Docker on the Mac:
+    - The owner approved this run on 6 Nov, answering "Yes, run them".
+    - It runs against a fresh export of the pushed commit, with Node 22.23.4 and `CI=true`, in Microsoft's Playwright image for our version (`mcr.microsoft.com/playwright:v1.64.1-noble`).
+    - Like CI, it ends with `npm audit`, which sends the dependency list to the npm registry that `npm install` already uses.
+    - It differs from GitHub's machine in two ways: it runs on arm64 instead of x86_64, and it uses the image's fonts and libraries instead of the runner's.
+- **`.github/workflows/ci.yml` stays,** with its manual trigger only. It never runs unless someone starts it, so it costs nothing, and it works again if the hold is lifted. Launch doesn't need it.
+
 ## 5 November 2026 (owner, in chat with the lead)
 
 ### Q7. Host: Cloudflare Pages (the domain is still open)
