@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Guard for heavy commands on the owner's 8 GB laptop. Usage: lowmem-run.sh <cmd...>
-# One heavy job per machine (lock). Starts only at Memory Used <= 6.3 GB (waits up
-# to 2 h). Stops the job above 6.7 GB, above 6.6 GB for 300 s, below 25% free, or
+# One heavy job per machine (lock). Starts only at Memory Used <= 6.25 GB (waits up
+# to 2 h). Stops the job above 6.5 GB, above 6.4 GB for 300 s, below 25% free, or
 # on CPU heat throttling. Memory Used = anonymous + wired + compressor pages.
+# 2026-11-06: caps lowered at the owner's request (laptop running hot); they were start 6.45, soft 6.6, hard 6.7.
 set -u
 LOCK=/tmp/kitamo-heavy.lock
-START_GB=${START_GB:-6.45}; HARD_GB=6.7; SOFT_GB=6.6; SOFT_S=300; MIN_FREE=25
+START_GB=${START_GB:-6.25}; HARD_GB=6.5; SOFT_GB=6.4; SOFT_S=300; MIN_FREE=25
 used_gb() { vm_stat | awk '/page size of/{ps=$8} /Anonymous pages/{a=$3} /Pages wired down/{w=$4} /occupied by compressor/{c=$5} END{gsub(/\./,"",a);gsub(/\./,"",w);gsub(/\./,"",c); printf "%.2f", (a+w+c)*ps/1073741824}'; }
 free_pct() { memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{gsub(/%/,"",$2); print $2}'; }
 throttled() { pmset -g therm 2>/dev/null | awk -F'= ' '/CPU_Speed_Limit/{if ($2+0 < 100) t=1} END{exit !t}'; }
