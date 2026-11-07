@@ -4,6 +4,17 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 7 November 2026 (owner, in chat with the lead)
+
+### D23. Public launch tonight, at the free pages.dev address (Q7, in part)
+- **The site goes public tonight, 7 November 2026, at the free `*.pages.dev` address** that Cloudflare gives the project. The owner answered "Public, free address" to the lead's question "What must be live tonight?". The other options were a public launch on a real domain, which would have to be bought and set up tonight, and a test copy only.
+- **Why:** the owner's deadline is tonight.
+- **What follows:**
+  - The release is built with `SITE_URL=https://<subdomain>.pages.dev`, the address `pages project create` prints (HANDOVER, "Each release").
+  - Installed apps are tied to that address. If a domain comes later, anyone who installed the app before the move has to install it again.
+  - Under Q9 (4 Nov), the clinical review isn't done, so the launch is built with `TBPH_CHECK=false`.
+- **Still open:** the domain (Q7), and the rest of what the launch needs from the owner (`docs/owner-queue.md`).
+
 ## 6 November 2026 (owner, in chat with the lead)
 
 ### D22. Linux tests without GitHub Actions (amends D22)
