@@ -179,7 +179,8 @@ describe('dates and reading dist/ (B74)', () => {
   it('reads a build without Check, without _headers, with synthetic data, and no build at all', () => {
     const r = readBuild(dist({ 'index.html': LIVE, 'data/facilities.json': data({ synthetic: true }) }));
     expect(r.build).toEqual({ home: LIVE, check: NONE, headers: null });
-    expect(keys(assess({ strings: [ROW], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'check-mentions', 'no-headers']);
+    // No check-mentions: every string that named the check has a …NoCheck twin (Q9, 7 Nov 2026).
+    expect(keys(assess({ strings: [ROW], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'no-headers']);
     expect(readBuild(dist({}))).toEqual({ build: null, facilities: null });
   });
 });
@@ -238,7 +239,7 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
 
 describe('assess: a build without Check', () => {
   const strings = [str('nav.home'), ROW, str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B' })];
-  const off = assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+  const off = assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', checkMentions: ['install.lead'] });
 
   it('blocks check-mentions, not check-review', () => {
     expect(keys(off)).toEqual(['check-mentions']);
@@ -247,6 +248,18 @@ describe('assess: a build without Check', () => {
 
   it('blocks check-mentions only while its list has strings (B74)', () => {
     expect(keys(assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', checkMentions: [] }))).toEqual([]);
+  });
+
+  it('ships each …NoCheck twin instead of the string that named the check (Q9, 7 Nov 2026)', () => {
+    const base = str('install.lead', ['FIL-REVIEW']);
+    const twin = str('install.leadNoCheck', undefined, { en: '', fil: '', origin: 'owner', src: ['owner', 'owner'] });
+    const items = [str('install.off2', ['FIL-REVIEW']), str('home.bring3', ['FIL-REVIEW'])];
+    const withOff = assess({ strings: [...strings, base, twin, ...items], build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(keys(withOff)).toEqual(['owner-strings']);
+    expect(withOff.blocking[0].text).toContain('install.leadNoCheck');
+    expect(JSON.stringify(withOff)).not.toMatch(/install\.lead[^N]|install\.off2|home\.bring3/);
+    const withOn = assess({ strings: [str('nav.home'), ROW, base, twin], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(JSON.stringify(withOn)).not.toMatch(/NoCheck/);
   });
 
   it("leaves Check's page title and description out too (B74)", () => {

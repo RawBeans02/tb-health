@@ -363,7 +363,7 @@ export default function Planner(props: Props) {
                 </button>
               </div>
             )}
-            {load !== 'error' && result && data && <RouteView result={result} data={data} lang={lang} t={t} sources={props.sources} drawn={drawn} headRef={headRef} />}
+            {load !== 'error' && result && data && <RouteView result={result} data={data} lang={lang} t={t} sources={props.sources} drawn={drawn} headRef={headRef} withCheck={props.withCheck} />}
           </div>
         </div>
       )}
@@ -390,11 +390,13 @@ interface RouteViewProps {
   lang: Lang;
   t: PlannerStrings;
   sources: Props['sources'];
+  /** Without Check (Q9) the route's "What to bring" list drops the check summary. */
+  withCheck: boolean;
   drawn: boolean;
   headRef: RefObject<HTMLHeadingElement | null>;
 }
 
-function RouteView({ result, data, lang, t, sources, drawn, headRef }: RouteViewProps) {
+function RouteView({ result, data, lang, t, sources, drawn, headRef, withCheck }: RouteViewProps) {
   const { origin, route: r, need } = result;
   const fromGps = isPoint(origin) && 'gps' in origin && origin.gps === true;
 
@@ -482,7 +484,7 @@ function RouteView({ result, data, lang, t, sources, drawn, headRef }: RouteView
             <ul class="group bring" role="list">
               <li>{t.bring1}</li>
               <li>{t.bring2}</li>
-              <li>{t.bring3}</li>
+              {withCheck && <li>{t.bring3}</li>}
               <li>{t.bring4}</li>
               <li>{t.bring5}</li>
             </ul>

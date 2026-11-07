@@ -4,6 +4,7 @@
 // button shows once the browser offers an install prompt; in the installed app the page
 // says so instead of showing the steps.
 import { createHash } from 'node:crypto';
+import { TBPH_CHECK } from 'astro:env/server';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { chrome } from '../content/chrome.ts';
 import { install } from '../content/install.ts';
@@ -30,17 +31,18 @@ const platforms = [
 ];
 const offline = [
   { text: t.off1, icon: TAB_ICONS.home },
-  { text: t.off2, icon: TAB_ICONS.check },
+  // Q9: a build without Check doesn't offer it offline.
+  ...(TBPH_CHECK ? [{ text: t.off2, icon: TAB_ICONS.check }] : []),
   { text: t.off3, icon: TAB_ICONS.learn },
 ];
 ---
-<BaseLayout lang={lang} title={title} description={meta.installDescription} current="install">
+<BaseLayout lang={lang} title={title} description={TBPH_CHECK ? meta.installDescription : meta.installDescriptionNoCheck} current="install">
   <main id="main" tabindex="-1">
     <div class="frame">
       <div class="install">
         <div class="install-head">
           <h1 class="h1">{t.h1}</h1>
-          <p class="lede">{t.lead}</p>
+          <p class="lede">{TBPH_CHECK ? t.lead : t.leadNoCheck}</p>
         </div>
         <div class="install-done" role="status"><span aria-hidden="true">✓</span><span>{t.installed}</span></div>
         <div class="install-action">

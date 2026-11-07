@@ -2,6 +2,7 @@
 // About (README:244–245, About.dc.html). Static. "Use TB PH like an app" hides in the
 // installed app (html[data-standalone="true"], set before paint). Helpful numbers are
 // 44px tel: links; the owner's privacy row (Q5) shows once supplied.
+import { TBPH_CHECK } from 'astro:env/server';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { about } from '../content/about.ts';
 import { meta } from '../content/meta.ts';
@@ -17,7 +18,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = pick(about, lang);
 const title = { en: `${about.h1.en} — TB PH`, fil: `${about.h1.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
-const privacy = [t.privacy1, t.privacy2, t.privacy3, t.privacyServices].filter(Boolean);
+const privacy = [TBPH_CHECK ? t.privacy1 : t.privacy1NoCheck, t.privacy2, t.privacy3, t.privacyServices].filter(Boolean);
 const numbers = [
   { who: t.n911_who, note: t.n911_note, number: '911', tel: 'tel:911' },
   { who: t.n1555_who, note: t.n1555_note, number: '1555', tel: 'tel:1555' },
@@ -35,19 +36,24 @@ const numbers = [
           <p class="lede">{t.lede}</p>
         </section>
 
-        <section id="partners" class="about-section" data-anchor aria-labelledby="partners-h">
-          <h2 id="partners-h" class="h2">{t.partners}</h2>
-          <ul class="group about-rows about-rows--quiet" role="list"><li>{t.partnersRow}</li></ul>
-        </section>
+        {/* Partners and Medical review show only once the owner has content for them (7 Nov 2026). */}
+        {t.partnersRow && (
+          <section id="partners" class="about-section" data-anchor aria-labelledby="partners-h">
+            <h2 id="partners-h" class="h2">{t.partners}</h2>
+            <ul class="group about-rows about-rows--quiet" role="list"><li>{t.partnersRow}</li></ul>
+          </section>
+        )}
 
-        <section id="review" class="about-section" data-anchor aria-labelledby="review-h">
-          <h2 id="review-h" class="h2">{t.review}</h2>
-          <div class="about-card"><p>{t.reviewText}</p></div>
-        </section>
+        {t.reviewText && (
+          <section id="review" class="about-section" data-anchor aria-labelledby="review-h">
+            <h2 id="review-h" class="h2">{t.review}</h2>
+            <div class="about-card"><p>{t.reviewText}</p></div>
+          </section>
+        )}
 
         <section id="disclaimer" class="about-section" data-anchor aria-labelledby="disclaimer-h">
           <h2 id="disclaimer-h" class="h2">{t.disclaimer}</h2>
-          <div class="about-card"><p>{t.disclaimerText}</p></div>
+          <div class="about-card"><p>{TBPH_CHECK ? t.disclaimerText : t.disclaimerTextNoCheck}</p></div>
         </section>
 
         <section id="privacy" class="about-section" data-anchor aria-labelledby="privacy-h">
@@ -65,7 +71,7 @@ const numbers = [
         <section id="app" class="about-section install-entry" data-anchor aria-labelledby="app-h">
           <h2 id="app-h" class="h2">{t.appH}</h2>
           <ul class="group about-rows" role="list">
-            <li class="about-loose">{t.appText}</li>
+            <li class="about-loose">{TBPH_CHECK ? t.appText : t.appTextNoCheck}</li>
             <li class="link-row-item">
               <a class="link-row" href={href('install', lang)}><span>{t.appLink}</span><span class="link-row-chevron" aria-hidden="true">›</span></a>
             </li>

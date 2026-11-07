@@ -86,6 +86,15 @@ export const meta = {
   aboutDescription: ownerFil('Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.', 'About.dc.html'),
   dataDescription: ownerFil('TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.', 'Data.dc.html'),
   installDescription: ownerFil('Add TB PH to your home screen. It opens full screen, and the planner, symptom check and Learn still open without a signal.', 'Install.dc.html'),
+  // Q9: a build without Check (TBPH_CHECK=false) ships this instead of installDescription.
+  installDescriptionNoCheck: {
+    en: '',
+    fil: '',
+    origin: 'owner',
+    src: ['owner', 'owner'],
+    note:
+      'Q9: meta.installDescription without the symptom check, for a build without Check. The owner approves the wording.',
+  },
   learnDescription: ownerFil('What TB is, how it spreads, the signs, who is at risk, free testing and treatment, drug-resistant TB, prevention, living with TB, and common myths.', 'Learn.dc.html'),
   placeDescription: ownerFil('Services, hours, phone and directions for a TB-DOTS center in the Philippines.', 'Place.dc.html'),
 } satisfies Dict;

@@ -26,6 +26,15 @@ export const about = {
     'Pangkalahatang impormasyong pangkalusugan ang ibinibigay ng website na ito at hindi ito kapalit ng konsultasyon sa doktor o health worker. Hindi nagbibigay ng diyagnosis ang symptom checker; pagsusuring medikal lang ang makapagsasabi kung may TB. Sa emergency, tumawag sa 911.',
     file,
   ),
+  // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
+  disclaimerTextNoCheck: {
+    en: '',
+    fil: '',
+    origin: 'owner',
+    src: ['owner', 'owner'],
+    note:
+      'Q9: about.disclaimerText without the sentences about the symptom checker, for a build without Check. The owner approves the wording.',
+  },
 
   privacy: ui('Privacy', 'Privacy', file),
   privacy1: ui(
@@ -33,6 +42,15 @@ export const about = {
     'Walang account, at hindi kami kumukuha ng personal na impormasyon. Tumatakbo lamang sa iyong browser ang symptom checker. Hindi kailanman sine-save o ipinapadala kahit saan ang iyong mga sagot.',
     file,
   ),
+  // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
+  privacy1NoCheck: {
+    en: '',
+    fil: '',
+    origin: 'owner',
+    src: ['owner', 'owner'],
+    note:
+      'Q9: about.privacy1 without the sentences about the symptom checker, for a build without Check. The owner approves the wording.',
+  },
   privacy2: ui(
     'We use your location only to sort places by distance. It stays on your device.',
     'Ginagamit lang namin ang lokasyon mo para ayusin ang mga lugar ayon sa layo. Nananatili ito sa iyong device.',
@@ -65,6 +83,15 @@ export const about = {
     'Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner, ang symptom check at ang Alamin kahit walang signal.',
     file,
   ),
+  // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
+  appTextNoCheck: {
+    en: '',
+    fil: '',
+    origin: 'owner',
+    src: ['owner', 'owner'],
+    note:
+      'Q9: about.appText without the symptom check, for a build without Check. The owner approves the wording.',
+  },
   appLink: ui('How to install', 'Paano i-install', file),
 
   a11y: ui('Accessibility', 'Accessibility', file),

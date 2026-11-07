@@ -24,7 +24,7 @@ const nav = pick(chrome, lang);
       <div class="notice">
         <div class="notice-head">
           <h1 class="h1">{t.h1}</h1>
-          <p class="lede">{t.lead}</p>
+          <p class="lede">{TBPH_CHECK ? t.lead : t.leadNoCheck}</p>
         </div>
         <div class="notice-actions">
           <a class="btn btn--primary" href={href('home', lang)}>{nav.nav_home}</a>

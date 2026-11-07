@@ -32,13 +32,17 @@ const KNOWN = [
 ];
 
 // Strings that still mention the symptom check, which a build without Check (Q9) leaves in.
-// home.bring3 ("Your TB check summary", on every route); notFound.lead (C8: "These" above a
-// single button once Check's goes). Listed for the owner, never reworded here (B48). A fixed
-// list, updated when the owner answers Q9 (B61).
-const CHECK_MENTIONS = ['install.off2', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'home.bring3', 'notFound.lead'];
+// Listed for the owner, never reworded here (B48). Empty since 7 Nov 2026: each string that
+// named the check has a twin without it (…NoCheck, the owner's wording) or is left out.
+const CHECK_MENTIONS = [];
 
-// Strings only Check's pages use, besides its own dictionary: a build without Check ships none.
-const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription'];
+// Strings a build without Check ships none of, besides Check's own dictionary: Check's page
+// title and description, the two list items that only make sense with Check (install.off2,
+// home.bring3), and the strings swapped for their …NoCheck twins (Q9, 7 Nov 2026).
+const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription', 'install.off2', 'home.bring3', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'notFound.lead'];
+
+// The twins, which only a build without Check ships.
+const NO_CHECK_ONLY = ['install.leadNoCheck', 'about.disclaimerTextNoCheck', 'about.privacy1NoCheck', 'about.appTextNoCheck', 'meta.installDescriptionNoCheck', 'notFound.leadNoCheck'];
 
 // The Check footer's reviewer placeholder, open until the clinical review is recorded. Matched
 // by its words, not its dash, which the V3 pass will reword (B82).
@@ -116,7 +120,7 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   // counts as in, and the split blocks.
   const checkBuilt = build ? build.check.en || build.check.fil : true;
   const isCheck = (s) => s.id.startsWith('check.');
-  const shipped = checkBuilt ? strings : strings.filter((s) => !isCheck(s) && !CHECK_ONLY.includes(s.id));
+  const shipped = checkBuilt ? strings.filter((s) => !NO_CHECK_ONLY.includes(s.id)) : strings.filter((s) => !isCheck(s) && !CHECK_ONLY.includes(s.id));
 
   // Copy. The privacy row is its own block, which can't be accepted: without it About doesn't
   // say who else sees what (RA 10173's transparency; the lead's ruling, B73).

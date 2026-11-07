@@ -11,6 +11,15 @@ export const install = {
     'Idagdag ito sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner, ang symptom check at ang Alamin kahit walang signal.',
     file,
   ),
+  // Q9: a build without Check (TBPH_CHECK=false) ships this instead of `lead`, which names the check.
+  leadNoCheck: {
+    en: '',
+    fil: '',
+    origin: 'owner',
+    src: ['owner', 'owner'],
+    note:
+      'Q9: install.lead without the symptom check, for a build without Check. The owner approves the wording.',
+  },
   button: ui('Install TB PH', 'I-install ang TB PH', file),
   installed: ui("TB PH is installed. You're using the app.", 'Naka-install na ang TB PH. Ginagamit mo na ang app.', file),
   done: ui('Installed. Look for TB PH on your home screen.', 'Na-install na. Hanapin ang TB PH sa home screen mo.', file),
