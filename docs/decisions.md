@@ -6,7 +6,7 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ## 7 November 2026 (owner, in chat with the lead)
 
-### D23. Public launch tonight, at the free pages.dev address (Q7, in part)
+### Q7. Public launch tonight, at the free pages.dev address (answers Q7 in part)
 - **The site goes public tonight, 7 November 2026, at the free `*.pages.dev` address** that Cloudflare gives the project. The owner answered "Public, free address" to the lead's question "What must be live tonight?". The other options were a public launch on a real domain, which would have to be bought and set up tonight, and a test copy only.
 - **Why:** the owner's deadline is tonight.
 - **What follows:**
