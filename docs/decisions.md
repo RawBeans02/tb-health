@@ -15,6 +15,21 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
   - Under Q9 (4 Nov), the clinical review isn't done, so the launch is built with `TBPH_CHECK=false`.
 - **Still open:** the domain (Q7), and the rest of what the launch needs from the owner (`docs/owner-queue.md`).
 
+### Q8. The full clinic list: run the pipeline now
+- **The owner approved the pipeline run.** The owner answered "Yes, run it" to the lead's question "May the builder fetch the full clinic list from PhilHealth now?". The question said what the run does:
+  - downloads PhilHealth's TB-DOTS list, one PDF;
+  - looks up about 2,100 clinic addresses on OpenStreetMap's Nominatim, one per second;
+  - installs two Python packages, pdfplumber and requests.
+- **The lead ran it** in the lead's scratch folder, not the builder's checkout, so the hour of lookups could start at once.
+  - **The PDF:** `DOTS_093026.pdf`, "List of Accredited TB DOTS Clinics for CY 2026 Updated as of September 30, 2026".
+    - It was the only TB-DOTS list on PhilHealth's page on 7 Nov 2026 (Last-Modified 15 Oct 2026).
+    - 4,017,609 bytes, SHA-256 `afb171c6aff3a3a0ba0591b6f765b1afeebb746379ffd05c4f51803d77ecf612`.
+  - **The parse:** 2,097 facilities in all 17 regions, rows 1–2,097 with no gaps or duplicates, and all 85 pages read as ruled tables.
+  - **The lookups:** the pipeline's queries, parameters and 1.1-second pause, in one thread, with every result cached.
+    - No contact email was given, so the User-Agent names the project's public repository: `TB-PH-route-planner (https://github.com/RawBeans02/tb-health)`. The owner can give an email instead.
+    - Every city is looked up first. Then come the address and name lookups, starting with the cities that have the most clinics.
+    - A clinic the lookups don't reach before the launch keeps its city's pin, and the site marks its distance as approximate.
+
 ## 6 November 2026 (owner, in chat with the lead)
 
 ### D22. Linux tests without GitHub Actions (amends D22)
