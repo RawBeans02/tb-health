@@ -12,6 +12,21 @@ test.describe('without Check', () => {
       await expect(page.locator('main h1')).toHaveText(h1);
     }
   });
+
+  test('no page names the symptom check, in its text or its description (Q9, 7 Nov 2026)', async ({ page }) => {
+    const mention = /symptom check|TB check summary|buod ng iyong TB check/i;
+    for (const path of ['/', '/places', '/learn', '/data', '/about', '/install', '/no-such-page', '/fil', '/fil/learn', '/fil/about', '/fil/install', '/fil/no-such-page']) {
+      await page.goto(path);
+      expect(await page.locator('body').innerText(), path).not.toMatch(mention);
+      const description = /<meta name="description" content="([^"]*)"/.exec(await page.content())?.[1] ?? '';
+      expect(description, `${path} description`).not.toMatch(mention);
+    }
+    // Install's "works offline" list drops the check, and the 404 keeps one button.
+    await page.goto('/install');
+    await expect(page.locator('.install-offline > li')).toHaveCount(2);
+    await page.goto('/no-such-page');
+    await expect(page.locator('.notice-actions a')).toHaveCount(1);
+  });
 });
 
 test('no page links to Check, and the tab bar has three tabs', async ({ page }) => {
