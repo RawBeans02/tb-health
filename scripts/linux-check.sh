@@ -77,7 +77,7 @@ step_cmd() {
     check) echo 'npm run check' ;;
     unit) echo 'npm test' ;;
     unit-1worker) echo 'npm test -- --maxWorkers=1' ;;
-    build) echo 'npm run build' ;;
+    build) echo 'npm run build && npm run build:sample' ;;
     chromium) echo 'node_modules/.bin/playwright test --project=chromium' ;;
     webkit) echo 'node_modules/.bin/playwright test --project=webkit' ;;
     pwa) echo 'node_modules/.bin/playwright test --project=pwa' ;;

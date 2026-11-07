@@ -34,6 +34,8 @@ jobs:
         run: npm test
       - name: Build (with check-links, budgets and the service worker)
         run: npm run build
+      - name: Build with the 93-row sample, the browser tests' fixture
+        run: npm run build:sample
       - name: Browsers for Playwright
         run: npx playwright install --with-deps chromium webkit
       - name: End-to-end, Chromium

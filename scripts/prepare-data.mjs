@@ -5,6 +5,8 @@
 //   node scripts/prepare-data.mjs              real facility file if present, else the 93-row sample
 //   node scripts/prepare-data.mjs --synthetic  ~2,100 obviously fake rows, for measuring scale only
 //   node scripts/prepare-data.mjs --worst-case the sample plus five fake worst-case rows (L2)
+//   node scripts/prepare-data.mjs --sample     the 93-row sample even when the real file exists: the
+//                                              browser tests' fixture (npm run build:sample)
 //
 //   node scripts/prepare-data.mjs --accept-ids  also records this list's place ids in
 //                                               data/place-ids.json (after reviewing the report)
@@ -289,7 +291,8 @@ function main() {
   const synthetic = process.argv.includes('--synthetic') || worst;
   const realPath = join(dataDir, 'tb-dots-facilities.json');
   const samplePath = join(dataDir, 'tb-dots-facilities-SAMPLE.json');
-  const sample = !synthetic && !existsSync(realPath);
+  const forcedSample = process.argv.includes('--sample');
+  const sample = !synthetic && (forcedSample || !existsSync(realPath));
   const sourcePath = synthetic || sample ? samplePath : realPath;
   const source = readJson(sourcePath);
   // The worst-case rows go first, so the Places list shows them (B51).
@@ -314,7 +317,8 @@ function main() {
   if (failures.length) fail(failures);
 
   const withIds = rows.map((row, i) => ({ ...row, id: ids[i] }));
-  if (!synthetic) reportIds(withIds, aliases);
+  // Place ids are reported (and accepted) for the real list only, never for a fixture.
+  if (!synthetic && !forcedSample) reportIds(withIds, aliases);
 
   const round = (x) => Math.round(x * 1e5) / 1e5;
   const abbreviations = existsSync(abbreviationsPath) ? readJson(abbreviationsPath).abbreviations : {};
