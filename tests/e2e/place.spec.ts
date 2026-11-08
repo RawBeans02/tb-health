@@ -125,9 +125,10 @@ test.describe('place page', () => {
     const status = page.locator('.place-copied');
     if (browserName === 'chromium') {
       await expect(status).toHaveText('Copied. Paste it into Sakay.ph.');
-      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Bangued Rural Health Unit, Actividad Economia St. Zone 3, Bangued, Abra');
+      // The address alone: the clinic's name may say "TB DOTS", and the About page says we copy the address (Q5).
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Actividad Economia St. Zone 3, Bangued, Abra');
     } else {
-      await expect(status).toHaveText(/^(Copied\. Paste it into Sakay\.ph\.|Copy this address into Sakay\.ph: Bangued Rural Health Unit, .+)$/);
+      await expect(status).toHaveText(/^(Copied\. Paste it into Sakay\.ph\.|Copy this address into Sakay\.ph: Actividad Economia St\. Zone 3, Bangued, Abra)$/);
     }
   });
 

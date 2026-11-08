@@ -125,7 +125,7 @@ export default function PlaceDetails({ place: p, lang, t, details, sample }: Pro
           <a class="btn btn--soft btn--md" href={directionsUrl(p, 'driving')} target="_blank" rel="noopener" aria-label={`${t.drive}: ${p.name}`}>
             {t.drive}
           </a>
-          <button type="button" class="btn btn--soft btn--md place-sakay" onClick={() => copyForSakay(`${p.name}, ${p.address}`).then((ok) => setCopied(ok ? 'ok' : 'fail'))}>
+          <button type="button" class="btn btn--soft btn--md place-sakay" onClick={() => copyForSakay(p.address).then((ok) => setCopied(ok ? 'ok' : 'fail'))}>
             {t.sakay}
           </button>
         </div>
@@ -135,7 +135,7 @@ export default function PlaceDetails({ place: p, lang, t, details, sample }: Pro
           </a>
         )}
         <p class="place-copied" role="status">
-          {copied === 'ok' ? t.copied : copied === 'fail' ? `${t.copyFail} ${p.name}, ${p.address}` : ''}
+          {copied === 'ok' ? t.copied : copied === 'fail' ? `${t.copyFail} ${p.address}` : ''}
         </p>
       </div>
 
