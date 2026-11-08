@@ -1,6 +1,7 @@
 // About (README:244–245; About.dc.html). The pack has no About copy, so the strings are the
 // prototype's; bracketed stand-ins are flagged PLACEHOLDER. The privacy row on outside
-// services comes from the owner (Q5); the 1555 note is the owner's wording (V4).
+// services comes from the owner (Q5); the 1555 note is the owner's wording (V4). The
+// prototype's "Our partners" and "Medical review" sections are left out for launch (A1).
 import { ui, type Dict } from './types.ts';
 
 const file = 'About.dc.html';
@@ -13,12 +14,6 @@ export const about = {
     file,
     ['PLACEHOLDER'],
   ),
-
-  partners: ui('Our partners', 'Mga katuwang namin', file),
-  partnersRow: ui('Partner hospitals (names and logos to come)', 'Mga katuwang na ospital (darating ang mga pangalan at logo)', file, ['PLACEHOLDER']),
-
-  review: ui('Medical review', 'Medical review', file),
-  reviewText: ui('Health content reviewed by [name, credentials, hospital] on [date].', 'Sinuri ang nilalamang pangkalusugan ni [pangalan, kredensiyal, ospital] noong [petsa].', file, ['PLACEHOLDER']),
 
   disclaimer: ui('Disclaimer', 'Paalala', file),
   disclaimerText: ui(

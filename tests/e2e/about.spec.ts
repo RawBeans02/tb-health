@@ -32,8 +32,7 @@ test.describe('About', () => {
     await expect(page.locator('main h1')).toHaveText('About');
     await expect(page.locator('main h1')).toHaveCSS('color', 'rgb(196, 32, 50)');
     await expect(page.locator('main h2')).toHaveText([
-      'Our partners',
-      'Medical review',
+      // No "Our partners" or "Medical review" at launch (A1).
       'Disclaimer',
       'Privacy',
       'Data and updates',

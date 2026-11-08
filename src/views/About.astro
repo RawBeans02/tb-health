@@ -36,20 +36,7 @@ const numbers = [
           <p class="lede">{t.lede}</p>
         </section>
 
-        {/* Partners and Medical review show only once the owner has content for them (7 Nov 2026). */}
-        {t.partnersRow && (
-          <section id="partners" class="about-section" data-anchor aria-labelledby="partners-h">
-            <h2 id="partners-h" class="h2">{t.partners}</h2>
-            <ul class="group about-rows about-rows--quiet" role="list"><li>{t.partnersRow}</li></ul>
-          </section>
-        )}
-
-        {t.reviewText && (
-          <section id="review" class="about-section" data-anchor aria-labelledby="review-h">
-            <h2 id="review-h" class="h2">{t.review}</h2>
-            <div class="about-card"><p>{t.reviewText}</p></div>
-          </section>
-        )}
+        {/* The prototype's "Our partners" and "Medical review" sections are left out for launch (A1, 8 Nov 2026). */}
 
         <section id="disclaimer" class="about-section" data-anchor aria-labelledby="disclaimer-h">
           <h2 id="disclaimer-h" class="h2">{t.disclaimer}</h2>

@@ -84,12 +84,12 @@ export const meta = {
 
   // Filipino descriptions the owner supplies later (Q3). Listed now so launch-check shows them.
   aboutDescription: {
-    en: 'Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.',
-    fil: 'Kung sino ang gumagawa ng TB PH, paano sinusuri ang nilalamang pangkalusugan, privacy, accessibility, mga update sa datos at mga numerong makatutulong.',
-    origin: 'ui',
-    src: ['proto:About.dc.html', 'decision:Q3'],
+    en: 'Who makes TB PH, privacy, accessibility, data updates and helpful phone numbers.',
+    fil: 'Kung sino ang gumagawa ng TB PH, privacy, accessibility, mga update sa datos at mga numerong makatutulong.',
+    origin: 'decision',
+    src: ['decision:A1', 'decision:A1'],
     flags: ['FIL-REVIEW'],
-    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+    note: 'The prototype\'s description (EN) and the owner\'s (Q3, FIL) without "how the health content is reviewed", as About has no Medical review section at launch (A1, 8 Nov 2026).',
   },
   dataDescription: {
     en: 'TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.',

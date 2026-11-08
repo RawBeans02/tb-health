@@ -6,6 +6,11 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ## 8 November 2026 (owner, in chat with the lead)
 
+### A1. About: no partner-hospitals or medical-reviewer rows at launch
+- **The About page launches without the prototype's "Our partners" and "Medical review" sections** (README:245 lists them; their rows were placeholders: "Partner hospitals (names and logos to come)" and "Health content reviewed by [name, credentials, hospital] on [date]"). The owner answered "Yes, drop both" to the lead's question "Drop the partner-hospitals and medical-reviewer rows for launch?" on 8 Nov 2026.
+- **What follows:** About's page description no longer promises how the health content is reviewed: `meta.aboutDescription` EN "Who makes TB PH, privacy, accessibility, data updates and helpful phone numbers." FIL "Kung sino ang gumagawa ng TB PH, privacy, accessibility, mga update sa datos at mga numerong makatutulong." (the prototype's and Q3's wording without that clause, as the owner queue said it would be).
+- **Still open:** the clinical review itself (Check, Learn L6) is unchanged and still pending; the sections come back when there are partner names or a reviewer to name.
+
 ### Q8. The OpenStreetMap credit (the owner's wording)
 - **The owner approved the lead's draft** of the credit for the clinic positions. They are OpenStreetMap data, from the Nominatim lookups of the Q8 run (7 Nov), and OpenStreetMap asks for a credit wherever its data is used (PLAN.md, Q8: "wording yours"). The owner answered "Approve the credit" to the lead's question "Approve the OpenStreetMap credit for the site footer?" on 8 Nov 2026.
   - `chrome.creditOsm`: EN "Clinic positions:" FIL "Mga lokasyon ng klinika:". In every page's footer, under the data credit, it's followed by "© OpenStreetMap contributors", a link to https://www.openstreetmap.org/copyright, the same in both languages (the map already credits OpenStreetMap the same way).
