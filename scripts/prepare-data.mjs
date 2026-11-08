@@ -264,7 +264,7 @@ export function worstCaseFacilities(sampleRows) {
       phone: '5000-0000 loc. 1234; 5000-0001 loc. 5678',
       hours: 'Monday to Friday 7:00 AM to 5:00 PM; Saturday 8:00 AM to 12:00 NN; closed on Sundays and holidays except for synthetic test emergencies',
     }),
-    base(other, 2, { phone: '000-0000' }),
+    base(other, 2, { phone: '500-0000' }),
     base(ncr, 3, { phone: '5100-0000' }),
     base(other, 4, { phone: '' }),
     base(other, 5, { lat: null, lng: null }),

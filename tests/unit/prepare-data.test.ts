@@ -151,7 +151,7 @@ describe('worstCaseFacilities (audit L2)', () => {
     expect(validateFacilities([...sample.facilities, ...rows]).errors).toEqual([]);
     for (const r of rows) expect(r.name).toMatch(/^SYNTHETIC TEST /);
     expect(rows[0].name).toMatch(/Ñ.*'/);
-    expect(rows.map((r) => r.phone)).toEqual(['5000-0000 loc. 1234; 5000-0001 loc. 5678', '000-0000', '5100-0000', '', '0000000000']);
+    expect(rows.map((r) => r.phone)).toEqual(['5000-0000 loc. 1234; 5000-0001 loc. 5678', '500-0000', '5100-0000', '', '0000000000']);
     expect(rows[4].lat).toBeNull();
   });
 });

@@ -6,7 +6,7 @@ import { buildDataset, loadFacilities, type FacilitiesFile } from '../../src/lib
 import { offers, prepare, serviceStatus, type FacilityRow } from '../../src/lib/core/facility.ts';
 import { buildGazetteer, distanceLabel, km, matchPlace, withKeys } from '../../src/lib/core/geo.ts';
 import { directionsUrl, homeQuery, readHomeParams } from '../../src/lib/core/links.ts';
-import { firstPhone, telHref } from '../../src/lib/core/phone.ts';
+import { callNumber, firstPhone, telHref } from '../../src/lib/core/phone.ts';
 import { resolveOrigin, route, type Origin } from '../../src/lib/core/route.ts';
 import { norm, titleCase } from '../../src/lib/core/text.ts';
 import { placeDetails } from '../../src/lib/place-details.ts';
@@ -107,9 +107,12 @@ describe('phone', () => {
     // 09…: a mobile, 11 digits.
     expect(telHref('0917 000 000', 'R1')).toBe('');
     expect(telHref('0917 000 00000', 'R1')).toBe('');
-    // Any other 0…: area code and landline, 10 digits.
+    // Any other 0…: area code and landline, 10 digits, or 11 with a provincial 8-digit landline.
     expect(telHref('(074) 000-000', 'CAR')).toBe('');
-    expect(telHref('(074) 0000-0000', 'CAR')).toBe('');
+    expect(telHref('(074) 0000-0000', 'CAR')).toBe('tel:+637400000000');
+    expect(telHref('(074) 0000-00000', 'CAR')).toBe('');
+    expect(telHref('(02) 8000-00000', 'NCR')).toBe('');
+    expect(telHref('(02) 8000-0000', 'NCR')).toBe('tel:+63280000000');
     expect(telHref('(074)', 'CAR')).toBe('');
     // Neither: a local number of 7 or 8 digits; NCR's longer ones keep their first 8.
     expect(telHref('500-0000', 'R1')).toBe('tel:5000000');
@@ -120,10 +123,25 @@ describe('phone', () => {
   });
 
   it('keeps such a number as text under Details, with no Call link', () => {
-    const p = prepare(row({ phone: '0917 000 000 / 0918 000 0000' }));
-    expect(p).toMatchObject({ phone: '0917 000 000 / 0918 000 0000', first: '0917 000 000', tel: '' });
+    const p = prepare(row({ phone: '0917 000 000 / (82) 000-0000' }));
+    expect(p).toMatchObject({ phone: '0917 000 000 / (82) 000-0000', first: '0917 000 000', tel: '' });
     const labels = { hoursLabel: 'Hours', hoursNotListed: 'Not listed', phoneLabel: 'Phone', regionLabel: 'Region', accrLabel: 'Until' };
-    expect(placeDetails(p, labels, 'en')).toContainEqual({ label: 'Phone', value: '0917 000 000 / 0918 000 0000' });
+    expect(placeDetails(p, labels, 'en')).toContainEqual({ label: 'Phone', value: '0917 000 000 / (82) 000-0000' });
+  });
+
+  it('calls the first number any phone can dial, else a local one', () => {
+    expect(callNumber('630-0000 / 0917 000 0000', 'R1')).toEqual({ first: '0917 000 0000', tel: 'tel:+639170000000' });
+    expect(callNumber('8/850-0000, 0905-000 0000', 'NCR')).toEqual({ first: '0905-000 0000', tel: 'tel:+639050000000' });
+    expect(callNumber('50-0000; 500-0000; 0917 000 00', 'R1')).toEqual({ first: '500-0000', tel: 'tel:5000000' });
+  });
+
+  it('calls the first number on the list that can be dialled', () => {
+    expect(callNumber('0917 000 000 / (077) 000-0000', 'R1')).toEqual({ first: '(077) 000-0000', tel: 'tel:+63770000000' });
+    expect(callNumber('(074) 000-0000 / 0917 000 0000', 'CAR')).toEqual({ first: '(074) 000-0000', tel: 'tel:+63740000000' });
+    expect(callNumber('NONE; 0917 000 00', 'R1')).toEqual({ first: 'NONE', tel: '' });
+    expect(callNumber('', 'R1')).toEqual({ first: '', tel: '' });
+    const p = prepare(row({ phone: '0917 000 000 / 0918 000 0000' }));
+    expect(p).toMatchObject({ phone: '0917 000 000 / 0918 000 0000', first: '0918 000 0000', tel: 'tel:+639180000000' });
   });
 });
 

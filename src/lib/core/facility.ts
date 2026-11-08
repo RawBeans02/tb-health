@@ -1,5 +1,5 @@
 // Facilities as the site uses them, ported from tbph-core.js (stat, prep, offers).
-import { firstPhone, telHref } from './phone.ts';
+import { callNumber } from './phone.ts';
 import { norm, titleCase } from './text.ts';
 
 export type Service = 'xray' | 'test' | 'meds';
@@ -47,7 +47,7 @@ export interface Place {
   place: string;
   address: string;
   phone: string;
-  /** The first of several numbers, and its tel: link. */
+  /** The number the Call link dials (the first that can be dialled, else the first listed), and its tel: link ('' for none). */
   first: string;
   tel: string;
   gov: boolean;
@@ -82,7 +82,7 @@ export function prepare(row: FacilityRow): Place {
   const place = city && prov && city !== prov && !city.includes(prov) ? `${city}, ${prov}` : city || prov;
   const street = titleCase(row.street ?? '');
   const phone = String(row.phone ?? '').trim();
-  const first = firstPhone(phone);
+  const { first, tel } = callNumber(phone, row.region_code);
   const lat = parseFloat(String(row.lat));
   const lng = parseFloat(String(row.lng));
   const located = Number.isFinite(lat) && Number.isFinite(lng);
@@ -98,7 +98,7 @@ export function prepare(row: FacilityRow): Place {
     address: [street, place].filter(Boolean).join(', '),
     phone,
     first,
-    tel: telHref(first, row.region_code),
+    tel,
     gov: /gov/i.test(row.sector ?? ''),
     code: row.region_code ?? '',
     region: row.region ?? '',

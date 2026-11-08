@@ -35,9 +35,8 @@ test.describe('place page', () => {
     expect((await commute.boundingBox())?.height).toBe(58);
     await expect(page.getByRole('link', { name: 'Walk: Bangued Rural Health Unit' })).toHaveAttribute('href', /travelmode=walking$/);
     await expect(page.getByRole('link', { name: 'Drive: Bangued Rural Health Unit' })).toHaveAttribute('href', /travelmode=driving$/);
-    // Its listed number has 11 digits and starts with 0, not 09 (a landline with its area code
-    // has 10), so it can't be dialled: no Call link, and the number shows under Details (below).
-    await expect(page.locator('.place-call')).toHaveCount(0);
+    // 074 and an 8-digit landline: 11 digits with the 0.
+    await expect(page.getByRole('link', { name: /^Call before you go: Bangued Rural Health Unit, / })).toHaveAttribute('href', 'tel:+637461401845');
 
     await expect(page.locator('.service-name')).toHaveText(['Chest X-ray', 'TB test (sputum)', 'Free TB medicines']);
     await expect(page.locator('.detail-row dt')).toHaveText(['Hours', 'Phone', 'Region', 'Accreditation until']);
