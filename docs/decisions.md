@@ -4,6 +4,29 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 8 November 2026 (owner, in chat with the lead)
+
+### Q5. The privacy row (the owner's wording)
+- **The owner approved the lead's draft** of `about.privacyServices`, the About › Privacy row on outside services (item 5 of the lead's launch wording list, drafted 7 Nov 2026). The owner answered "Approve all" to the lead's question "Do you approve the launch wording file as drafted?" on 8 Nov 2026. That approves items 5–17; items 1–4 (group name, contact email, partner hospitals, medical reviewer) ask for facts and are still open. It ships as written:
+  - `about.privacyServices`: EN "TB PH serves its own fonts, so no font service sees your visit. Our web host, Cloudflare, sees your IP address, your browser and the pages you open. The map comes from OpenStreetMap, and only if you open it; OpenStreetMap then sees your IP address and the area on the map, which is around you if you used your location. Directions open in Google Maps, which then sees the place you chose. For Sakay.ph, we copy the address and open sakay.ph, which sees it only if you paste it there. Calls go through your phone." FIL "Ang TB PH mismo ang nagbibigay ng mga font nito, kaya walang font service na nakakakita sa pagbisita mo. Nakikita ng aming web host, ang Cloudflare, ang IP address mo, ang browser mo at ang mga pahinang binubuksan mo. Galing sa OpenStreetMap ang mapa, at kapag binuksan mo lang ito; makikita ng OpenStreetMap ang IP address mo at ang lugar na nasa mapa, na nasa paligid mo kung ginamit mo ang lokasyon mo. Sa Google Maps bumubukas ang direksiyon, kaya makikita nito ang lugar na pinili mo. Para sa Sakay.ph, kinokopya namin ang address at binubuksan ang sakay.ph; makikita lang nito ang address kung i-paste mo ito roon. Dumadaan sa phone mo ang mga tawag."
+
+### Q3. Filipino page descriptions (the owner's wording)
+- **The owner approved the lead's drafts** of the Filipino descriptions (items 13–17). The English stays the prototype's. `meta.installDescription` is the version for a build with Check; a build without Check ships `meta.installDescriptionNoCheck` (Q9 below).
+  - `meta.aboutDescription`: "Kung sino ang gumagawa ng TB PH, paano sinusuri ang nilalamang pangkalusugan, privacy, accessibility, mga update sa datos at mga numerong makatutulong."
+  - `meta.dataDescription`: "Ang TB sa Pilipinas sa mga numero: mga kaso, pagkamatay, mga kasong hindi natutukoy, pagsusuri, gamutan, pondo at pag-iwas, kasama ang mga pinagmulan at talaan ng bawat chart."
+  - `meta.installDescription`: "Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at nabubuksan pa rin ang planner, ang symptom check at ang Alamin kahit walang signal."
+  - `meta.learnDescription`: "Ano ang TB, paano ito kumakalat, mga senyales at sintomas, sino ang mas nanganganib, libreng pagsusuri at gamutan, drug-resistant TB, pag-iwas, pamumuhay nang may TB, at mga maling akala."
+  - `meta.placeDescription`: "Mga serbisyo, oras, telepono at direksiyon ng isang TB-DOTS center sa Pilipinas."
+
+### Q9. Launch wording without Check (the owner's wording)
+- **The owner approved the lead's drafts** for a build without Check (items 6–12). Each cuts the symptom check from a string that named it; the 404's lead says "This" above its single button. A build without Check ships these instead of the strings they replace, and leaves out `install.off2` and `home.bring3` (no new words):
+  - `install.leadNoCheck`: EN "Add it to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal." FIL "Idagdag ito sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal."
+  - `about.appTextNoCheck`: EN "Add TB PH to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal." FIL "Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal."
+  - `meta.installDescriptionNoCheck`: EN "Add TB PH to your home screen. It opens full screen, and the planner and Learn still open without a signal." FIL "Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at nabubuksan pa rin ang planner at ang Alamin kahit walang signal."
+  - `about.disclaimerTextNoCheck`: EN "This website provides general health information and does not replace a consultation with a doctor or health worker. In an emergency, call 911." FIL "Pangkalahatang impormasyong pangkalusugan ang ibinibigay ng website na ito at hindi ito kapalit ng konsultasyon sa doktor o health worker. Sa emergency, tumawag sa 911."
+  - `about.privacy1NoCheck`: EN "There are no accounts, and we don't collect personal information." FIL "Walang account, at hindi kami kumukuha ng personal na impormasyon."
+  - `notFound.leadNoCheck`: EN "The link may be old or mistyped. This will get you back on track:" FIL "Maaaring luma o mali ang link. Makatutulong ito:"
+
 ## 7 November 2026 (owner, in chat with the lead)
 
 ### Q7. Public launch tonight, at the free pages.dev address (answers Q7 in part)

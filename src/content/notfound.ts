@@ -6,11 +6,10 @@ export const notFound = {
   lead: ui('The link may be old or mistyped. These will get you back on track:', 'Maaaring luma o mali ang link. Makatutulong ang mga ito:', '404.dc.html'),
   // Q9, C8: without Check one button is left, so "These" would point at a single button.
   leadNoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9, C8: notFound.lead for a build without Check, above its single button. The owner approves the wording.',
+    en: 'The link may be old or mistyped. This will get you back on track:',
+    fil: 'Maaaring luma o mali ang link. Makatutulong ito:',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
 } satisfies Dict;

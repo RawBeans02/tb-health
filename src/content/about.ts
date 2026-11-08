@@ -28,12 +28,11 @@ export const about = {
   ),
   // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
   disclaimerTextNoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9: about.disclaimerText without the sentences about the symptom checker, for a build without Check. The owner approves the wording.',
+    en: 'This website provides general health information and does not replace a consultation with a doctor or health worker. In an emergency, call 911.',
+    fil: 'Pangkalahatang impormasyong pangkalusugan ang ibinibigay ng website na ito at hindi ito kapalit ng konsultasyon sa doktor o health worker. Sa emergency, tumawag sa 911.',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
 
   privacy: ui('Privacy', 'Privacy', file),
@@ -44,12 +43,11 @@ export const about = {
   ),
   // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
   privacy1NoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9: about.privacy1 without the sentences about the symptom checker, for a build without Check. The owner approves the wording.',
+    en: 'There are no accounts, and we don\'t collect personal information.',
+    fil: 'Walang account, at hindi kami kumukuha ng personal na impormasyon.',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
   privacy2: ui(
     'We use your location only to sort places by distance. It stays on your device.',
@@ -62,12 +60,11 @@ export const about = {
     file,
   ),
   privacyServices: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      "The owner writes this row (Q5). It replaces the prototype's row naming Google Fonts, which the site doesn't use, and is not shown until supplied. What it has to cover, as the site works now: the fonts are served by TB PH itself; the host sees each visitor's IP address, browser and the pages requested; OpenStreetMap is contacted only if the map is opened, and then sees the IP address and the area viewed (around the reader if they used their location); directions hand off to Google Maps, which then sees the chosen place; for Sakay.ph the site copies the address and opens sakay.ph, which sees it only if the reader pastes it there; calls go through the phone.",
+    en: 'TB PH serves its own fonts, so no font service sees your visit. Our web host, Cloudflare, sees your IP address, your browser and the pages you open. The map comes from OpenStreetMap, and only if you open it; OpenStreetMap then sees your IP address and the area on the map, which is around you if you used your location. Directions open in Google Maps, which then sees the place you chose. For Sakay.ph, we copy the address and open sakay.ph, which sees it only if you paste it there. Calls go through your phone.',
+    fil: 'Ang TB PH mismo ang nagbibigay ng mga font nito, kaya walang font service na nakakakita sa pagbisita mo. Nakikita ng aming web host, ang Cloudflare, ang IP address mo, ang browser mo at ang mga pahinang binubuksan mo. Galing sa OpenStreetMap ang mapa, at kapag binuksan mo lang ito; makikita ng OpenStreetMap ang IP address mo at ang lugar na nasa mapa, na nasa paligid mo kung ginamit mo ang lokasyon mo. Sa Google Maps bumubukas ang direksiyon, kaya makikita nito ang lugar na pinili mo. Para sa Sakay.ph, kinokopya namin ang address at binubuksan ang sakay.ph; makikita lang nito ang address kung i-paste mo ito roon. Dumadaan sa phone mo ang mga tawag.',
+    origin: 'decision',
+    src: ['decision:Q5', 'decision:Q5'],
+    note: 'The owner\'s approved wording (Q5, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
 
   updates: ui('Data and updates', 'Datos at mga update', file),
@@ -85,12 +82,11 @@ export const about = {
   ),
   // Q9: a build without Check (TBPH_CHECK=false) ships this instead, without the check.
   appTextNoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9: about.appText without the symptom check, for a build without Check. The owner approves the wording.',
+    en: 'Add TB PH to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal.',
+    fil: 'Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal.',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
   appLink: ui('How to install', 'Paano i-install', file),
 

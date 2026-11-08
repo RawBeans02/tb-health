@@ -13,12 +13,11 @@ export const install = {
   ),
   // Q9: a build without Check (TBPH_CHECK=false) ships this instead of `lead`, which names the check.
   leadNoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9: install.lead without the symptom check, for a build without Check. The owner approves the wording.',
+    en: 'Add it to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal.',
+    fil: 'Idagdag ito sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal.',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
   button: ui('Install TB PH', 'I-install ang TB PH', file),
   installed: ui("TB PH is installed. You're using the app.", 'Naka-install na ang TB PH. Ginagamit mo na ang app.', file),

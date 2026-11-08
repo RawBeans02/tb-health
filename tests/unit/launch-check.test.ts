@@ -64,8 +64,10 @@ describe('assess: each key and its trigger', () => {
     expect(r.blocking[0].text).toContain("isn't in the dictionaries");
   });
 
-  it('privacy-row: the id the gate looks for is the real dictionary row, which the owner supplies (B82)', () => {
-    expect(about.privacyServices).toMatchObject({ origin: 'owner', src: ['owner', 'owner'] });
+  it("privacy-row: the id the gate looks for is the real dictionary row, now the owner's wording (B82, Q5)", () => {
+    expect(about.privacyServices).toMatchObject({ origin: 'decision', src: ['decision:Q5', 'decision:Q5'] });
+    expect(about.privacyServices.en).not.toBe('');
+    expect(about.privacyServices.fil).not.toBe('');
   });
 
   it('review, verify and placeholders: flagged copy outside Check', () => {

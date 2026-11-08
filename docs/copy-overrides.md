@@ -43,6 +43,27 @@ Each string entry names its dictionary id (`src/content/…`). `tests/unit/parit
 
 Strings whose wording the owner gave in `docs/decisions.md`; the parity test finds each one, in quotes, in the decision it names (by id, such as V4, not by line).
 
+### `about.privacyServices` (Q5, 8 Nov 2026)
+- **Ships (Q5 in decisions.md):** "TB PH serves its own fonts, so no font service sees your visit. Our web host, Cloudflare, sees your IP address, your browser and the pages you open. The map comes from OpenStreetMap, and only if you open it; OpenStreetMap then sees your IP address and the area on the map, which is around you if you used your location. Directions open in Google Maps, which then sees the place you chose. For Sakay.ph, we copy the address and open sakay.ph, which sees it only if you paste it there. Calls go through your phone." / "Ang TB PH mismo ang nagbibigay ng mga font nito, kaya walang font service na nakakakita sa pagbisita mo. Nakikita ng aming web host, ang Cloudflare, ang IP address mo, ang browser mo at ang mga pahinang binubuksan mo. Galing sa OpenStreetMap ang mapa, at kapag binuksan mo lang ito; makikita ng OpenStreetMap ang IP address mo at ang lugar na nasa mapa, na nasa paligid mo kung ginamit mo ang lokasyon mo. Sa Google Maps bumubukas ang direksiyon, kaya makikita nito ang lugar na pinili mo. Para sa Sakay.ph, kinokopya namin ang address at binubuksan ang sakay.ph; makikita lang nito ang address kung i-paste mo ito roon. Dumadaan sa phone mo ang mga tawag."
+
+### `install.leadNoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "Add it to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal." / "Idagdag ito sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal."
+
+### `about.appTextNoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "Add TB PH to your home screen. It opens full screen, and once it has been opened, the planner and Learn still work without a signal." / "Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at kapag nabuksan na minsan, gumagana pa rin ang planner at ang Alamin kahit walang signal."
+
+### `meta.installDescriptionNoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "Add TB PH to your home screen. It opens full screen, and the planner and Learn still open without a signal." / "Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at nabubuksan pa rin ang planner at ang Alamin kahit walang signal."
+
+### `about.disclaimerTextNoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "This website provides general health information and does not replace a consultation with a doctor or health worker. In an emergency, call 911." / "Pangkalahatang impormasyong pangkalusugan ang ibinibigay ng website na ito at hindi ito kapalit ng konsultasyon sa doktor o health worker. Sa emergency, tumawag sa 911."
+
+### `about.privacy1NoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "There are no accounts, and we don't collect personal information." / "Walang account, at hindi kami kumukuha ng personal na impormasyon."
+
+### `notFound.leadNoCheck` (Q9, 8 Nov 2026)
+- **Ships (Q9 in decisions.md):** "The link may be old or mistyped. This will get you back on track:" / "Maaaring luma o mali ang link. Makatutulong ito:"
+
 ### `about.n1555_note`: the DOH hotline note (step 10, V4)
 - **Prototype:** "[VERIFY] Confirm before launch" / "[VERIFY] Kumpirmahin bago ilunsad", in TB red.
 - **Ships (V4 in decisions.md, the v7 wording):** "Press 2 for the National Patient Navigation and Referral Center." / "Pindutin ang 2 para sa National Patient Navigation and Referral Center.", in the muted note colour, since it is no longer a `[VERIFY]`.

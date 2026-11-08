@@ -83,18 +83,52 @@ export const meta = {
   },
 
   // Filipino descriptions the owner supplies later (Q3). Listed now so launch-check shows them.
-  aboutDescription: ownerFil('Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.', 'About.dc.html'),
-  dataDescription: ownerFil('TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.', 'Data.dc.html'),
-  installDescription: ownerFil('Add TB PH to your home screen. It opens full screen, and the planner, symptom check and Learn still open without a signal.', 'Install.dc.html'),
+  aboutDescription: {
+    en: 'Who makes TB PH, how the health content is reviewed, privacy, accessibility, data updates and helpful phone numbers.',
+    fil: 'Kung sino ang gumagawa ng TB PH, paano sinusuri ang nilalamang pangkalusugan, privacy, accessibility, mga update sa datos at mga numerong makatutulong.',
+    origin: 'ui',
+    src: ['proto:About.dc.html', 'decision:Q3'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+  },
+  dataDescription: {
+    en: 'TB in the Philippines in numbers: cases, deaths, missed cases, testing, treatment, funding and prevention, with sources and table versions of every chart.',
+    fil: 'Ang TB sa Pilipinas sa mga numero: mga kaso, pagkamatay, mga kasong hindi natutukoy, pagsusuri, gamutan, pondo at pag-iwas, kasama ang mga pinagmulan at talaan ng bawat chart.',
+    origin: 'ui',
+    src: ['proto:Data.dc.html', 'decision:Q3'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+  },
+  installDescription: {
+    en: 'Add TB PH to your home screen. It opens full screen, and the planner, symptom check and Learn still open without a signal.',
+    fil: 'Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at nabubuksan pa rin ang planner, ang symptom check at ang Alamin kahit walang signal.',
+    origin: 'ui',
+    src: ['proto:Install.dc.html', 'decision:Q3'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+  },
   // Q9: a build without Check (TBPH_CHECK=false) ships this instead of installDescription.
   installDescriptionNoCheck: {
-    en: '',
-    fil: '',
-    origin: 'owner',
-    src: ['owner', 'owner'],
-    note:
-      'Q9: meta.installDescription without the symptom check, for a build without Check. The owner approves the wording.',
+    en: 'Add TB PH to your home screen. It opens full screen, and the planner and Learn still open without a signal.',
+    fil: 'Idagdag ang TB PH sa home screen mo. Bumubukas ito nang full screen, at nabubuksan pa rin ang planner at ang Alamin kahit walang signal.',
+    origin: 'decision',
+    src: ['decision:Q9', 'decision:Q9'],
+    note: 'The owner\'s approved wording (Q9, 8 Nov 2026): drafted by the lead, approved by the owner.',
   },
-  learnDescription: ownerFil('What TB is, how it spreads, the signs, who is at risk, free testing and treatment, drug-resistant TB, prevention, living with TB, and common myths.', 'Learn.dc.html'),
-  placeDescription: ownerFil('Services, hours, phone and directions for a TB-DOTS center in the Philippines.', 'Place.dc.html'),
+  learnDescription: {
+    en: 'What TB is, how it spreads, the signs, who is at risk, free testing and treatment, drug-resistant TB, prevention, living with TB, and common myths.',
+    fil: 'Ano ang TB, paano ito kumakalat, mga senyales at sintomas, sino ang mas nanganganib, libreng pagsusuri at gamutan, drug-resistant TB, pag-iwas, pamumuhay nang may TB, at mga maling akala.',
+    origin: 'ui',
+    src: ['proto:Learn.dc.html', 'decision:Q3'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+  },
+  placeDescription: {
+    en: 'Services, hours, phone and directions for a TB-DOTS center in the Philippines.',
+    fil: 'Mga serbisyo, oras, telepono at direksiyon ng isang TB-DOTS center sa Pilipinas.',
+    origin: 'ui',
+    src: ['proto:Place.dc.html', 'decision:Q3'],
+    flags: ['FIL-REVIEW'],
+    note: 'FIL: the owner\'s approved description (Q3, 8 Nov 2026): drafted by the lead, approved by the owner.',
+  },
 } satisfies Dict;
