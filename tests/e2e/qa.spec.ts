@@ -109,7 +109,12 @@ test.describe('qa-harness matrix: Places with one result and with none', () => {
           await page.setViewportSize({ width, height: 820 });
           await page.goto(lang === 'fil' ? '/fil/places' : '/places', { waitUntil: 'networkidle' });
           const wide = width >= 1080;
-          if (!wide) await page.locator('.filters-button').click();
+          if (!wide) {
+            await page.locator('.filters-button').click();
+            // The sheet moves focus to its heading on the next frame: text typed before that is
+            // lost when the machine is busy (seen in WebKit on 8 Nov 2026), so wait for it.
+            await expect(page.locator('#sheet-h')).toBeFocused();
+          }
           await page.locator(wide ? '#panel-q' : '#sheet-q').fill(query);
           if (!wide) await page.locator('.sheet-done').click();
           await expect(page.locator('[role="dialog"]')).toHaveCount(0);
