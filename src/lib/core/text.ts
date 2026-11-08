@@ -50,3 +50,11 @@ export function titleCase(text: unknown): string {
 export function contains(key: string, t: string): boolean {
   return t.length > 2 ? key.includes(t) : ` ${key}`.includes(` ${t}`);
 }
+
+/** A region or the country at the end of typed place text: "Pasig, Metro Manila" is Pasig. */
+const AREA = /(?: (?:metro manila|ncr|philippines|pilipinas|ph))+$/;
+
+/** Typed place text, normalised, without a region or the country at the end. */
+export function placeText(text: unknown): string {
+  return norm(text).replace(AREA, '');
+}
