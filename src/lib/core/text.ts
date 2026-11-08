@@ -51,10 +51,27 @@ export function contains(key: string, t: string): boolean {
   return t.length > 2 ? key.includes(t) : ` ${key}`.includes(` ${t}`);
 }
 
-/** A region or the country at the end of typed place text: "Pasig, Metro Manila" is Pasig. */
-const AREA = /(?: (?:metro manila|ncr|philippines|pilipinas|ph))+$/;
+/**
+ * Words that name a region, the country or a ZIP code, which say nothing about the town: "Metro
+ * Manila", "NCR", "Calabarzon", "Calabarzon Region", "Region IV-A", "Region IVA", "Region 4A",
+ * "Philippines", "4301". "Caraga" alone is also a town, so only "Caraga Region" here. Four digits
+ * after "Lot", "Blk", "No.", "Purok" and the like are a lot or house number, not a ZIP code.
+ */
+const AREA_WORD = [
+  'metro manila|ncr|philippines|pilipinas|ph',
+  '(?<!\\b(?:lot|blk|block|phase|purok|zone|km|no|unit|bldg|building|house|door|room|stall|apt|brgy|bgy|barangay|sitio) )\\d{4}',
+  'region (?:[ivx]+|\\d+) ?[ab]?|(?:ilocos|bicol|davao|caraga) region|cordillera administrative region',
+  '(?:calabarzon|mimaropa|soccsksargen|barmm|bangsamoro|cagayan valley|central luzon|(?:western|central|eastern) visayas|zamboanga peninsula|northern mindanao)(?: region)?',
+].join('|');
+const AREA = new RegExp(`(?: (?:${AREA_WORD}))+$`);
+const ONLY_AREA = new RegExp(`^(?: (?:${AREA_WORD}))+$`);
 
-/** Typed place text, normalised, without a region or the country at the end. */
+/** Typed place text, normalised, without a region, the country or a ZIP code at the end: "Pasig, Metro Manila" is Pasig. */
 export function placeText(text: unknown): string {
   return norm(text).replace(AREA, '');
+}
+
+/** Whether typed text names only a region, the country or a ZIP code ("Philippines", "4301"). */
+export function isArea(text: unknown): boolean {
+  return ONLY_AREA.test(` ${norm(text)}`);
 }

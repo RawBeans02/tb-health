@@ -299,7 +299,6 @@ describe('the committed full list', () => {
     const cases = [
       ['Bagumbayan, Taguig City', 'Taguig City'],
       ['Brgy. San Vicente, Lapu-Lapu City', 'Lapu-Lapu City'],
-      ['San Miguel, City of Manila', 'City of Manila'],
       ['Brgy. San Isidro, Abra', 'Abra'],
       ['Brgy. Sta. Isabel, Tuguegarao City', 'Tuguegarao City, Cagayan'],
       ['Brgy. Sunrise, Isabela City', 'Isabela, Basilan'],
@@ -310,6 +309,8 @@ describe('the committed full list', () => {
       ['Little Baguio, San Juan City', 'San Juan City'],
     ];
     for (const [text, place] of cases) expect(label(text, full)).toBe(place);
+    // The list names this Manila district; it is 0.1 km from the City of Manila's point.
+    expect(label('San Miguel, City of Manila', full)).toBe('San Miguel, Manila, City of Manila');
   });
 
   it('keeps clinic names and addresses from the list on their own town', () => {
@@ -317,7 +318,7 @@ describe('the committed full list', () => {
       // A longer name around "<name> City" wins, and "City" belongs to a name only in its own part.
       ['Maria Aurora City Hall', 'Maria Aurora'],
       ['New Lucena City Hall', 'New Lucena, Iloilo Province'],
-      ['San Miguel, City of Manila', 'City of Manila'],
+      ['San Nicolas, City of Manila', 'City of Manila'],
       // Namesakes found as "<name> City" tie (label order), never cancel out.
       ['Cauayan City Health Office', 'Cauayan, Isabela'],
       // A town with its province named in the text beats a namesake elsewhere.
@@ -362,5 +363,508 @@ describe('the committed full list', () => {
     for (const text of ['Isabela', 'Rizal', 'Cebu', 'Quezon', 'Batangas Province', 'Isabela City', 'QC', 'Santa Rosa', 'Quezon City, Metro Manila']) {
       expect(label(text, compact)).toBe(label(text, full));
     }
+  });
+});
+
+describe('the re-review of 3ad2bf0: what each finding found, with the right place', () => {
+  const rows: FacilityRow[] = JSON.parse(readFileSync('data/tb-dots-facilities.json', 'utf8')).facilities;
+  const abbreviations: Record<string, string> = JSON.parse(readFileSync('data/place-abbreviations.json', 'utf8')).abbreviations;
+  const full = buildGazetteer(rows.map(prepare), abbreviations);
+  /** Each text with the label it plans from (null: the text route), so a failure names the text. */
+  const expectPlaces = (cases: [string, string | null][], entries: readonly GazEntry[] = full) => {
+    for (const [text, place] of cases) expect([text, matchPlace(text, entries)?.label ?? null]).toEqual([text, place]);
+  };
+
+  it('ranks a barangay named like another town of the province below the town typed with it', () => {
+    expectPlaces([
+      ['Magsaysay, Quezon, Palawan', 'Quezon, Palawan'],
+      ['Purok 1, Magsaysay, Narra, Palawan', 'Narra, Palawan'],
+      ['Buenavista, Real, Quezon', 'Real, Quezon'],
+      ['San Carlos, Sipalay, Negros Occidental', 'Sipalay, Negros Occidental'],
+      ['Claveria, Tuguegarao City, Cagayan', 'Tuguegarao City, Cagayan'],
+      ['Brgy. Del Pilar, Tubod, Surigao del Norte', 'Tubod, Surigao del Norte'],
+      ['Quezon, Talugtug, Nueva Ecija', 'Talugtug, Nueva Ecija'],
+      ['Biñan, Pagsanjan, Laguna', 'Pagsanjan, Laguna'],
+      // A town that stands for its province ranks as that province in longer text.
+      ['Brgy. Iniguihan, Bato 5355, Leyte', 'Bato, Leyte'],
+      ['Tacloban City, Leyte', 'Tacloban City'],
+      ['Ormoc City, Leyte', 'Ormoc City'],
+    ]);
+  });
+
+  it('plans "…, Rizal", "…, Manila" and a city group named as the last part from the province or group', () => {
+    expectPlaces([
+      ['Taytay, Rizal', 'Province of Rizal'],
+      ['San Isidro, Rodriguez, Rizal', 'Province of Rizal'],
+      ['Blk 5 Lot 10, San Isidro, Cainta, Rizal', 'Province of Rizal'],
+      ['Santo Niño, Rizal', 'Province of Rizal'],
+      ['San Isidro, Rizal Province', 'Province of Rizal'],
+      ['SM City Taytay, Rizal', 'Province of Rizal'],
+      ['Brgy. San Mateo, Taytay, Rizal', 'Province of Rizal'],
+      ['San Agustin Church, Manila', 'City of Manila'],
+      ['Santo Tomas University, Manila', 'City of Manila'],
+      ['Sta. Ana Hospital, Manila', 'Sta. Ana, Manila, City of Manila'],
+      ['Bagumbayan, Taguig', 'Taguig City'],
+      ['San Vicente, Lapu-Lapu', 'Lapu-Lapu City'],
+      ['Concepcion, Malabon', 'Malabon City'],
+      ['Little Baguio, San Juan', 'San Juan City'],
+      // Not the provinces the list names "… Province": "…, Cebu" and "…, Iloilo" stay the cities.
+      ['Brgy. Poblacion, Cebu', 'Cebu City'],
+      ['Jaro, Iloilo', 'Iloilo City'],
+      ['Rizal, Laguna', 'Rizal, Laguna'],
+      ['123 Mabini St., Malate, Manila', 'Malate, Manila, City of Manila'],
+    ]);
+  });
+
+  it('takes the town that is the whole last part of "<barangay>, <town>" over a town named like the barangay', () => {
+    expectPlaces([
+      ['San Isidro, Tanauan', 'Tanauan, Batangas'],
+      ['Magsaysay, Tagum', 'Tagum, Davao del Norte'],
+      ['Burgos, Digos', 'Digos, Davao del Sur'],
+      ['La Paz, Makati', 'Makati City'],
+      ['Concepcion, Marikina', 'Marikina City'],
+      ['Legazpi Village, Makati', 'Makati City'],
+      ['Bagumbayan, City of Batangas', 'Batangas City'],
+    ]);
+  });
+
+  it('plans a Metro Manila district the list doesn\'t name from the City of Manila', () => {
+    expectPlaces([
+      ['Cubao, Metro Manila', 'City of Manila'],
+      ['BGC, Metro Manila', 'City of Manila'],
+      ['Kapitolyo, Metro Manila', 'City of Manila'],
+      ['Alabang, Metro Manila', 'City of Manila'],
+      ['Camarin, Metro Manila', 'City of Manila'],
+      ['Quezon City, Metro Manila', 'Quezon City'],
+    ]);
+  });
+
+  it('reads "<barangay> City of <city>" as the city, not "<barangay> City"', () => {
+    expectPlaces([
+      ['San Miguel City of Manila', 'San Miguel, Manila, City of Manila'],
+      ['San Nicolas City of Manila', 'City of Manila'],
+      ['Brgy. Del Pilar City of Manila', 'City of Manila'],
+      ['San Isidro City of Bacolod', 'Bacolod City'],
+      ['San Jose City of Angeles', 'Angeles City'],
+      ['Science City of Muñoz', 'Science City of Muñoz, Nueva Ecija'],
+    ]);
+  });
+
+  it('ignores a ZIP code, a region or the country after the province, also without a comma', () => {
+    expectPlaces([
+      ['Carmen, Cavite 4100', 'Cavite Province'],
+      ['Carmen, 4100 Cavite', 'Cavite Province'],
+      ['Bagumbayan, Batangas 4200', 'Batangas Province'],
+      ['Burgos, Cavite Philippines', 'Cavite Province'],
+      ['Brgy. San Jose, Batangas Philippines', 'Batangas Province'],
+      ['Brgy. San Isidro, Quezon Philippines', 'Quezon Province'],
+      ['Brgy. Ibabang Dupay, Quezon 4301', 'Quezon Province'],
+      ['Brgy. San Jose, Quezon, Calabarzon', 'Quezon Province'],
+      ['Quezon City 1100', 'Quezon City'],
+      ['Purok 1234, Tuguegarao City', 'Tuguegarao City, Cagayan'],
+      // Four digits after "Lot" are a lot number, not a ZIP code.
+      ['Lot 1234', null],
+    ]);
+  });
+
+  it('reads a qualified province as the last part', () => {
+    expectPlaces([
+      ['Brgy. San Jose, Lalawigan ng Quezon', 'Quezon Province'],
+      ['Brgy. San Jose, Province of Quezon', 'Quezon Province'],
+      ['Brgy. San Jose, Province of Batangas', 'Batangas Province'],
+      ['Brgy. San Jose, Probinsya ng Cavite', 'Cavite Province'],
+      ['Brgy. San Jose, Lungsod ng Batangas', 'Batangas City'],
+    ]);
+  });
+
+  it('reads a listed abbreviation in longer text, also with dots', () => {
+    expectPlaces([
+      ['Cubao, QC', 'Quezon City'],
+      ['Brgy. San Isidro, QC', 'Quezon City'],
+      ['QC Hall', 'Quezon City'],
+      ['Cubao, Q.C.', 'Quezon City'],
+      ['Carmen, CDO', 'Cagayan de Oro City'],
+      ['Lapasan, C.D.O.', 'Cagayan de Oro City'],
+      ['Lagao, GenSan', 'General Santos City, South Cotabato'],
+      ['Salitran, Dasma', 'Dasmarinas, Cavite'],
+      ['Isabela, NegOcc', 'Isabela, Negros Occidental'],
+      ['Pamplona, CamSur', 'Pamplona, Camarines Sur'],
+      ['QC', 'Quezon City'],
+    ]);
+  });
+
+  it('finds a Manila district by its own name, after every other name', () => {
+    expectPlaces([
+      ['Brgy. 105, Ermita', 'Ermita, Manila, City of Manila'],
+      ['Binondo 1012', 'Binondo, Manila, City of Manila'],
+      ['123 Mabini St., Malate', 'Malate, Manila, City of Manila'],
+      ['Tondo Medical Center', 'Tondo, Manila, City of Manila'],
+      ['Smokey Mountain, Tondo', 'Tondo, Manila, City of Manila'],
+      // A town of that name still wins.
+      ['Santa Cruz', 'Santa Cruz, Marinduque'],
+      ['BRGY. NAPO, Santa Cruz', 'Santa Cruz, Marinduque'],
+      ['Sta. Ana', 'Sta. Ana, Cagayan'],
+    ]);
+  });
+
+  it('takes "<town>, Quezon City" as Quezon City', () => {
+    expectPlaces([
+      ['San Antonio, Quezon City', 'Quezon City'],
+      ['San Antonio Quezon City', 'Quezon City'],
+      ['Lian, Batangas City', 'Batangas City'],
+      ['San Antonio, Quezon Province', 'San Antonio, Quezon'],
+    ]);
+  });
+
+  it('finds San Fernando, Pampanga, typed "San Fernando City", and keeps La Union\'s', () => {
+    expectPlaces([
+      ['San Fernando City, Pampanga', 'San Fernando, Pampanga'],
+      ['Brgy. Dolores, San Fernando City, Pampanga', 'San Fernando, Pampanga'],
+      ['San Fernando City Pampanga', 'San Fernando, Pampanga'],
+      ['San Fernando City Hall, San Fernando, Pampanga', 'San Fernando, Pampanga'],
+      ['Brgy. Dolores, City of San Fernando, Pampanga', 'San Fernando, Pampanga'],
+      ['San Fernando City', 'San Fernando City, La Union'],
+      ['Brgy. Catbangen, San Fernando City, La Union', 'San Fernando City, La Union'],
+      ['Naga City, Cebu', 'Naga, Cebu Province'],
+      // A province named before the city: the province, 2 km from its capital.
+      ['SM City Pampanga, San Fernando City', 'Pampanga'],
+      // A province's name as a whole part before the last reads as a barangay's: the city typed stays.
+      ['Isabela, Roxas City', 'Roxas City, Capiz'],
+      ['Isabela, San Pablo City', 'San Pablo City, Laguna'],
+      // A street or barangay named after a province says nothing about the city's namesakes.
+      ['Isabela St., Quezon City', 'Quezon City'],
+      ['Brgy. Isabela, Quezon City', 'Quezon City'],
+      ['Cebu St., Naga City', 'Naga City'],
+      ['Abra del Ilog, San Juan City', 'San Juan City'],
+    ]);
+  });
+
+  it('finds the town typed with its province before a landmark named after another town', () => {
+    expectPlaces([
+      ['Magsaysay Park, Narra, Palawan', 'Narra, Palawan'],
+      ['Quezon Memorial Hospital, Taytay, Palawan', 'Taytay, Palawan'],
+      ['Rizal Elementary School, Tuguegarao City, Cagayan', 'Tuguegarao City, Cagayan'],
+      ['Mabini Shrine, Tagbilaran City, Bohol', 'Tagbilaran City, Bohol'],
+      ['Burgos Elementary School, Urdaneta, Pangasinan', 'Urdaneta, Pangasinan'],
+      ['Rizal Park, Tuguegarao, Cagayan', 'Tuguegarao City, Cagayan'],
+      ['Magsaysay Elementary School, Puerto Princesa City, Palawan', 'Puerto Princesa City'],
+      ['Quezon Park, Santiago City, Isabela', 'Santiago City'],
+      ['Leyte Provincial Hospital, Palo, Leyte', 'Palo, Leyte'],
+      ['Aparri, Cagayan de Oro City', 'Cagayan de Oro City'],
+    ]);
+  });
+
+  it("doesn't take a street or barangay named like a province for that province", () => {
+    expectPlaces([
+      ['Brgy. Quezon, Dolores, Eastern Samar', 'Eastern Samar'],
+      ['M.L. Quezon St., General Luna, Surigao del Norte', 'Surigao del Norte'],
+      ['Brgy. Quezon, Buenavista, Bohol', 'Bohol'],
+      ['Brgy. Aurora, Casiguran, Sorsogon', 'Sorsogon'],
+      ['J.P. Rizal St., Baras', 'Baras, Province of Rizal'],
+      ['Quezon Rural Health Unit - Isabela, Quezon', 'Quezon, Isabela'],
+    ]);
+  });
+
+  it('reads "Sto. Tomas City" as the Sto. Tomas spelled so', () => {
+    expectPlaces([
+      ['Sto. Tomas City Hall', 'Sto. Tomas, Batangas'],
+      ['Sto. Tomas City Health Office', 'Sto. Tomas, Batangas'],
+      ['Sto. Tomas City', 'Sto. Tomas, Batangas'],
+      ['Sta. Barbara City', 'Sta. Barbara, Iloilo Province'],
+      ['Santo Tomas City', 'Santo Tomas, Pampanga'],
+      // Spelled the other way, a town named with its province still ranks above the province.
+      ['SANTA ANA RURAL HEALTH UNIT, Cagayan', 'Sta. Ana, Cagayan'],
+    ]);
+  });
+
+  it('drops the namesakes of a town found by its label with its province', () => {
+    expectPlaces([
+      ['MAASIN CITY HEALTH UNIT I, Maasin, Southern Leyte', 'Maasin, Southern Leyte'],
+      ['TALISAY CITY HEALTH UNIT III, Talisay, Cebu Province', 'Talisay, Cebu Province'],
+      ['SAN CARLOS CITY HEALTH OFFICE, San Carlos City, Pangasinan', 'San Carlos City, Pangasinan'],
+      ['Samal City Hall, Samal, Davao del Norte', 'Samal, Davao del Norte'],
+      ['Valencia City Hall, Valencia, Bukidnon', 'Valencia, Bukidnon'],
+      ['Batangas City, Batangas Province', 'Batangas City'],
+    ]);
+  });
+
+  it('counts a name that is also named on its own, outside a longer name', () => {
+    expectPlaces([
+      ['Brgy. New Bataan, Bataan', 'Bataan'],
+      ['Padre Burgos St., Burgos, Pangasinan', 'Burgos, Pangasinan'],
+      ['BRGY. NAGA-NAGA, Palo', 'Palo, Leyte'],
+      ['Brgy. Poblacion, New Bataan', 'New Bataan, Davao de Oro'],
+    ]);
+  });
+
+  it("doesn't take a province's name inside another town's label as naming a town's province", () => {
+    expectPlaces([
+      ['ABORLAN MEDICARE HOSPITAL, Rizal (Marcos), Palawan', 'Rizal (Marcos), Palawan'],
+      ['Aborlan District Hospital, Taytay, Palawan', 'Taytay, Palawan'],
+      ['Abulug District Hospital, Tuguegarao City, Cagayan', 'Tuguegarao City, Cagayan'],
+      ['Mabini, Maribojoc, Bohol', 'Maribojoc, Bohol'],
+      ['Luna, Rosario, La Union', 'Rosario, La Union'],
+      // Nor the province's name inside a city's name.
+      ['San Francisco, Cebu City', 'Cebu City'],
+      ['Lemery, Iloilo City', 'Iloilo City'],
+    ]);
+  });
+
+  it('reads street and barangay words only within their own comma part, and ranks those names no higher than a town', () => {
+    expectPlaces([
+      ['TABUK BARANGAY, Isabela', 'Isabela'],
+      ['Bagumbayan Barangay, Bais City, Negros Oriental', 'Bais City, Negros Oriental'],
+      ['Brgy. Cebu City, Aguinaldo', 'Aguinaldo, Ifugao'],
+    ]);
+  });
+
+  it('doesn\'t take the word "Mountain" for Mountain Province', () => {
+    expectPlaces([
+      ['Mountain View Subdivision', null],
+      ['Rocky Mountain Clinic', null],
+      ['Smokey Mountain', null],
+      ['Mountain View Subdivision, Rizal', 'Province of Rizal'],
+      // As the last part, or before "Provincial", it is still the province: no city answers to "Mountain".
+      ['Brgy. San Jose, Mountain', 'Mountain Province'],
+      ['Mountain Provincial Hospital', 'Mountain Province'],
+      ['Mountain Province', 'Mountain Province'],
+      ['Bontoc, Mountain Province', 'Bontoc, Mountain Province'],
+    ]);
+  });
+
+  it('leaves a province at the very end without a comma, "Bayan ng X" and a partial "Sta." name as they were', () => {
+    expectPlaces([
+      // A province at the very end without a comma: cities still win ties.
+      ['Kawit Cavite', 'Cavite City'],
+      ['Taytay Rizal', 'Taytay, Palawan'],
+      // "Bayan ng X" is a name with no kind asked for.
+      ['Bayan ng Isabela', 'Isabela'],
+      // Partial "Sta." names while typing tie by label order.
+      ['Sta. B', 'Santa Barbara, Pangasinan'],
+    ]);
+  });
+
+  it('applies the same rules to a small synthetic list', () => {
+    expectPlaces(
+      [
+        ['Brgy. 1, QC', 'Quezon City'],
+        ['Cubao, Q.C.', 'Quezon City'],
+        ['Bagumbayan, Lamitan', 'Lamitan, Basilan'],
+        ['Cubao, Metro Manila', 'City of Manila'],
+        ['Brgy. San Jose, Batangas 4200', 'Batangas Province'],
+        ['Brgy. 1, Rizal', 'Province of Rizal'],
+        ['Brgy. 1, Province of Quezon', 'Quezon Province'],
+      ],
+      gaz,
+    );
+  });
+});
+
+describe('the two checkers of round 1: what each finding found, with the right place', () => {
+  const rows: FacilityRow[] = JSON.parse(readFileSync('data/tb-dots-facilities.json', 'utf8')).facilities;
+  const abbreviations: Record<string, string> = JSON.parse(readFileSync('data/place-abbreviations.json', 'utf8')).abbreviations;
+  const full = buildGazetteer(rows.map(prepare), abbreviations);
+  /** Each text with the label it plans from (null: the text route), so a failure names the text. */
+  const expectPlaces = (cases: [string, string | null][], entries: readonly GazEntry[] = full) => {
+    for (const [text, place] of cases) expect([text, matchPlace(text, entries)?.label ?? null]).toEqual([text, place]);
+  };
+
+  it('reads "<Metro Manila city>, Manila" as that city, with Manila as the metro area', () => {
+    expectPlaces([
+      ['Muntinlupa, Manila', 'Muntinlupa City'],
+      ['Las Pinas, Manila', 'Las Piñas City'],
+      ['Brgy. San Isidro, Marikina, Manila', 'Marikina City'],
+      ['Taguig City, Manila', 'Taguig City'],
+      ['Pateros, Manila', 'Pateros'],
+      ['Caloocan, Manila', 'Caloocan City'],
+      ['Makati, Manila', 'Makati City'],
+      // Unchanged: a landmark or district before ", Manila".
+      ['Quezon Bridge, Manila', 'City of Manila'],
+      ['Pasig River, Manila', 'City of Manila'],
+      ['San Agustin Church, Manila', 'City of Manila'],
+      ['Tondo, Manila', 'Tondo, Manila, City of Manila'],
+      ['123 Mabini St., Malate, Manila', 'Malate, Manila, City of Manila'],
+      // Old addresses with "Rizal" stay with the province (lead decision 2).
+      ['Marikina, Rizal', 'Province of Rizal'],
+    ]);
+  });
+
+  it('keeps a Metro Manila city typed with "Metro Manila" or "NCR", also when a street has its name', () => {
+    expectPlaces([
+      ['Diliman, Quezon, Metro Manila', 'Quezon City'],
+      ['East Avenue, Diliman, Brgy. Pinyahan, Quezon, Metro Manila', 'Quezon City'],
+      ['Diliman, Quezon, NCR', 'Quezon City'],
+      ['Quezon Ave., Metro Manila', 'Quezon City'],
+      ['Makati Ave., Metro Manila', 'Makati City'],
+      ['Pasig Blvd, Pasig, Metro Manila', 'Pasig City'],
+      ['425 Pasig Blvd., Brgy. Bagong Ilog, Pasig, Metro Manila', 'Pasig City'],
+      ['Caloocan Ave., Caloocan, Metro Manila', 'Caloocan City'],
+      ['Brgy. Caloocan, Caloocan, Metro Manila', 'Caloocan City'],
+      // Unchanged: a place the list doesn't name is the City of Manila; Quezon without Metro Manila is the province.
+      ['Cubao, Metro Manila', 'City of Manila'],
+      ['BGC, Metro Manila', 'City of Manila'],
+      ['Alabang, Metro Manila', 'City of Manila'],
+      ['Brgy. Bagumbayan, Metro Manila', 'City of Manila'],
+      ['Quezon City, Metro Manila', 'Quezon City'],
+      ['Brgy. San Jose, Quezon', 'Quezon Province'],
+      ['Cubao, Quezon', 'Quezon Province'],
+      ['Brgy. San Isidro, Rizal, Metro Manila', 'Province of Rizal'],
+    ]);
+  });
+
+  it('reads "Prov." as "Province", and "Caraga" after a town as the region', () => {
+    expectPlaces([
+      ['Brgy. San Isidro, Mountain Prov.', 'Mountain Province'],
+      ['Poblacion, Mountain Prov.', 'Mountain Province'],
+      ['Brgy. San Jose, Prov. of Mountain', 'Mountain Province'],
+      ['Brgy. San Jose, Batangas Prov.', 'Batangas Province'],
+      ['Brgy. San Jose, Cavite Prov.', 'Cavite Province'],
+      ['Brgy. Consuelo, Bunawan, Caraga', 'Bunawan, Agusan del Sur'],
+      ['National Highway, Maygatasan, Bayugan, Caraga', 'Bayugan, Agusan del Sur'],
+      ['Brgy. Consuelo, Bunawan, Caraga Region', 'Bunawan, Agusan del Sur'],
+      ['Purok 2, Brgy. Poblacion, Caraga', 'Caraga, Davao Oriental'],
+      ['Poblacion, Caraga', 'Caraga, Davao Oriental'],
+      ['Caraga', 'Caraga, Davao Oriental'],
+    ]);
+  });
+
+  it('ignores "<name> Region", "Region IVA" and "Region 4A" at the end', () => {
+    expectPlaces([
+      ['Brgy. San Jose, Cavite, Calabarzon Region', 'Cavite Province'],
+      ['Brgy. San Jose, Cavite, Region IVA', 'Cavite Province'],
+      ['Brgy. San Jose, Batangas, Region 4A', 'Batangas Province'],
+      ['Brgy. San Jose, Batangas, Region IV-A', 'Batangas Province'],
+    ]);
+  });
+
+  it('reads an abbreviation inside a brand or shop name as a bare name, below the town typed last', () => {
+    expectPlaces([
+      ['CDO Foodsphere, Valenzuela', 'Valenzuela City'],
+      ['GenSan Tuna Bar, Pasig', 'Pasig City'],
+      ['QC Bank, Pasig', 'Pasig City'],
+      // Unchanged: alone, last, or before a ZIP code it is still its place.
+      ['Cubao, QC 1100', 'Quezon City'],
+      ['Cubao QC', 'Quezon City'],
+      ['QC Hall', 'Quezon City'],
+      ['Bagumbayan QC', 'Quezon City'],
+      ['CDO Divisoria', 'Cagayan de Oro City'],
+      ['GenSan Fish Port', 'General Santos City, South Cotabato'],
+      ['Lagao, GenSan 9500', 'General Santos City, South Cotabato'],
+      ['Dasma Cavite', 'Dasmarinas, Cavite'],
+      ['Q.C.', 'Quezon City'],
+    ]);
+  });
+
+  it('finds a town the list writes with a second name in brackets by its first name', () => {
+    expectPlaces([
+      ['San Fernando, Banton, Romblon', 'Banton (Jones), Romblon'],
+      ['Caoayan, Quirino, Ilocos Sur', 'Quirino (Angaki), Ilocos Sur'],
+      ['Ayungon, Valencia, Negros Oriental', 'Valencia (Luzurriaga), Negros Oriental'],
+      ['Alilem, San Juan, Ilocos Sur', 'San Juan (Lapog), Ilocos Sur'],
+      ['Bagumbayan, Santa Praxedes', 'Sta. Praxedes (Langangan), Cagayan'],
+      ['Bagumbayan, Sta. Praxedes', 'Sta. Praxedes (Langangan), Cagayan'],
+      // As the last part, a town of that name without brackets still comes first.
+      ['San Isidro, Valencia', 'Valencia, Bohol'],
+    ]);
+  });
+
+  it('reads "Cotabato" after a North Cotabato town as its province', () => {
+    expectPlaces([
+      ['Antipas, Cotabato', 'Antipas, North Cotabato'],
+      ['Brgy. Poblacion, Arakan, Cotabato', 'Arakan, North Cotabato'],
+      ['Kidapawan, Cotabato', 'Kidapawan, North Cotabato'],
+      ['Carmen, Cotabato', 'Carmen, North Cotabato'],
+      ['Brgy. Rosary Heights, Cotabato', 'Cotabato City'],
+    ]);
+  });
+
+  it('takes the town typed with its province over "<X> City" named elsewhere in the text', () => {
+    expectPlaces([
+      ['Tagbilaran City, Talibon, Bohol', 'Talibon, Bohol'],
+      ['Lipa City District Hospital, Nasugbu, Batangas', 'Nasugbu, Batangas'],
+      ['Bago City District Hospital, Calatrava, Negros Occidental', 'Calatrava, Negros Occidental'],
+      ['Bago City Health Office, Binalbagan, Negros Occidental', 'Binalbagan, Negros Occidental'],
+      ['Tuguegarao City District Hospital, Tuao, Cagayan', 'Tuao, Cagayan'],
+      // Lead decision 4.
+      ['Tacloban City, Leyte', 'Tacloban City'],
+    ]);
+  });
+
+  it('reads a city listed as "<X> City" only within one comma part and not before "of"', () => {
+    expectPlaces([
+      ['Quezon, City of Calamba', 'Calamba, Laguna'],
+      ['Santiago, City of Malolos', 'Malolos, Bulacan'],
+      ['Quezon, City of Ilagan', 'Ilagan, Isabela'],
+      ['Santiago, City of Cabuyao', 'Cabuyao, Laguna'],
+      ['Little Baguio, City of San Juan', 'San Juan City'],
+      ['Dagupan, City of Manila', 'City of Manila'],
+      ['Quezon, City of Tanauan, Batangas', 'Tanauan, Batangas'],
+      ['Quezon, City of San Fernando, Pampanga', 'San Fernando, Pampanga'],
+    ]);
+  });
+
+  it('reads a province typed as a street or barangay and again as the last part as that province', () => {
+    expectPlaces([
+      ['Bulacan St., San Roque, Bulacan', 'Bulacan'],
+      ['Brgy. Bulacan, San Jose, Bulacan', 'Bulacan'],
+      ['Leyte St., San Isidro, Leyte', 'Leyte'],
+      ['Cagayan St., San Isidro, Cagayan', 'Cagayan'],
+      ['Laguna St., San Isidro, Laguna', 'Laguna'],
+      ['Pangasinan St., San Jose, Pangasinan', 'Pangasinan'],
+      ['Brgy. San Miguel, San Miguel, Manila', 'San Miguel, Manila, City of Manila'],
+      ['Magsaysay Avenue Ramon Magsaysay', 'Ramon Magsaysay, Zamboanga del Sur'],
+    ]);
+  });
+
+  it('ranks a "Sta."/"Santa" spelling below the last part\'s edge', () => {
+    expectPlaces([
+      ['San Isidro, Santa Lucia', 'Sta. Lucia, Ilocos Sur'],
+      ['Santa Maria District Hospital, Bulacan', 'Sta. Maria, Bulacan'],
+      ['Sta. Fe Health Center, Leyte', 'Santa Fe, Leyte'],
+      ['Sta. Fe Rural Health Unit, Romblon', 'Santa Fe, Romblon'],
+      ['SANTA ANA RURAL HEALTH UNIT, Cagayan', 'Sta. Ana, Cagayan'],
+      ['Sta. Ana', 'Sta. Ana, Cagayan'],
+    ]);
+    // Two towns are spelled "Sta. Teresita": either is right.
+    expect(['Sta. Teresita, Batangas', 'Sta. Teresita, Cagayan']).toContain(matchPlace('San Jose, Santa Teresita', full)?.label);
+  });
+
+  it('reads a Manila district typed before ", Manila" at the end as that district', () => {
+    expectPlaces([
+      ['Dagupan Health Center, Tondo, Manila', 'Tondo, Manila, City of Manila'],
+      ['Dapitan Health Center, Sampaloc, Manila', 'Sampaloc, Manila, City of Manila'],
+      ['Esperanza Health Center, Santa Mesa, Manila', 'Santa Mesa, Manila, City of Manila'],
+      ['San Miguel Health Center, San Miguel, Manila', 'San Miguel, Manila, City of Manila'],
+      ['Sta. Ana Hospital, Sta. Ana, Manila', 'Sta. Ana, Manila, City of Manila'],
+      ['Tayabas Health Center, Tondo, Manila', 'Tondo, Manila, City of Manila'],
+      ['Tondo, Manila, Batangas 4000', 'Batangas Province'],
+    ]);
+  });
+
+  it('takes a province or city group that is the whole last part, also "…, Manila City"', () => {
+    expectPlaces([
+      ['Biliran, Bohol', 'Bohol'],
+      ['Biliran, Cagayan', 'Cagayan'],
+      ['Pateros, Quezon', 'Quezon Province'],
+      ['Bulacan, Taguig', 'Taguig City'],
+      ['Lapu-Lapu City, Taguig', 'Taguig City'],
+      ['San Isidro, Manila City', 'City of Manila'],
+      ['Bagumbayan, Manila City', 'City of Manila'],
+      ['San Agustin Church, Manila City', 'City of Manila'],
+      ['Brgy. Greenhills, City of San Juan', 'San Juan City'],
+    ]);
+  });
+
+  it('the final check of round 2: purok before a Caraga barangay, Metro Manila typed, an abbreviation before a province', () => {
+    expectPlaces([
+      ['Purok 2, San Jose, Caraga', 'Caraga, Davao Oriental'],
+      ['Sitio Mahayag, Santiago, Caraga', 'Caraga, Davao Oriental'],
+      ['Brgy. Consuelo, Bunawan, Caraga', 'Bunawan, Agusan del Sur'],
+      ['Marikina, Santo Niño, Metro Manila', 'Marikina City'],
+      ['Pasig, Santa Lucia, Metro Manila', 'Pasig City'],
+      ['Quezon, Santo Domingo, Metro Manila', 'Quezon City'],
+      ['Lapasan CDO, Misamis Oriental', 'Cagayan de Oro City'],
+      ['CDO Foodsphere, Valenzuela', 'Valenzuela City'],
+    ]);
   });
 });
