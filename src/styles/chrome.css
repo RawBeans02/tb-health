@@ -381,11 +381,15 @@ html[data-standalone='true'] .install-entry {
   padding-top: 20px;
 }
 
-.site-footer-credit p:first-child {
+.site-footer-sources p {
   font-size: var(--text-15);
   line-height: 1.45;
   color: var(--muted);
   max-width: 44rem;
+}
+
+.site-footer-sources p + p {
+  margin-top: 4px;
 }
 
 .site-footer-mark {

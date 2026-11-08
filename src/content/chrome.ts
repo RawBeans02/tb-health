@@ -40,4 +40,11 @@ export const chrome = {
     flags: ['FIL-REVIEW'],
     note: 'Pack :35–36 say 23 October 2026; README and the prototype say 30 October 2026. {date} is the newest data-file date (src/lib/dates.ts).',
   },
+  creditOsm: {
+    en: 'Clinic positions:',
+    fil: 'Mga lokasyon ng klinika:',
+    origin: 'decision',
+    src: ['decision:Q8', 'decision:Q8'],
+    note: "The owner's approved wording (Q8, 8 Nov 2026): the clinic positions are OpenStreetMap data (Nominatim), which asks for this credit. SiteFooter.astro follows it with the link \"© OpenStreetMap contributors\".",
+  },
 } satisfies Dict;

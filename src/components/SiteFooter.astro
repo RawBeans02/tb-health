@@ -1,6 +1,7 @@
 ---
 // Footer (README:139–145, SiteFooter.dc.html): safety note, emergency line, more pages,
-// the language links again, data credit and wordmark. "Install the app" hides when the
+// the language links again, data credit, the OpenStreetMap credit for the clinic positions
+// (Q8) and wordmark. "Install the app" hides when the
 // site runs as an installed app (html[data-standalone="true"]).
 import { chrome } from '../content/chrome.ts';
 import { fill, pick } from '../content/types.ts';
@@ -50,7 +51,10 @@ const items = navKeys('footer', features).map((key) => ({
       <LangToggle lang={lang} path={togglePath} />
     </div>
     <div class="site-footer-credit">
-      <p data-t="credit">{fill(t.credit, { date: formatDate(LAST_UPDATED, lang) })}</p>
+      <div class="site-footer-sources">
+        <p data-t="credit">{fill(t.credit, { date: formatDate(LAST_UPDATED, lang) })}</p>
+        <p><span data-t="creditOsm">{t.creditOsm}</span> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a></p>
+      </div>
       <p class="site-footer-mark wordmark"><span class="wordmark-tb">TB</span> PH</p>
     </div>
   </div>
