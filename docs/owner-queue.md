@@ -1,65 +1,40 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 6 November 2026 (launch no longer needs GitHub Actions). Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons.
+Kept by the TB Health lead. Updated 8 November 2026, launch day. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
 
-## Decide now
+## Before the public launch
 
-1. **Q7. The web address (domain).** The host is decided: Cloudflare Pages, in a TB Health-only account you control (`docs/decisions.md`, 5 Nov). Still open is the real domain. It's needed before the public launch, because an installed app is tied to its address. Until then, test copies use the free `*.pages.dev` address. The builder reads the address from one setting (`SITE_URL`), so your answer is a config change. Once the domain is known, HSTS also gets `includeSubDomains`.
-   - **When you're ready:** create the Cloudflare account yourself (with an email that isn't KitaMo's). Then follow HANDOVER's one-time setup:
-     - make an API token for the account and save it in the Mac's Keychain. You paste it in yourself, in Terminal. No session will ask you for it, and only the release commands read it. Like your GitHub key, any program running as your Mac user could read it.
-     - check the account;
-     - create the project.
+1. **Facts for the About page.** The release check blocks on its placeholders (`about.lede`, `about.a11yText`, `about.contactRow`):
+   - the group's name;
+   - whether the intro is true as written: "a team of researchers and data scientists, working with partner hospitals that care for people with TB". With no partner hospitals named at launch (A1), "working with partner hospitals" may need to go or change;
+   - the contact email, for the Contact row and the accessibility row ("tell us at [email]").
+2. **Cloudflare.** HANDOVER's one-time setup (the account, a Pages-only API token in the Keychain, the project), then the `*.pages.dev` address, which the release build takes as `SITE_URL`.
+3. **Two yeses for the release command:**
+   - ship the 13 strings that wait on the clinical review before it happens: the route's step titles and texts (`care.stopTitle_*`, `care.stopText_*`) and Learn's Treatment section (L6, 7 strings). The release command accepts them with `--accept=review`;
+   - keep the current defaults: the v6 design (the v7 zip isn't on the Mac), no Linux check before launch, the smaller design items (O2–O27) as they are, and no alt text for the link-preview image.
 
-     The exact commands are in HANDOVER's "One-time setup" (summarised in chat on 5 November). Test copies go to a separate preview address that search engines skip; only the launch goes to the main address.
-2. **O1. Typed barangays and landmarks hit a dead end.** The field asks for a barangay, but the site only knows cities and provinces. Recommended: the field's hint asks for a city or province (you write the new hint in EN and FIL), and the no-match state links to the full list. Revisit after the full clinic list (Q8).
-3. **O11. Four symptom-check cases for the clinical reviewers.** The code follows the content pack exactly, and two independent checks found no routing difference. In four cases, though, the pack's own wording conflicts, e.g. "No signs of TB right now" for someone who reported current symptoms. Recommended: add them to the clinical review list.
-   - **Also for the clinical review:** whether the saved or printed summary card should list risk factors such as HIV. That is sensitive health information under the Data Privacy Act (RA 10173).
-4. **Place abbreviations** the builder added to the place search: QC, CDO, GenSan, SJDM, Dasma, CamSur, CamNorte, NegOcc, NegOr. Confirm them or strike any that are wrong or too local.
-5. **Seven wording overrides** in `docs/copy-overrides.md`, where the README's or the prototype's wording ships instead of the content pack's (e.g. "Commute directions", "Call before you go", "Find TB care"). Confirm or change them.
-6. **The smaller design items, in one go.** Accept my recommendations for O2 to O7, O9, O10, O13 to O17, O19 to O21 and O24 to O26 (O16 means "keep as designed"). Also record O23 (don't adopt Glisse; port three small behaviours) and O27 (keep the frosted Home card as an approved exception). Several need a short line of wording from you; they're listed below.
-   - **O3 (short tab labels) matters more than the audit said.** The builder measured the phone tab bar:
-     - English labels already take two lines at 390px;
-     - "Check symptoms" overflows its tab by 6px at 320px, even at the default text size.
+## Decided (in `docs/decisions.md`)
 
-     Until short labels land, Check's Next button sits 11px higher on phones than in the prototype. That keeps the README's 14px gap above the bar (my call; say if you'd rather keep the prototype's 3px). With short labels it goes back to the README position.
+- **Q7, 7 Nov:** a public launch on a free `*.pages.dev` address, built without Check (`TBPH_CHECK=false`).
+- **Q8, 7 Nov:** the full PhilHealth list, geocoded with Nominatim; the run and its 8 Nov corrections are in `docs/data-refresh-2026-11-07.md`.
+- **Q5, Q3 and Q9, 8 Nov ("Approve all"):** the privacy row, the Filipino page descriptions and the wording without Check.
+- **Q8, 8 Nov ("Approve the credit"):** the OpenStreetMap credit for the clinic positions, in every page's footer.
+- **A1, 8 Nov ("Yes, drop both"):** no "Our partners" or "Medical review" section on About at launch; About's description no longer mentions how the health content is reviewed.
 
-## Wording only you can write (EN and FIL)
+## After the launch
 
-- **The privacy row** (`about.privacyServices`, Q5). The site can't launch publicly without it: the release check blocks until it's written, because the Data Privacy Act (RA 10173) expects visitors to be told who else sees what. It must cover:
-  - fonts are served by TB PH itself;
-  - the web host sees IP address, browser and pages visited;
-  - OpenStreetMap sees IP and the map area, and only if the map is opened;
-  - directions hand off to Google Maps, which then sees the chosen place;
-  - for Sakay.ph, the site copies the address and opens sakay.ph, which sees the place only if the reader pastes it there;
-  - calls go through the phone.
-- **Filipino page descriptions** for About, Data, Install, Learn and Place (Q3), and description templates for place pages (C10).
-- **If you accept them:**
-  - short tab labels (O3);
-  - a city-or-province hint for the location field (O1);
-  - a message for a location timeout (O6);
-  - Filipino names for the map's buttons (O13);
-  - a hidden "opens Google Maps in a new tab" phrase for screen readers (O14);
-  - a message for locations outside the Philippines (O21);
-  - "shared" and "couldn't save" lines for the summary image (O22).
-- **Alt text** for the link-preview image.
-- **Launch without Check (Q9):** versions without the check, or a yes to keep these as they are: `install.off2`, `install.lead`, `about.disclaimerText`, `about.privacy1`, `about.appText`, `meta.installDescription`, the 404 lead (C3, C8), and `home.bring3`, "Your TB check summary" in every route's What to bring list (found in the step 13 review).
-- **Placeholders:** group name, partners, medical reviewer, contact emails (`launch-check` lists them).
-- **Calls to make with the content owner:**
-  - C4: explain jargon at first use;
-  - C5: em dashes outside v7's list;
-  - C6: one name for a listed facility;
-  - C7: one Filipino register;
-  - C9: "never saved" lines beside Save, Share and Print;
-  - C11: lines that go stale with the WHO 2026 report.
-
-## Waiting on something else
-
-- **The v7 design** (`TB-PH-project.zip`): not on the Mac yet. Dark mode and the v7 wording wait for it, and so does the public launch, unless you decide to launch on the current design (v6) without them.
-- **Q8. The full clinic list** (a pipeline run with your OK), then O8 (the same centers repeated under every stop).
-- **Q11** (WHO 2026 report) and **Q12** (lapsed accreditations; default D24 applies until you decide).
-- **O12.** Record the reuse terms for the WHO data and the PhilHealth list, before step 14.
-- **O18 and O28:** try them on a real iPhone and Android phone first.
-- **Device checks:** the runtime checks listed in the audit report, including installing the app on a real iPhone and Android phone, VoiceOver, TalkBack and a Safari keyboard pass.
-- **Type sizes (D1):** the build uses the exact sizes the design specifies. Merging them into a smaller set later is a one-file change. Recommended: keep them as they are for launch.
-- **Keeping the clinic list fresh:** who refreshes the list each month, and the oldest list date you'll accept. launch-check shows the current date.
-- **Sakay.ph:** the site copies the address and opens sakay.ph, so no deep link ships. The deep links stay [VERIFY] until someone confirms Sakay's link format.
+- **Place search** (`src/lib/core/geo.ts`, reviewed three times on 8 Nov; see `docs/launch-2026-11-08.md`). Choices the lead made for you to confirm: in "<barangay>, <town>" the town after the comma wins a tie ("San Isidro, Tanauan" is Tanauan), which costs "<town>, <barangay>" written town-first ("Lubao, San Isidro" goes to San Isidro, Bohol); "…, Cebu" and "…, Iloilo" keep the cities; "Carmen, Cotabato" is Carmen, North Cotabato; "Rizal, Palawan" is the town Rizal (Marcos). Still open: island groups ("…, Luzon"); a city typed without "City" with its province ("Zamboanga, Zamboanga del Sur", "Tacloban, Leyte"), which needs city-to-province data; spellings the list doesn't hold ("General Trias" for "Gen. Trias", "Abra de Ilog" for "Abra del Ilog"); "M.M." for Metro Manila; namesake towns still tie by label order. O1's hint asking for a city or province would help.
+- **Phones:** 30 clinics list only numbers that can't be dialled and 60 only a local number without its area code (row numbers in `docs/data-refresh-2026-11-07.md`). Partners could confirm them.
+- **The clinic list:**
+  - who refreshes it each month, and the oldest list date you'll accept (launch-check shows the current date);
+  - Q12, the 85 lapsed accreditations (D24 applies until you decide);
+  - pipeline fixes before the next run: look up city groups with their province, read "Sta."/"Sto.", reject generic address text, and stop on a pin far from its province's other clinics.
+- **The sample fixture** (`data/tb-dots-facilities-SAMPLE.json`, the browser tests' 93 rows) carries the clinics' email column on 92 rows. Dropping it is a repository clean-up for your OK.
+- **Still open from earlier:**
+  - O11: four symptom-check cases for the clinical review, and whether the summary card should list risk factors such as HIV (RA 10173), when Check returns;
+  - the copy overrides in `docs/copy-overrides.md`;
+  - C4–C11 with the content owner;
+  - Q11 (the WHO 2026 report);
+  - O12: the reuse terms for the WHO data and the PhilHealth list;
+  - O18 and O28, and the device checks in the audit report (a real iPhone and Android phone, VoiceOver, TalkBack, a Safari keyboard pass);
+  - the Sakay.ph deep links stay [VERIFY]; the site copies the address and opens sakay.ph instead.
