@@ -6,6 +6,11 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ## 8 November 2026 (owner, in chat with the lead)
 
+### R1. The launch ships the strings that wait on the clinical review (release key [review])
+- **The owner accepts the release check's [review] key for the launch:** the 13 strings flagged [REVIEW] ship before their clinical review. They are the route's step titles and texts (`care.stopTitle_xray`, `care.stopTitle_test`, `care.stopTitle_meds`, `care.stopText_xray`, `care.stopText_test`, `care.stopText_meds`) and Learn's Treatment section (L6: `learn.l6_h`, `learn.l6_p1` to `learn.l6_p6`), all verbatim from the content pack. The owner answered "Yes, ship them" to the lead's question "Ship the 13 strings still awaiting clinical review with the launch?" on 8 Nov 2026.
+- **What follows:** the release command runs `npm run release-check -- --accept=review` (HANDOVER, "Each release", step 4). Check stays out of the launch build (Q9).
+- **Still open:** the clinical review itself. The [REVIEW] flags stay on these strings until it is recorded, and launch-check keeps listing them.
+
 ### A1. About: no partner-hospitals or medical-reviewer rows at launch
 - **The About page launches without the prototype's "Our partners" and "Medical review" sections** (README:245 lists them; their rows were placeholders: "Partner hospitals (names and logos to come)" and "Health content reviewed by [name, credentials, hospital] on [date]"). The owner answered "Yes, drop both" to the lead's question "Drop the partner-hospitals and medical-reviewer rows for launch?" on 8 Nov 2026.
 - **What follows:** About's page description no longer promises how the health content is reviewed: `meta.aboutDescription` EN "Who makes TB PH, privacy, accessibility, data updates and helpful phone numbers." FIL "Kung sino ang gumagawa ng TB PH, privacy, accessibility, mga update sa datos at mga numerong makatutulong." (the prototype's and Q3's wording without that clause, as the owner queue said it would be).

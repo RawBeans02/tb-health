@@ -9,9 +9,7 @@ Kept by the TB Health lead. Updated 8 November 2026, launch day. Answer in chat 
    - whether the intro is true as written: "a team of researchers and data scientists, working with partner hospitals that care for people with TB". With no partner hospitals named at launch (A1), "working with partner hospitals" may need to go or change;
    - the contact email, for the Contact row and the accessibility row ("tell us at [email]").
 2. **Cloudflare.** HANDOVER's one-time setup (the account, a Pages-only API token in the Keychain, the project), then the `*.pages.dev` address, which the release build takes as `SITE_URL`.
-3. **Two yeses for the release command:**
-   - ship the 13 strings that wait on the clinical review before it happens: the route's step titles and texts (`care.stopTitle_*`, `care.stopText_*`) and Learn's Treatment section (L6, 7 strings). The release command accepts them with `--accept=review`;
-   - keep the current defaults: the v6 design (the v7 zip isn't on the Mac), no Linux check before launch, the smaller design items (O2–O27) as they are, and no alt text for the link-preview image.
+3. **One yes for the release:** keep the current defaults: the v6 design (the v7 zip isn't on the Mac), no Linux check before launch, the smaller design items (O2–O27) as they are, and no alt text for the link-preview image.
 
 ## Decided (in `docs/decisions.md`)
 
@@ -19,6 +17,7 @@ Kept by the TB Health lead. Updated 8 November 2026, launch day. Answer in chat 
 - **Q8, 7 Nov:** the full PhilHealth list, geocoded with Nominatim; the run and its 8 Nov corrections are in `docs/data-refresh-2026-11-07.md`.
 - **Q5, Q3 and Q9, 8 Nov ("Approve all"):** the privacy row, the Filipino page descriptions and the wording without Check.
 - **Q8, 8 Nov ("Approve the credit"):** the OpenStreetMap credit for the clinic positions, in every page's footer.
+- **R1, 8 Nov ("Yes, ship them"):** the 13 strings that wait on the clinical review ship with the launch (`--accept=review`); the review itself stays open.
 - **A1, 8 Nov ("Yes, drop both"):** no "Our partners" or "Medical review" section on About at launch; About's description no longer mentions how the health content is reviewed.
 
 ## After the launch
