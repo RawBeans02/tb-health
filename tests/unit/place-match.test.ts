@@ -69,6 +69,13 @@ const list = [
   clinic('Abra del Ilog', 'Occidental Mindoro', 13.44, 120.73),
   clinic('Del Carmen', 'Surigao del Norte', 9.87, 126.03),
   clinic('Santa Monica (Sapao)', 'Surigao del Norte', 10.02, 126.04),
+  // A city group, and barangay names that are towns elsewhere (the review of e992bb1).
+  clinic('Taguig', 'Taguig City', 14.52, 121.05),
+  clinic('Bagumbayan', 'Sultan Kudarat', 6.53, 124.56),
+  clinic('San Isidro', 'Bohol', 10.03, 124.32),
+  clinic('Claveria', 'Cagayan', 18.61, 121.08),
+  clinic('Claveria', 'Misamis Oriental', 8.61, 124.89),
+  clinic('Gingoog City', 'Misamis Oriental', 8.82, 125.1),
 ];
 const gaz = buildGazetteer(list, { QC: 'Quezon City' });
 const label = (text: string, entries: readonly GazEntry[] = gaz) => matchPlace(text, entries)?.label ?? null;
@@ -189,6 +196,46 @@ describe('matchPlace: a place inside longer text', () => {
     expect(label('Santa Monica')).toBe('Santa Monica (Sapao), Surigao del Norte');
   });
 
+  it('finds a province or city group named after a barangay that is a town elsewhere', () => {
+    expect(label('Bagumbayan, Taguig City')).toBe('Taguig City');
+    expect(label('Brgy. San Isidro, Abra')).toBe('Abra');
+    expect(label('Brgy. San Isidro, Cebu Province')).toBe('Cebu Province');
+  });
+
+  it("takes an address's last part as its province, also one a city answers to", () => {
+    expect(label('Brgy. San Jose, Batangas')).toBe('Batangas Province');
+    expect(label('Brgy. Ibabang Dupay, Quezon')).toBe('Quezon Province');
+    expect(label('Brgy. San Jose, Batangas, Philippines')).toBe('Batangas Province');
+    // Without a comma it's a landmark or a street, and cities still win ties.
+    expect(label('Quezon Avenue')).toBe('Quezon City');
+    expect(label('Batangas')).toBe('Batangas City');
+    expect(label('Batangas City, Batangas')).toBe('Batangas City');
+  });
+
+  it('finds a town named with its province elsewhere in the text', () => {
+    expect(label('Claveria Health Dots Center Misamis Oriental')).toBe('Claveria, Misamis Oriental');
+    expect(label('Claveria Rural Health Unit, Cagayan')).toBe('Claveria, Cagayan');
+  });
+
+  it('finds "<name> City" in longer text for a town the list writes without it', () => {
+    expect(label('Brgy. Sunrise, Isabela City')).toBe('Isabela, Basilan');
+    expect(label('Brgy. 1, City of Isabela')).toBe('Isabela, Basilan');
+  });
+
+  it('ranks a barangay, sitio or purok named like a town elsewhere below the places in the text', () => {
+    expect(label('Brgy. San Isidro, Tuguegarao City')).toBe('Tuguegarao City, Cagayan');
+    expect(label('Purok Claveria, Lamitan')).toBe('Lamitan, Basilan');
+    expect(label('Sitio Bagumbayan, Baler')).toBe('Baler, Aurora');
+    // Alone, it still finds the town.
+    expect(label('Barangay San Isidro')).toBe('San Isidro, Bohol');
+  });
+
+  it("doesn't take a barangay's \"Sta.\" or \"Sto.\" for the town of Santa", () => {
+    expect(label('Brgy. Sta. Isabel, Tuguegarao City')).toBe('Tuguegarao City, Cagayan');
+    expect(label('Brgy. Poblacion, Santa')).toBe('Santa, Ilocos Sur');
+    expect(label('Santa Rural Health Unit')).toBe('Santa, Ilocos Sur');
+  });
+
   it('ranks a street named like a place below the places in the text', () => {
     expect(label('123 Mabini St., Malate, Manila')).toBe('Malate, Manila, City of Manila');
     expect(label('Mabini St.')).toBe('Mabini, Batangas');
@@ -246,6 +293,50 @@ describe('the committed full list', () => {
     expect(label('Santa Monica', full)).toBe('Santa Monica (Sapao), Surigao del Norte');
     expect(label('Quezon City, Metro Manila', full)).toBe('Quezon City');
     expect(label('123 Mabini St., Malate, Manila', full)).toBe('Malate, Manila, City of Manila');
+  });
+
+  it('keeps barangays named like towns elsewhere in their province or city (the review of e992bb1)', () => {
+    const cases = [
+      ['Bagumbayan, Taguig City', 'Taguig City'],
+      ['Brgy. San Vicente, Lapu-Lapu City', 'Lapu-Lapu City'],
+      ['San Miguel, City of Manila', 'City of Manila'],
+      ['Brgy. San Isidro, Abra', 'Abra'],
+      ['Brgy. Sta. Isabel, Tuguegarao City', 'Tuguegarao City, Cagayan'],
+      ['Brgy. Sunrise, Isabela City', 'Isabela, Basilan'],
+      ['Claveria Health Dots Center Misamis Oriental', 'Claveria, Misamis Oriental'],
+      ['Quezon Rural Health Unit-Nueva Vizcaya', 'Quezon, Nueva Vizcaya'],
+      ['Brgy. Santo Niño, Tuguegarao City', 'Tuguegarao City, Cagayan'],
+      ['Brgy. San Jose, Batangas', 'Batangas Province'],
+      ['Little Baguio, San Juan City', 'San Juan City'],
+    ];
+    for (const [text, place] of cases) expect(label(text, full)).toBe(place);
+  });
+
+  it('keeps clinic names and addresses from the list on their own town', () => {
+    const cases = [
+      // A longer name around "<name> City" wins, and "City" belongs to a name only in its own part.
+      ['Maria Aurora City Hall', 'Maria Aurora'],
+      ['New Lucena City Hall', 'New Lucena, Iloilo Province'],
+      ['San Miguel, City of Manila', 'City of Manila'],
+      // Namesakes found as "<name> City" tie (label order), never cancel out.
+      ['Cauayan City Health Office', 'Cauayan, Isabela'],
+      // A town with its province named in the text beats a namesake elsewhere.
+      ['Ilang, San Carlos City, Pangasinan', 'San Carlos City, Pangasinan'],
+      ['Pangasinan Provincial Hospital, San Carlos City', 'San Carlos City, Pangasinan'],
+      ['KM 2 Binuangan Isabela City, Isabela', 'Isabela, Basilan'],
+      // A name named twice counts everywhere it appears; a group named after its town adds nothing.
+      ['STA. BARBARA RURAL HEALTH UNIT, Santa Barbara', 'Santa Barbara, Pangasinan'],
+      ['SAN JUAN MUNICIPAL HEALTH OFFICE, San Juan (Lapog)', 'San Juan (Lapog), Ilocos Sur'],
+      ['Brgy. Sta. Isabel, Santa', 'Santa, Ilocos Sur'],
+    ];
+    for (const [text, place] of cases) expect(label(text, full)).toBe(place);
+  });
+
+  it('stays fast on long text: matching reads at most 200 characters', () => {
+    const start = performance.now();
+    expect(label(`${'Quezon '.repeat(2000)}`, full)).toBe('Quezon City');
+    expect(label(`${'Purok 1, Brgy. San Isidro, '.repeat(3)}Tuguegarao City`, full)).toBe('Tuguegarao City, Cagayan');
+    expect(performance.now() - start).toBeLessThan(500);
   });
 
   it('attaches every listed abbreviation as before', () => {

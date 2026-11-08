@@ -115,15 +115,21 @@ const isCity = (g: GazEntry) => g.kind === 'city' && g.key !== g.key2;
  *  - a prefix of a name or label;
  *  - a name with the kind it asks for: "Isabela City", "Province of Rizal", "Lungsod ng Quezon";
  *  - a place named in longer text, as a barangay, street or landmark comes with it ("Brgy.
- *    Poblacion, Aurora, Zamboanga del Sur", "Baguio General Hospital"): a town's label with its
- *    province, then a name. A name inside a longer place's name in the text doesn't count
- *    ("Bataan" in "New Bataan", "Leyte" in "Southern Leyte"), and a street's ranks lower
- *    ("Mabini St.");
+ *    Poblacion, Aurora, Zamboanga del Sur", "Bagumbayan, Taguig City", "Baguio General
+ *    Hospital"): a town's label with its province, a town named with its province elsewhere in
+ *    the text ("Claveria … Misamis Oriental"), a province or city group named in full ("Taguig
+ *    City", "Nueva Vizcaya"; not one named like a town, such as Isabela), a province named as an
+ *    address's last part even when a city answers to it ("Brgy. San Jose, Batangas" is Batangas
+ *    Province; "Quezon Avenue" is still Quezon City), "<name> City" for a
+ *    town the list writes without it ("Brgy. Sunrise, Isabela City"); then a name. A name inside
+ *    a longer place's name in the text doesn't count ("Bataan" in "New Bataan", "Leyte" in
+ *    "Southern Leyte"), a street's or a barangay's ranks lower ("Mabini St.", "Brgy. Santo
+ *    Niño"), and "Sta."/"Sto." alone isn't the town of Santa or Santo ("Brgy. Sta. Isabel");
  *  - a name containing the text.
  * Below the names, ties go to a town or city, then a province, then a town named like a
  * province elsewhere; then to the label order. "Sta." and "Sto." read as "Santa" and "Santo"
- * (of two names that tie, the one spelled as typed wins), and a region or the country at the
- * end ("Metro Manila", "Philippines") doesn't count.
+ * (when the whole text is a name, of two that tie the one spelled as typed wins), and a region
+ * or the country at the end ("Metro Manila", "Philippines") doesn't count.
  */
 export function matchPlace(text: string, gaz: readonly GazEntry[]): GazEntry | null {
   return rankPlaces(text, gaz)?.g ?? null;
@@ -147,54 +153,168 @@ function qualified(t: string): { name: string; kind: GazEntry['kind'] } | null {
 
 const isName = (g: GazEntry, t: string) => g.full === t || g.key === t || g.key2 === t || g.aka.includes(t);
 
+/** A comma-separated part that is only a region or the country ("…, Batangas, Philippines"). */
+const AREA_PART = /^(?:metro manila|ncr|philippines|pilipinas|ph)$/;
+
 /** Words after a name that make it a street's: "Mabini St.", "Rizal Avenue". */
 const STREET = new Set(['st', 'street', 'ave', 'avenue', 'blvd', 'boulevard', 'rd', 'road', 'hwy', 'highway', 'dr', 'drive', 'ln', 'lane', 'ext', 'extension']);
 
-/** Where `name` first appears in `t` as whole words: its first word and the word after its last. */
-function span(t: string, name: string): [number, number] | null {
-  const at = name ? ` ${t} `.indexOf(` ${name} `) : -1;
-  if (at < 0) return null;
-  const first = at === 0 ? 0 : t.slice(0, at).trim().split(' ').length;
-  return [first, first + name.split(' ').length];
+/** Words before a name that make it a barangay's or a sitio's: "Brgy. Santo Niño", "Sitio Mabini". */
+const BARANGAY = new Set(['brgy', 'bgy', 'barangay', 'sitio', 'purok']);
+
+type Span = [number, number];
+
+/** For text `t`: every place a name appears in it as whole words, as its first word and the word after its last. */
+function spansIn(t: string): (name: string) => Span[] {
+  const padded = ` ${t} `;
+  // The word that starts at each character of `padded` (after its space).
+  const first = new Map<number, number>();
+  let at = 0;
+  t.split(' ').forEach((word, i) => {
+    first.set(at, i);
+    at += word.length + 1;
+  });
+  return (name) => {
+    const out: Span[] = [];
+    if (!name) return out;
+    const n = name.split(' ').length;
+    for (let i = padded.indexOf(` ${name} `); i >= 0; i = padded.indexOf(` ${name} `, i + 1)) out.push([first.get(i)!, first.get(i)! + n]);
+    return out;
+  };
 }
 
-function rankPlaces(text: string, gaz: readonly GazEntry[]): { g: GazEntry; score: number } | null {
+/** What rankPlaces looks up in a gazetteer, built once per gazetteer (Places matches on every render). */
+interface GazIndex {
+  /** The provinces each name (with and without "Province") belongs to. */
+  provinces: Map<string, string[]>;
+  /** Towns' and cities' names without "City". */
+  towns: Set<string>;
+  /** Every entry's name. */
+  keys: Set<string>;
+}
+
+const indexes = new WeakMap<readonly GazEntry[], GazIndex>();
+
+function indexOf(gaz: readonly GazEntry[]): GazIndex {
+  let index = indexes.get(gaz);
+  if (!index) {
+    const provinces = new Map<string, string[]>();
+    for (const p of gaz) if (p.kind === 'prov') for (const k of new Set([p.key, p.key2])) provinces.set(k, [...(provinces.get(k) ?? []), p.name]);
+    index = { provinces, towns: new Set(gaz.filter((x) => x.kind === 'city').map((x) => x.key2)), keys: new Set(gaz.map((x) => x.key)) };
+    indexes.set(gaz, index);
+  }
+  return index;
+}
+
+/** An address or landmark is short; longer text is cut, so matching stays fast. */
+const MAX_TEXT = 200;
+
+function rankPlaces(input: string, gaz: readonly GazEntry[]): { g: GazEntry; score: number } | null {
+  const text = input.slice(0, MAX_TEXT);
   const typed = placeText(text);
   const t = placeKey(typed);
   if (t.length < 2) return null;
+  const spans = spansIn(t);
   const q = qualified(t);
-  // The provinces each name (with and without "Province") belongs to.
-  const provinces = new Map<string, string[]>();
-  for (const p of gaz) if (p.kind === 'prov') for (const k of new Set([p.key, p.key2])) provinces.set(k, [...(provinces.get(k) ?? []), p.name]);
+  const { provinces, towns, keys } = indexOf(gaz);
+  const words = t.split(' ');
+  const typedWords = typed.split(' ');
+  // The last part of an address, after a comma ("Brgy. San Jose, Batangas"), names a province.
+  const parts = text.split(',').map((part) => placeKey(part)).filter((part) => part && !AREA_PART.test(part));
+  const last = parts.length > 1 && t.endsWith(` ${parts[parts.length - 1]}`) ? parts[parts.length - 1] : '';
+  // Where the commas fall, as word counts: "City" belongs to a name only in its own part ("San Miguel, City of Manila").
+  const commas: number[] = [];
+  for (const part of text.split(',').map((p) => placeKey(p)).filter(Boolean)) commas.push((commas[commas.length - 1] ?? 0) + part.split(' ').length);
+  const oneSide = ([a, b]: Span) => !commas.some((k) => a < k && k < b);
   // A town named like a province elsewhere: "Isabela, Basilan"; "San Juan, Abra" beside San Juan City.
   const shadowed = (g: GazEntry) => g.kind === 'city' && (provinces.get(g.key) ?? []).some((name) => name !== g.prov);
   const tie = (g: GazEntry) => (g.kind === 'prov' ? 0 : shadowed(g) ? -1 : 1);
-  const found: { g: GazEntry; score: number; at: [number, number] | null }[] = [];
+
+  /** A place named in longer text: its score, the first place that fits and every place its name appears. */
+  const inText = (g: GazEntry): { score: number; at: Span; all: Span[]; city?: true } | null => {
+    // Each way below names the place with its name without "City" in it.
+    if (!t.includes(g.key2)) return null;
+    const hit = (name: string, score: number, fits: (at: Span) => boolean = () => true) => {
+      const all = spans(name);
+      const at = all.find(fits);
+      return at ? { score, at, all } : null;
+    };
+    // A town's label, or a province named in full ("Taguig City", "Nueva Vizcaya") as d5a9d05 had it,
+    // but a province named like a town (Isabela, Aurora, Quirino) only by its name, below. A city
+    // also by its name ("Tuguegarao City").
+    if (g.kind === 'city' || g.full !== g.key2 || !towns.has(g.key2)) {
+      const score = 75 + (g.kind === 'prov' ? 0 : g.full !== g.key ? 1 : tie(g));
+      const found = hit(g.full, score) ?? (isCity(g) ? hit(g.key, score, oneSide) : null);
+      if (found) return found;
+    }
+    // A province named as an address's last part, also one a city answers to ("…, Batangas") or a
+    // town elsewhere is named like ("…, Aurora").
+    if (g.kind === 'prov' && g.key === last) {
+      const at: Span = [words.length - last.split(' ').length, words.length];
+      return { score: 75, at, all: [at] };
+    }
+    // "Isabela City": a town the list writes without "City", as its label, unless a place is named so.
+    // It sits on the name, so a longer name around it wins ("Maria Aurora City Hall" isn't Aurora).
+    if (g.kind === 'city' && g.key === g.key2 && !keys.has(`${g.key} city`) && !keys.has(`city of ${g.key}`)) {
+      const n = g.key.split(' ').length;
+      const before = spans(`${g.key} city`).filter(oneSide);
+      const after = spans(`city of ${g.key}`).filter(oneSide);
+      const at: Span | undefined = before.length ? [before[0][0], before[0][0] + n] : after.length ? [after[0][1] - n, after[0][1]] : undefined;
+      if (at) return { score: 76, at, all: [...before, ...after], city: true };
+    }
+    // A name; "Santa"/"Santo" alone only where typed so ("Sta. Isabel" isn't the town of Santa).
+    if (g.key2.length >= 4) return hit(g.key2, 70 + tie(g), ([first]) => !/^sant[ao]$/.test(g.key2) || typedWords[first] === g.key2);
+    return null;
+  };
+
+  const found: { g: GazEntry; score: number; at: Span | null; all: Span[]; city?: true }[] = [];
   for (const g of gaz) {
     let score = 0;
-    let at: [number, number] | null = null;
+    let at: Span | null = null;
+    let all: Span[] = [];
+    let city: true | undefined;
     if (g.aka.includes(t) || (g.full === t && g.full !== g.key)) score = 105;
     else if (g.key === t || g.key2 === t) score = g.kind === 'prov' ? (g.key === t ? 102 : 101) : isCity(g) ? 104 : shadowed(g) ? 100 : 103;
     // Typing on past a town's name into its province's picks that town.
     else if (g.full.startsWith(t) || g.key2.startsWith(t)) score = 80 + (g.kind === 'city' && t.length > g.key.length ? 1 : tie(g));
     else if (q && isName(g, q.name)) score = g.kind === q.kind ? 78 + (isCity(g) ? 1 : 0) : 77;
-    else if (g.kind === 'city' && (at = span(t, g.full))) score = 75 + (g.full !== g.key ? 1 : tie(g));
-    else if (g.key2.length >= 4 && (at = span(t, g.key2))) score = 70 + tie(g);
-    else if (t.length >= 3 && g.key.includes(t)) score = 60 + tie(g);
+    else {
+      const named = inText(g);
+      if (named) ({ score, at, all, city } = named);
+      else if (t.length >= 3 && g.key.includes(t)) score = 60 + tie(g);
+    }
+    if (!score) continue;
     // Of two towns that tie by name, the one spelled as typed: "Sta. Ana" is Sta. Ana, Cagayan, not Santa Ana, Pampanga.
     if (score >= 100 && score < 105 && g.kind === 'city' && norm(g.name) === typed) score += 0.5;
-    if (score) found.push({ g, score, at });
+    if (at) {
+      const where: Span = at;
+      // A town whose province is named elsewhere in the text counts as its label ("Claveria … Misamis
+      // Oriental"), and above a namesake also found by its full name ("…, San Carlos City").
+      if (g.kind === 'city' && g.prov && g.prov !== g.name && (score < 72 || score === 76)) {
+        const prov = placeKey(g.prov);
+        // Not a group named after the town itself: "San Juan City" says nothing more about San Juan.
+        const names = [prov, prov.replace(/^(city|province) of /, '').replace(/ (city|province)$/, '')].filter((name) => name !== g.key && name !== g.key2);
+        if (names.some((name) => spans(name).some(([a, b]) => b <= where[0] || a >= where[1]))) score = score < 75 ? 76 : 77;
+      }
+      // A name found only by reading "Sta." as "Santa" (or the reverse) ranks a hair below one spelled as typed.
+      const label = ` ${norm(g.label)} `;
+      if (/\bsant[ao]\b/.test(words.slice(where[0], where[1]).join(' ')) && !all.some(([a, b]) => label.includes(` ${typedWords.slice(a, b).join(' ')} `))) score -= 0.5;
+      // A street's or a barangay's name ranks below the places named in the text: "123 Mabini St., Malate,
+      // Manila" is Malate; "Brgy. Santo Niño, Tuguegarao City" is Tuguegarao. Alone, "Quezon Avenue"
+      // still finds Quezon City.
+      if (STREET.has(words[where[1]])) score -= 5;
+      if (where[0] > 0 && BARANGAY.has(words[where[0] - 1])) score -= 5;
+    }
+    found.push({ g, score, at, all, city });
   }
-  // A street named like a place ranks below the places named in the text: "123 Mabini St., Malate,
-  // Manila" is Malate, not Mabini in Batangas. Alone, "Quezon Avenue" still finds Quezon City.
-  const words = t.split(' ');
-  for (const f of found) if (f.at && STREET.has(words[f.at[1]])) f.score -= 5;
   // A name inside a longer place's name, both in the text, doesn't count: "Bataan" in "Brgy.
-  // Poblacion, New Bataan", "Leyte" in "Southern Leyte", "Aurora" in "Aurora, Zamboanga del Sur".
-  const inner = (at: [number, number] | null) =>
-    at !== null && found.some((o) => o.at !== null && o.at[0] <= at[0] && o.at[1] >= at[1] && o.at[1] - o.at[0] > at[1] - at[0]);
+  // Poblacion, New Bataan", "Leyte" in "Southern Leyte", "Santa" in "…, Santa Barbara".
+  // Two namesakes found as "<name> City" ("Cauayan City": Isabela's and Negros Occidental's) tie.
+  const inner = (f: (typeof found)[number]) =>
+    f.at !== null &&
+    found.some((o) => o !== f && !(o.city && f.city && o.g.key === f.g.key) && o.all.some(([a, b]) => a <= f.at![0] && b >= f.at![1] && b - a > f.at![1] - f.at![0]));
   let best: { g: GazEntry; score: number } | null = null;
-  for (const { g, score, at } of found) if (score > (best?.score ?? 0) && !inner(at)) best = { g, score };
+  for (const f of found) if (f.score > (best?.score ?? 0) && !inner(f)) best = { g: f.g, score: f.score };
   return best;
 }
 
