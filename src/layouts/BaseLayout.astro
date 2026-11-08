@@ -105,7 +105,7 @@ const shareDescription = shareText?.[lang] || descriptionText;
     </div>
     {/* Updates that don't move focus are read out here (src/scripts/announce.ts, audit B28). */}
     <p id="tbph-announce" class="visually-hidden" role="status"></p>
-    {inPlace && <InPlaceLanguage title={title} description={description} />}
+    {inPlace && <InPlaceLanguage title={title} description={description} features={features} />}
     <script>
       import '../scripts/lang.ts';
       import '../scripts/pwa.ts';

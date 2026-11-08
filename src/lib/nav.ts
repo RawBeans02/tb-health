@@ -1,5 +1,6 @@
 // One route list for the header nav, the phone tab bar, the footer and the
-// manifest shortcuts, so the Q9 build switch can leave Check out of all of them at once.
+// manifest shortcuts, so the Q9 build switch can leave Check out of all of them at once,
+// and the strings that name the check, which it leaves out of every page.
 import { href, type Lang } from './i18n.ts';
 
 export type NavKey = 'home' | 'check' | 'learn' | 'data' | 'about' | 'a11y' | 'install';
@@ -7,6 +8,28 @@ export type NavKey = 'home' | 'check' | 'learn' | 'data' | 'about' | 'a11y' | 'i
 /** Build-time feature switches. `check: false` launches without /check (Q9). */
 export interface Features {
   check: boolean;
+}
+
+/**
+ * Words that name the check, in either language. A build without Check has them nowhere in
+ * its pages, not even out of sight in island props or the in-place language JSON (Q9, review
+ * 8 Nov 2026): scripts/check-links.mjs fails the build on them, and the no-check browser test
+ * reads the pages for them.
+ */
+export const CHECK_NAMES = /symptom check|TB check summary|buod ng iyong TB check|check (?:my |your )?symptoms|suriin ang (?:iyong |aking )?sintomas/i;
+
+// Strings that name the check and travel whole to the browser, in island props or the in-place
+// language JSON: the nav label, Home's "Not sure yet?" link and the route's check summary.
+const CHECK_STRINGS = ['nav_check', 'optNotSure', 'bring3'] as const;
+type CheckString = (typeof CHECK_STRINGS)[number];
+
+/** Strings as a build ships them: one without Check may lack those that name it. */
+export type ForBuild<T> = Omit<T, CheckString> & Partial<Pick<T, Extract<keyof T, CheckString>>>;
+
+/** `strings` as this build ships them: a build without Check leaves out those that name it (Q9). */
+export function forBuild<T extends Record<string, string>>(strings: T, features: Features): ForBuild<T> {
+  if (features.check) return strings;
+  return Object.fromEntries(Object.entries(strings).filter(([key]) => !(CHECK_STRINGS as readonly string[]).includes(key))) as ForBuild<T>;
 }
 
 // README:130 (header), :132 (tab bar: the first four header items; About lives in the

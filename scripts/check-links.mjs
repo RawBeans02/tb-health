@@ -5,7 +5,9 @@
 //   - an internal link points at a page or file that wasn't built;
 //   - a canonical or hreflang link points at a page that wasn't built, or off the site (B41).
 // Pages from later steps are in PENDING: links to them only warn until they exist.
-// A build without Check (TBPH_CHECK=false, Q9) must not build or link to /check at all.
+// A build without Check (TBPH_CHECK=false, Q9) must not build or link to /check at all, ship
+// its island or stylesheet (which the service worker would save), or name the check anywhere
+// in a page's HTML: text, title, descriptions, island props, the in-place language JSON.
 //
 //   node scripts/check-links.mjs
 
@@ -13,12 +15,20 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { langOf, pagePath, toLang } from '../src/lib/i18n.ts';
+import { CHECK_NAMES } from '../src/lib/nav.ts';
 
 const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 
 // English paths of pages not built yet; remove each as its step lands.
 const PENDING = new Set([]);
 const withoutCheck = process.env.TBPH_CHECK === 'false';
+// Check's island and stylesheet in _astro/. Astro names the island after its component
+// (CheckFlow.<hash>.js) and the stylesheet after what imports check.css: the view
+// (Check.<hash>.css) or a lone page (_check_.<hash>.css). In case check.css's rules land in
+// a stylesheet named otherwise, every stylesheet is also read for .check-main, check.css's
+// class for Check's <main>.
+const CHECK_ASSET = /^_?check(?:flow)?_?\./i;
+const CHECK_CSS = /\.check-main\b/;
 
 function htmlFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -63,6 +73,8 @@ const site = homeCanonical ? new URL(homeCanonical).origin : null;
 for (const file of htmlFiles(dist)) {
   const html = readFileSync(file, 'utf8');
   const page = pagePath(`/${relative(dist, file)}`);
+  const named = withoutCheck && CHECK_NAMES.exec(html)?.[0];
+  if (named) errors.push(`${page}: names the check ("${named}"), but this build leaves Check out (TBPH_CHECK=false)`);
   const pageLang = /<html[^>]*\blang="([^"]+)"/.exec(html)?.[1];
   if (pageLang !== 'en' && pageLang !== 'fil') {
     errors.push(`${page}: <html lang> is ${JSON.stringify(pageLang)}`);
@@ -101,6 +113,10 @@ for (const file of htmlFiles(dist)) {
 
 if (withoutCheck) {
   for (const path of ['/check', '/fil/check']) if (builtFile(path)) errors.push(`${path} was built, but this build leaves Check out (TBPH_CHECK=false)`);
+  // build-sw.mjs precaches everything in _astro/, so this also keeps Check out of the service worker.
+  const assets = existsSync(join(dist, '_astro')) ? readdirSync(join(dist, '_astro')) : [];
+  const isCheck = (name) => CHECK_ASSET.test(name) || (name.endsWith('.css') && CHECK_CSS.test(readFileSync(join(dist, '_astro', name), 'utf8')));
+  for (const name of assets.filter(isCheck)) errors.push(`_astro/${name} is Check's, but this build leaves Check out (TBPH_CHECK=false)`);
 }
 
 if (pending.size) {
@@ -113,3 +129,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(`check-links: ${links} internal links and ${headLinks} canonical and hreflang links checked, languages match.`);
+if (withoutCheck) console.log('check-links: without Check: no /check page, link, _astro/ file or page naming the check.');

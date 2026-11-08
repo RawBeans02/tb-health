@@ -1,10 +1,43 @@
 // @ts-check
+import { fileURLToPath } from 'node:url';
 import { defineConfig, envField, fontProviders } from 'astro/config';
 import preact from '@astrojs/preact';
+import { loadEnv } from 'vite';
 import { siteOrigin } from './src/lib/site.ts';
 
 /** @param {string} pkg @param {string} file */
 const fontsource = (pkg, file) => `./node_modules/@fontsource/${pkg}/files/${file}`;
+
+// TBPH_CHECK=false builds without Check (Q9): no /check pages, and no Check in the nav, tab
+// bar, shortcuts, sitemap or service worker.
+const TBPH_CHECK = envField.boolean({ context: 'server', access: 'public', default: true });
+
+/**
+ * Check's pages, /check and /fil/check (Q9). They live in src/check-pages, not src/pages, and
+ * are added only when the build has Check: Astro bundles the island and stylesheet of every
+ * page in src/pages, so a build without Check would still ship and precache them (review,
+ * 8 Nov 2026). The switch is read as astro:env reads it for the pages, in the modes astro dev
+ * and astro build run in: the environment over .env files, empty or unset is the schema's
+ * default, anything but true or false an error.
+ * @returns {import('astro').AstroIntegration}
+ */
+function checkPages() {
+  return {
+    name: 'tbph-check-pages',
+    hooks: {
+      'astro:config:setup': ({ config, command, injectRoute }) => {
+        const value = loadEnv(command === 'dev' ? 'development' : 'production', config.vite.envDir ?? fileURLToPath(config.root), '').TBPH_CHECK;
+        if (value !== undefined && value !== '' && value !== 'true' && value !== 'false') {
+          throw new Error(`TBPH_CHECK is ${JSON.stringify(value)}: it must be true or false (Q9).`);
+        }
+        const withCheck = value === undefined || value === '' ? TBPH_CHECK.default : value === 'true';
+        if (!withCheck) return;
+        injectRoute({ pattern: '/check', entrypoint: './src/check-pages/check.astro' });
+        injectRoute({ pattern: '/fil/check', entrypoint: './src/check-pages/fil/check.astro' });
+      },
+    },
+  };
+}
 
 export default defineConfig({
   output: 'static',
@@ -14,12 +47,9 @@ export default defineConfig({
   // Slashless URLs served from flat files: /places -> places.html (PLAN §2).
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [preact()],
+  integrations: [preact(), checkPages()],
   env: {
-    schema: {
-      // TBPH_CHECK=false builds without Check in the nav, tab bar, shortcuts and sitemap (Q9).
-      TBPH_CHECK: envField.boolean({ context: 'server', access: 'public', default: true }),
-    },
+    schema: { TBPH_CHECK },
   },
   // Self-hosted from the Fontsource npm packages (README:89, OFL 1.1), latin subset.
   // Astro writes the @font-face rules and metric-matched fallbacks, so the swap doesn't shift layout.

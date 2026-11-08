@@ -10,6 +10,7 @@ import { home, homeSources } from '../content/home.ts';
 import { meta } from '../content/meta.ts';
 import { pick } from '../content/types.ts';
 import type { Lang } from '../lib/i18n.ts';
+import { forBuild } from '../lib/nav.ts';
 import '../styles/home.css';
 
 interface Props {
@@ -17,7 +18,9 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const strings = { en: { ...pick(home, 'en'), ...pick(care, 'en') }, fil: { ...pick(home, 'fil'), ...pick(care, 'fil') } };
+// Without Check (Q9) the strings that name it stay out of the island's props, not just its markup.
+const text = (l: Lang) => forBuild({ ...pick(home, l), ...pick(care, l) }, { check: TBPH_CHECK });
+const strings = { en: text('en'), fil: text('fil') };
 ---
 <BaseLayout lang={lang} title={meta.homeTitle} description={meta.homeDescription} shareText={home.lede} current="home" inPlace>
   <main id="main" tabindex="-1">

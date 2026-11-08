@@ -5,16 +5,19 @@ import { chrome } from '../content/chrome.ts';
 import { fill, pick, type Str } from '../content/types.ts';
 import { formatDate, LAST_UPDATED } from '../lib/dates.ts';
 import { LANGS } from '../lib/i18n.ts';
+import { forBuild, type Features } from '../lib/nav.ts';
 
 interface Props {
   title: Str;
   description?: Str;
+  features: Features;
 }
 
-const { title, description } = Astro.props;
+const { title, description, features } = Astro.props;
 const strings = Object.fromEntries(
   LANGS.map((lang) => {
-    const t = pick(chrome, lang);
+    // Without Check (Q9) its nav label stays out too: nothing would show it, but it would ship.
+    const t = forBuild(pick(chrome, lang), features);
     return [lang, { ...t, credit: fill(t.credit, { date: formatDate(LAST_UPDATED, lang) }), title: title[lang], description: description?.[lang] ?? '' }];
   }),
 );

@@ -1,6 +1,7 @@
 ---
 // Check symptoms (PLAN §5 step 7). The island owns <main> and switches language in place,
-// so it carries both languages' strings. Not built at all when TBPH_CHECK=false (Q9).
+// so it carries both languages' strings. Not built at all when TBPH_CHECK=false (Q9): its
+// pages, in src/check-pages, are added by astro.config.mjs only when the build has Check.
 import CheckFlow from '../islands/CheckFlow.tsx';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { check } from '../content/check.ts';

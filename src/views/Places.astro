@@ -1,6 +1,7 @@
 ---
 // Places: the full list (PLAN §5 step 5). The island owns <main> and switches language in
 // place, so it carries both languages' strings.
+import { TBPH_CHECK } from 'astro:env/server';
 import Places from '../islands/Places.tsx';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { care } from '../content/care.ts';
@@ -9,6 +10,7 @@ import { meta } from '../content/meta.ts';
 import { places } from '../content/places.ts';
 import { pick } from '../content/types.ts';
 import type { Lang } from '../lib/i18n.ts';
+import { forBuild } from '../lib/nav.ts';
 import '../styles/home.css';
 import '../styles/places.css';
 
@@ -17,10 +19,9 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const strings = {
-  en: { ...pick(home, 'en'), ...pick(care, 'en'), ...pick(places, 'en') },
-  fil: { ...pick(home, 'fil'), ...pick(care, 'fil'), ...pick(places, 'fil') },
-};
+// Without Check (Q9) Home's strings that name it stay out of the props (Places shows none of them).
+const text = (l: Lang) => forBuild({ ...pick(home, l), ...pick(care, l), ...pick(places, l) }, { check: TBPH_CHECK });
+const strings = { en: text('en'), fil: text('fil') };
 ---
 <BaseLayout lang={lang} title={meta.placesTitle} description={meta.placesDescription} current="home" inPlace>
   <main id="main" tabindex="-1">

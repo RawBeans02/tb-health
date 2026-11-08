@@ -16,11 +16,13 @@ import { locate } from '../lib/core/locate.ts';
 import { activeFilters, filterPlaces, NO_FILTERS, provinceOptions, regionOptions, type PlaceFilters, type Sector } from '../lib/core/places.ts';
 import { isPoint, resolveOrigin } from '../lib/core/route.ts';
 import { href, isLang, type Lang } from '../lib/i18n.ts';
+import type { ForBuild } from '../lib/nav.ts';
 import { BottomSheet, FacilityRow, LocationField, SegmentedControl, Select, Switch } from '../ui/controls.tsx';
 import { InfoLine, statusLabel } from '../ui/parts.tsx';
 import { createMap, loadLeaflet, type PlacesMap } from './placesMap.ts';
 
-export type PlacesStrings = Record<keyof typeof places | keyof typeof care | keyof typeof home, string>;
+/** A build without Check (Q9) passes none of the strings that name it. */
+export type PlacesStrings = ForBuild<Record<keyof typeof places | keyof typeof care | keyof typeof home, string>>;
 
 interface Props {
   lang: Lang;

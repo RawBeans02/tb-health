@@ -16,10 +16,12 @@ import { homeQuery, readHomeParams, type Need } from '../lib/core/links.ts';
 import { locate } from '../lib/core/locate.ts';
 import { isPoint, resolveOrigin, route, type Origin, type Route } from '../lib/core/route.ts';
 import { href, isLang, type Lang } from '../lib/i18n.ts';
+import type { ForBuild } from '../lib/nav.ts';
 import { FacilityRow, LocationField } from '../ui/controls.tsx';
 import { InfoLine, LinkRow, statusLabel } from '../ui/parts.tsx';
 
-export type PlannerStrings = Record<keyof typeof home | keyof typeof care, string>;
+/** A build without Check (Q9) passes none of the strings that name it (optNotSure, bring3). */
+export type PlannerStrings = ForBuild<Record<keyof typeof home | keyof typeof care, string>>;
 
 interface Props {
   lang: Lang;

@@ -1,8 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { about } from '../../src/content/about.ts';
+import { care } from '../../src/content/care.ts';
+import { chrome } from '../../src/content/chrome.ts';
+import { dotStory } from '../../src/content/dotstory.ts';
+import { home } from '../../src/content/home.ts';
+import { install } from '../../src/content/install.ts';
+import { learn } from '../../src/content/learn.ts';
+import { meta } from '../../src/content/meta.ts';
+import { notFound } from '../../src/content/notfound.ts';
+import { places } from '../../src/content/places.ts';
+import { pick } from '../../src/content/types.ts';
 import { formatDate, LAST_UPDATED } from '../../src/lib/dates.ts';
-import { href, langOf, pagePath, toLang } from '../../src/lib/i18n.ts';
-import { navHref, navKeys } from '../../src/lib/nav.ts';
+import { href, LANGS, langOf, pagePath, toLang } from '../../src/lib/i18n.ts';
+import { CHECK_NAMES, forBuild, navHref, navKeys } from '../../src/lib/nav.ts';
 
 describe('toLang', () => {
   it('maps every page to its twin and back', () => {
@@ -66,6 +77,36 @@ describe('navKeys (one route list, Q9)', () => {
 
   it('points Accessibility at the About section', () => {
     expect(navHref('a11y', 'fil')).toBe('/fil/about#accessibility');
+  });
+});
+
+describe('the strings a build without Check ships (Q9, review 8 Nov 2026)', () => {
+  it("CHECK_NAMES finds each of the check's names in the copy, in both languages", () => {
+    for (const s of [chrome.nav_check, home.optNotSure, home.bring3, dotStory.b7_check, learn.l5_action1, install.off2, install.lead, about.privacy1, about.disclaimerText, about.appText, meta.checkTitle, meta.installDescription]) {
+      expect(s.en).toMatch(CHECK_NAMES);
+      expect(s.fil).toMatch(CHECK_NAMES);
+    }
+  });
+
+  it('CHECK_NAMES finds none of the …NoCheck twins, which a build without Check ships instead', () => {
+    for (const s of [about.disclaimerTextNoCheck, about.privacy1NoCheck, about.appTextNoCheck, install.leadNoCheck, meta.installDescriptionNoCheck, notFound.leadNoCheck]) {
+      expect(s.en).not.toMatch(CHECK_NAMES);
+      expect(s.fil).not.toMatch(CHECK_NAMES);
+    }
+  });
+
+  it('forBuild passes every string through with Check', () => {
+    const t = { ...pick(home, 'en'), ...pick(chrome, 'en') };
+    expect(forBuild(t, { check: true })).toBe(t);
+  });
+
+  it('forBuild leaves out exactly the strings islands and the language JSON carry that name the check', () => {
+    for (const lang of LANGS) {
+      const all = { ...pick(home, lang), ...pick(care, lang), ...pick(places, lang), ...pick(chrome, lang) };
+      const shipped = forBuild(all, { check: false });
+      expect(Object.keys(all).filter((key) => !(key in shipped))).toEqual(['optNotSure', 'bring3', 'nav_check']);
+      expect(JSON.stringify(shipped), lang).not.toMatch(CHECK_NAMES);
+    }
   });
 });
 
