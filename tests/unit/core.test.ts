@@ -9,6 +9,7 @@ import { directionsUrl, homeQuery, readHomeParams } from '../../src/lib/core/lin
 import { firstPhone, telHref } from '../../src/lib/core/phone.ts';
 import { resolveOrigin, route, type Origin } from '../../src/lib/core/route.ts';
 import { norm, titleCase } from '../../src/lib/core/text.ts';
+import { placeDetails } from '../../src/lib/place-details.ts';
 
 const sampleFile = JSON.parse(readFileSync('data/tb-dots-facilities-SAMPLE.json', 'utf8'));
 const sample = buildDataset({
@@ -74,6 +75,55 @@ describe('phone', () => {
     expect(telHref('3000-0000', 'NCR')).toBe('tel:+63230000000');
     expect(telHref('', 'NCR')).toBe('');
     expect(telHref('n/a', 'NCR')).toBe('');
+  });
+
+  // The launch review's rules, on made-up numbers.
+  it('skips empty entries for the first number', () => {
+    expect(firstPhone('/0917 000 0000')).toBe('0917 000 0000');
+    expect(firstPhone(' ; 8000-0000, 8000-0001')).toBe('8000-0000');
+    expect(firstPhone('/')).toBe('');
+    expect(firstPhone(undefined)).toBe('');
+  });
+
+  it('leaves out an extension: loc, loc., local or L-', () => {
+    expect(telHref('500-0000 L-145', 'R1')).toBe('tel:5000000');
+    expect(telHref('(074) 000-0000 local 12', 'CAR')).toBe('tel:+63740000000');
+    expect(telHref('8000-0000 LOC. 12', 'NCR')).toBe('tel:+63280000000');
+    // An L- inside a word is no extension.
+    expect(telHref('TEL-0917 000 0000', 'R1')).toBe('tel:+639170000000');
+  });
+
+  it('reads a leading 63 as the country code only at 11 or 12 digits', () => {
+    expect(telHref('+63 74 000 0000', 'CAR')).toBe('tel:+63740000000');
+    expect(telHref('+63 917 000 0000', 'R1')).toBe('tel:+639170000000');
+    // A 7-digit local number and an NCR landline that start with 63.
+    expect(telHref('630-0000', 'R1')).toBe('tel:6300000');
+    expect(telHref('6300-0000', 'NCR')).toBe('tel:+63263000000');
+    expect(telHref('63 74 000 00', 'CAR')).toBe('');
+    expect(telHref('+63 917 000 00000', 'R1')).toBe('');
+  });
+
+  it('gives no link to a number that can’t be dialled', () => {
+    // 09…: a mobile, 11 digits.
+    expect(telHref('0917 000 000', 'R1')).toBe('');
+    expect(telHref('0917 000 00000', 'R1')).toBe('');
+    // Any other 0…: area code and landline, 10 digits.
+    expect(telHref('(074) 000-000', 'CAR')).toBe('');
+    expect(telHref('(074) 0000-0000', 'CAR')).toBe('');
+    expect(telHref('(074)', 'CAR')).toBe('');
+    // Neither: a local number of 7 or 8 digits; NCR's longer ones keep their first 8.
+    expect(telHref('500-0000', 'R1')).toBe('tel:5000000');
+    expect(telHref('(82) 000-0000', 'R11')).toBe('');
+    expect(telHref('50-0000', 'R10')).toBe('');
+    expect(telHref('8', 'NCR')).toBe('');
+    expect(telHref('8000-0000-12', 'NCR')).toBe('tel:+63280000000');
+  });
+
+  it('keeps such a number as text under Details, with no Call link', () => {
+    const p = prepare(row({ phone: '0917 000 000 / 0918 000 0000' }));
+    expect(p).toMatchObject({ phone: '0917 000 000 / 0918 000 0000', first: '0917 000 000', tel: '' });
+    const labels = { hoursLabel: 'Hours', hoursNotListed: 'Not listed', phoneLabel: 'Phone', regionLabel: 'Region', accrLabel: 'Until' };
+    expect(placeDetails(p, labels, 'en')).toContainEqual({ label: 'Phone', value: '0917 000 000 / 0918 000 0000' });
   });
 });
 

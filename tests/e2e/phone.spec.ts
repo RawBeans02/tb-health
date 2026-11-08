@@ -31,8 +31,9 @@ test.describe('on a phone @phone', () => {
   });
 
   test('a place page shows its actions, each at least 44px tall', async ({ page }) => {
-    await page.goto('/place/bangued-rural-health-unit-abra?stop=2');
-    await expect(page.locator('h1')).toHaveText('Bangued Rural Health Unit');
+    // A place whose number can be dialled, so its Call link is one of the actions.
+    await page.goto('/place/baguio-general-hospital-and-medical-center-baguio-city?stop=2');
+    await expect(page.locator('h1')).toHaveText('Baguio General Hospital and Medical Center');
     const actions = page.locator('.place-actions a.btn, .place-actions button, .place-call');
     await expect(actions).toHaveCount(5);
     for (const action of await actions.all()) expect((await action.boundingBox())!.height).toBeGreaterThanOrEqual(44);

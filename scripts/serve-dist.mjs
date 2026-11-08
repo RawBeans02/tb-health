@@ -8,7 +8,8 @@
 //   text files     → Brotli or gzip when the browser accepts it, as the host compresses them
 //                    (Lighthouse's throttled timings count the bytes sent)
 //
-//   node scripts/serve-dist.mjs [--port 4322]
+//   node scripts/serve-dist.mjs [--port 4322]   (0: any free port; it prints the address it got)
+// The browser tests start it on their own port (scripts/test-port.mjs), Lighthouse on port 0.
 
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -136,5 +137,5 @@ const server = createServer((req, res) => {
 });
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`serve-dist: http://127.0.0.1:${port} (dist/)`);
+  console.log(`serve-dist: http://127.0.0.1:${server.address().port} (${root})`);
 });

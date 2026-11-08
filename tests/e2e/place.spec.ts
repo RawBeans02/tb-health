@@ -35,7 +35,9 @@ test.describe('place page', () => {
     expect((await commute.boundingBox())?.height).toBe(58);
     await expect(page.getByRole('link', { name: 'Walk: Bangued Rural Health Unit' })).toHaveAttribute('href', /travelmode=walking$/);
     await expect(page.getByRole('link', { name: 'Drive: Bangued Rural Health Unit' })).toHaveAttribute('href', /travelmode=driving$/);
-    await expect(page.getByRole('link', { name: /^Call before you go: Bangued Rural Health Unit, / })).toHaveAttribute('href', 'tel:+637461401845');
+    // Its listed number has 11 digits and starts with 0, not 09 (a landline with its area code
+    // has 10), so it can't be dialled: no Call link, and the number shows under Details (below).
+    await expect(page.locator('.place-call')).toHaveCount(0);
 
     await expect(page.locator('.service-name')).toHaveText(['Chest X-ray', 'TB test (sputum)', 'Free TB medicines']);
     await expect(page.locator('.detail-row dt')).toHaveText(['Hours', 'Phone', 'Region', 'Accreditation until']);
@@ -44,6 +46,11 @@ test.describe('place page', () => {
     await expect(page.locator('main .install-entry')).toBeVisible();
     await expect(page.locator('.stop-panel')).toBeHidden();
     await expect(page.getByRole('link', { name: 'Find TB care' }).first()).toHaveAttribute('href', '/');
+  });
+
+  test('a number that can be dialled gets a Call link: an NCR landline with +632, without its local', async ({ page }) => {
+    await page.goto('/place/lung-center-of-the-philippines-lcp-quezon-city');
+    await expect(page.getByRole('link', { name: 'Call before you go: Lung Center of the Philippines (LCP), 8924-6101 loc 1856-1857' })).toHaveAttribute('href', 'tel:+63289246101');
   });
 
   test('in Filipino, with Filipino labels, date and links', async ({ page }) => {

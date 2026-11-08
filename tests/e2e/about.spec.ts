@@ -46,12 +46,16 @@ test.describe('About', () => {
     await expect(page.locator('#app').getByRole('link', { name: 'How to install' })).toHaveAttribute('href', '/install');
   });
 
-  test('privacy shows the prototype rows and holds the outside-services row for the owner (Q5)', async ({ page }) => {
+  test('privacy shows the prototype rows, then the owner’s row on outside services (Q5), in both languages', async ({ page }) => {
     await page.goto('/about');
     const rows = page.locator('#privacy li');
-    await expect(rows).toHaveCount(3);
+    await expect(rows).toHaveCount(4);
     await expect(rows.first()).toHaveText(/^There are no accounts/);
+    await expect(rows.last()).toHaveText(/^TB PH serves its own fonts/);
     await expect(page.locator('#privacy')).not.toContainText('Google Fonts');
+    await page.goto('/fil/about');
+    await expect(rows).toHaveCount(4);
+    await expect(rows.last()).toHaveText(/^Ang TB PH mismo ang nagbibigay/);
   });
 
   test('helpful numbers: no blank rows, exact tel: links of 44px, the 1555 note from V4', async ({ page }) => {

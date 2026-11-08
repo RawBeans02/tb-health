@@ -11,7 +11,7 @@
 // request timed out, or the script failed, so the check is incomplete.
 //
 //   node scripts/post-deploy-check.mjs https://the-live-site.example
-//   (the local server works too: node scripts/post-deploy-check.mjs http://127.0.0.1:4322)
+//   (the local server works too: npm run serve, then node scripts/post-deploy-check.mjs http://127.0.0.1:4322)
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
