@@ -30,13 +30,15 @@ const withoutCheck = process.env.TBPH_CHECK === 'false';
 const CHECK_ASSET = /^_?check(?:flow)?_?\./i;
 const CHECK_CSS = /\.check-main\b/;
 
-function htmlFiles(dir) {
+function files(dir, wanted) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
-    if (entry.isDirectory()) return htmlFiles(path);
-    return entry.name.endsWith('.html') ? [path] : [];
+    if (entry.isDirectory()) return files(path, wanted);
+    return wanted.test(entry.name) ? [path] : [];
   });
 }
+
+const htmlFiles = (dir) => files(dir, /\.html$/);
 
 function attributes(tag) {
   const out = {};
@@ -117,6 +119,11 @@ if (withoutCheck) {
   const assets = existsSync(join(dist, '_astro')) ? readdirSync(join(dist, '_astro')) : [];
   const isCheck = (name) => CHECK_ASSET.test(name) || (name.endsWith('.css') && CHECK_CSS.test(readFileSync(join(dist, '_astro', name), 'utf8')));
   for (const name of assets.filter(isCheck)) errors.push(`_astro/${name} is Check's, but this build leaves Check out (TBPH_CHECK=false)`);
+  // Nor any other text file it ships: scripts, styles, data, the service worker, the manifest.
+  for (const file of files(dist, /\.(?:js|mjs|css|json|webmanifest|xml|txt)$/)) {
+    const named = CHECK_NAMES.exec(readFileSync(file, 'utf8'))?.[0];
+    if (named) errors.push(`${relative(dist, file)}: names the check ("${named}"), but this build leaves Check out (TBPH_CHECK=false)`);
+  }
 }
 
 if (pending.size) {
@@ -129,4 +136,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(`check-links: ${links} internal links and ${headLinks} canonical and hreflang links checked, languages match.`);
-if (withoutCheck) console.log('check-links: without Check: no /check page, link, _astro/ file or page naming the check.');
+if (withoutCheck) console.log('check-links: without Check: no /check page, link, _astro/ file, or page or file naming the check.');

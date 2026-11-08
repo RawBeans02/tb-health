@@ -38,8 +38,10 @@ const CHECK_MENTIONS = [];
 
 // Strings a build without Check ships none of, besides Check's own dictionary: Check's page
 // title and description, the two list items that only make sense with Check (install.off2,
-// home.bring3), and the strings swapped for their …NoCheck twins (Q9, 7 Nov 2026).
-const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription', 'install.off2', 'home.bring3', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'notFound.lead'];
+// home.bring3), the strings swapped for their …NoCheck twins (Q9, 7 Nov 2026), and those that
+// name or link the check, which the build leaves out: the nav label, Home's "Not sure yet?"
+// link (src/lib/nav.ts CHECK_STRINGS), Data's and Learn's lines that point to it.
+const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription', 'install.off2', 'home.bring3', 'install.lead', 'about.disclaimerText', 'about.privacy1', 'about.appText', 'meta.installDescription', 'notFound.lead', 'chrome.nav_check', 'home.optNotSure', 'dotStory.b7_check', 'learn.l5_action1'];
 
 // The twins, which only a build without Check ships.
 const NO_CHECK_ONLY = ['install.leadNoCheck', 'about.disclaimerTextNoCheck', 'about.privacy1NoCheck', 'about.appTextNoCheck', 'meta.installDescriptionNoCheck', 'notFound.leadNoCheck'];

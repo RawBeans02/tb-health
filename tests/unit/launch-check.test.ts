@@ -264,6 +264,14 @@ describe('assess: a build without Check', () => {
     expect(JSON.stringify(withOn)).not.toMatch(/NoCheck/);
   });
 
+  it('leaves out the strings that name or link the check, which the build drops (Q9 review)', () => {
+    const named = ['chrome.nav_check', 'home.optNotSure', 'dotStory.b7_check', 'learn.l5_action1'].map((id) => str(id, ['FIL-REVIEW']));
+    const r = assess({ strings: [...strings, ...named], build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(JSON.stringify(r)).not.toMatch(/nav_check|optNotSure|b7_check|l5_action1/);
+    const on = assess({ strings: [...strings, ...named], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
+    expect(on.queues[0]).toBe('Filipino review: 5 strings not from the pack (D10).');
+  });
+
   it("leaves Check's page title and description out too (B74)", () => {
     const meta = [str('meta.checkTitle', undefined, { en: 'Check — TB PH' }), str('meta.checkDescription', ['FIL-REVIEW'])];
     const r = assess({ strings: [...strings, ...meta], build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
