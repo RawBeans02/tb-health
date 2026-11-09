@@ -1,19 +1,22 @@
 // About (README:244–245; About.dc.html). The pack has no About copy, so the strings are the
 // prototype's; bracketed stand-ins are flagged PLACEHOLDER. The privacy row on outside
 // services comes from the owner (Q5); the 1555 note is the owner's wording (V4). The
-// prototype's "Our partners" and "Medical review" sections are left out for launch (A1).
+// prototype's "Our partners" and "Medical review" sections are left out for launch (A1), and
+// the lede names the group (A2).
 import { ui, type Dict } from './types.ts';
 
 const file = 'About.dc.html';
 
 export const about = {
   h1: ui('About', 'Tungkol sa amin', file),
-  lede: ui(
-    'TB PH is a TB awareness project by [group name], a team of researchers and data scientists, working with partner hospitals that care for people with TB. We turn public TB data into clear information so more Filipinos get tested early and finish treatment.',
-    'Ang TB PH ay proyekto para sa kamalayan sa TB ng [pangalan ng grupo], isang pangkat ng mga mananaliksik at data scientist, katuwang ang mga ospital na nag-aalaga sa mga taong may TB. Ginagawa naming malinaw na impormasyon ang pampublikong datos tungkol sa TB, para mas maraming Pilipino ang magpasuri nang maaga at tumapos ng gamutan.',
-    file,
-    ['PLACEHOLDER'],
-  ),
+  lede: {
+    en: 'TB PH is a TB awareness project by Amazing Research Labs, a team of researchers and data scientists. We turn public TB data into clear information so more Filipinos get tested early and finish treatment.',
+    fil: 'Ang TB PH ay proyekto para sa kamalayan sa TB ng Amazing Research Labs, isang pangkat ng mga mananaliksik at data scientist. Ginagawa naming malinaw na impormasyon ang pampublikong datos tungkol sa TB, para mas maraming Pilipino ang magpasuri nang maaga at tumapos ng gamutan.',
+    origin: 'decision',
+    src: ['decision:A2', 'decision:A2'],
+    flags: ['FIL-REVIEW'],
+    note: 'The prototype\'s lede with the owner\'s facts (A2, 9 Nov 2026): the group is Amazing Research Labs, and "working with partner hospitals that care for people with TB" is dropped (no partners are named at launch, A1).',
+  },
 
   disclaimer: ui('Disclaimer', 'Paalala', file),
   disclaimerText: ui(

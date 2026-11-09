@@ -6,6 +6,12 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ## 9 November 2026 (owner, in chat with the lead)
 
+### A2. About: the group's name and the intro
+- **The group is Amazing Research Labs.** The owner sent "https://amazinglabs.org/ here is the team" on 9 Nov 2026. The site names it Amazing Research Labs (Amazing Research Labs Organization, Inc.), a nonprofit applied research organization. Only the organization is named on About, not its people.
+- **The intro drops the partner hospitals.** The owner answered "Yes, drop it" to the lead's question "Drop "working with partner hospitals" from the About intro?" on 9 Nov 2026, as no partners are named at launch (A1).
+  - `about.lede`: EN "TB PH is a TB awareness project by Amazing Research Labs, a team of researchers and data scientists. We turn public TB data into clear information so more Filipinos get tested early and finish treatment." FIL "Ang TB PH ay proyekto para sa kamalayan sa TB ng Amazing Research Labs, isang pangkat ng mga mananaliksik at data scientist. Ginagawa naming malinaw na impormasyon ang pampublikong datos tungkol sa TB, para mas maraming Pilipino ang magpasuri nang maaga at tumapos ng gamutan."
+- **Still open:** the contact email for the Contact and Accessibility rows.
+
 ### R2. Launch on the v6 design with the current defaults
 - **The launch keeps the current defaults:** the v6 design (the v7 zip, with dark mode and the v7 wording, isn't on the Mac), no Linux check before launch (D22, amended 6 Nov), the smaller design items O2–O27 as they are (`docs/audit-2026-11-05.md`), and no alt text for the link-preview image. The owner answered "Yes, v6 defaults" to the lead's question "Launch on the v6 design with the other defaults?" on 9 Nov 2026.
 - **Still open:** v7 when its files arrive; the O items stay listed in `docs/owner-queue.md` for after the launch.
