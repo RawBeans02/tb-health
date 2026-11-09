@@ -6,6 +6,11 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ## 9 November 2026 (owner, in chat with the lead)
 
+### A3. About: no contact email at launch
+- **The site launches without a contact email.** The owner answered "launch without one" to the lead's question "Will you send the contact email, or launch without one?" on 9 Nov 2026. About drops the prototype's Contact section (its row was the "[email]" placeholder), and the accessibility text drops its last sentence, "If something doesn't work for you, tell us at [email]." (FIL "Kung may hindi gumagana para sa iyo, sabihin sa amin sa [email].").
+  - `about.a11yText`: EN "We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA. The site works with a keyboard and screen readers, uses large text and strong contrast, and every chart has a table version. Known limitation: the optional map works best with a mouse or touch, so the same places are always listed as text." FIL "Layunin naming maabot ang Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Gumagana ang site gamit ang keyboard at screen reader, malalaki ang titik at malinaw ang kulay, at may talaan ang bawat chart. Limitasyon: pinakamainam gamitin ang mapa gamit ang mouse o touch, kaya laging nakalista rin bilang teksto ang parehong mga lugar."
+- **Still open:** a contact email, which brings both back.
+
 ### A2. About: the group's name and the intro
 - **The group is Amazing Research Labs.** The owner sent "https://amazinglabs.org/ here is the team" on 9 Nov 2026. The site names it Amazing Research Labs (Amazing Research Labs Organization, Inc.), a nonprofit applied research organization. Only the organization is named on About, not its people.
 - **The intro drops the partner hospitals.** The owner answered "Yes, drop it" to the lead's question "Drop "working with partner hospitals" from the About intro?" on 9 Nov 2026, as no partners are named at launch (A1).

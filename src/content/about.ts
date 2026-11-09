@@ -1,8 +1,8 @@
 // About (README:244–245; About.dc.html). The pack has no About copy, so the strings are the
 // prototype's; bracketed stand-ins are flagged PLACEHOLDER. The privacy row on outside
 // services comes from the owner (Q5); the 1555 note is the owner's wording (V4). The
-// prototype's "Our partners" and "Medical review" sections are left out for launch (A1), and
-// the lede names the group (A2).
+// prototype's "Our partners" and "Medical review" sections are left out for launch (A1), the
+// lede names the group (A2), and there is no Contact section or contact email (A3).
 import { ui, type Dict } from './types.ts';
 
 const file = 'About.dc.html';
@@ -89,12 +89,14 @@ export const about = {
   appLink: ui('How to install', 'Paano i-install', file),
 
   a11y: ui('Accessibility', 'Accessibility', file),
-  a11yText: ui(
-    "We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA. The site works with a keyboard and screen readers, uses large text and strong contrast, and every chart has a table version. Known limitation: the optional map works best with a mouse or touch, so the same places are always listed as text. If something doesn't work for you, tell us at [email].",
-    'Layunin naming maabot ang Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Gumagana ang site gamit ang keyboard at screen reader, malalaki ang titik at malinaw ang kulay, at may talaan ang bawat chart. Limitasyon: pinakamainam gamitin ang mapa gamit ang mouse o touch, kaya laging nakalista rin bilang teksto ang parehong mga lugar. Kung may hindi gumagana para sa iyo, sabihin sa amin sa [email].',
-    file,
-    ['PLACEHOLDER'],
-  ),
+  a11yText: {
+    en: "We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA. The site works with a keyboard and screen readers, uses large text and strong contrast, and every chart has a table version. Known limitation: the optional map works best with a mouse or touch, so the same places are always listed as text.",
+    fil: 'Layunin naming maabot ang Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Gumagana ang site gamit ang keyboard at screen reader, malalaki ang titik at malinaw ang kulay, at may talaan ang bawat chart. Limitasyon: pinakamainam gamitin ang mapa gamit ang mouse o touch, kaya laging nakalista rin bilang teksto ang parehong mga lugar.',
+    origin: 'decision',
+    src: ['decision:A3', 'decision:A3'],
+    flags: ['FIL-REVIEW'],
+    note: 'The prototype\'s text without its last sentence, "If something doesn\'t work for you, tell us at [email]." (FIL to match): the site launches without a contact email (A3, 9 Nov 2026).',
+  },
 
   numbers: ui('Helpful numbers', 'Mga numerong makatutulong', file),
   call: ui('Call {who}, {number}', 'Tumawag sa {who}, {number}', file),
@@ -116,6 +118,4 @@ export const about = {
   local_who: ui('Your local health center', 'Ang inyong lokal na health center', file),
   local_note: ui('Usually the fastest first stop', 'Kadalasang pinakamabilis na unang puntahan', file),
 
-  contact: ui('Contact', 'Makipag-ugnayan', file),
-  contactRow: ui('[email]', '[email]', file, ['PLACEHOLDER']),
 } satisfies Dict;

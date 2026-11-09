@@ -39,7 +39,7 @@ test.describe('About', () => {
       'Use TB PH like an app',
       'Accessibility',
       'Helpful numbers',
-      'Contact',
+      // No Contact section: no contact email at launch (A3).
     ]);
     await expect(page.locator('#updates p')).toHaveText(new RegExp(`^Data last updated ${formatDate(LAST_UPDATED, 'en')}\\. `));
     await expect(page.locator('#app').getByRole('link', { name: 'How to install' })).toHaveAttribute('href', '/install');
