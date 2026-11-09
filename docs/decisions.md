@@ -4,6 +4,12 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 9 November 2026 (owner, in chat with the lead)
+
+### R2. Launch on the v6 design with the current defaults
+- **The launch keeps the current defaults:** the v6 design (the v7 zip, with dark mode and the v7 wording, isn't on the Mac), no Linux check before launch (D22, amended 6 Nov), the smaller design items O2–O27 as they are (`docs/audit-2026-11-05.md`), and no alt text for the link-preview image. The owner answered "Yes, v6 defaults" to the lead's question "Launch on the v6 design with the other defaults?" on 9 Nov 2026.
+- **Still open:** v7 when its files arrive; the O items stay listed in `docs/owner-queue.md` for after the launch.
+
 ## 8 November 2026 (owner, in chat with the lead)
 
 ### R1. The launch ships the strings that wait on the clinical review (release key [review])
