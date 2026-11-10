@@ -7,7 +7,11 @@ import { describe, expect, it } from 'vitest';
 import type { Str } from '../../src/content/types.ts';
 import { LANGS } from '../../src/lib/i18n.ts';
 
-const design = 'design/design_handoff_tb_ph';
+// The v8 design reference (V6, V8, 4 Nov 2026): its content pack is the copy baseline. Its
+// README is v6's unchanged. Its prototype's copy differs from v6's only where v8 dropped the em
+// dashes (V8), changed the page titles (V9) and took the owner's wording: the 1555 note (V4),
+// YAKAP in Learn L5 (V10) and "Aksesibilidad" (V11).
+const design = 'design/v8/design_handoff_tb_ph';
 const packLines = readFileSync(`${design}/reference/content-and-data-pack.md`, 'utf8').split('\n');
 const readmeLines = readFileSync(`${design}/README.md`, 'utf8').split('\n');
 // The owner's decisions by id ("### V4. …" up to the next heading). Found by id, not line:
@@ -50,6 +54,11 @@ describe('copy dictionaries', () => {
     expect(dictionaryFiles.length).toBeGreaterThanOrEqual(8);
     expect(modules.every((m) => Object.keys(m).length > 0)).toBe(true);
     expect(entries.length).toBeGreaterThan(20);
+  });
+
+  it('has no em dash in any string, in either language (V8: the v8 pack has none)', () => {
+    const dashed = entries.filter(({ str }) => LANGS.some((lang) => str[lang].includes('—'))).map(({ id }) => id);
+    expect(dashed).toEqual([]);
   });
 
   for (const { id, str } of entries) {
@@ -101,6 +110,25 @@ describe('copy dictionaries', () => {
         }
         if (str.origin === 'ui' && str.src[1] !== 'owner') expect(str.flags).toContain('FIL-REVIEW');
       });
+    });
+  }
+});
+
+describe('the Filipino the owner flagged for review (V10, V11)', () => {
+  // Pack Filipino needs no FIL-REVIEW flag (D10), so the origin check above wouldn't miss one of
+  // these, and launch-check would leave the string out of the native-speaker review queue.
+  const flagged = [
+    ['learn.l5_ol1', 'V10'],
+    ['chrome.nav_a11y', 'V11'],
+    ['about.a11y', 'V11'],
+  ] as const;
+  for (const [id, v] of flagged) {
+    it(`${id} carries FIL-REVIEW on the Filipino ${v} quotes`, () => {
+      const str = entries.find((entry) => entry.id === id)?.str;
+      expect(str, `${id} not found`).toBeDefined();
+      expect(decision(v), `${v} flags it`).toContain('FIL-REVIEW');
+      expect(decision(v)).toContain(`"${str!.fil}"`);
+      expect(str!.flags).toContain('FIL-REVIEW');
     });
   }
 });

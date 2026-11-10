@@ -14,6 +14,19 @@ test.describe('Learn', () => {
     await expect(page.locator('#l5 .learn-actions .btn--primary')).toHaveCSS('min-height', '58px');
   });
 
+  test('L5 in the v8 pack’s words: a colon in the heading (V8), YAKAP in step 1 (V10), in both languages', async ({ page }) => {
+    await page.goto('/learn');
+    await expect(page.locator('#l5 h2')).toHaveText("Getting tested: it's free");
+    await expect(page.locator('#l5 .learn-steps li').first()).toHaveText(
+      "A health worker asks about your symptoms and may send you for a chest X-ray. PhilHealth's YAKAP package (formerly Konsulta) covers chest X-rays for members registered at a YAKAP clinic.",
+    );
+    await page.goto('/fil/learn');
+    await expect(page.locator('#l5 h2')).toHaveText('Magpasuri: libre ito');
+    await expect(page.locator('#l5 .learn-steps li').first()).toHaveText(
+      'Tatanungin ka ng health worker tungkol sa iyong mga sintomas at maaaring ipa-chest X-ray ka. Sakop ng YAKAP package ng PhilHealth (dating Konsulta) ang chest X-ray para sa mga miyembrong rehistrado sa isang YAKAP clinic.',
+    );
+  });
+
   test('every "More in the data" link goes to its claim on the Data page, in the page language', async ({ page }) => {
     for (const [path, prefix] of [
       ['/learn', '/data#claim-'],

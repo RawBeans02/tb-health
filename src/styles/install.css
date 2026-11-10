@@ -1,5 +1,7 @@
 /* Install (README:250, Install.dc.html). What shows depends on html attributes set before
-   paint (prepaint.js) or by the install prompt (pwa.ts): data-standalone, data-installable. */
+   paint (prepaint.js) or by the install prompt (pwa.ts): data-standalone, data-installable.
+   The installed line and the one-tap button are hidden in the HTML, and the scripts show
+   them (install-order.js, install.ts), so without JavaScript only the steps show. */
 
 .install {
   max-width: 760px;
@@ -27,7 +29,7 @@
 
 /* In the installed app */
 .install-done {
-  display: none;
+  display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px 18px;
@@ -41,23 +43,11 @@
   font-size: var(--text-20);
 }
 
-html[data-standalone='true'] .install-done {
-  display: flex;
-}
-
 /* One-tap install, while the browser offers it */
 .install-action {
-  display: none;
+  display: grid;
   gap: 10px;
   max-width: 560px;
-}
-
-html[data-installable='true'] .install-action {
-  display: grid;
-}
-
-html[data-standalone='true'] .install-action {
-  display: none;
 }
 
 .install-action .btn {

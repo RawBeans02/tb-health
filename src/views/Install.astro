@@ -2,7 +2,8 @@
 // Install (README:250, Install.dc.html). Static steps for each platform, in the order that
 // suits the visitor's device (an inline script orders them before paint). The one-tap
 // button shows once the browser offers an install prompt; in the installed app the page
-// says so instead of showing the steps.
+// says so instead of showing the steps. Both start hidden in the HTML and the scripts show
+// them, so without JavaScript only the steps show (step 15.6).
 import { createHash } from 'node:crypto';
 import { TBPH_CHECK } from 'astro:env/server';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -12,6 +13,7 @@ import { meta } from '../content/meta.ts';
 import { pick } from '../content/types.ts';
 import type { Lang } from '../lib/i18n.ts';
 import { TAB_ICONS } from '../lib/nav.ts';
+import { pageTitle } from '../lib/title.ts';
 import order from '../scripts/install-order.js?raw';
 import '../styles/install.css';
 
@@ -21,8 +23,8 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = pick(install, lang);
-// "Install the app — TB PH", from the footer link's label (the prototype's <title>).
-const title = { en: `${chrome.nav_install.en} — TB PH`, fil: `${chrome.nav_install.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+// "Install the app | TB PH", from the footer link's label (the prototype's <title>, V9).
+const title = { en: pageTitle(chrome.nav_install.en), fil: pageTitle(chrome.nav_install.fil), origin: 'ui', src: ['derived', 'derived'] } as const;
 Astro.csp?.insertScriptHash(`sha256-${createHash('sha256').update(order).digest('base64')}`);
 const platforms = [
   { id: 'android', title: t.android, steps: [t.android1, t.android2, t.android3] },
@@ -44,8 +46,8 @@ const offline = [
           <h1 class="h1">{t.h1}</h1>
           <p class="lede">{TBPH_CHECK ? t.lead : t.leadNoCheck}</p>
         </div>
-        <div class="install-done" role="status"><span aria-hidden="true">✓</span><span>{t.installed}</span></div>
-        <div class="install-action">
+        <div class="install-done" role="status" hidden><span aria-hidden="true">✓</span><span>{t.installed}</span></div>
+        <div class="install-action" hidden>
           <button type="button" class="btn btn--primary" data-install>{t.button}</button>
         </div>
         <p class="install-status" role="status" data-install-status data-done={t.done} data-later={t.later}></p>

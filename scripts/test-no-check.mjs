@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // The Check-off variant's job (Q9, audit B26): build the shipped list with TBPH_CHECK=false
-// (check-links runs in the build), run the no-check Playwright project against it, then rebuild
+// (check-links and check-dashes run in the build), run the no-check Playwright project against it, then rebuild
 // the other browser projects' fixture, the 93-row sample (npm run build:sample), so later test
 // runs find it. Run it on its own guarded job:
 //   GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh bash -c '. ~/.nvm/nvm.sh && nvm use >/dev/null && npm run test:no-check'

@@ -19,6 +19,7 @@ import { readFacilities } from '../lib/build-data.ts';
 import { storyData } from '../lib/dotstory.ts';
 import { href, type Lang } from '../lib/i18n.ts';
 import { italics } from '../lib/learn.ts';
+import { pageTitle } from '../lib/title.ts';
 import '../styles/data.css';
 
 interface Props {
@@ -42,7 +43,7 @@ const regions = {
 const ids = Array.from({ length: 20 }, (_, i) => `d${i + 1}`);
 const topics = ['burden', 'detection', 'who', 'drivers', 'testing', 'treatment', 'prevention', 'cost', 'funding', 'targets', 'regional'] as const;
 const sources = claims.sources as Record<string, { title: string; url: string }>;
-const title = { en: `${dataPage.h2.en} — TB PH`, fil: `${dataPage.h2.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+const title = { en: pageTitle(dataPage.h2.en), fil: pageTitle(dataPage.h2.fil), origin: 'ui', src: ['derived', 'derived'] } as const;
 ---
 <BaseLayout lang={lang} title={title} description={meta.dataDescription} current="data">
   <main id="main" tabindex="-1">

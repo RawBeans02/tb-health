@@ -5,7 +5,8 @@ const file = 'Home.dc.html';
 
 export const home = {
   h1: ui('Find your way to TB care.', 'Hanapin ang daan papunta sa gamutan sa TB.', file),
-  lede: ui('Chest X-ray, TB test and free medicines — near you, step by step.', 'Chest X-ray, TB test at libreng gamot — malapit sa iyo, hakbang-hakbang.', file),
+  // V6, V8: the v8 prototype's lede, without the em dash (also Home's share preview text).
+  lede: ui('Chest X-ray, TB test and free medicines near you, step by step.', 'Chest X-ray, TB test at libreng gamot na malapit sa iyo, hakbang-hakbang.', file),
   fromLabel: ui('Where are you?', 'Nasaan ka?', file),
   fromPh: ui('Barangay, city or landmark', 'Barangay, lungsod o palatandaan', file),
   useLoc: ui('Use my location', 'Gamitin ang aking lokasyon', file),
@@ -24,9 +25,9 @@ export const home = {
   nearest: ui('The nearest is {distance} away.', 'Ang pinakamalapit ay {distance} ang layo.', file),
   reassureLabel: ui('Good to know', 'Mabuting malaman', file),
   reassure1: ui('Testing and TB medicines are free at public health centers.', 'Libre ang pagsusuri at gamot sa TB sa mga pampublikong health center.', file),
-  reassure2: pack('A cough that lasts 2 weeks deserves a test.', 'Ang ubong umabot na nang dalawang linggo ay dapat ipasuri.', 80, 83),
+  reassure2: pack('A cough that lasts 2 weeks deserves a test.', 'Ang ubong umabot na nang dalawang linggo ay dapat ipasuri.', 81, 84),
   reassure3: ui('TB is curable when you finish treatment.', 'Nagagamot ang TB kapag tinapos ang gamutan.', file),
-  teaser: pack('In 2024, about 724,000 Filipinos fell ill with TB.', 'Noong 2024, tinatayang 724,000 Pilipino ang nagkasakit ng TB.', 43, 45),
+  teaser: pack('In 2024, about 724,000 Filipinos fell ill with TB.', 'Noong 2024, tinatayang 724,000 Pilipino ang nagkasakit ng TB.', 44, 46),
   teaserLink: ui('See the data.', 'Tingnan ang datos.', file),
   bringTitle: ui('What to bring', 'Ano ang dadalhin', file),
   bring1: ui('A valid ID', 'Valid ID', file),
@@ -34,7 +35,7 @@ export const home = {
   bring3: ui('Your TB check summary', 'Ang buod ng iyong TB check', file),
   bring4: ui('Any old chest X-ray results', 'Mga lumang resulta ng chest X-ray', file),
   bring5: ui('A face mask', 'Face mask', file),
-  noMatch: pack('No centers match your search.', 'Walang tumugma sa hinanap mo.', 411),
+  noMatch: pack('No centers match your search.', 'Walang tumugma sa hinanap mo.', 412),
   loading: ui('Loading the list of centers…', 'Kinukuha ang listahan ng mga center…', file),
   sources: ui('Sources:', 'Pinagmulan:', file),
   failed: ui('The list could not be loaded. Check your connection and try again.', 'Hindi makuha ang listahan. Tingnan ang inyong koneksiyon at subukang muli.', file),

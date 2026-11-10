@@ -85,6 +85,9 @@ test.describe('About', () => {
   test('in Filipino, with the same numbers', async ({ page }) => {
     await page.goto('/fil/about');
     await expect(page.locator('main h1')).toHaveText('Tungkol sa amin');
+    // "Aksesibilidad" heads the accessibility section in Filipino (V11).
+    await expect(page.locator('#accessibility h2')).toHaveText('Aksesibilidad');
+    await expect(page.locator('.site-footer').getByRole('link', { name: 'Aksesibilidad' })).toHaveAttribute('href', '/fil/about#accessibility');
     await expect(page.locator('#numbers li').nth(1).locator('.number-note')).toHaveText('Pindutin ang 2 para sa National Patient Navigation and Referral Center.');
     await expect(page.locator('#numbers a').first()).toHaveAccessibleName('Tumawag sa Emergency (pulis, bumbero, medikal), 911');
     await expect(page.locator('#app a')).toHaveAttribute('href', '/fil/install');
@@ -126,12 +129,17 @@ test.describe('Install', () => {
   test('shows the one-tap button only once the browser offers to install', async ({ page }) => {
     await page.goto('/install');
     const button = page.getByRole('button', { name: 'Install TB PH' });
+    // The installed app's line stays hidden in a browser tab (the scripts show it, step 15.6).
+    const done = page.locator('.install-done');
     await expect(button).toBeHidden();
+    await expect(done).toBeHidden();
     await offerInstall(page, 'accepted');
     await expect(button).toBeVisible();
+    await expect(done).toBeHidden();
     await button.click();
     await expect(page.locator('[data-install-status]')).toHaveText('Installed. Look for TB PH on your home screen.');
     await expect(button).toBeHidden();
+    await expect(done).toBeHidden();
   });
 
   test('says it can wait when the prompt is dismissed (in Filipino)', async ({ page }) => {
@@ -145,7 +153,10 @@ test.describe('Install', () => {
     await installed(page);
     await page.goto('/install');
     await expect(page.locator('.install-done')).toHaveText(/TB PH is installed\. You're using the app\./);
+    // toHaveText passes on a hidden element too; the scripts show this line (step 15.6).
+    await expect(page.locator('.install-done')).toBeVisible();
     await offerInstall(page, 'accepted');
+    await expect(page.locator('.install-done')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Install TB PH' })).toBeHidden();
     await expect(sections(page)).toHaveText(['What works without a signal']);
   });

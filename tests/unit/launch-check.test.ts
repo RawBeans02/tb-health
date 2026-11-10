@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { about } from '../../src/content/about.ts';
+import { check } from '../../src/content/check.ts';
 import { headersFile } from '../../src/lib/headers.ts';
 import { PLACEHOLDER_SITE } from '../../src/lib/site.ts';
 import { ACCEPTABLE, applyAccept, assess, manilaToday, parseArgs, readBuild, viewTitleDashes } from '../../scripts/launch-check.mjs';
@@ -125,12 +126,27 @@ describe('assess: each key and its trigger', () => {
     const foot = (en: string) => str('check.foot', undefined, { en, fil: 'Medical review: Dr. A.' });
     expect(keys(ready({ strings: [foot('Medical review: [partner clinicians, pending].')] }))).toEqual(['check-review']);
     expect(keys(ready({ strings: [foot('Medical review: [partner clinicians: pending]')] }))).toEqual(['check-review']);
+    // The real footer, in the v8 pack's wording (V8: a comma for the dash), unflagged: still open.
+    const real = str('check.foot', undefined, { en: check.foot.en, fil: check.foot.fil });
+    expect(real.en).toContain('[partner clinicians, pending]');
+    expect(real.fil).toContain('[mga katuwang na doktor, nakabinbin]');
+    expect(keys(ready({ strings: [real] }))).toEqual(['check-review']);
   });
 
   it('lists the em dashes in strings and in the page titles the views build (B74)', () => {
     const r = ready({ strings: [str('home.lede', undefined, { en: 'A — B' })], titleDashes: ['About', 'Learn'] });
-    expect(r.decide.find((d) => d.startsWith('Em dashes'))).toBe('Em dashes (V3), for the owner or the v7 wording: home.lede; and the page titles built in src/views and src/islands (" — TB PH"): About, Learn.');
-    expect(viewTitleDashes('src/views', 'src/islands')).toEqual(['About', 'Data', 'Install', 'Learn', 'Place', 'PlaceShell']);
+    expect(r.decide.find((d) => d.startsWith('Em dashes'))).toBe('Em dashes (V8), for the owner: home.lede; and the page titles built in src/views and src/islands (" — TB PH"): About, Learn.');
+    // None left since step 15.1: titles use " | " (V9).
+    expect(viewTitleDashes('src/views', 'src/islands')).toEqual([]);
+  });
+
+  it('counts the pack strings the owner flagged for the Filipino review apart (V10, V11)', () => {
+    const fromProto = (id: string) => str(id, ['FIL-REVIEW'], { origin: 'ui', src: ['proto', 'proto'] });
+    const one = ready({ strings: [fromProto('home.lede'), fromProto('about.a11y'), str('learn.l5_ol1', ['FIL-REVIEW'])] });
+    expect(one.queues[0]).toBe('Filipino review: 2 strings not from the pack (D10) and 1 pack string the owner flagged (V10, V11).');
+    const two = ready({ strings: [fromProto('home.lede'), fromProto('about.a11y'), str('learn.l5_ol1', ['FIL-REVIEW']), str('chrome.nav_a11y', ['FIL-REVIEW'])] });
+    expect(two.queues[0]).toBe('Filipino review: 2 strings not from the pack (D10) and 2 pack strings the owner flagged (V10, V11).');
+    expect(ready({ strings: [fromProto('home.lede'), fromProto('about.a11y')] }).queues[0]).toBe('Filipino review: 2 strings not from the pack (D10).');
   });
 
   it('counts a title only in code, not in a comment (B82)', () => {
@@ -240,7 +256,7 @@ describe('the script: exit codes, also run through a symlink (B74)', () => {
 });
 
 describe('assess: a build without Check', () => {
-  const strings = [str('nav.home'), ROW, str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B' })];
+  const strings = [str('nav.home'), ROW, str('check.q1', ['REVIEW']), str('check.foot', ['REVIEW', 'PLACEHOLDER']), str('check.fil', ['FIL-REVIEW'], { en: 'A — B', origin: 'ui', src: ['proto', 'proto'] })];
   const off = assess({ strings, build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05', checkMentions: ['install.lead'] });
 
   it('blocks check-mentions, not check-review', () => {
@@ -265,7 +281,7 @@ describe('assess: a build without Check', () => {
   });
 
   it('leaves out the strings that name or link the check, which the build drops (Q9 review)', () => {
-    const named = ['chrome.nav_check', 'home.optNotSure', 'dotStory.b7_check', 'learn.l5_action1'].map((id) => str(id, ['FIL-REVIEW']));
+    const named = ['chrome.nav_check', 'home.optNotSure', 'dotStory.b7_check', 'learn.l5_action1'].map((id) => str(id, ['FIL-REVIEW'], { origin: 'ui', src: ['proto', 'proto'] }));
     const r = assess({ strings: [...strings, ...named], build: { home: LIVE, check: NONE, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });
     expect(JSON.stringify(r)).not.toMatch(/nav_check|optNotSure|b7_check|l5_action1/);
     const on = assess({ strings: [...strings, ...named], build: { home: LIVE, check: BOTH, headers: HEADERS }, facilities: facilities(), today: '2026-11-05' });

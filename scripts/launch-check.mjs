@@ -47,7 +47,7 @@ const CHECK_ONLY = ['meta.checkTitle', 'meta.checkDescription', 'install.off2', 
 const NO_CHECK_ONLY = ['install.leadNoCheck', 'about.disclaimerTextNoCheck', 'about.privacy1NoCheck', 'about.appTextNoCheck', 'meta.installDescriptionNoCheck', 'notFound.leadNoCheck'];
 
 // The Check footer's reviewer placeholder, open until the clinical review is recorded. Matched
-// by its words, not its dash, which the V3 pass will reword (B82).
+// by its words, not its punctuation: the v8 pack put a comma where its em dash was (V8, B82).
 const REVIEWER_PLACEHOLDER = /\[(partner clinicians|mga katuwang na doktor)\b[^\]]*\]/;
 
 const PRIVACY_ROW = 'about.privacyServices';
@@ -90,9 +90,9 @@ export function readBuild(dist) {
 }
 
 /**
- * The views and islands that build a page title with an em dash (" — TB PH"), for the V3
- * list: Astro views, and islands that set document.title at runtime (PlaceShell). Comments
- * don't count (B82).
+ * The views and islands that build a page title with an em dash (" — TB PH"), for the em-dash
+ * list (V8): Astro views, and islands that set document.title at runtime (PlaceShell). None
+ * since step 15.1: titles use " | " (V9, src/lib/title.ts). Comments don't count (B82).
  */
 export function viewTitleDashes(...dirs) {
   const code = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/<!--[\s\S]*?-->/g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
@@ -160,13 +160,19 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
     const left = [review && `${review} check string${review > 1 ? 's still carry' : ' still carries'} [REVIEW]`, reviewer.length && `the reviewer placeholder is still in (${reviewer.join(', ')})`].filter(Boolean);
     if (left.length) block('check-review', `Check is in the build, but its clinical review is pending: ${left.join('; ')}. Record the review, or build with TBPH_CHECK=false (Q9).`);
   }
+  // Filipino not from the pack (D10), and pack Filipino the owner flagged for the same review
+  // (V10: Learn L5, step 1; V11: "Aksesibilidad"), counted apart.
   const filReview = shipped.filter((s) => s.flags?.includes('FIL-REVIEW'));
-  queues.push(`Filipino review: ${filReview.length} strings not from the pack (D10).`);
+  const ownerFlagged = filReview.filter((s) => s.origin === 'pack').length;
+  const flaggedPack = ownerFlagged ? ` and ${ownerFlagged} pack string${ownerFlagged > 1 ? 's' : ''} the owner flagged (V10, V11)` : '';
+  queues.push(`Filipino review: ${filReview.length - ownerFlagged} strings not from the pack (D10)${flaggedPack}.`);
   queues.push(`Filipino register pass: ${shipped.filter((s) => s.origin === 'pack').length} pack strings, for one consistent register across pack and review copy.`);
-  // V3: no em dashes in copy. Listed for the owner, never reworded here.
+  // V8: no em dashes in copy (the v8 pack has none). One the pack or a decision doesn't cover
+  // is listed for the owner, never reworded here; scripts/check-dashes.mjs fails a build that
+  // shows one.
   const dashes = shipped.filter((s) => s.en.includes('—') || s.fil.includes('—'));
   const titles = titleDashes.length ? `; and the page titles built in src/views and src/islands (" — TB PH"): ${titleDashes.join(', ')}` : '';
-  if (dashes.length || titles) decide.push(`Em dashes (V3), for the owner or the v7 wording: ${dashes.map((s) => s.id).join(', ')}${titles}.`);
+  if (dashes.length || titles) decide.push(`Em dashes (V8), for the owner: ${dashes.map((s) => s.id).join(', ')}${titles}.`);
   const overrides = shipped.filter((s) => s.origin === 'override');
   queues.push(`Copy overrides for the owner to confirm: ${overrides.length} strings (docs/copy-overrides.md).`);
 

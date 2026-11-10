@@ -6,6 +6,7 @@ import { loadFacilities } from '../lib/core/data.ts';
 import type { Place } from '../lib/core/facility.ts';
 import { href, type Lang } from '../lib/i18n.ts';
 import { placeDetails } from '../lib/place-details.ts';
+import { pageTitle } from '../lib/title.ts';
 import PlaceDetails, { type PlaceStrings } from './PlaceDetails.tsx';
 
 export type ShellStrings = PlaceStrings & Record<'loading' | 'failed' | 'retry' | 'notFoundTitle', string>;
@@ -55,7 +56,7 @@ export default function PlaceShell({ lang, t }: Props) {
   useEffect(load, []);
 
   useEffect(() => {
-    if (state.kind === 'ready') document.title = `${state.place.name} — TB PH`;
+    if (state.kind === 'ready') document.title = pageTitle(state.place.name);
     if (state.kind === 'missing') document.title = t.notFoundTitle;
   }, [state]);
 

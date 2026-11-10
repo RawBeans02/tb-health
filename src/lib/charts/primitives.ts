@@ -238,8 +238,9 @@ export function bullets(o: Opts): Chart {
 }
 export function tbl(caption: string, cols: string[], rows: (string | number | null)[][]): Table {
   // Column widths come from a class per column count (.dtable--n2 …): no inline grid templates.
+  // A missing value is an en dash, as the v8 pack's empty table cells are (V8).
   const al = (i: number) => (i ? 'right' : 'left') as 'left' | 'right';
-  return { caption, n: cols.length, cols: cols.map((s: any, i: number) => ({ s, al: al(i) })), rows: rows.map((r) => ({ cells: r.map((s: any, i: number) => ({ s: s == null ? '—' : String(s), al: al(i) })) })) };
+  return { caption, n: cols.length, cols: cols.map((s: any, i: number) => ({ s, al: al(i) })), rows: rows.map((r) => ({ cells: r.map((s: any, i: number) => ({ s: s == null ? '–' : String(s), al: al(i) })) })) };
 }
 
 export function fstack(o: Opts): Chart {

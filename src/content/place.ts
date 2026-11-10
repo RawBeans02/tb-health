@@ -10,7 +10,7 @@ export const place = {
   details: ui('Details', 'Mga detalye', file),
   hoursLabel: ui('Hours', 'Oras', file),
   phoneLabel: ui('Phone', 'Telepono', file),
-  regionLabel: pack('Region', 'Rehiyon', 402),
+  regionLabel: pack('Region', 'Rehiyon', 403),
   accrLabel: ui('Accreditation until', 'Accredited hanggang', file),
   hoursNotListed: ui('Not listed. Call first.', 'Walang nakalista. Tumawag muna.', file),
   offlinePlace: ui("You're offline. Showing the saved details for this center.", 'Wala kang koneksiyon. Ipinapakita ang naka-save na detalye ng center na ito.', file),

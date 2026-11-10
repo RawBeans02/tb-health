@@ -23,11 +23,11 @@ async function trackShifts(page: Page) {
 test.describe('place page', () => {
   test('shows the place, its actions, services and details', async ({ page }) => {
     await page.goto(PATH);
-    await expect(page).toHaveTitle('Bangued Rural Health Unit — TB PH');
+    await expect(page).toHaveTitle('Bangued Rural Health Unit | TB PH');
     await expect(page.locator('h1')).toHaveText('Bangued Rural Health Unit');
     await expect(page.locator('h1')).toHaveCSS('color', 'rgb(196, 32, 50)');
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://tb-ph.example${PATH}`);
-    await expect(page.locator('.place-meta .badge')).toHaveText('Government — free TB care');
+    await expect(page.locator('.place-meta .badge')).toHaveText('Government (free TB care)');
     await expect(page.locator('.place-address')).toHaveText('Actividad Economia St. Zone 3, Bangued, Abra');
 
     const commute = page.getByRole('link', { name: 'Commute directions: Bangued Rural Health Unit' });

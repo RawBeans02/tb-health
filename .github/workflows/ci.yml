@@ -32,7 +32,7 @@ jobs:
         run: npm run check
       - name: Unit tests
         run: npm test
-      - name: Build (with check-links, budgets and the service worker)
+      - name: Build (with check-links, check-dashes, budgets and the service worker)
         run: npm run build
       - name: Build with the 93-row sample, the browser tests' fixture
         run: npm run build:sample

@@ -44,10 +44,10 @@ describe('chart primitives', () => {
     expect(c.texts.filter((t) => t.s.startsWith('v'))).toHaveLength(5);
   });
 
-  it('tables carry their column count and show a dash for missing values', () => {
+  it('tables carry their column count and show an en dash for missing values (V8: never an em dash)', () => {
     const table = tbl('Caption', ['Year', 'Cases'], [[2024, '1,000'], [2025, null]]);
     expect(table.n).toBe(2);
-    expect(table.rows[1].cells.map((c) => c.s)).toEqual(['2025', '—']);
+    expect(table.rows[1].cells.map((c) => c.s)).toEqual(['2025', '–']);
     expect(table.cols.map((c) => c.al)).toEqual(['left', 'right']);
   });
 });

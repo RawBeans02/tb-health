@@ -1,5 +1,6 @@
 // Runs first in the npm scripts dev, prepare-data, build, build:synthetic, build:worst-case,
-// check, check-links, launch-check, release-check and post-deploy-check (audit B85, B87).
+// check, check-links, check-dashes, launch-check, release-check and post-deploy-check (audit
+// B85, B87).
 // Most of them import TypeScript directly, which needs Node 22.18 or later (type stripping);
 // post-deploy-check imports none, and runs it as a release script. @astrojs/preact 6.1.1
 // declares Node 22.23.4 or later, as package.json's engines and .nvmrc do. An older Node,

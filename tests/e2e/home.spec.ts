@@ -43,6 +43,13 @@ async function ready(page: Page, path = '/') {
 }
 
 test.describe('planner', () => {
+  test('the lede is the v8 prototype’s, without the em dash (V8), in both languages', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.planner-lede')).toHaveText('Chest X-ray, TB test and free medicines near you, step by step.');
+    await page.goto('/fil');
+    await expect(page.locator('.planner-lede')).toHaveText('Chest X-ray, TB test at libreng gamot na malapit sa iyo, hakbang-hakbang.');
+  });
+
   test('an empty submit asks for a place and returns focus to the field', async ({ page }) => {
     await ready(page);
     await submit(page).click();

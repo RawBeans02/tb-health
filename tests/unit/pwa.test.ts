@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { CANVAS, webManifest } from '../../src/lib/manifest.ts';
 import { offlineStandIn, precachePages, savedPath } from '../../src/lib/offline.ts';
 
-const prototype = JSON.parse(readFileSync('design/design_handoff_tb_ph/prototype/manifest.webmanifest', 'utf8'));
+// The v8 design reference's manifest (V6), byte for byte v6's.
+const prototype = JSON.parse(readFileSync('design/v8/design_handoff_tb_ph/prototype/manifest.webmanifest', 'utf8'));
 
 describe('webManifest', () => {
   const manifest = webManifest({ check: true });

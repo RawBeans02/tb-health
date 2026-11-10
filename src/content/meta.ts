@@ -1,6 +1,8 @@
 // Page titles and descriptions (PLAN §4.3). English as in the prototype's <head>.
 // Filipino titles are built from the Filipino H1s and nav labels; Filipino descriptions
 // are verbatim pack sentences, or come from the owner (Q3). Pages join as they're built.
+// Titles join the page and the brand with " | " (V9): "TB PH | …" on Home, "… | TB PH"
+// elsewhere, as src/lib/title.ts builds the titles the views derive.
 import type { Dict } from './types.ts';
 
 const ownerFil = (en: string, file: string) =>
@@ -14,25 +16,25 @@ const ownerFil = (en: string, file: string) =>
 
 export const meta = {
   homeTitle: {
-    en: 'TB PH — Find your way to TB care',
-    fil: 'TB PH — Hanapin ang daan papunta sa gamutan sa TB',
+    en: 'TB PH | Find your way to TB care',
+    fil: 'TB PH | Hanapin ang daan papunta sa gamutan sa TB',
     origin: 'ui',
-    src: ['proto:Home.dc.html', 'derived'],
+    src: ['proto:Home.dc.html', 'decision:V9'],
     flags: ['FIL-REVIEW'],
-    note: 'FIL: the Filipino H1 (Home.dc.html:59) without its full stop, after the brand, as in the English title.',
+    note: 'V9 (4 Nov 2026) quotes both. FIL: the Filipino H1 (Home.dc.html:62) without its full stop, after the brand, as in the English title.',
   },
   homeDescription: {
     en: 'Find a chest X-ray, a TB test and free TB medicines near you in the Philippines, step by step. Testing and treatment are free at public health centers.',
     fil: 'Libre ang pagsusuri at gamutan sa TB sa mga pampublikong health center at TB-DOTS center.',
     origin: 'ui',
-    src: ['proto:Home.dc.html', 'pack:395'],
+    src: ['proto:Home.dc.html', 'pack:396'],
     flags: ['FIL-REVIEW'],
     note: 'FIL: a verbatim pack sentence (Places intro), not a translation of the English description.',
   },
 
   placesTitle: {
-    en: 'Find TB care near you — TB PH',
-    fil: 'Hanapin ang gamutan malapit sa iyo — TB PH',
+    en: 'Find TB care near you | TB PH',
+    fil: 'Hanapin ang gamutan malapit sa iyo | TB PH',
     origin: 'ui',
     src: ['proto:Places.dc.html', 'derived'],
     flags: ['FIL-REVIEW'],
@@ -42,14 +44,14 @@ export const meta = {
     en: 'Search PhilHealth-accredited TB-DOTS clinics by city, service, region and type. Testing and TB medicines are free at public health centers.',
     fil: 'Makikita rito ang mga TB-DOTS clinic na accredited ng PhilHealth (update noong 30 Setyembre 2026).',
     origin: 'ui',
-    src: ['proto:Places.dc.html', 'pack:395'],
+    src: ['proto:Places.dc.html', 'pack:396'],
     flags: ['FIL-REVIEW'],
     note: 'FIL: a verbatim pack sentence (Places intro), not a translation of the English description.',
   },
 
   checkTitle: {
-    en: 'Check symptoms — TB PH',
-    fil: 'Suriin ang sintomas — TB PH',
+    en: 'Check symptoms | TB PH',
+    fil: 'Suriin ang sintomas | TB PH',
     origin: 'ui',
     src: ['proto:Check.dc.html', 'derived'],
     flags: ['FIL-REVIEW'],
@@ -61,12 +63,12 @@ export const meta = {
     origin: 'ui',
     src: ['proto:Check.dc.html', 'derived'],
     flags: ['FIL-REVIEW'],
-    note: 'FIL: three verbatim pack sentences, from pack :197 and :198, matching the English sentence by sentence.',
+    note: 'FIL: three verbatim pack sentences, from pack :198 and :199, matching the English sentence by sentence.',
   },
 
   notFoundTitle: {
-    en: 'Page not found — TB PH',
-    fil: 'Hindi namin mahanap ang pahinang iyon — TB PH',
+    en: 'Page not found | TB PH',
+    fil: 'Hindi namin mahanap ang pahinang iyon | TB PH',
     origin: 'ui',
     src: ['proto:404.dc.html', 'derived'],
     flags: ['FIL-REVIEW'],
@@ -74,8 +76,8 @@ export const meta = {
   },
 
   offlineTitle: {
-    en: 'Offline — TB PH',
-    fil: 'Wala kang koneksiyon — TB PH',
+    en: 'Offline | TB PH',
+    fil: 'Wala kang koneksiyon | TB PH',
     origin: 'ui',
     src: ['proto:sw.js', 'derived'],
     flags: ['FIL-REVIEW'],

@@ -36,7 +36,9 @@ test.describe('list', () => {
     const privateCount = Number((await count(page).innerText()).split(' ')[0]);
     expect(privateCount).toBeGreaterThan(0);
     expect(privateCount).toBeLessThan(93);
-    for (const badge of await page.locator('.facility .badge').all()) await expect(badge).toHaveText('Private — fees may apply');
+    for (const badge of await page.locator('.facility .badge').all()) await expect(badge).toHaveText('Private (fees may apply)');
+    // The sample lists no hours: the v8 wording, without the em dash (V3, V8).
+    await expect(page.locator('.facility .facility-hours').first()).toHaveText('Hours not listed. Call first.');
 
     await page.getByRole('group', { name: 'Type' }).first().getByRole('button', { name: 'All' }).click();
     await panel.getByLabel('Region').selectOption({ label: 'Cordillera (CAR)' });

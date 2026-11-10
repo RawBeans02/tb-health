@@ -10,6 +10,7 @@ import { meta } from '../content/meta.ts';
 import { pick } from '../content/types.ts';
 import { href, type Lang } from '../lib/i18n.ts';
 import { italics, NUMBERS, SECTION_SOURCES, SECTIONS, SOURCES } from '../lib/learn.ts';
+import { pageTitle } from '../lib/title.ts';
 import '../styles/learn.css';
 
 interface Props {
@@ -24,7 +25,8 @@ const myths = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({
   myth: t[`myth${n}_myth` as keyof typeof t],
   fact: t[`myth${n}_fact` as keyof typeof t],
 }));
-const title = { en: `${learn.h1.en} — TB PH`, fil: `${learn.h1.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+// "Learn about TB | TB PH" and "Alamin ang TB | TB PH", as V9 quotes them.
+const title = { en: pageTitle(learn.h1.en), fil: pageTitle(learn.h1.fil), origin: 'ui', src: ['derived', 'derived'] } as const;
 ---
 <BaseLayout lang={lang} title={title} description={meta.learnDescription} current="learn">
   <main id="main" tabindex="-1">

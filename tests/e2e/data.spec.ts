@@ -31,6 +31,21 @@ test.describe('Data', () => {
     expect(await table.getByRole('row').count()).toBeGreaterThan(10);
   });
 
+  test('says it without em dashes (V8): beats 2 and 4, the cost caption, and an en dash in an empty cell', async ({ page }) => {
+    await page.goto('/data');
+    await expect(page.locator('.story-big')).toHaveText("That's about 2,000 people every day, more than one every minute.");
+    await expect(page.getByRole('heading', { name: 'TB took about 37,000 lives, nearly 100 every day.' })).toHaveCount(1);
+    const d12 = await panel(page, 'd12');
+    await expect(d12).toContainText('Catastrophic costs: total TB costs (medical, non-medical and lost income, net of assistance) above 20% of yearly household income.');
+    const d3 = await panel(page, 'd3');
+    await d3.getByRole('button', { name: 'View as table' }).click();
+    // 2026 has January only so far: February's cell is empty.
+    const row2026 = d3.getByRole('table').first().getByRole('row').last();
+    await expect(row2026.getByRole('cell').first()).toHaveText(/^2026/);
+    await expect(row2026.getByRole('cell').nth(2)).toHaveText('–');
+    await expect(page.locator('main')).not.toContainText('—');
+  });
+
   test('charts are laid out at the panel width, so labels keep their size', async ({ page }) => {
     for (const width of [390, 1280]) {
       await page.setViewportSize({ width, height: 900 });

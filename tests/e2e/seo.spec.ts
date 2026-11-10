@@ -52,6 +52,10 @@ test.describe('search and sharing', () => {
       const html = await response.text();
       const title = tag(html, /<title>([^<]*)<\/title>/);
       expect(title, loc).toBeTruthy();
+      // V9: "TB PH | …" on Home, "… | TB PH" everywhere else; a place is titled with its name (V8: no em dash).
+      expect(title, loc).toMatch(/^(\/fil)?\/?$/.test(url.pathname) ? /^TB PH \| \S/ : /\S \| TB PH$/);
+      expect(title, loc).not.toMatch(/—|&mdash;|&#8212;|&#x2014;/i);
+      if (/^(\/fil)?\/place\//.test(url.pathname)) expect(title, loc).toBe(`${tag(html, /<h1 class="place-name">([^<]*)<\/h1>/)} | TB PH`);
       expect(tag(html, /<link rel="canonical" href="([^"]+)"/), loc).toBe(loc);
       expect(html, loc).not.toContain('name="robots"');
       for (const lang of ['en', 'fil', 'x-default']) {
@@ -66,10 +70,53 @@ test.describe('search and sharing', () => {
     }
   });
 
-  test('Home shares the prototype’s preview text', async ({ request }) => {
+  test('Home shares the prototype’s preview text, in v8’s wording (V8, V9)', async ({ request }) => {
     const html = await (await get(request, '/')).text();
-    expect(tag(html, /<meta property="og:title" content="([^"]+)"/)).toBe('TB PH — Find your way to TB care');
-    expect(tag(html, /<meta property="og:description" content="([^"]+)"/)).toBe('Chest X-ray, TB test and free medicines — near you, step by step.');
+    expect(tag(html, /<meta property="og:title" content="([^"]+)"/)).toBe('TB PH | Find your way to TB care');
+    expect(tag(html, /<meta property="og:description" content="([^"]+)"/)).toBe('Chest X-ray, TB test and free medicines near you, step by step.');
+    const fil = await (await get(request, '/fil')).text();
+    expect(tag(fil, /<meta property="og:title" content="([^"]+)"/)).toBe('TB PH | Hanapin ang daan papunta sa gamutan sa TB');
+    expect(tag(fil, /<meta property="og:description" content="([^"]+)"/)).toBe('Chest X-ray, TB test at libreng gamot na malapit sa iyo, hakbang-hakbang.');
+  });
+
+  test('every route’s <title> and og:title, in English and Filipino (V9)', async ({ request }) => {
+    const titles: Record<string, string> = {
+      '/': 'TB PH | Find your way to TB care',
+      '/fil': 'TB PH | Hanapin ang daan papunta sa gamutan sa TB',
+      '/places': 'Find TB care near you | TB PH',
+      '/fil/places': 'Hanapin ang gamutan malapit sa iyo | TB PH',
+      '/check': 'Check symptoms | TB PH',
+      '/fil/check': 'Suriin ang sintomas | TB PH',
+      '/learn': 'Learn about TB | TB PH',
+      '/fil/learn': 'Alamin ang TB | TB PH',
+      '/data': 'The data | TB PH',
+      '/fil/data': 'Ang datos | TB PH',
+      '/about': 'About | TB PH',
+      '/fil/about': 'Tungkol sa amin | TB PH',
+      '/install': 'Install the app | TB PH',
+      '/fil/install': 'I-install ang app | TB PH',
+    };
+    for (const [path, title] of Object.entries(titles)) {
+      const html = await (await get(request, path)).text();
+      expect(tag(html, /<title>([^<]*)<\/title>/), path).toBe(title);
+      expect(tag(html, /<meta property="og:title" content="([^"]+)"/), path).toBe(title);
+    }
+    // The stand-ins and 404s, which have no share preview: the title alone.
+    const standIns: Record<string, string> = {
+      '/offline': 'Offline | TB PH',
+      '/fil/offline': 'Wala kang koneksiyon | TB PH',
+      '/no-such-page': 'Page not found | TB PH',
+      '/fil/no-such-page': 'Hindi namin mahanap ang pahinang iyon | TB PH',
+      '/place/no-such-place': 'Page not found | TB PH',
+      '/fil/place/no-such-place': 'Hindi namin mahanap ang pahinang iyon | TB PH',
+      '/place': 'TB PH',
+      '/fil/place': 'TB PH',
+    };
+    for (const [path, title] of Object.entries(standIns)) {
+      const html = await (await get(request, path)).text();
+      expect(tag(html, /<title>([^<]*)<\/title>/), path).toBe(title);
+      expect(html, path).not.toContain('og:title');
+    }
   });
 
   test('the stand-ins and 404s are noindex, with no canonical or share preview', async ({ request }) => {

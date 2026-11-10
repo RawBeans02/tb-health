@@ -9,6 +9,7 @@ import { meta } from '../content/meta.ts';
 import { fill, pick } from '../content/types.ts';
 import { formatDate, LAST_UPDATED } from '../lib/dates.ts';
 import { href, type Lang } from '../lib/i18n.ts';
+import { pageTitle } from '../lib/title.ts';
 import '../styles/about.css';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = pick(about, lang);
-const title = { en: `${about.h1.en} — TB PH`, fil: `${about.h1.fil} — TB PH`, origin: 'ui', src: ['derived', 'derived'] } as const;
+const title = { en: pageTitle(about.h1.en), fil: pageTitle(about.h1.fil), origin: 'ui', src: ['derived', 'derived'] } as const;
 const privacy = [TBPH_CHECK ? t.privacy1 : t.privacy1NoCheck, t.privacy2, t.privacy3, t.privacyServices].filter(Boolean);
 const numbers = [
   { who: t.n911_who, note: t.n911_note, number: '911', tel: 'tel:911' },

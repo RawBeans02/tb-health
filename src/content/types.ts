@@ -8,7 +8,7 @@ export type Flag =
   | 'REVIEW' //      needs a clinician's check
   | 'VERIFY' //      needs a fact check
   | 'PLACEHOLDER' // stands in for something not decided yet
-  | 'FIL-REVIEW'; // Filipino not from the pack: for the native-speaker review (D10)
+  | 'FIL-REVIEW'; // Filipino not from the pack, or flagged by the owner (V10, V11): for the native-speaker review (D10)
 
 export type Origin =
   | 'pack' //     the content pack, verbatim
@@ -18,10 +18,11 @@ export type Origin =
   | 'owner'; //   still to come from the owner; blocks launch
 
 /**
- * Where one language's text comes from:
- *   pack:N    line N of design/…/reference/content-and-data-pack.md
- *   readme:N  line N of design/…/README.md
- *   proto:F   prototype file F
+ * Where one language's text comes from, in the v8 design reference, design/v8/design_handoff_tb_ph
+ * (V6, V8: its content pack is the copy baseline):
+ *   pack:N    line N of design/v8/…/reference/content-and-data-pack.md, the v8 pack
+ *   readme:N  line N of design/v8/…/README.md
+ *   proto:F   prototype file F (design/v8/…/prototype/F)
  *   decision:ID  decision ID in docs/decisions.md ("### V4. …"), which quotes the owner's wording
  *   derived   built mechanically from other strings, as the note says (checked by hand)
  *   owner     not supplied yet

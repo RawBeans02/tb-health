@@ -95,6 +95,12 @@ describe('the strings a build without Check ships (Q9, review 8 Nov 2026)', () =
     }
   });
 
+  it("CHECK_NAMES finds no check in Learn L5's step 1, in V10's wording, so a build without Check keeps it (only the L5 button, learn.l5_action1, goes)", () => {
+    expect(learn.l5_ol1.en).toContain('YAKAP');
+    expect(learn.l5_ol1.en).not.toMatch(CHECK_NAMES);
+    expect(learn.l5_ol1.fil).not.toMatch(CHECK_NAMES);
+  });
+
   it('forBuild passes every string through with Check', () => {
     const t = { ...pick(home, 'en'), ...pick(chrome, 'en') };
     expect(forBuild(t, { check: true })).toBe(t);

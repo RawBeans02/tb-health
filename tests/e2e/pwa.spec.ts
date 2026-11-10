@@ -87,7 +87,7 @@ test.describe('phone app', () => {
 
     await page.goto(`/place/${UNVISITED}?stop=1`);
     await expect(page.locator('h1')).toHaveText('Baguio General Hospital and Medical Center');
-    await expect(page).toHaveTitle('Baguio General Hospital and Medical Center — TB PH');
+    await expect(page).toHaveTitle('Baguio General Hospital and Medical Center | TB PH');
     // The shell, not a saved page: noindex and no canonical.
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
@@ -103,7 +103,7 @@ test.describe('phone app', () => {
 
     await page.goto('/place/no-such-place');
     await expect(page.locator('h1')).toHaveText("This place isn't on the list.");
-    await expect(page).toHaveTitle('Page not found — TB PH');
+    await expect(page).toHaveTitle('Page not found | TB PH');
   });
 
   test('an unsaved page offline gets the offline page in its language', async ({ page }) => {
@@ -114,7 +114,7 @@ test.describe('phone app', () => {
     await expect(page.locator('main a.btn')).toHaveAttribute('href', '/');
     await page.goto('/fil/wala-nito');
     await expect(page.locator('main h1')).toHaveText('Wala kang koneksiyon.');
-    await expect(page).toHaveTitle('Wala kang koneksiyon — TB PH');
+    await expect(page).toHaveTitle('Wala kang koneksiyon | TB PH');
     await expect(page.locator('main a.btn')).toHaveAttribute('href', '/fil');
   });
 

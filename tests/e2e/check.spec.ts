@@ -23,6 +23,8 @@ test.describe('flow', () => {
   test('intro, then one question per screen with focus on each title (TB red, Q10)', async ({ page }) => {
     await page.goto('/check');
     await expect(h1(page)).toHaveText('Check your symptoms');
+    // The v8 pack's intro: a full stop where the em dash was (V8).
+    await expect(page.locator('main')).toContainText('This is not a diagnosis. Only a test can tell whether you have TB.');
     await expect(page.locator('.privacy-row')).toHaveText("Your answers stay on your device. We don't save or send them.");
     await page.getByRole('button', { name: 'Start' }).click();
     await expect(h1(page)).toHaveText('Who are you checking for?');
@@ -56,7 +58,8 @@ test.describe('flow', () => {
     await expect(page.locator('.result-steps li')).toHaveCount(3);
     await expect(page.locator('.result-notes li')).toHaveText(['iNot sure about an old X-ray? Bring the result with you, or ask whether you need a new one.']);
     await expect(page.getByRole('link', { name: 'Plan my route to a test' })).toHaveAttribute('href', '/?need=all');
-    await expect(page.locator('.result-foot')).toContainText('Medical review: [partner clinicians — pending].');
+    await expect(page.locator('.result-foot')).toContainText('Medical review: [partner clinicians, pending].');
+    await expect(page.locator('#card-title')).toHaveText('My TB check: show this to the health worker');
     const card = page.locator('.patient-card');
     await expect(card.locator('dt')).toHaveText(['Date', 'Checked for', 'Symptoms for 2 weeks or more', 'Blood in phlegm', 'Recent symptoms', 'Chest X-ray answer', 'Risk factors', 'Recommended next step']);
     await expect(card.locator('dd').nth(1)).toHaveText('Myself (15 or older)');

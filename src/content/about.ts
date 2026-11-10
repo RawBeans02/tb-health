@@ -88,7 +88,8 @@ export const about = {
   },
   appLink: ui('How to install', 'Paano i-install', file),
 
-  a11y: ui('Accessibility', 'Accessibility', file),
+  // V11: "Aksesibilidad" in Filipino, as in the v8 prototype and the footer link; FIL-REVIEW, as every ui() string.
+  a11y: ui('Accessibility', 'Aksesibilidad', file),
   a11yText: {
     en: "We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA. The site works with a keyboard and screen readers, uses large text and strong contrast, and every chart has a table version. Known limitation: the optional map works best with a mouse or touch, so the same places are always listed as text.",
     fil: 'Layunin naming maabot ang Web Content Accessibility Guidelines (WCAG) 2.2, level AA. Gumagana ang site gamit ang keyboard at screen reader, malalaki ang titik at malinaw ang kulay, at may talaan ang bawat chart. Limitasyon: pinakamainam gamitin ang mapa gamit ang mouse o touch, kaya laging nakalista rin bilang teksto ang parehong mga lugar.',
