@@ -1,0 +1,466 @@
+{
+  "v": 1,
+  "mode": "omelette",
+  "root": "project/",
+  "title": "Design system and six-page build complete",
+  "entry": "Home.dc.html",
+  "pages": [
+    {
+      "path": "Places.dc.html",
+      "title": "Places",
+      "kind": "page"
+    },
+    {
+      "path": "Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "DotStory.dc.html",
+      "title": "DotStory",
+      "kind": "component"
+    },
+    {
+      "path": "Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "Place.dc.html",
+      "title": "Place",
+      "kind": "page"
+    },
+    {
+      "path": "About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "404.dc.html",
+      "title": "404",
+      "kind": "page"
+    },
+    {
+      "path": "SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "index.html",
+      "title": "TB PH — Find your way to TB care",
+      "kind": "plain"
+    },
+    {
+      "path": "Install.dc.html",
+      "title": "Install",
+      "kind": "page"
+    },
+    {
+      "path": "Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    },
+    {
+      "path": "Home v3.dc.html",
+      "title": "Home v3",
+      "kind": "page"
+    },
+    {
+      "path": "Color Directions.dc.html",
+      "title": "Color Directions",
+      "kind": "page"
+    },
+    {
+      "path": "v1/About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Find.dc.html",
+      "title": "Find",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "v1/Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/404.dc.html",
+      "title": "404",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/index.html",
+      "title": "TB PH — Find your way to TB care",
+      "kind": "plain"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Install.dc.html",
+      "title": "Install",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Place.dc.html",
+      "title": "Place",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/Places.dc.html",
+      "title": "Places",
+      "kind": "page"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/qa-harness.html",
+      "title": "QA harness (temporary)",
+      "kind": "plain"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/404.dc.html",
+      "title": "404",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Color Directions.dc.html",
+      "title": "Color Directions",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Home v3.dc.html",
+      "title": "Home v3",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/index.html",
+      "title": "TB PH — Find your way to TB care",
+      "kind": "plain"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Install.dc.html",
+      "title": "Install",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Place.dc.html",
+      "title": "Place",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/Places.dc.html",
+      "title": "Places",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Find.dc.html",
+      "title": "Find",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/404.dc.html",
+      "title": "404",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/About.dc.html",
+      "title": "About",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Check.dc.html",
+      "title": "Check",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Data.dc.html",
+      "title": "Data",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Design System.dc.html",
+      "title": "Design System",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Home.dc.html",
+      "title": "Home",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/index.html",
+      "title": "TB PH — Find your way to TB care",
+      "kind": "plain"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Install.dc.html",
+      "title": "Install",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Learn.dc.html",
+      "title": "Learn",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Place.dc.html",
+      "title": "Place",
+      "kind": "page"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Places.dc.html",
+      "title": "Places",
+      "kind": "page"
+    },
+    {
+      "path": "v1/SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "v1/SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/DotStory.dc.html",
+      "title": "DotStory",
+      "kind": "component"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "design_handoff_tb_ph/prototype/SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/DotStory.dc.html",
+      "title": "DotStory",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/v1/SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/DotStory.dc.html",
+      "title": "DotStory",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/SiteFooter.dc.html",
+      "title": "SiteFooter",
+      "kind": "component"
+    },
+    {
+      "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/SiteHeader.dc.html",
+      "title": "SiteHeader",
+      "kind": "component"
+    }
+  ],
+  "migratorVersion": "artifact-migrator (claude-design-backend ed667f7ac9c1)",
+  "createdAt": "2026-11-04T02:17:21.998Z",
+  "source": {
+    "v": 1,
+    "app": "claude-design",
+    "url": "https://claude.ai/design/p/be67e7f9-94c3-4d1a-9637-d5d3c80b6d63",
+    "projectId": "be67e7f9-94c3-4d1a-9637-d5d3c80b6d63",
+    "exportedAt": "2026-11-04T02:17:21.998Z"
+  },
+  "report": {
+    "itemsVersion": 2,
+    "pages": {
+      "total": 63,
+      "ok": 59,
+      "partial": 4,
+      "notMigrated": 0
+    },
+    "items": [
+      {
+        "kind": "external_blocked",
+        "path": "design_handoff_tb_ph/prototype/Places.dc.html",
+        "text": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "Places.dc.html",
+        "text": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/Places.dc.html",
+        "text": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "uploads/TB-PH-build-v5/Places.dc.html",
+        "text": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "design_handoff_tb_ph/prototype/tbph-core.js",
+        "text": "https://sakay.ph"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "tbph-core.js",
+        "text": "https://sakay.ph"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "uploads/TB-PH-build-v5/design_handoff_tb_ph/prototype/tbph-core.js",
+        "text": "https://sakay.ph"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "uploads/TB-PH-build-v5/tbph-core.js",
+        "text": "https://sakay.ph"
+      }
+    ],
+    "truncated": 0,
+    "truncatedLeftOut": 0
+  }
+}

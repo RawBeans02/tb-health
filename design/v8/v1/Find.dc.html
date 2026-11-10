@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find a TB-DOTS center — TB PH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap">
+  <style>*,*::before,*::after{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{margin:0;background:#F2F0EA;color:#14212B;font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}a{color:#1E6B70;text-decoration-thickness:1.5px;text-underline-offset:3px}a:hover{color:#14212B}:focus-visible{outline:3px solid #14212B;outline-offset:3px}h1,h2,h3,p,ul,ol{margin:0}button,input,select{font:inherit;color:inherit}input[type=search]::-webkit-search-cancel-button{cursor:pointer}</style>
+</helmet>
+<div lang="{{ lang }}" style="background:#F2F0EA; color:#14212B; min-height:100vh; display:flex; flex-direction:column; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <div style="position:sticky; top:0; z-index:40;">
+    <dc-import name="SiteHeader" lang="{{ lang }}" current="find" on-lang="{{ setLang }}" hint-size="100%,65px"></dc-import>
+  </div>
+
+  <main id="main" tabindex="-1" style="flex:1; outline:none;">
+    <div style="max-width:1280px; margin:0 auto; padding:clamp(32px,6vw,72px) clamp(20px,5vw,64px) clamp(56px,8vw,104px);">
+      <div style="display:grid; grid-template-columns:{{ L.cols }}; gap:{{ L.gap }}; align-items:start;">
+
+        <div style="min-width:0; max-width:46rem; display:grid; gap:32px;">
+          <div id="intro" data-anchor="" style="display:grid; gap:18px;">
+            <sc-if value="{{ en }}" hint-placeholder-val="{{ true }}">
+              <h1 style="font-family:Newsreader,Georgia,'Times New Roman',serif; font-weight:500; font-size:clamp(2.125rem,1.5rem + 2.4vw,3.25rem); line-height:1.08; letter-spacing:-0.01em; text-wrap:balance;">Find a TB-DOTS center</h1>
+              <p style="font-family:Newsreader,Georgia,'Times New Roman',serif; font-size:clamp(1.1875rem,1.15rem + 0.15vw,1.25rem); line-height:1.6; max-width:34em; text-wrap:pretty;">TB testing and treatment are free at public health centers and TB-DOTS centers. This list shows TB-DOTS clinics accredited by PhilHealth (update of 30 September 2026). Your barangay health station or rural health unit can help too. Call ahead to confirm their hours.</p>
+            </sc-if>
+            <sc-if value="{{ fil }}" hint-placeholder-val="{{ false }}">
+              <h1 style="font-family:Newsreader,Georgia,'Times New Roman',serif; font-weight:500; font-size:clamp(2.125rem,1.5rem + 2.4vw,3.25rem); line-height:1.08; letter-spacing:-0.01em; text-wrap:balance;">Hanapin ang TB-DOTS center</h1>
+              <p style="font-family:Newsreader,Georgia,'Times New Roman',serif; font-size:clamp(1.1875rem,1.15rem + 0.15vw,1.25rem); line-height:1.6; max-width:34em; text-wrap:pretty;">Libre ang pagsusuri at gamutan sa TB sa mga pampublikong health center at TB-DOTS center. Makikita rito ang mga TB-DOTS clinic na accredited ng PhilHealth (update noong 30 Setyembre 2026). Makatutulong din ang inyong barangay health station o rural health unit. Tumawag muna para kumpirmahin ang kanilang oras.</p>
+            </sc-if>
+            <sc-if value="{{ isSample }}" hint-placeholder-val="{{ false }}">
+              <p style="font-size:16px; line-height:1.45; color:#56626A; max-width:40em;">{{ sampleNote }}</p>
+            </sc-if>
+          </div>
+
+          <div id="search" data-anchor="" role="search" style="display:grid; gap:18px;">
+            <label style="display:grid; gap:8px;">
+              <span style="font-size:17px; font-weight:700; line-height:1.35;">{{ t.search }}</span>
+              <input type="search" value="{{ q }}" onChange="{{ onQ }}" autocomplete="off" enterkeyhint="search" style="width:100%; min-height:56px; padding:0 16px; border:2px solid #56626A; border-radius:6px; background:#FBFAF6; font-size:18px;">
+            </label>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)); gap:16px;">
+              <label style="display:grid; gap:8px;">
+                <span style="font-size:17px; font-weight:700;">{{ t.region }}</span>
+                <select value="{{ region }}" onChange="{{ onRegion }}" style="width:100%; min-height:56px; padding:0 14px; border:2px solid #56626A; border-radius:6px; background:#FBFAF6; font-size:18px;">{{ regionOptions }}</select>
+              </label>
+              <label style="display:grid; gap:8px;">
+                <span style="font-size:17px; font-weight:700;">{{ t.prov }}</span>
+                <select value="{{ prov }}" onChange="{{ onProv }}" style="width:100%; min-height:56px; padding:0 14px; border:2px solid #56626A; border-radius:6px; background:#FBFAF6; font-size:18px;">{{ provOptions }}</select>
+              </label>
+            </div>
+            <div role="group" aria-labelledby="type-label" style="display:grid; gap:8px;">
+              <span id="type-label" style="font-size:17px; font-weight:700;">{{ t.type }}</span>
+              <div style="display:flex; flex-wrap:wrap; justify-self:start; border:1.5px solid #14212B; border-radius:6px; overflow:hidden;">
+                <sc-for list="{{ sectors }}" as="s" hint-placeholder-count="3">
+                  <button type="button" aria-pressed="{{ s.on }}" onClick="{{ s.pick }}" style="min-height:48px; padding:0 18px; border:0; border-left:{{ s.sep }}; background:{{ s.bg }}; color:{{ s.fg }}; font-size:17px; font-weight:700; cursor:pointer;">{{ s.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div id="results" data-anchor="" style="display:grid; gap:4px;">
+            <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px 20px; padding-bottom:14px;">
+              <h2 ref="{{ countRef }}" tabindex="-1" aria-live="polite" style="font-size:22px; font-weight:700; line-height:1.3; outline:none; font-variant-numeric:tabular-nums;">{{ countLabel }}</h2>
+              <sc-if value="{{ filtered }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ clear }}" style="min-height:44px; padding:0; border:0; background:none; color:#1E6B70; font-size:17px; font-weight:700; text-decoration:underline; text-underline-offset:4px; cursor:pointer;">{{ t.clear }}</button>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+              <p role="status" style="border-top:1px solid #D9D5CB; padding:24px 0; font-size:18px; color:#56626A;">{{ t.loading }}</p>
+            </sc-if>
+            <sc-if value="{{ failed }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="border-top:1px solid #D9D5CB; padding:24px 0; display:grid; gap:14px; justify-items:start;">
+                <p style="font-size:18px;">{{ t.failed }}</p>
+                <button type="button" onClick="{{ retry }}" style="min-height:48px; padding:0 20px; border:2px solid #1E6B70; border-radius:6px; background:transparent; color:#1E6B70; font-size:17px; font-weight:700; cursor:pointer;">{{ t.retry }}</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #D9D5CB; padding:28px 0; display:grid; gap:16px; justify-items:start;">
+                <p style="font-size:19px; line-height:1.5; max-width:32em;">{{ t.empty }}</p>
+                <button type="button" onClick="{{ clear }}" style="min-height:52px; padding:0 22px; border:2px solid #1E6B70; border-radius:6px; background:transparent; color:#1E6B70; font-size:18px; font-weight:700; cursor:pointer;" style-hover="background:#DDE8E5;">{{ t.clear }}</button>
+              </div>
+            </sc-if>
+
+            <ul role="list" style="list-style:none; padding:0; margin:0;">
+              <sc-for list="{{ results }}" as="f" hint-placeholder-count="3">
+                <li style="border-top:1px solid #D9D5CB; padding:22px 0 26px; display:grid; gap:10px;">
+                  <h3 style="font-size:21px; font-weight:700; line-height:1.3; text-wrap:pretty;">{{ f.name }}</h3>
+                  <p><span style="display:inline-flex; align-items:center; min-height:30px; padding:2px 12px; border:1.5px solid {{ f.badgeLine }}; border-radius:999px; color:{{ f.badgeInk }}; font-size:15px; font-weight:700; line-height:1.3;">{{ f.badge }}</span></p>
+                  <p style="font-size:18px; line-height:1.45;">{{ f.street }}<br>{{ f.place }}</p>
+                  <sc-if value="{{ f.hasPhone }}" hint-placeholder-val="{{ true }}"><p style="font-size:17px; line-height:1.4; color:#56626A; font-variant-numeric:tabular-nums; overflow-wrap:anywhere;">{{ f.phone }}</p></sc-if>
+                  <div style="display:flex; flex-wrap:wrap; gap:10px; padding-top:6px;">
+                    <sc-if value="{{ f.hasTel }}" hint-placeholder-val="{{ true }}">
+                      <a href="{{ f.tel }}" aria-label="{{ f.callAria }}" style="display:inline-flex; align-items:center; min-height:48px; padding:0 20px; background:#1E6B70; color:#F2F0EA; border-radius:6px; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:#175458; color:#F2F0EA;">{{ t.call }}</a>
+                    </sc-if>
+                    <a href="{{ f.maps }}" target="_blank" rel="noopener" aria-label="{{ f.dirAria }}" style="display:inline-flex; align-items:center; min-height:48px; padding:0 18px; border:2px solid #1E6B70; color:#1E6B70; border-radius:6px; font-size:17px; font-weight:700; text-decoration:none;" style-hover="background:#DDE8E5; color:#175458;">{{ t.directions }}</a>
+                    <button type="button" onClick="{{ f.copy }}" style="min-height:48px; padding:0 18px; border:2px solid #1E6B70; border-radius:6px; background:transparent; color:#1E6B70; font-size:17px; font-weight:700; cursor:pointer;" style-hover="background:#DDE8E5;">{{ f.copyLabel }}</button>
+                  </div>
+                </li>
+              </sc-for>
+            </ul>
+
+            <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+              <div style="border-top:1px solid #D9D5CB; padding-top:24px;">
+                <button type="button" onClick="{{ more }}" style="min-height:52px; padding:0 22px; border:2px solid #14212B; border-radius:6px; background:transparent; color:#14212B; font-size:18px; font-weight:700; cursor:pointer;" style-hover="background:#E8E4DA;">{{ moreLabel }}</button>
+              </div>
+            </sc-if>
+            <p role="status" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;">{{ copiedMsg }}</p>
+            <p style="border-top:1px solid #D9D5CB; margin-top:20px; padding-top:18px; font-size:15px; line-height:1.5; color:#56626A; max-width:40em;">{{ t.note }}</p>
+          </div>
+        </div>
+
+        <aside id="overview" data-anchor="" aria-labelledby="ov-title" style="min-width:0; position:{{ L.asidePos }}; top:97px; display:grid; gap:16px;">
+          <h2 id="ov-title" style="font-size:18px; font-weight:700; line-height:1.35; max-width:22em;">{{ t.caption }}</h2>
+          <sc-if value="{{ showTiles }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid; grid-template-columns:repeat(3,minmax(0,84px)); grid-auto-rows:62px; gap:6px;">
+              <sc-for list="{{ tiles }}" as="r" hint-placeholder-count="17">
+                <button type="button" aria-pressed="{{ r.pressed }}" aria-label="{{ r.aria }}" onClick="{{ r.pick }}" style="grid-column:{{ r.col }}; grid-row:{{ r.row }}; display:grid; align-content:center; justify-items:start; gap:1px; padding:6px 9px; border:{{ r.border }}; outline:{{ r.ring }}; outline-offset:2px; border-radius:4px; background:{{ r.bg }}; color:{{ r.fg }}; text-align:left; cursor:{{ r.cursor }};">
+                  <span style="font-size:13px; font-weight:700; line-height:1.2;">{{ r.short }}</span>
+                  <span style="font-size:19px; font-weight:700; line-height:1.15; font-variant-numeric:tabular-nums;">{{ r.n }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="display:grid; gap:8px; font-size:15px; line-height:1.4; color:#56626A;">
+              <p style="display:flex; align-items:center; gap:10px;"><span aria-hidden="true" style="display:flex;"><span style="width:14px; height:14px; background:#DDE8E5;"></span><span style="width:14px; height:14px; background:#B9D3CF;"></span><span style="width:14px; height:14px; background:#1E6B70;"></span><span style="width:14px; height:14px; background:#175458;"></span></span>{{ t.legendMore }}</p>
+              <p style="display:flex; align-items:center; gap:10px;"><span aria-hidden="true" style="width:28px; height:16px; border:1.5px dashed #56626A; border-radius:3px;"></span>{{ t.noData }}</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showBars }}" hint-placeholder-val="{{ false }}">
+            <ul role="list" style="list-style:none; padding:0; margin:0; display:grid; gap:10px;">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="5">
+                <li>
+                  <button type="button" aria-pressed="{{ b.pressed }}" onClick="{{ b.pick }}" style="width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:center; min-height:48px; padding:4px 0; border:0; background:none; color:#14212B; text-align:left; cursor:pointer;">
+                    <span style="font-size:16px; font-weight:{{ b.weight }}; line-height:1.3;">{{ b.name }}</span>
+                    <span style="font-size:16px; font-weight:700; font-variant-numeric:tabular-nums;">{{ b.n }}</span>
+                    <span aria-hidden="true" style="grid-column:1 / -1; height:10px; background:#E8E4DA;"><span style="display:block; height:100%; width:{{ b.w }}; background:#1E6B70;"></span></span>
+                  </button>
+                </li>
+              </sc-for>
+            </ul>
+            <p style="font-size:15px; line-height:1.5; color:#56626A;">{{ t.noDataList }} {{ emptyRegions }}</p>
+          </sc-if>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <dc-import name="SiteFooter" lang="{{ lang }}" current="find" on-lang="{{ setLang }}" hint-size="100%,340px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: this.readLang(), vw: window.innerWidth, all: null, src: '', failed: false, q: '', region: '', prov: '', sector: '', limit: 20, copied: null };
+  countRef = React.createRef();
+  REG = [
+    { code: 'R1', name: 'Region I (Ilocos)', short: 'I', c: 1, r: 1 },
+    { code: 'CAR', name: 'Cordillera (CAR)', short: 'CAR', c: 2, r: 1 },
+    { code: 'R2', name: 'Region II (Cagayan Valley)', short: 'II', c: 3, r: 1 },
+    { code: 'R3', name: 'Region III (Central Luzon)', short: 'III', c: 1, r: 2 },
+    { code: 'NCR', name: 'NCR & Rizal', short: 'NCR', c: 2, r: 2 },
+    { code: 'R4B', name: 'MIMAROPA (Region IV-B)', short: 'IV-B', c: 1, r: 3 },
+    { code: 'R4A', name: 'Region IV-A (Calabarzon)', short: 'IV-A', c: 2, r: 3 },
+    { code: 'R5', name: 'Region V (Bicol)', short: 'V', c: 3, r: 3 },
+    { code: 'R6', name: 'Region VI (Western Visayas)', short: 'VI', c: 1, r: 4 },
+    { code: 'R7', name: 'Region VII (Central Visayas)', short: 'VII', c: 2, r: 4 },
+    { code: 'R8', name: 'Region VIII (Eastern Visayas)', short: 'VIII', c: 3, r: 4 },
+    { code: 'R9', name: 'Region IX (Zamboanga Peninsula)', short: 'IX', c: 1, r: 5 },
+    { code: 'R10', name: 'Region X (Northern Mindanao)', short: 'X', c: 2, r: 5 },
+    { code: 'R13', name: 'Caraga (Region XIII)', short: 'XIII', c: 3, r: 5 },
+    { code: 'BARMM', name: 'BARMM', short: 'BARMM', c: 1, r: 6 },
+    { code: 'R12', name: 'Region XII (Soccsksargen)', short: 'XII', c: 2, r: 6 },
+    { code: 'R11', name: 'Region XI (Davao)', short: 'XI', c: 3, r: 6 }
+  ];
+  T = {
+    en: { search: 'Search by city, municipality or facility name', region: 'Region', prov: 'Province or city', type: 'Type', all: 'All', allRegions: 'All regions', allProv: 'All provinces and cities', gov: 'Government', priv: 'Private', count: n => n === 1 ? '1 center' : n.toLocaleString('en-US') + ' centers', call: 'Call', directions: 'Get directions', copy: 'Copy address', copied: 'Copied', badgeGov: 'Government — free TB care', badgePriv: 'Private — fees may apply', empty: 'No centers match your search. Try a nearby city, or clear the filters.', clear: 'Clear filters', note: "Facility details come from PhilHealth. If a number doesn't work, contact your city or municipal health office.", caption: 'PhilHealth-accredited TB-DOTS clinics per region', more: n => 'Show more centers (' + n.toLocaleString('en-US') + ' left)', loading: 'Loading the list of centers…', failed: 'The list could not be loaded. Check your connection and try again.', retry: 'Try again', noData: 'No data yet', noDataList: 'No data yet:', legendMore: 'Darker means more clinics', sample: (n, r) => 'Sample list: ' + n + ' of about 2,100 accredited centers, from ' + r + ' regions. The full list replaces it before launch.', callAria: (name, num) => 'Call ' + name + ', ' + num, dirAria: name => 'Get directions to ' + name + ' (opens Google Maps)', copiedMsg: 'Address copied', tileAria: (name, n) => name + ': ' + (n === 1 ? '1 center' : n + ' centers'), tileEmpty: name => name + ': no data yet' },
+    fil: { search: 'Maghanap ayon sa lungsod, bayan o pangalan ng pasilidad', region: 'Rehiyon', prov: 'Probinsiya o lungsod', type: 'Uri', all: 'Lahat', allRegions: 'Lahat ng rehiyon', allProv: 'Lahat ng probinsiya at lungsod', gov: 'Pampubliko', priv: 'Pribado', count: n => n.toLocaleString('en-US') + ' na center', call: 'Tumawag', directions: 'Paano pumunta', copy: 'Kopyahin ang address', copied: 'Nakopya na', badgeGov: 'Pampubliko — libreng gamutan sa TB', badgePriv: 'Pribado — maaaring may bayad', empty: 'Walang tumugma sa hinanap mo. Subukan ang kalapit na lungsod, o i-clear ang mga filter.', clear: 'I-clear ang mga filter', note: 'Galing sa PhilHealth ang detalye ng mga pasilidad. Kung hindi gumagana ang numero, makipag-ugnayan sa inyong city o municipal health office.', caption: 'Bilang ng TB-DOTS clinic bawat rehiyon na accredited ng PhilHealth', more: n => 'Ipakita pa ang ibang center (' + n.toLocaleString('en-US') + ' pa)', loading: 'Kinukuha ang listahan ng mga center…', failed: 'Hindi makuha ang listahan. Tingnan ang inyong koneksiyon at subukang muli.', retry: 'Subukang muli', noData: 'Wala pang datos', noDataList: 'Wala pang datos:', legendMore: 'Mas madilim, mas maraming clinic', sample: (n, r) => 'Halimbawang listahan: ' + n + ' sa mga 2,100 accredited na center, mula sa ' + r + ' rehiyon. Papalitan ito ng buong listahan bago ilunsad.', callAria: (name, num) => 'Tumawag sa ' + name + ', ' + num, dirAria: name => 'Paano pumunta sa ' + name + ' (bubuksan ang Google Maps)', copiedMsg: 'Nakopya na ang address', tileAria: (name, n) => name + ': ' + n + ' na center', tileEmpty: name => name + ': wala pang datos' }
+  };
+
+  readLang() { try { return localStorage.getItem('tbph-lang') === 'fil' ? 'fil' : 'en'; } catch (e) { return 'en'; } }
+  componentDidMount() {
+    document.documentElement.lang = this.state.lang;
+    this.onR = () => { clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 80); };
+    window.addEventListener('resize', this.onR);
+    this.load();
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onR); clearTimeout(this.ct); }
+
+  setLang = (l) => {
+    if (l === this.state.lang) return;
+    let a = null;
+    document.querySelectorAll('[data-anchor]').forEach(el => { const t = el.getBoundingClientRect().top; if (t <= window.innerHeight * 0.35) a = { el, t }; });
+    try { localStorage.setItem('tbph-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    this.setState({ lang: l }, () => { if (a) requestAnimationFrame(() => window.scrollBy(0, a.el.getBoundingClientRect().top - a.t)); });
+  };
+
+  async load() {
+    this.setState({ failed: false });
+    const get = async (u) => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); };
+    let j = null, src = 'full';
+    try { j = await get('data/tb-dots-facilities.json'); }
+    catch (e) {
+      try { j = await get('data/tb-dots-facilities-SAMPLE.json'); src = 'sample'; }
+      catch (e2) { this.setState({ failed: true }); return; }
+    }
+    const all = (j.facilities || []).map(f => this.prep(f));
+    this.setState({ all, src });
+  }
+
+  norm(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  tc(s) {
+    const small = new Set(['and', 'of', 'the', 'for', 'ng', 'sa', 'at', 'to', 'in', 'on', 'or', 'de', 'del', 'dela']);
+    const acr = new Set(['TB', 'DOTS', 'IDOTS', 'RHU', 'PPMD', 'LCP', 'NCPR', 'EDSA', 'QI', 'BF', 'RITM', 'II', 'III', 'IV', 'VI', 'VII', 'VIII', 'IX', 'XI', 'XII', 'XIII', 'NCR', 'CAR', 'PGH', 'OPD', 'HIV', 'LGU', 'C3', 'DOH', 'UP', 'UST', 'UERM', 'FEU', 'BGHMC', 'MMC']);
+    let first = true;
+    return String(s || '').split(/(\s+|\/|-|\(|\))/).map(tok => {
+      if (!tok || /^(\s+|\/|-|\(|\))$/.test(tok)) return tok;
+      if (/^([A-Za-z]\.){1,3}$/.test(tok)) { first = false; return tok.toUpperCase(); }
+      const core = tok.replace(/[.,;:]+$/, ''), trail = tok.slice(core.length), up = core.toUpperCase();
+      let out;
+      if (acr.has(up)) out = up;
+      else if (/^\d/.test(core)) out = core.replace(/^(\d+)(ST|ND|RD|TH)$/i, (m, d, sfx) => d + sfx.toLowerCase());
+      else if (!first && small.has(core.toLowerCase())) out = core.toLowerCase();
+      else out = core.charAt(0).toUpperCase() + core.slice(1).toLowerCase();
+      first = false;
+      return out + trail;
+    }).join('');
+  }
+  telHref(p, code) {
+    if (!p) return '';
+    const d = p.split(/\s*loc\.?\s*/i)[0].replace(/\D/g, '');
+    if (!d) return '';
+    if (d.startsWith('63')) return 'tel:+' + d;
+    if (d.startsWith('0')) return 'tel:+63' + d.slice(1);
+    if (code === 'NCR' && d.length >= 8 && (d[0] === '8' || d[0] === '7')) return 'tel:+632' + d.slice(0, 8);
+    return 'tel:' + d;
+  }
+  prep(f) {
+    const name = this.tc(f.name), street = this.tc(f.street || '');
+    const city = f.city_municipality || '', prov = f.province_or_city_group || '';
+    const place = city && prov && city !== prov && !city.includes(prov) ? city + ', ' + prov : (city || prov);
+    const phone = (f.phone || '').trim();
+    const first = phone.split(/\s*(?:\/|;|,|\bto\b)\s*/i)[0].trim();
+    return { id: f.id, name, raw: f.name, street, place, address: [street, place].filter(Boolean).join(', '), phone, first, tel: this.telHref(first, f.region_code), gov: /gov/i.test(f.sector || ''), code: f.region_code, region: f.region, prov, maps: f.maps_url, key: this.norm([f.name, city, prov].join(' ')) };
+  }
+
+  matches() {
+    const { all, q, region, prov, sector } = this.state;
+    if (!all) return [];
+    const toks = this.norm(q).split(/\s+/).filter(Boolean);
+    return all.filter(f => (!region || f.code === region) && (!prov || f.prov === prov) && (!sector || (sector === 'gov') === f.gov) && toks.every(t => f.key.includes(t)));
+  }
+  copy(f) {
+    const done = () => { this.setState({ copied: f.id }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: null }), 2500); };
+    const fallback = () => { const ta = document.createElement('textarea'); ta.value = f.address; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(f.address).then(done, fallback); else fallback();
+  }
+  pickRegion(code) {
+    const next = this.state.region === code ? '' : code;
+    this.setState({ region: next, prov: '', limit: 20 }, () => {
+      if (this.state.vw < 1080 && this.countRef.current) { const y = this.countRef.current.getBoundingClientRect().top + window.scrollY - 96; window.scrollTo(0, y); this.countRef.current.focus({ preventScroll: true }); }
+    });
+  }
+
+  renderVals() {
+    const { lang, vw, all, src, failed, q, region, prov, sector, limit, copied } = this.state;
+    const en = lang === 'en', t = this.T[lang], wide = vw >= 1080;
+    const list = this.matches(), shown = list.slice(0, limit);
+    const counts = {};
+    (all || []).forEach(f => { counts[f.code] = (counts[f.code] || 0) + 1; });
+    const max = Math.max(1, ...Object.values(counts));
+    const shades = ['', '#DDE8E5', '#B9D3CF', '#1E6B70', '#175458'];
+    const known = this.REG.map(r => r.code);
+    const extra = Object.keys(counts).filter(c => !known.includes(c)).map((c, i) => ({ code: c, name: ((all || []).find(f => f.code === c) || {}).region || c, short: c, c: (i % 3) + 1, r: 7 + Math.floor(i / 3) }));
+    const regs = this.REG.concat(extra).map(r => { const f = (all || []).find(x => x.code === r.code); return { ...r, name: f && f.region ? f.region : r.name }; });
+    const tiles = regs.map(r => {
+      const n = counts[r.code] || 0, lvl = n ? Math.max(1, Math.ceil(n / max * 4)) : 0, on = region === r.code;
+      return { short: r.short, n: n ? n.toLocaleString('en-US') : '—', col: r.c, row: r.r, pressed: on, aria: n ? t.tileAria(r.name, n) : t.tileEmpty(r.name), bg: n ? shades[lvl] : 'transparent', fg: lvl >= 3 ? '#F2F0EA' : '#14212B', border: n ? '1.5px solid ' + (lvl >= 3 ? shades[lvl] : '#1E6B70') : '1.5px dashed #56626A', ring: on ? '3px solid #14212B' : '0 solid transparent', cursor: n ? 'pointer' : 'default', pick: () => { if (n) this.pickRegion(r.code); } };
+    });
+    const bars = regs.filter(r => counts[r.code]).sort((a, b) => counts[b.code] - counts[a.code]).map(r => ({ name: r.name, n: counts[r.code].toLocaleString('en-US'), w: (counts[r.code] / max * 100).toFixed(1) + '%', pressed: region === r.code, weight: region === r.code ? 700 : 400, pick: () => this.pickRegion(r.code) }));
+    const emptyRegions = regs.filter(r => !counts[r.code]).map(r => r.name).join('; ');
+    const present = regs.filter(r => counts[r.code]);
+    const regionOptions = [React.createElement('option', { key: '', value: '' }, t.allRegions)].concat(present.map(r => React.createElement('option', { key: r.code, value: r.code }, r.name)));
+    const provs = [...new Set((all || []).filter(f => !region || f.code === region).map(f => f.prov).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    const provOptions = [React.createElement('option', { key: '', value: '' }, t.allProv)].concat(provs.map(p => React.createElement('option', { key: p, value: p }, p)));
+    const sectors = [['', t.all], ['gov', t.gov], ['priv', t.priv]].map(([k, label], i) => ({ label, on: sector === k, bg: sector === k ? '#14212B' : 'transparent', fg: sector === k ? '#F2F0EA' : '#14212B', sep: i ? '1.5px solid #14212B' : '0', pick: () => this.setState({ sector: k, limit: 20 }) }));
+    const results = shown.map(f => ({
+      name: f.name, street: f.street, place: f.place, phone: f.phone, hasPhone: !!f.phone, hasTel: !!f.tel, tel: f.tel, maps: f.maps,
+      badge: f.gov ? t.badgeGov : t.badgePriv, badgeLine: f.gov ? '#1E6B70' : '#56626A', badgeInk: f.gov ? '#1E6B70' : '#14212B',
+      callAria: t.callAria(f.name, f.first), dirAria: t.dirAria(f.name),
+      copyLabel: copied === f.id ? t.copied : t.copy, copy: () => this.copy(f)
+    }));
+    const filtered = !!(q || region || prov || sector);
+    return {
+      en, fil: !en, lang, setLang: this.setLang, t,
+      L: wide ? { cols: 'minmax(0,1fr) 300px', gap: '64px', asidePos: 'sticky' } : { cols: 'minmax(0,1fr)', gap: '56px', asidePos: 'static' },
+      isSample: src === 'sample' && !!all, sampleNote: all ? t.sample(all.length, Object.keys(counts).length) : '',
+      q, region, prov, regionOptions, provOptions, sectors,
+      onQ: e => this.setState({ q: e.target.value, limit: 20 }),
+      onRegion: e => this.setState({ region: e.target.value, prov: '', limit: 20 }),
+      onProv: e => this.setState({ prov: e.target.value, limit: 20 }),
+      clear: () => this.setState({ q: '', region: '', prov: '', sector: '', limit: 20 }),
+      retry: () => this.load(),
+      loading: !all && !failed, failed, empty: !!all && list.length === 0, filtered,
+      countLabel: all ? t.count(list.length) : '', countRef: this.countRef,
+      results, hasMore: list.length > shown.length, moreLabel: t.more(list.length - shown.length), more: () => this.setState({ limit: limit + 20 }),
+      copiedMsg: copied ? t.copiedMsg : '',
+      showTiles: wide, showBars: !wide, tiles, bars, emptyRegions
+    };
+  }
+}
+</script>
+</body>
+</html>

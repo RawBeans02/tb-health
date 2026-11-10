@@ -4,6 +4,56 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 4 November 2026, fourth batch (owner, written to the lead)
+
+Why: the owner compared the live site (https://tb-ph.pages.dev) with the v8 design project and approved a fix pass, step 15 (`docs/step-15-fix-pass.md`). The owner sent this batch with `TB-PH-v8.zip` on 10 November 2026 and asked for it to be recorded as "4 November 2026, owner, fourth batch". **Where it differs from PLAN.md, it wins.** R2 (the v6 design) covered the launch; from step 15 on, v8 applies. V6 to V14 are the owner's items 1 to 9.
+
+### V6. v8 is the newest design reference
+- **`design/v8/` is the newest design reference. Wherever v6, v7 and v8 differ, v8 wins.** `design/v8/HANDOFF.md` lists every change under "v7" and "v8".
+- `design/v8/` is the zip's `design-v8/`, copied unedited. It's reference only: don't edit it. V1's `design/v7/` never reached the repository.
+
+### V7. Dark mode ships (overrides D2)
+- Use the `--tb-*` tokens in `design/v8/theme.css`. Light values are unchanged; dark values apply with `prefers-color-scheme: dark`. **No in-app switch.**
+- These keep their colours on purpose:
+  - the urgent Film screen and its white "Call 911" button;
+  - the saved summary image, which is always light;
+  - the map tiles and markers.
+- In dark mode the dot story's TB red is `#F26A72`, D14's TB red in dark mode. The other dark values are in `design/v8/DotStory.dc.html` › `applyScheme` (step 15.2).
+
+### V8. No em dashes in copy (overrides D6)
+- The copy baseline is now `design/v8/design_handoff_tb_ph/reference/content-and-data-pack.md`, the v8 pack. It has no em dashes and uses the owner's approved wording.
+- The parity test points at it, and every changed string is logged in `docs/copy-overrides.md`.
+- En dashes stay for ranges and empty table cells.
+
+### V9. Page titles use " | " instead of " — "
+- In English and Filipino:
+  - "TB PH | Find your way to TB care"
+  - "Learn about TB | TB PH"
+  - "TB PH | Hanapin ang daan papunta sa gamutan sa TB"
+  - "Alamin ang TB | TB PH"
+- `og:title` follows the same pattern.
+
+### V10. Learn L5, step 1
+- EN: "A health worker asks about your symptoms and may send you for a chest X-ray. PhilHealth's YAKAP package (formerly Konsulta) covers chest X-rays for members registered at a YAKAP clinic."
+- FIL, flagged FIL-REVIEW: "Tatanungin ka ng health worker tungkol sa iyong mga sintomas at maaaring ipa-chest X-ray ka. Sakop ng YAKAP package ng PhilHealth (dating Konsulta) ang chest X-ray para sa mga miyembrong rehistrado sa isang YAKAP clinic."
+
+### V11. The Filipino label for Accessibility is "Aksesibilidad"
+- It's used for the footer link and the About section heading, and flagged FIL-REVIEW. The English stays "Accessibility".
+
+### V12. Claims keep the 4 November rounding
+- The rounding in `data/claims.json` stays as supplied on 4 November (V5).
+- `build_claims.py` is replaced with `design/v8/design_handoff_tb_ph/pipeline/build_claims.py`, so future refreshes keep the same rounding. The lead checked on 10 November: the repository's copy (`design/design_handoff_tb_ph/pipeline/build_claims.py`; there is no top-level `pipeline/`) and `data/claims.json` were already identical to v8's, so neither changed.
+
+### V13. glisse is not adopted
+- It's React-only, pre-1.0, and its SVG refraction is heavy for low-end Android phones. It also has no reduced-transparency or high-contrast fallback.
+
+### V14. New skills for step 15
+- In `.claude/skills/`: `mobile-native`, `break-ui`, `review-animations`, `animation-performance`, `emil-design-eng` and `apple-motion`. `apple-motion` is the motion skill from skills-main, renamed so it doesn't clash with the HIG `apple-design` skill. The builder uses them in step 15.
+- They're in the checkout's `.claude/skills/` on the owner's Mac, with the zip's `apple-design` (the HIG skill), not in the repository. The Mac's user-level `~/.claude/skills/apple-design` is still the motion skill, so ask for the HIG skill as `apple-design-hig` (its user-level copy) to be sure which one loads.
+
+### Still open
+- Who builds step 15: the Jr. Builder moved to another project on 10 November 2026.
+
 ## 9 November 2026 (owner, in chat with the lead)
 
 ### A3. About: no contact email at launch

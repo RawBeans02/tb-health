@@ -3,6 +3,7 @@
 A side project for the owner's (Rovince's) nonprofit internship on TB (tuberculosis) health. The Jr. Builder builds it. It is **not** KitaMo.
 
 ## Sources of truth
+- `design/v8/`: the newest design reference (owner decision V6). Where v6, v7 and v8 differ, v8 wins. Start at `design/v8/HANDOFF.md`, and don't edit `design/v8/`. Its pack, `design/v8/design_handoff_tb_ph/reference/content-and-data-pack.md`, is the copy baseline (V8). Step 15's brief is `docs/step-15-fix-pass.md`.
 - `design/design_handoff_tb_ph/README.md`: the build spec (screens, tokens, behavior, open items). Read it first, before choosing a stack or writing UI.
 - `design/design_handoff_tb_ph/prototype/`: HTML design references to recreate pixel-accurately. They are not production code: port `tbph-core.js`, never `support.js`.
 - `design/design_handoff_tb_ph/reference/content-and-data-pack.md`: the canonical EN/FIL copy and chart specs. `ultimate-build-source-of-truth.md` is the checklist the build is audited against.

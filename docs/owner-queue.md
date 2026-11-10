@@ -1,6 +1,10 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 9 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
+Kept by the TB Health lead. Updated 10 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
+
+## Now
+
+- **Who builds step 15**, the v8 fix pass (`docs/step-15-fix-pass.md`; your fourth batch is V6 to V14 in `docs/decisions.md`). The Jr. Builder moved to another project on 10 November 2026.
 
 ## Before the public launch
 

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<header style="position:relative; background:#F2F0EA; border-bottom:1px solid #D9D5CB; color:#14212B; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;">
+  <a href="#main" style="position:absolute; left:12px; top:-64px; z-index:5; background:#14212B; color:#F2F0EA; padding:12px 16px; border-radius:4px; font-size:16px; font-weight:700; text-decoration:none;" style-focus="top:8px; color:#F2F0EA;">{{ t.skip }}</a>
+  <div style="max-width:1280px; margin:0 auto; padding:0 clamp(16px,5vw,64px); min-height:64px; display:flex; align-items:center; gap:{{ gap }};">
+    <a href="Home.dc.html" style="display:inline-flex; align-items:center; gap:9px; min-height:44px; flex:none; text-decoration:none; color:#14212B; font-family:Newsreader,Georgia,'Times New Roman',serif; font-weight:600; font-size:23px; letter-spacing:-0.01em; line-height:1; white-space:nowrap;" style-hover="color:#14212B;">
+      <span aria-hidden="true" style="width:11px; height:11px; border-radius:50%; background:#14212B; flex:none;"></span>
+      <span>{{ brand }}</span>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav aria-label="{{ t.nav }}" style="margin-left:auto;">
+        <ul style="list-style:none; margin:0; padding:0; display:flex; gap:clamp(2px,0.8vw,10px);">
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+            <li style="display:flex;"><a href="{{ it.href }}" aria-current="{{ it.aria }}" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:16px; font-weight:{{ it.weight }}; color:#14212B; text-decoration:none; border-bottom:2px solid {{ it.line }}; white-space:nowrap;" style-hover="color:#1E6B70;">{{ it.label }}</a></li>
+          </sc-for>
+        </ul>
+      </nav>
+    </sc-if>
+    <div role="group" aria-label="Language / Wika" style="display:flex; flex:none; margin-left:{{ toggleMl }}; border:1.5px solid #14212B; border-radius:6px; overflow:hidden;">
+      <button type="button" lang="en" aria-pressed="{{ isEn }}" onClick="{{ toEn }}" style="min-height:44px; padding:{{ tpad }}; border:0; background:{{ enBg }}; color:{{ enFg }}; font-size:{{ tfs }}; font-weight:700; cursor:pointer;">English</button>
+      <button type="button" lang="fil" aria-pressed="{{ isFil }}" onClick="{{ toFil }}" style="min-height:44px; padding:{{ tpad }}; border:0; border-left:1.5px solid #14212B; background:{{ filBg }}; color:{{ filFg }}; font-size:{{ tfs }}; font-weight:700; cursor:pointer;">Filipino</button>
+    </div>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" aria-expanded="{{ open }}" aria-controls="site-menu" onClick="{{ toggle }}" style="min-height:44px; min-width:44px; flex:none; padding:{{ tpad }}; border:1.5px solid #14212B; border-radius:6px; background:transparent; color:#14212B; font-size:{{ tfs }}; font-weight:700; cursor:pointer;">{{ menuLabel }}</button>
+    </sc-if>
+  </div>
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+    <nav id="site-menu" aria-label="{{ t.nav }}" style="border-top:1px solid #D9D5CB; background:#F2F0EA; max-height:calc(100vh - 65px); overflow:auto;">
+      <ul style="list-style:none; margin:0 auto; padding:4px clamp(16px,5vw,64px) 24px; max-width:1280px;">
+        <sc-for list="{{ allItems }}" as="it" hint-placeholder-count="6">
+          <li style="border-bottom:1px solid #D9D5CB;"><a href="{{ it.href }}" aria-current="{{ it.aria }}" style="display:flex; align-items:center; min-height:56px; font-size:19px; font-weight:{{ it.weight }}; color:#14212B; text-decoration:none;" style-hover="color:#1E6B70;">{{ it.label }}</a></li>
+        </sc-for>
+      </ul>
+    </nav>
+  </sc-if>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:120},&quot;brand&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;TB PH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;fil&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;'en'|'fil'&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;learn&quot;,&quot;check&quot;,&quot;find&quot;,&quot;data&quot;,&quot;about&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onLang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(lang: 'en'|'fil') =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { vw: typeof window !== 'undefined' ? window.innerWidth : 1280, open: false, lang: 'en' };
+  nav = [
+    { k: 'home', href: 'Home.dc.html', en: 'Home', fil: 'Simula' },
+    { k: 'learn', href: 'Learn.dc.html', en: 'Learn about TB', fil: 'Alamin ang TB' },
+    { k: 'check', href: 'Check.dc.html', en: 'Check symptoms', fil: 'Suriin ang sintomas' },
+    { k: 'find', href: 'Find.dc.html', en: 'Find a TB-DOTS center', fil: 'Hanapin ang TB-DOTS center' },
+    { k: 'data', href: 'Data.dc.html', en: 'The data', fil: 'Ang datos' },
+    { k: 'about', href: 'About.dc.html', en: 'About', fil: 'Tungkol sa amin' }
+  ];
+  copy = {
+    en: { skip: 'Skip to content', nav: 'Main', menu: 'Menu', close: 'Close' },
+    fil: { skip: 'Lumaktaw sa nilalaman', nav: 'Pangunahing nabigasyon', menu: 'Menu', close: 'Isara' }
+  };
+  componentDidMount() {
+    this.onR = () => { cancelAnimationFrame(this.rf); this.rf = requestAnimationFrame(() => this.setState({ vw: window.innerWidth })); };
+    this.onK = (e) => { if (e.key === 'Escape' && this.state.open) this.setState({ open: false }); };
+    window.addEventListener('resize', this.onR);
+    window.addEventListener('keydown', this.onK);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onR);
+    window.removeEventListener('keydown', this.onK);
+  }
+  pick(l) { if (this.props.onLang) this.props.onLang(l); else this.setState({ lang: l }); }
+  renderVals() {
+    const lang = (this.props.lang || this.state.lang) === 'fil' ? 'fil' : 'en';
+    const t = this.copy[lang], cur = this.props.current || '', vw = this.state.vw;
+    const wide = vw >= (lang === 'fil' ? 1280 : 1100), tight = vw < 380;
+    const mk = (n) => ({ href: n.href, label: n[lang], aria: n.k === cur ? 'page' : 'false', weight: n.k === cur ? 700 : 400, line: n.k === cur ? '#1E6B70' : 'transparent' });
+    const open = this.state.open && !wide;
+    return {
+      t, brand: this.props.brand || 'TB PH', wide, narrow: !wide, open,
+      items: this.nav.filter(n => n.k !== 'home').map(mk), allItems: this.nav.map(mk),
+      isEn: lang === 'en', isFil: lang === 'fil',
+      enBg: lang === 'en' ? '#14212B' : 'transparent', enFg: lang === 'en' ? '#F2F0EA' : '#14212B',
+      filBg: lang === 'fil' ? '#14212B' : 'transparent', filFg: lang === 'fil' ? '#F2F0EA' : '#14212B',
+      toEn: () => this.pick('en'), toFil: () => this.pick('fil'),
+      toggle: () => this.setState(s => ({ open: !s.open })),
+      menuLabel: open ? t.close : t.menu,
+      toggleMl: wide ? '4px' : 'auto',
+      tfs: tight ? '14px' : '15px', tpad: tight ? '0 8px' : '0 11px', gap: tight ? '8px' : 'clamp(10px,2vw,28px)'
+    };
+  }
+}
+</script>
+</body>
+</html>

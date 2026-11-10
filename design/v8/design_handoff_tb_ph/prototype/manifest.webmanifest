@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "TB PH",
+  "short_name": "TB PH",
+  "description": "Find a chest X-ray, a TB test and free TB medicines near you in the Philippines, step by step.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./Home.dc.html?source=app",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F1F3F4",
+  "theme_color": "#F1F3F4",
+  "categories": ["health", "medical", "navigation"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Find TB care", "short_name": "Find care", "url": "./Home.dc.html?need=all&source=shortcut", "icons": [{ "src": "icons/shortcut-find-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Check symptoms", "short_name": "Check", "url": "./Check.dc.html?source=shortcut", "icons": [{ "src": "icons/shortcut-check-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Learn about TB", "short_name": "Learn", "url": "./Learn.dc.html?source=shortcut", "icons": [{ "src": "icons/shortcut-learn-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "The data", "short_name": "Data", "url": "./Data.dc.html?source=shortcut", "icons": [{ "src": "icons/shortcut-data-96.png", "sizes": "96x96", "type": "image/png" }] }
+  ]
+}

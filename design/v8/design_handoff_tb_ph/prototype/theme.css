@@ -1,0 +1,100 @@
+/* TB PH appearance: light by default, dark when the phone or computer is set to dark.
+   Pages use var(--tb-*, light value), so light mode is unchanged if this file doesn't load.
+   No in-app switch: the site follows the system setting (Apple HIG, dark-mode.md). */
+:root {
+  color-scheme: light dark;
+  --tb-canvas: #F1F3F4;
+  --tb-surface: #FFFFFF;
+  --tb-ink: #14212B;
+  --tb-ink-fill: #14212B;
+  --tb-secondary: #3F4B53;
+  --tb-muted: #56626A;
+  --tb-control: #7A858C;
+  --tb-separator: #E3E6E8;
+  --tb-track: #DADDE0;
+  --tb-underline: #9AA3A8;
+  --tb-chevron: #8A949A;
+  --tb-row-hover: #F6F8F8;
+  --tb-accent: #1E6B70;
+  --tb-accent-ink: #1E6B70;
+  --tb-accent-text: #175458;
+  --tb-accent-hover: #175458;
+  --tb-red: #C42032;
+  --tb-dot: #7A8C97;
+  --tb-rule: #D9D5CB;
+  --tb-rule2: #C3C9CD;
+  --tb-map-ground: #DCE6E5;
+  --tb-tint-13: rgba(30,107,112,0.13);
+  --tb-tint-14: rgba(30,107,112,0.14);
+  --tb-tint-22: rgba(30,107,112,0.22);
+  --tb-shadow-12: rgba(20,33,43,0.12);
+  --tb-shadow-16: rgba(20,33,43,0.16);
+  --tb-scrim-32: rgba(20,33,43,0.32);
+  --tb-glass-85: rgba(255,255,255,0.85);
+  --tb-glass-75: rgba(255,255,255,0.75);
+  --tb-glass-72: rgba(255,255,255,0.72);
+  --tb-glass-70: rgba(255,255,255,0.7);
+  --tb-glass-68: rgba(255,255,255,0.68);
+  --tb-glass-64: rgba(255,255,255,0.64);
+  --tb-glass-hi-16: rgba(255,255,255,0.16);
+  --tb-glass-hi-26: rgba(255,255,255,0.26);
+}
+html { background: var(--tb-canvas); }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tb-canvas: #0E1417;
+    --tb-surface: #182126;
+    --tb-ink: #E7ECEF;
+    --tb-ink-fill: #44535C;
+    --tb-secondary: #B6C1C7;
+    --tb-muted: #97A4AB;
+    --tb-control: #7D8B92;
+    --tb-separator: #2A353B;
+    --tb-track: #34424A;
+    --tb-underline: #66747C;
+    --tb-chevron: #7D8B92;
+    --tb-row-hover: #1F2A30;
+    --tb-accent: #22777C;
+    --tb-accent-ink: #6CC7C3;
+    --tb-accent-text: #8BD5D2;
+    --tb-accent-hover: #2A878C;
+    --tb-red: #F26A72;
+    --tb-dot: #8798A3;
+    --tb-rule: #36424A;
+    --tb-rule2: #3F4B53;
+    --tb-map-ground: #13272C;
+    --tb-tint-13: rgba(108,199,195,0.16);
+    --tb-tint-14: rgba(108,199,195,0.17);
+    --tb-tint-22: rgba(108,199,195,0.26);
+    --tb-shadow-12: rgba(255,255,255,0.08);
+    --tb-shadow-16: rgba(0,0,0,0.45);
+    --tb-scrim-32: rgba(0,0,0,0.6);
+    --tb-glass-85: rgba(255,255,255,0.10);
+    --tb-glass-75: rgba(255,255,255,0.12);
+    --tb-glass-72: rgba(24,33,38,0.76);
+    --tb-glass-70: rgba(255,255,255,0.10);
+    --tb-glass-68: rgba(24,33,38,0.72);
+    --tb-glass-64: rgba(24,33,38,0.70);
+    --tb-glass-hi-16: rgba(255,255,255,0.06);
+    --tb-glass-hi-26: rgba(255,255,255,0.10);
+  }
+  /* SVG colours written as attributes can't use variables; restyle them here. */
+  svg [fill="#FFFFFF"] { fill: var(--tb-surface); }
+  svg [stroke="#FFFFFF"] { stroke: var(--tb-surface); }
+  svg [fill="#1E6B70"] { fill: var(--tb-accent); }
+  svg [stroke="#1E6B70"] { stroke: var(--tb-accent); }
+  svg [stroke="#56626A"] { stroke: var(--tb-muted); }
+  svg [stroke="#7A8C97"] { stroke: var(--tb-dot); }
+  svg [stroke="#14212B"] { stroke: var(--tb-ink); }
+}
+
+/* Phone feel (mobile-native skill). Hover gating lives in the production build, because the canvas runtime applies hover styles itself. */
+a, button, input, select, textarea, label, summary, [role="button"], [role="tab"], [role="option"], [role="switch"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+a:active, button:active, summary:active, [role="button"]:active, [role="tab"]:active { opacity: 0.82; }
+button, summary, [role="tab"], [role="switch"] { -webkit-user-select: none; user-select: none; }
+@media (display-mode: standalone) { html, body { overscroll-behavior-y: none; } }
+/* Worst-case data (break-ui skill): long clinic names, emails and addresses wrap instead of overflowing. */
+body { overflow-wrap: break-word; }

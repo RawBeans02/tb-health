@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /v1/
+Disallow: /uploads/
+
+# Replace the placeholder domain before launch.
+Sitemap: https://tbph.example.org/sitemap.xml
