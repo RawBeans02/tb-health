@@ -161,9 +161,10 @@
   text-decoration: none;
 }
 
-/* "Tingnan ang iba pang / lugar" at 320px became "Tingnan ang iba / pang lugar" (step 15.4). */
+/* No word alone on the last line ("Isa sa bawat apat ang hindi / natutukoy" at 390px), step 15.4.
+   Pretty, not balance: balance split "COVID- / 19" on Data to even the lines out. */
 .link-row > span:first-child {
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -487,8 +488,9 @@
 
 .facility-name {
   overflow-wrap: anywhere;
-  /* No name ends on one short word, as "Malasiqui Rural Health Unit / II" did (step 15.4). */
-  text-wrap: balance;
+  /* No name ends on one short word, as "Malasiqui Rural Health Unit / II" did (step 15.4). Pretty,
+     not balance, so a hyphenated name ("Institute-TB") isn't split at its hyphen to even lines. */
+  text-wrap: pretty;
 }
 
 .text-input {

@@ -141,6 +141,24 @@ test.describe('planner', () => {
     await expect.poll(() => page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.route-step[data-i="3"] .rail-fill')!).transform).d), { timeout: 3000 }).toBeCloseTo(1);
   });
 
+  test("each stop disc fills by opacity alone, in the rail's teal once drawn (step 15.5)", async ({ page }) => {
+    await ready(page);
+    await field(page).fill('Quezon City');
+    await submit(page).click();
+    await expect(page.locator('.route')).toHaveAttribute('data-drawn', 'true');
+    const disc = (i: number) =>
+      page.evaluate((i) => {
+        const el = document.querySelector(`.route-step[data-i="${i}"] .stop-disc`)!;
+        const fill = getComputedStyle(el, '::after');
+        const rail = getComputedStyle(document.querySelector(`.route-step[data-i="${i}"] .rail-fill`)!);
+        return { opacity: Number(fill.opacity), animates: fill.transitionProperty, railTeal: fill.backgroundColor === rail.backgroundColor, discStill: getComputedStyle(el).transitionDuration };
+      }, i);
+    // Disc 3 fills at 1,210ms, so just after the route appears it's still clear.
+    expect((await disc(3)).opacity).toBeLessThan(0.2);
+    await expect.poll(async () => (await disc(3)).opacity, { timeout: 3000 }).toBe(1);
+    for (const i of [1, 2, 3]) expect(await disc(i), `disc ${i}`).toEqual({ opacity: 1, animates: 'opacity', railTeal: true, discStill: '0s' });
+  });
+
   test('a new route draws in, and appears drawn at once under reduced motion', async ({ page }) => {
     await ready(page);
     await watchDrawn(page);

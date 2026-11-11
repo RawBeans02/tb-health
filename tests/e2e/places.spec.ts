@@ -600,6 +600,45 @@ test.describe('sheet drag (audit B30)', () => {
     await expect(page.locator('.sheet[style*="translateY"]')).toHaveCount(0, { timeout: 100 });
     await context.close();
   });
+
+  // Step 15.5 (apple-motion): the release counts where the swipe would come to rest.
+  test('a pull that rests short, or turns back up past 90px, stays open; a quick flick closes', async ({ browser }) => {
+    const { context, page, touch, sheet, at } = await openSheet(browser);
+    const open = page.locator('.sheet.is-shown');
+    const to = (dy: number) => touch('touchMove', [{ x: at.x, y: at.y + dy, id: 1 }]);
+
+    // Slowly to 60px, then still before lifting: back to rest.
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    for (const dy of [10, 20, 30, 40, 50, 60]) {
+      await to(dy);
+      await page.waitForTimeout(30);
+    }
+    await page.waitForTimeout(250);
+    await touch('touchEnd', []);
+    await expect(sheet).not.toHaveClass(/is-dragging/);
+    await expect(open).toBeVisible();
+
+    // To 150px, a pause, then thrown back up to 100px: still past 90, but on its way back.
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    await to(150);
+    await page.waitForTimeout(200);
+    await to(125);
+    await page.waitForTimeout(16); // a frame apart, so the two moves have a speed
+    await to(100);
+    await touch('touchEnd', []);
+    await expect(sheet).not.toHaveClass(/is-dragging/);
+    await expect(open).toBeVisible();
+
+    // A short, quick flick, 40px: closes.
+    await page.waitForTimeout(300);
+    await touch('touchStart', [{ ...at, id: 1 }]);
+    await to(15);
+    await page.waitForTimeout(16);
+    await to(40);
+    await touch('touchEnd', []);
+    await expect(open).toHaveCount(0);
+    await context.close();
+  });
 });
 
 test.describe('place field keyboard (audit B31)', () => {

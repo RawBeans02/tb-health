@@ -144,8 +144,8 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   letter-spacing: -0.02em;
   color: var(--tb-red);
   overflow-wrap: anywhere;
-  /* Even lines, no short word left alone ("Malasiqui Rural / Health Unit II"), step 15.4. */
-  text-wrap: balance;
+  /* No short word left alone on the last line ("Malasiqui Rural Health Unit / II"), step 15.4. */
+  text-wrap: pretty;
 }
 
 .place-meta {

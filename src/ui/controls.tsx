@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Place, Status } from '../lib/core/facility.ts';
 import type { GazEntry } from '../lib/core/geo.ts';
 import { directionsUrl } from '../lib/core/links.ts';
+import { closesOnRelease, releaseVelocity, type Sample } from '../lib/sheet.ts';
 import { Chip, SectorBadge } from './parts.tsx';
 
 /** Buttons with aria-pressed in a labelled group; the selected one is Ink-filled. */
@@ -184,11 +185,18 @@ export function FacilityRow(props: {
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** The sheet's offset on screen now, mid-slide too: a grab starts from it, not from a jump. */
+function offsetY(el: HTMLElement): number {
+  const transform = getComputedStyle(el).transform;
+  return transform && transform !== 'none' ? new DOMMatrixReadOnly(transform).m42 : 0;
+}
+
 /**
  * A bottom sheet dialog (README:211): slides up in 240ms (instant with reduced motion),
- * closes with Done, a scrim tap, Escape or a downward swipe over 90px. While open, focus
- * is trapped, the page can't scroll, and everything else is inert. Focus returns to
- * `returnFocus` on close. The parent unmounts it after `onClosed`.
+ * closes with Done, a scrim tap, Escape or a downward swipe over 90px, which since step 15.5
+ * counts where the swipe would come to rest (src/lib/sheet.ts): a flick closes it, a pull that
+ * turns back up doesn't. While open, focus is trapped, the page can't scroll, and everything
+ * else is inert. Focus returns to `returnFocus` on close. The parent unmounts it after `onClosed`.
  */
 export function BottomSheet(props: {
   title: string;
@@ -203,11 +211,16 @@ export function BottomSheet(props: {
   children: ComponentChildren;
 }) {
   const [shown, setShown] = useState(reduced());
-  const [drag, setDrag] = useState(0);
   const sheet = useRef<HTMLDivElement>(null);
   const head = useRef<HTMLHeadingElement>(null);
   const startY = useRef<number | null>(null);
   const touchId = useRef<number | null>(null); // the one finger the sheet follows (B30)
+  // The drag (step 15.5): written to the element, not to state, so a move doesn't re-render the
+  // sheet (the animation-performance skill). `from`: where the sheet was when the finger landed;
+  // `samples`: the last moves, for the speed at release.
+  const drag = useRef(0);
+  const from = useRef(0);
+  const samples = useRef<Sample[]>([]);
 
   // Open: lock scroll, make the rest inert, slide in, focus the heading.
   useEffect(() => {
@@ -255,7 +268,7 @@ export function BottomSheet(props: {
       return;
     }
     setShown(false);
-    setDrag(0);
+    settle();
     const id = setTimeout(props.onClosed, 220);
     return () => clearTimeout(id);
   }, [props.closing]);
@@ -277,11 +290,32 @@ export function BottomSheet(props: {
     }
   }
 
-  // Every close starts the slide-out at once, from wherever a drag left the sheet (B30).
+  /** Follows the finger: the transform on the element itself (CSSOM, which the CSP allows). */
+  function follow(y: number) {
+    const el = sheet.current;
+    if (!el) return;
+    drag.current = y;
+    el.classList.add('is-dragging');
+    el.style.transform = `translateY(${y}px)`;
+  }
+
+  /** Lets go: back to the class's transform, which the transition takes from where the drag was. */
+  function settle() {
+    drag.current = 0;
+    samples.current = [];
+    const el = sheet.current;
+    if (!el) return;
+    el.classList.remove('is-dragging');
+    el.style.transform = '';
+  }
+
+  // Every close starts the slide-out at once, from wherever a drag left the sheet (B30): the
+  // class goes in the same frame as the drag's transform, not at the next render.
   function dismiss() {
     startY.current = null;
     touchId.current = null;
-    setDrag(0);
+    sheet.current?.classList.remove('is-shown');
+    settle();
     setShown(false);
     props.onClose();
   }
@@ -290,26 +324,32 @@ export function BottomSheet(props: {
   const ours = (list: TouchList) => [...list].find((t) => t.identifier === touchId.current);
 
   function onTouchStart(event: TouchEvent) {
-    if (touchId.current !== null) return; // a second finger: ignored
+    if (touchId.current !== null || props.closing) return; // a second finger, or a sheet on its way out: ignored
     const touch = event.changedTouches[0];
     touchId.current = touch.identifier;
     startY.current = touch.clientY;
+    from.current = sheet.current ? Math.max(0, offsetY(sheet.current)) : 0;
+    samples.current = [{ y: touch.clientY, t: event.timeStamp }];
   }
 
   function onTouchMove(event: TouchEvent) {
     const touch = ours(event.touches);
-    if (touch && startY.current !== null) setDrag(Math.max(0, touch.clientY - startY.current));
+    if (!touch || startY.current === null) return;
+    follow(Math.max(0, from.current + touch.clientY - startY.current));
+    samples.current.push({ y: touch.clientY, t: event.timeStamp });
+    if (samples.current.length > 12) samples.current.shift();
   }
 
   function onTouchEnd(event: TouchEvent) {
     if (!ours(event.changedTouches)) return;
-    if (drag > 90) {
+    // The finger's own travel decides, so a grab mid-slide that lets go at once reopens it.
+    if (closesOnRelease(drag.current - from.current, releaseVelocity(samples.current, event.timeStamp))) {
       dismiss();
       return;
     }
     startY.current = null;
     touchId.current = null;
-    setDrag(0);
+    settle();
   }
 
   // The system took the touch (a scroll, a gesture, a call): back to rest, never a close.
@@ -317,7 +357,7 @@ export function BottomSheet(props: {
     if (!ours(event.changedTouches)) return;
     startY.current = null;
     touchId.current = null;
-    setDrag(0);
+    settle();
   }
 
   return (
@@ -325,13 +365,11 @@ export function BottomSheet(props: {
       <div class={`sheet-scrim${shown ? ' is-shown' : ''}`} aria-hidden="true" onClick={dismiss} />
       <div
         ref={sheet}
-        class={`sheet${shown ? ' is-shown' : ''}${drag ? ' is-dragging' : ''}`}
+        class={`sheet${shown ? ' is-shown' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="sheet-h"
         onKeyDown={onKeyDown}
-        // Follows the finger while dragging (CSSOM, which the CSP allows).
-        style={drag ? { transform: `translateY(${drag}px)` } : undefined}
       >
         <div class="sheet-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onTouchCancel={onTouchCancel}>
           <span class="sheet-grabber" aria-hidden="true" />

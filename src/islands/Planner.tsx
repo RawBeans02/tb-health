@@ -447,7 +447,7 @@ function RouteView({ result, data, lang, t, sources, drawn, headRef, withCheck }
             <li key={stop.k} id={`stop-${stop.k}`} class="route-step" data-i={String(i + 1)} data-anchor>
               <span class="rail" aria-hidden="true" />
               <span class="rail-fill" aria-hidden="true" />
-              <span class="stop-disc" aria-hidden="true">
+              <span class="stop-disc" data-n={String(n)} aria-hidden="true">
                 {n}
               </span>
               <div class="stop-body">

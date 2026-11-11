@@ -391,28 +391,43 @@
   height: 36px;
   border-radius: 50%;
   border: 3px solid var(--teal);
-  background: var(--teal);
-  color: var(--on-teal);
+  /* The undrawn disc, under the fill (step 15.5). */
+  background: var(--surface);
+  color: var(--teal-deep);
   display: grid;
   place-items: center;
   font-size: var(--text-16);
   font-weight: 700;
-  transition: background-color 260ms ease, color 260ms ease;
 }
 
-.route[data-drawn='false'] .stop-disc {
-  background: var(--surface);
-  color: var(--teal-deep);
+/* The drawn fill, with the number again (data-n; the disc is aria-hidden). It fades in over the
+   undrawn disc by opacity (step 15.5, the animation-performance skill): the draw-in composites
+   instead of repainting the disc and its number each frame, as background-color and color did.
+   Inside the ring, so the ring stays in forced colours. */
+.stop-disc::after {
+  content: attr(data-n);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--on-teal);
+  transition: opacity 260ms ease;
+}
+
+.route[data-drawn='false'] .stop-disc::after {
+  opacity: 0;
   transition: none;
 }
 
-.route-step[data-i='1'] .stop-disc { transition-delay: 350ms; }
-.route-step[data-i='2'] .stop-disc { transition-delay: 780ms; }
-.route-step[data-i='3'] .stop-disc { transition-delay: 1210ms; }
+.route-step[data-i='1'] .stop-disc::after { transition-delay: 350ms; }
+.route-step[data-i='2'] .stop-disc::after { transition-delay: 780ms; }
+.route-step[data-i='3'] .stop-disc::after { transition-delay: 1210ms; }
 
 @media (prefers-reduced-motion: reduce) {
   .rail-fill,
-  .stop-disc {
+  .stop-disc::after {
     transition: none;
   }
 }
