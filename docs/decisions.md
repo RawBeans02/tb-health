@@ -4,6 +4,45 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 11 November 2026 (owner, in chat with the stand-in lead)
+
+Why: the lead on the main account paused at its weekly limit on 11 November. Until it resets (Friday 13 November, 1 PM Manila), a session on the desktop account is lead and builder. It put the open points from the lead's handoff and from the step 15.2 reviews to the owner, each with a default. The owner answered "Use the defaults", so V15 to V20 are those defaults.
+
+### V15. Open points from the lead's handoff
+- The data file's title keeps its em dash ("TB in the Philippines — data pack"). It's never shown, and the pipeline writes it.
+- Learn L5 cites S13 only, as the v8 pack does. S24 isn't added.
+- check-dashes stays strict: a build stops if a PhilHealth clinic name or address has an em dash. HANDOVER's refresh notes are to say so (step 15.7).
+- The dark contrast pairs: v8's HANDOFF has no list, so the contrast test checks the light pairs against the dark values, plus the pairs dark mode adds.
+- The old Jr. Builder's notes on the Linux check in Docker go into HANDOVER, with the results marked "not run yet".
+- The test copy is built without Check (`TBPH_CHECK=false`), like production.
+
+### V16. The primary button's hover in dark mode is #288287
+- theme.css's #2A878C gives white text 4.25:1. That's under AA for the two 18px bold labels: "Clear filters" on Places, and the button at the end of Data's story.
+- #288287 is the nearest shade of it that reaches 4.5:1 (4.53:1), and it's still lighter than the resting #22777C.
+- Light mode is unchanged.
+
+### V17. Selected segments and the current language in dark mode
+- They take the look v8 gives Data's d5 toggle (Data.dc.html): an Ink fill (#E7ECEF) with Surface text (#182126), 13.7:1.
+- theme.css's ink-fill (#44535C) was 2.05:1 against the surface, under the 3:1 a state needs.
+- Light mode is unchanged. The info disc and the skip link keep ink-fill.
+
+### V18. Over the Places map, the header and tab bar turn solid in dark mode
+- The map keeps its light colours (V7), so the dark glass over it turns grey and the current tab's label falls to about 3.1:1.
+- While the map shows, the bars take the solid fallback that Increase Contrast and Reduce Transparency already use.
+- Light mode is unchanged.
+
+### V19. Dark values accepted as they are
+- d2's "Missed" label stays as it is for now: 4.42:1 in dark, 4.48:1 in light.
+- These stay under 3:1 in dark only, because the same information is also given in text:
+  - the progress and stop lines (1.98:1);
+  - the dot story's died against fell-ill dots (2.50:1);
+  - d7's "Not evaluated" and "Treatment failed" swatches (1.17:1).
+- The dot story's "died" legend swatch stays Ink, so it matches the dots. DotStory.dc.html's legend uses ink-fill.
+
+### V20. The dot story's Filipino label for beat 4
+- It calls the died dots "itim" (black), but in dark mode they're near-white.
+- The wording stays for now and goes on the Filipino review list (`docs/owner-queue.md`).
+
 ## 4 November 2026, fourth batch (owner, written to the lead)
 
 Why: the owner compared the live site (https://tb-ph.pages.dev) with the v8 design project and approved a fix pass, step 15 (`docs/step-15-fix-pass.md`). The owner sent this batch with `TB-PH-v8.zip` on 10 November 2026 and asked for it to be recorded as "4 November 2026, owner, fourth batch". **Where it differs from PLAN.md, it wins.** R2 (the v6 design) covered the launch; from step 15 on, v8 applies. V6 to V14 are the owner's items 1 to 9.

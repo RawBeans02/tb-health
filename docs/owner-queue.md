@@ -30,6 +30,7 @@ Nothing is left to decide. The Cloudflare project is `tb-ph` and the launch addr
   - Q12, the 85 lapsed accreditations (D24 applies until you decide);
   - pipeline fixes before the next run: look up city groups with their province, read "Sta."/"Sto.", reject generic address text, and stop on a pin far from its province's other clinics.
 - **The sample fixture** (`data/tb-dots-facilities-SAMPLE.json`, the browser tests' 93 rows) carries the clinics' email column on 92 rows. Dropping it is a repository clean-up for your OK.
+- **Filipino review (V20):** the dot story's screen-reader label for beat 4 (`src/content/dotstory.ts`) calls the died dots "itim" (black), but in dark mode they're near-white.
 - **Still open from earlier:**
   - O11: four symptom-check cases for the clinical review, and whether the summary card should list risk factors such as HIV (RA 10173), when Check returns;
   - the copy overrides in `docs/copy-overrides.md`;
