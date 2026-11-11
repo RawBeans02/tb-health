@@ -91,7 +91,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .btn--primary:hover {
-    background: var(--teal-deep);
+    background: var(--teal-hover);
     color: var(--on-teal);
   }
 }
@@ -267,7 +267,7 @@
   height: 22px;
   margin-top: 1px;
   border-radius: 50%;
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--on-ink);
   display: grid;
   place-items: center;
@@ -406,7 +406,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .facility-name a:hover {
-    color: var(--teal);
+    color: var(--teal-ink);
   }
 }
 
@@ -555,9 +555,18 @@
 }
 
 .segmented button[aria-pressed='true'] {
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--on-ink);
   font-weight: 700;
+}
+
+/* Dark mode: the look v8 gives Data's d5 toggle (Data.dc.html), an Ink fill with Surface text
+   (V17). theme.css's ink-fill would be 2.05:1 against the surface, under 3:1 for a state. */
+@media screen and (prefers-color-scheme: dark) {
+  .segmented button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--surface);
+  }
 }
 
 /* Four options in a row, 2 × 2 under 440px (Places "Service"). */
@@ -621,7 +630,7 @@
 
 .switch[aria-checked='true'] .switch-knob {
   left: 22px;
-  background: var(--surface);
+  background: var(--on-teal); /* white on the Teal track, in dark mode too (Places.dc.html) */
 }
 
 /* ---------- Bottom sheet (README:211) ---------- */

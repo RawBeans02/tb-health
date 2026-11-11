@@ -39,7 +39,7 @@
 }
 
 .install-done > span:first-child {
-  color: var(--teal);
+  color: var(--teal-ink);
   font-size: var(--text-20);
 }
 
@@ -115,7 +115,7 @@
 
 .install-offline svg {
   justify-self: center;
-  color: var(--teal);
+  color: var(--teal-ink);
 }
 
 .install-offline path {

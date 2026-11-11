@@ -1,6 +1,7 @@
 // The dot story's canvas (DotStory.dc.html): draws the field and moves it between beats.
 // Layout and targets are pure (src/lib/dotstory.ts); this owns the canvas, the clock and the
-// colours, which come from the design tokens so a dark theme can swap them.
+// colours, which come from the design tokens, so dark mode swaps them (V7: the canvas, ink, dot,
+// muted, separator and TB red tokens' dark values are DotStory.dc.html's applyScheme palette).
 import type { DotStageStrings } from '../content/dotstory.ts';
 import { computeLayout, ease, hexRgb, overlays, progress, seedDots, target, type Kind, type Layout, type Look, type Palette, type StoryData } from '../lib/dotstory.ts';
 
@@ -47,14 +48,18 @@ export class DotStage {
     this.dots = kind.map((k, i) => ({ kind: k, delay: delay[i], x: 0, y: 0, r: 0, h: 0, a: 0, c: [...this.P.dot], f: null, t: null }));
   }
 
-  /** Reads the tokens again (on load, and when the colour scheme changes). */
-  readColors() {
+  /**
+   * Reads the tokens again: on load, when the colour scheme changes, and around printing.
+   * `light`: their light values, for print, which stays light whatever the system setting (V7).
+   */
+  readColors(light = false) {
     const style = getComputedStyle(this.canvas);
     const probe = this.canvas.getContext('2d');
     // The canvas writes any opaque CSS colour back as #rrggbb, whatever form the token takes.
     const v = (name: string) => {
-      const value = style.getPropertyValue(name).trim();
+      const value = (light && lightValue(name)) || style.getPropertyValue(name).trim();
       if (!probe) return value;
+      // A reset first, so a value the canvas can't parse doesn't leave the last one in place.
       probe.fillStyle = '#000000';
       probe.fillStyle = value;
       return String(probe.fillStyle);
@@ -114,6 +119,11 @@ export class DotStage {
   destroy() {
     cancelAnimationFrame(this.raf);
     this.raf = 0;
+  }
+
+  /** Draws the field now, not at the next frame: a page about to print can't wait for one. */
+  paint() {
+    if (this.ctx && this.L) this.draw();
   }
 
   private apply(dot: Dot, p: number) {
@@ -317,6 +327,26 @@ export class DotStage {
     }
     ctx.globalAlpha = 1;
   }
+}
+
+/**
+ * A token's light value: its declaration in tokens.css's :root rule outside any @media (the
+ * dark values sit in an @media rule), or '' if no :root rule has it.
+ */
+function lightValue(name: string): string {
+  for (const sheet of document.styleSheets) {
+    let rules: CSSRuleList;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue; // a sheet from another origin can't be read
+    }
+    for (const rule of rules) {
+      const value = rule instanceof CSSStyleRule && rule.selectorText === ':root' ? rule.style.getPropertyValue(name).trim() : '';
+      if (value) return value;
+    }
+  }
+  return '';
 }
 
 function capsule(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {

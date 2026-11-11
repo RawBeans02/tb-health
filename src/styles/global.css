@@ -7,6 +7,9 @@
 }
 
 html {
+  /* Light, or dark when the system is set to dark (V7): the browser's own parts (scrollbars,
+     native pickers) follow. The dark token values are in tokens.css. */
+  color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   /* Link targets and focused elements land clear of the sticky header and, on phones, the
@@ -19,6 +22,13 @@ html {
 
 html:has(.next-bar) {
   scroll-padding-bottom: min(calc(var(--tabbar-h) + 92px + env(safe-area-inset-bottom)), 50vh); /* 162px, with Next */
+}
+
+/* Print stays light, whatever the system setting (the dark tokens are screen only). */
+@media print {
+  html {
+    color-scheme: light;
+  }
 }
 
 @media (min-width: 62.5em) {

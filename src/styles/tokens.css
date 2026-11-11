@@ -1,12 +1,14 @@
-/* Design tokens from design/design_handoff_tb_ph/README.md, "Design tokens (v4 — from Home)".
+/* Design tokens from design/design_handoff_tb_ph/README.md, "Design tokens (v4 — from Home)",
+   and their dark values from design/v8/theme.css (V7, at the end of this file).
    Values are copied as specced; don't change one here without changing the README or
-   recording the decision in docs/. */
+   recording the decision in docs/. tests/unit/tokens.test.ts pins the light values. */
 
 :root {
   /* Color */
   --canvas: #F1F3F4;          /* page background */
   --surface: #FFFFFF;         /* grouped lists, inputs, solid bars */
-  --ink: #14212B;             /* text, focus ring, info disc, selected language */
+  --ink: #14212B;             /* text, focus ring, card and language-toggle edges */
+  --ink-fill: #14212B;        /* Ink as a fill: info disc, selected segment and language, skip link (V7: its own dark value) */
   --secondary: #3F4B53;       /* secondary body text, distances, location note */
   --muted: #56626A;           /* captions, hours, footnotes, placeholder, icons */
   --control-edge: #7A858C;    /* input border, unselected radio ring/glyph */
@@ -18,12 +20,14 @@
   --grabber: #C3C9CD;         /* bottom sheet grabber */
   --scrim: rgba(20, 33, 43, 0.32); /* behind the bottom sheet */
   --teal: #1E6B70;            /* primary button, route, stops, checkmarks, "Offers this" chip */
-  --teal-deep: #175458;       /* teal text, primary hover */
+  --teal-ink: #1E6B70;        /* Teal as a foreground: ✓ marks, icons, link hover, chart labels (V7: its own dark value) */
+  --teal-deep: #175458;       /* teal text */
+  --teal-hover: #175458;      /* primary hover (V7: its own dark value; --teal-deep is the text) */
   --teal-tint-13: rgba(30, 107, 112, 0.13); /* soft buttons */
   --teal-tint-22: rgba(30, 107, 112, 0.22); /* soft button hover */
   --teal-tint-14: rgba(30, 107, 112, 0.14); /* active tab pill in the phone tab bar */
   --on-teal: #FFFFFF;         /* text on Teal (primary button, "Offers this" chip) */
-  --on-ink: #FFFFFF;          /* text on Ink (info disc) */
+  --on-ink: #FFFFFF;          /* text on the Ink fill (info disc, selected segment) */
   --tb-red: #C42032;          /* H1, "you are here", errors, invalid input border; never a button */
   --map-ground: #DCE6E5;      /* planner backdrop */
 
@@ -36,7 +40,12 @@
   --tb-red-on-film: #F0646C;
   --teal-on-film: #6FB5B9;
   --paper-2: #E8E4DA;
-  --on-film: #FFFFFF;         /* text on Film (urgent screen) */
+  --on-film: #FFFFFF;         /* text on Film (urgent screen); the "Call 911" button */
+  /* The urgent screen keeps its colours in dark mode (V7), so these have no dark value. */
+  --call-911-text: #C42032;   /* TB red on the white "Call 911" button */
+  --call-911-hover: #F1F3F4;  /* its hover */
+  --film-soft: rgba(255, 255, 255, 0.16);       /* Back and Start over on Film */
+  --film-soft-hover: rgba(255, 255, 255, 0.26); /* their hover */
 
   /* The map stays light in both colour schemes, like its markers (V2): never give these a
      dark value. */
@@ -115,4 +124,50 @@
   /* Focus */
   --focus-ring: 3px solid var(--ink);
   --focus-ring-on-film: 3px solid var(--paper);
+}
+
+/* Dark mode (V7): design/v8/theme.css's dark values, each on the token with the same light
+   value and role (tests/unit/tokens.test.ts holds the map). No in-app switch: the site follows
+   the system setting (Apple HIG, Dark Mode). Screen only, so a dark system setting never prints
+   a dark page. Left out on purpose, so they keep their light value: the urgent Film screen and
+   its "Call 911" button, the map popups (V7), the white or paper text on Teal and Ink fills,
+   and paper-2 and field, which nothing on screen uses. */
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #0E1417;
+    --surface: #182126;
+    --ink: #E7ECEF;
+    --ink-fill: #44535C;
+    --secondary: #B6C1C7;
+    --muted: #97A4AB;
+    --control-edge: #7D8B92;
+    --separator: #2A353B;
+    --track: #34424A;
+    --link-underline: #66747C;
+    --chevron: #7D8B92;
+    --row-hover: #1F2A30;
+    --grabber: #3F4B53;
+    --scrim: rgba(0, 0, 0, 0.6);
+    --teal: #22777C;
+    --teal-ink: #6CC7C3;
+    --teal-deep: #8BD5D2;
+    --teal-hover: #288287;      /* the owner's (V16): theme.css's #2A878C gives white text 4.25:1 */
+    --teal-tint-13: rgba(108, 199, 195, 0.16);
+    --teal-tint-22: rgba(108, 199, 195, 0.26);
+    --teal-tint-14: rgba(108, 199, 195, 0.17);
+    --tb-red: #F26A72;          /* D14's TB red in dark mode */
+    --map-ground: #13272C;
+    --dot: #8798A3;
+    --rule: #36424A;
+
+    /* Glass */
+    --header-glass-bg: rgba(24, 33, 38, 0.76);
+    --header-glass-edge: rgba(255, 255, 255, 0.08);
+    --tabbar-glass-bg: rgba(24, 33, 38, 0.72);
+    --tabbar-glass-edge: rgba(255, 255, 255, 0.1);
+    --tabbar-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --sheet-glass-bg: rgba(24, 33, 38, 0.7);
+    --sheet-glass-edge: rgba(255, 255, 255, 0.12);
+    --sheet-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 50px rgba(0, 0, 0, 0.45);
+  }
 }

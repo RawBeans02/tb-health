@@ -157,6 +157,13 @@
   height: clamp(360px, 62vh, 640px);
 }
 
+/* Inside the map, which keeps its light colours in dark mode (V7), the ring is the map's own
+   ink: the zoom buttons, attribution links and popups are white, where dark mode's near-white
+   --ink ring can't be seen. It is the light ring's colour, so light mode is unchanged. */
+.map :focus-visible {
+  outline-color: var(--map-popup-text);
+}
+
 .map-status {
   position: absolute;
   inset: 0;

@@ -65,6 +65,8 @@
 
 .privacy-row svg {
   justify-self: center;
+  /* Check.dc.html draws the lock with stroke="#1E6B70", which theme.css paints in the accent in
+     dark mode: --teal, 3.1:1 on the dark surface, enough for an icon (WCAG 1.4.11). */
   stroke: var(--teal);
 }
 
@@ -310,7 +312,7 @@
   padding: 0 28px;
   border-radius: var(--radius-capsule);
   background: var(--on-film);
-  color: var(--tb-red);
+  color: var(--call-911-text);
   font-size: max(22px, 1.375rem);
   font-weight: 700;
   text-decoration: none;
@@ -318,8 +320,8 @@
 
 @media (hover: hover) and (pointer: fine) {
   .urgent-call:hover {
-    background: var(--canvas);
-    color: var(--tb-red);
+    background: var(--call-911-hover);
+    color: var(--call-911-text);
   }
 }
 
@@ -334,7 +336,7 @@
   padding: 0 20px;
   border: 0;
   border-radius: var(--radius-capsule);
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--film-soft);
   color: var(--on-film);
   font-size: var(--text-17);
   font-weight: 700;
@@ -343,7 +345,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .urgent-actions button:hover {
-    background: rgba(255, 255, 255, 0.26);
+    background: var(--film-soft-hover);
   }
 }
 
@@ -532,7 +534,7 @@
 
 @media print {
   body {
-    background: #fff !important;
+    background: var(--surface) !important; /* white: print has only the light values */
   }
 
   .site-header,

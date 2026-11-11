@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { charts } from '../../src/content/charts.ts';
 import { pick } from '../../src/content/types.ts';
-import { buildPanels, COLORS, HATCHES, type PanelState } from '../../src/lib/charts/panels.ts';
+import { buildPanels, COLORS, HATCHES, PAINTS, type PanelState } from '../../src/lib/charts/panels.ts';
 import { textWidth, wrapText } from '../../src/lib/charts/primitives.ts';
 
 const data = JSON.parse(readFileSync('data/tb-ph-data.json', 'utf8'));
@@ -60,6 +60,33 @@ describe('buildPanels', () => {
   it('d14 counts clinics per region from the prepared list, with the sample note', () => {
     const d14 = buildPanels(data, 'en', 640, true, state(), pick(charts, 'en')).find((p) => p.id === 'd14')!;
     expect(d14.caption).toContain('Sample list: 93 clinics from 2 regions');
+  });
+});
+
+describe('chart colours are tokens (step 15.2, V7)', () => {
+  const css = readFileSync('src/styles/data.css', 'utf8');
+  const tokens = readFileSync('src/styles/tokens.css', 'utf8');
+
+  it('every shape and label is painted with a token, none, or a hatch', () => {
+    for (const lang of ['en', 'fil'] as const) {
+      for (const [w, wide] of [[928, true], [320, false]] as const) {
+        for (const p of buildPanels(data, lang, w, wide, state(), pick(charts, lang))) {
+          for (const svg of p.svgs ?? []) {
+            const colours = [...svg.rects, ...svg.paths].flatMap((s) => [s.fill, s.stroke]).concat([...svg.circles, ...svg.texts].map((s) => s.fill));
+            for (const colour of colours) expect(PAINTS.includes(colour) || colour === 'none' || /^url\(#[\w-]+\)$/.test(colour), `${p.id}: ${colour}`).toBe(true);
+          }
+        }
+      }
+    }
+    expect(Object.values(HATCHES).every((stroke) => PAINTS.includes(stroke))).toBe(true);
+  });
+
+  it('data.css reads each token through a .fill- and a .stroke- class', () => {
+    for (const name of PAINTS) {
+      expect(tokens, `--${name}`).toMatch(new RegExp(`--${name}:`));
+      expect(css).toContain(`.fill-${name} { fill: var(--${name}); }`);
+      expect(css).toContain(`.stroke-${name} { stroke: var(--${name}); }`);
+    }
   });
 });
 

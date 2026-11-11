@@ -10,7 +10,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import InPlaceLanguage from '../components/InPlaceLanguage.astro';
 import type { Str } from '../content/types.ts';
 import { pagePath, toLang, type Lang } from '../lib/i18n.ts';
-import { CANVAS } from '../lib/manifest.ts';
+import { CANVAS, CANVAS_DARK } from '../lib/manifest.ts';
 import { headLinks } from '../lib/site.ts';
 import prepaint from '../scripts/prepaint.js?raw';
 import tabbarPrepaint from '../scripts/tabbar-prepaint.js?raw';
@@ -83,8 +83,11 @@ const shareDescription = shareText?.[lang] || descriptionText;
         </>
       )
     }
-    {/* The canvas token. A meta tag can't read CSS; dark mode (V2) adds a prefers-color-scheme: dark twin. */}
-    <meta name="theme-color" content={CANVAS} />
+    {/* Light and dark (V7), as the system is set. The theme colour is the canvas token in each
+        scheme: a meta tag can't read CSS. The manifest stays light. */}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content={CANVAS} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={CANVAS_DARK} media="(prefers-color-scheme: dark)" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />

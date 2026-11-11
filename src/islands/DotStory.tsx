@@ -61,19 +61,28 @@ export default function DotStory({ lang, d, tx }: Props) {
       if (near && !scrollFrame) scrollFrame = requestAnimationFrame(() => ((scrollFrame = 0), check()));
     };
     const snap = () => engine.go(current, true);
-    const recolour = () => {
-      engine.readColors();
+    // A canvas can't use the tokens, so it reads them again and repaints when the system
+    // appearance changes (V7). Print stays light: just before printing it paints with the light
+    // values, at once (the page prints before another frame), and afterwards as the screen is.
+    const recolour = (light: boolean) => {
+      engine.readColors(light);
       snap();
+      engine.paint();
     };
+    const onScheme = () => recolour(false);
+    const beforePrint = () => recolour(true);
+    const afterPrint = () => recolour(false);
 
     const observer = new ResizeObserver(resize);
     observer.observe(box);
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
+    addEventListener('beforeprint', beforePrint);
+    addEventListener('afterprint', afterPrint);
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
     const scheme = matchMedia('(prefers-color-scheme: dark)');
     motion.addEventListener('change', snap);
-    scheme.addEventListener('change', recolour);
+    scheme.addEventListener('change', onScheme);
     void document.fonts?.ready.then(() => engine.kick());
 
     return () => {
@@ -81,8 +90,10 @@ export default function DotStory({ lang, d, tx }: Props) {
       presence.disconnect();
       removeEventListener('scroll', onScroll);
       removeEventListener('resize', onScroll);
+      removeEventListener('beforeprint', beforePrint);
+      removeEventListener('afterprint', afterPrint);
       motion.removeEventListener('change', snap);
-      scheme.removeEventListener('change', recolour);
+      scheme.removeEventListener('change', onScheme);
       cancelAnimationFrame(scrollFrame);
       engine.destroy();
     };

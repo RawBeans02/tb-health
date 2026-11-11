@@ -1,8 +1,9 @@
 // Step 11: the manifest and what the service worker saves (PLAN §5).
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { CANVAS, webManifest } from '../../src/lib/manifest.ts';
+import { CANVAS, CANVAS_DARK, webManifest } from '../../src/lib/manifest.ts';
 import { offlineStandIn, precachePages, savedPath } from '../../src/lib/offline.ts';
+import { readTokens } from './css-tokens.ts';
 
 // The v8 design reference's manifest (V6), byte for byte v6's.
 const prototype = JSON.parse(readFileSync('design/v8/design_handoff_tb_ph/prototype/manifest.webmanifest', 'utf8'));
@@ -33,6 +34,12 @@ describe('webManifest', () => {
   it('uses the canvas token for its colours, as the theme-color meta does', () => {
     const token = /--canvas:\s*(#[0-9A-Fa-f]{6})/.exec(readFileSync('src/styles/tokens.css', 'utf8'))?.[1];
     expect(CANVAS).toBe(token);
+  });
+
+  it('stays light; the dark theme-color meta takes the canvas token’s dark value (V7)', () => {
+    const { light, dark } = readTokens('src/styles/tokens.css');
+    expect([manifest.theme_color, manifest.background_color]).toEqual([light.canvas, light.canvas]);
+    expect(CANVAS_DARK).toBe(dark.canvas);
   });
 });
 

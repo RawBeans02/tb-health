@@ -1,7 +1,8 @@
 // Chart primitives, ported from Data.dc.html (G, ts, rows, hbars, pyramid, monthly, stack,
 // bullets, tbl, fstack). Pure functions of data, language and width: they return shapes and
-// labels, which src/islands/ChartPanel.tsx draws as SVG. The prototype's layout numbers are
-// kept as they are, so the charts match it at every width (D13).
+// labels, which src/islands/DataCharts.tsx draws as SVG. The prototype's layout numbers are
+// kept as they are, so the charts match it at every width (D13). A colour is a token's name
+// (panels.ts COLORS), 'none' or a hatch pattern's url(#id).
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- option shapes are the prototype's, set by src/lib/charts/panels.ts. */
 export type Opts = Record<string, any>;
@@ -68,7 +69,7 @@ export function G(w: number, h: number, alt: string) {
         s: String(s),
         fs: o.fs || 14,
         fw: o.fw || 400,
-        fill: o.fill || '#14212B',
+        fill: o.fill || 'ink',
       }),
     done: (title?: string): Chart => ({ vb: `0 0 ${Math.round(w)} ${Math.round(h)}`, w: Math.round(w), h: Math.round(h), alt, title: title || '', ...g }),
   };
@@ -211,7 +212,7 @@ export function stack(o: Opts): Chart {
   const S = G(o.w, h, o.alt);
   let x = 0;
   o.segs.forEach((s: any) => { const sw = s.v / 100 * o.w; S.rect(x, top, sw, barH, s.color); x += sw; });
-  S.text(14, top + barH / 2, o.segs[0].v.toFixed(1) + '%', { fs: 18, fw: 700, fill: '#FFFFFF' });
+  S.text(14, top + barH / 2, o.segs[0].v.toFixed(1) + '%', { fs: 18, fw: 700, fill: 'on-teal' });
   o.segs.forEach((s: any, i: number) => { const yy = listTop + i * lineH + 10, val = s.v.toFixed(1) + '%' + (s.n != null ? ' (' + fmt(s.n) + ')' : ''); S.rect(0, yy - 7, 14, 14, s.color); if (narrow) { S.text(24, yy, s.label, { fs: 15, fill: th.ink }); S.text(24, yy + 20, val, { fs: 15, fw: 700, fill: th.ink }); } else S.text(24, yy, s.label + ': ' + val, { fs: 15, fill: th.ink }); });
   return S.done(o.title);
 }
@@ -229,7 +230,7 @@ export function bullets(o: Opts): Chart {
     const extra = own[k] ? lineH : 0, by = y0 + 50 + extra, bh = 18, x = (v: number) => v / it.max * o.w;
     S.text(0, y0 + 10, it.label, { fs: 16, fw: 700, fill: th.ink });
     S.text(o.w, y0 + 10 + extra, it.now, { a: 'end', fs: 16, fw: 700, fill: th.ink });
-    S.rect(0, by, o.w, bh, '#E3E6E8');
+    S.rect(0, by, o.w, bh, 'separator');
     S.rect(0, by, x(it.v), bh, th.coral);
     it.marks.forEach((m: any) => { const mx = x(m.v), tw = m.text.length * 8.2, x0 = mx + 6 + tw <= o.w ? mx + 6 : (mx - 6 - tw >= 0 ? mx - 6 - tw : 0); S.line(mx, by - 8, mx, by + bh + 8, th.ink, 2.5); S.text(x0, m.below ? by + bh + 20 : by - 16, m.text, { fs: 14, fw: 700, fill: th.ink }); });
     y0 += itemH + extra;

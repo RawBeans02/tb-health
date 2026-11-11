@@ -10,10 +10,18 @@ import { bullets, fmt, fstack, hbars, monthly, pyramid, rows, stack, tbl, ts, ty
 /* eslint-disable @typescript-eslint/no-explicit-any -- the data files' shapes, as the prototype reads them. */
 export type ChartStrings = Record<keyof typeof charts, string>;
 
-/** Data-page colours (Data.dc.html C). Charts use TB red for illness, Teal for care, Dot for context. */
-export const COLORS = { ink: '#14212B', muted: '#56626A', rule: '#E3E6E8', coral: '#C42032', coralDeep: '#C42032', teal: '#1E6B70', tealDeep: '#175458', dot: '#7A8C97', paper: '#FFFFFF', paper2: '#E3E6E8' };
+/**
+ * Data-page colours (Data.dc.html C), as the names of the tokens they are (tokens.css). Charts
+ * use TB red for illness, Teal for care, Dot for context. DataCharts draws each through a class
+ * that reads its token (.fill-ink, .stroke-dot … in data.css), so the charts follow the colour
+ * scheme (V7). Teal text is teal-ink: the same colour in light, readable on the dark panel.
+ */
+export const COLORS = { ink: 'ink', muted: 'muted', rule: 'separator', coral: 'tb-red', coralDeep: 'tb-red', teal: 'teal', tealInk: 'teal-ink', tealDeep: 'teal-deep', dot: 'dot', paper: 'surface', paper2: 'separator', onTeal: 'on-teal' } as const;
 
-/** The hatch patterns charts fill with (Data.dc.html:34-37): a 3px line on white, by id. */
+/** Every token a chart paints with; data.css has a .fill- and a .stroke- class for each. */
+export const PAINTS: readonly string[] = [...new Set(Object.values(COLORS))];
+
+/** The hatch patterns charts fill with (Data.dc.html:34-37): a 3px line on the panel colour, by id. */
 export const HATCHES: Record<string, string> = { dhatch: COLORS.dot, 'dh-teal': COLORS.teal, 'dh-ink': COLORS.ink, 'dh-dot': COLORS.dot };
 
 /** Region codes and names for d14 (Data.dc.html REG). */
@@ -68,7 +76,7 @@ export function buildPanels(d: any, lang: Lang, cw: number, wide: boolean, state
       const alt = tx.d2_8;
       out.push({ id: 'd2', th: light, takeaway: tx.d3_1,
         caption: wide ? tx.d3_2 : tx.d3_3, source: S.whoDoh,
-        svgs: [wide ? ts({ w: cw, years: yrs, th: light, yMax: 800000, ticks: [0, 200000, 400000, 600000, 800000], tf: fmt, gap: { upper: est, lower: no, color: C.coral, at: 2, label: tx.d3_4, ink: C.coralDeep }, series: [{ vals: est, color: C.ink, label: tx.d3_5, sub: fmt(last.estimated_new_cases), dy: -6 }, { vals: no, color: C.teal, label: tx.d3_6, sub: fmt(last.notified_new_and_relapse) + ' (' + pct(last.treatment_coverage_pct) + ')', ink: C.teal, dy: 6 }], notes: [{ i: i20, v: no[i20], text: pct(g[i20].treatment_coverage_pct) + ' (2020)', color: C.teal, below: true }], alt })
+        svgs: [wide ? ts({ w: cw, years: yrs, th: light, yMax: 800000, ticks: [0, 200000, 400000, 600000, 800000], tf: fmt, gap: { upper: est, lower: no, color: C.coral, at: 2, label: tx.d3_4, ink: C.coralDeep }, series: [{ vals: est, color: C.ink, label: tx.d3_5, sub: fmt(last.estimated_new_cases), dy: -6 }, { vals: no, color: C.teal, label: tx.d3_6, sub: fmt(last.notified_new_and_relapse) + ' (' + pct(last.treatment_coverage_pct) + ')', ink: C.tealInk, dy: 6 }], notes: [{ i: i20, v: no[i20], text: pct(g[i20].treatment_coverage_pct) + ' (2020)', color: C.teal, below: true }], alt })
           : rows({ w: cw, years: yrs, vals: no, outer: est, color: C.teal, max: 800000, th: light, valText: (i: any) => pct(g[i].treatment_coverage_pct), legend: [{ fill: C.teal, label: tx.d3_6 }, { fill: 'none', stroke: C.ink, sw: 1.25, label: tx.d3_5 }], alt })],
         tables: [tbl(tx.d3_7, [Y, tx.d3_5, tx.d3_6, tx.d3_8, tx.d3_9], g.map((r: any) => [r.year, fmt(r.estimated_new_cases), fmt(r.notified_new_and_relapse), pct(r.treatment_coverage_pct), fmt(r.not_reached)]))] }); }
 
@@ -97,7 +105,8 @@ export function buildPanels(d: any, lang: Lang, cw: number, wide: boolean, state
       out.push({ id: 'd5', th: light, takeaway: tx.d6_1,
         caption: tx.d6_2, source: S.whoDoh,
         toggleLabel: tx.d6_3,
-        toggle: [['est', tx.d3_5], ['not', tx.d3_6]].map(([k, label], i) => { const on = state.pyr === k; return { label, on, pick: pick(k), bg: on ? C.ink : 'transparent', fg: on ? C.paper : C.ink, sep: i ? '1.5px solid #14212B' : '0' }; }),
+        // The segmented control's own classes colour it (ui.css).
+        toggle: [['est', tx.d3_5], ['not', tx.d3_6]].map(([k, label]) => ({ label, on: state.pyr === k, pick: pick(k) })),
         svgs: [pyramid({ w: Math.min(cw, 760), groups: isEst ? est : not, max: 80000, th: light, men: tx.d6_4, women: tx.d6_5, alt: tx.d6_6 })],
         tables: [tbl(tx.d6_7, [tx.d6_8, tx.d6_4, tx.d6_5], est.map((r: any) => [r.label, fmt(r.m), fmt(r.f)])), tbl(tx.d6_9, [tx.d6_8, tx.d6_4, tx.d6_5], not.map((r: any) => [r.label, fmt(r.m), fmt(r.f)]))] }); }
 
@@ -109,12 +118,12 @@ export function buildPanels(d: any, lang: Lang, cw: number, wide: boolean, state
         tables: [tbl(tx.d7_4, [tx.d7_5, tx.d7_6, tx.d2_6, tx.d2_7, tx.d7_7], rf.map((r: any) => [names[r.key] || r.risk_factor, fmt(r.cases), fmt(r.lo), fmt(r.hi), scope(r.age_scope)]))] }); }
 
     { const o = d.treatment_outcomes, c = o.new_and_relapse_2023, tr = o.success_trend, yrs = tr.map((r: any) => r.cohort_year), v = tr.map((r: any) => r.success_pct);
-      const segs = [{ v: c.success_pct, n: c.success, color: C.teal, label: tx.d7_8 }, { v: c.lost_to_follow_up_pct, n: c.lost_to_follow_up, color: C.coral, label: tx.d7_9 }, { v: c.not_evaluated_pct, n: c.not_evaluated, color: C.dot, label: tx.d7_10 }, { v: c.died_pct, n: c.died, color: C.ink, label: tx.d7_11 }, { v: c.failed_pct, n: c.failed, color: '#56626A', label: tx.d7_12 }];
+      const segs = [{ v: c.success_pct, n: c.success, color: C.teal, label: tx.d7_8 }, { v: c.lost_to_follow_up_pct, n: c.lost_to_follow_up, color: C.coral, label: tx.d7_9 }, { v: c.not_evaluated_pct, n: c.not_evaluated, color: C.dot, label: tx.d7_10 }, { v: c.died_pct, n: c.died, color: C.ink, label: tx.d7_11 }, { v: c.failed_pct, n: c.failed, color: C.muted, label: tx.d7_12 }];
       const t2 = tx.d7_13;
       out.push({ id: 'd7', th: light, takeaway: tx.d8_1,
         source: tx.d8_2,
         svgs: [stack({ w: Math.min(cw, 760), segs, th: light, title: tx.d8_3 + ' (' + fmt(c.cohort) + ')', alt: tx.d8_4 }),
-          wide ? ts({ w: cw, h: 260, years: yrs, th: light, yMax: 100, ticks: [0, 25, 50, 75, 100], tf: (v: any) => v + '%', series: [{ vals: v, color: C.teal, label: pct(v[v.length - 1]), sub: tx.d8_5, ink: C.teal }], title: t2, alt: t2 })
+          wide ? ts({ w: cw, h: 260, years: yrs, th: light, yMax: 100, ticks: [0, 25, 50, 75, 100], tf: (v: any) => v + '%', series: [{ vals: v, color: C.teal, label: pct(v[v.length - 1]), sub: tx.d8_5, ink: C.tealInk }], title: t2, alt: t2 })
             : rows({ w: cw, years: yrs, vals: v, color: C.teal, max: 100, th: light, valText: (i: any) => pct(v[i]), title: t2, alt: t2 })],
         tables: [tbl(tx.d8_6, [tx.d8_7, tx.d8_8, tx.d8_9], segs.map((s: any) => [s.label, pct(s.v), fmt(s.n)])), tbl(t2, [tx.d8_10, tx.d8_11, tx.d8_9], tr.map((r: any) => [r.cohort_year, pct(r.success_pct), fmt(r.cohort)]))] }); }
 
@@ -134,7 +143,7 @@ export function buildPanels(d: any, lang: Lang, cw: number, wide: boolean, state
       const t2 = tx.d10_11;
       out.push({ id: 'd10', th: light, takeaway: tx.d11_1, source: S.who,
         svgs: [hbars({ w: cw, th: light, max: 180000, labelW: 250, title: tx.d11_2, rows: [{ label: tx.d11_3, v: t.household_contacts_identified, color: C.dot, text: fmt(t.household_contacts_identified) }, { label: tx.d11_4, v: t.contacts_screened, color: C.teal, text: fmt(t.contacts_screened) }, { label: tx.d11_5, v: t.tb_found_among_contacts, color: C.coral, text: fmt(t.tb_found_among_contacts) }, { label: tx.d11_6, v: t.contacts_started_tpt, color: C.teal, text: fmt(t.contacts_started_tpt) }], alt: tx.d11_7 }),
-          wide ? ts({ w: cw, h: 260, years: yrs, th: light, yMax: 80000, ticks: [0, 20000, 40000, 60000, 80000], tf: fmt, series: [{ vals: v, color: C.teal, label: fmt(v[v.length - 1]), sub: tx.d11_8, ink: C.teal }], title: t2, alt: t2 })
+          wide ? ts({ w: cw, h: 260, years: yrs, th: light, yMax: 80000, ticks: [0, 20000, 40000, 60000, 80000], tf: fmt, series: [{ vals: v, color: C.teal, label: fmt(v[v.length - 1]), sub: tx.d11_8, ink: C.tealInk }], title: t2, alt: t2 })
             : rows({ w: cw, years: yrs, vals: v, color: C.teal, max: 80000, th: light, valText: (i: any) => fmt(v[i]), title: t2, alt: t2 })],
         tables: [tbl(tx.d11_9, [tx.d11_10, tx.d8_9], [[tx.d11_11, fmt(t.household_contacts_identified)], [tx.d11_4, fmt(t.contacts_screened)], [tx.d11_5, fmt(t.tb_found_among_contacts)], [tx.d11_6, fmt(t.contacts_started_tpt)], [tx.d11_12, fmt(t.children_under5_started_tpt)], [tx.d11_13, fmt(t.short_rifamycin_regimens)]]), tbl(t2, [Y, tx.d11_14], t.tpt_series.map((r: any) => [r.year, fmt(r.contacts_started_tpt)]))] }); }
 

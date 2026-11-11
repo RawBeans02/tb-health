@@ -1,4 +1,5 @@
-/* The data (README:235–242). Every chart is a white panel; tables scroll sideways. */
+/* The data (README:235–242). Every chart is a white panel (the surface colour in dark mode);
+   tables scroll sideways. */
 
 .data {
   max-width: var(--container);
@@ -221,6 +222,30 @@
   font-family: inherit;
   font-variant-numeric: tabular-nums;
 }
+
+/* Chart colours (V7): each shape and label names its token in a class (DataCharts.tsx paint()),
+   so the tokens reach the SVG, hatches, legends, axes and labels included, and the charts follow
+   the colour scheme. One pair per token in panels.ts PAINTS (tests/unit/panels.test.ts). */
+.fill-ink { fill: var(--ink); }
+.fill-muted { fill: var(--muted); }
+.fill-separator { fill: var(--separator); }
+.fill-tb-red { fill: var(--tb-red); }
+.fill-teal { fill: var(--teal); }
+.fill-teal-ink { fill: var(--teal-ink); }
+.fill-teal-deep { fill: var(--teal-deep); }
+.fill-dot { fill: var(--dot); }
+.fill-surface { fill: var(--surface); }
+.fill-on-teal { fill: var(--on-teal); }
+.stroke-ink { stroke: var(--ink); }
+.stroke-muted { stroke: var(--muted); }
+.stroke-separator { stroke: var(--separator); }
+.stroke-tb-red { stroke: var(--tb-red); }
+.stroke-teal { stroke: var(--teal); }
+.stroke-teal-ink { stroke: var(--teal-ink); }
+.stroke-teal-deep { stroke: var(--teal-deep); }
+.stroke-dot { stroke: var(--dot); }
+.stroke-surface { stroke: var(--surface); }
+.stroke-on-teal { stroke: var(--on-teal); }
 
 .panel-caption {
   font-size: var(--text-16);
@@ -497,6 +522,8 @@
   border: 2.5px solid var(--tb-red);
 }
 
+/* Ink, the colour the canvas draws these dots in, in both schemes (DotStory.dc.html's legend
+   takes ink-fill, which in dark mode would not match the dots). */
 .story-swatch--died {
   background: var(--ink);
 }

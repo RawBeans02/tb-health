@@ -8,6 +8,11 @@ import { navKeys, type Features } from './nav.ts';
 
 /** The --canvas token (tokens.css). A manifest can't read CSS; a unit test keeps them equal. */
 export const CANVAS = '#F1F3F4';
+/**
+ * Its dark value, for the dark theme-color meta only: the manifest stays light (V7). A unit
+ * test keeps it equal to the token's dark value.
+ */
+export const CANVAS_DARK = '#0E1417';
 
 type ShortcutKey = 'home' | 'check' | 'learn' | 'data';
 

@@ -5,7 +5,7 @@ import { Fragment } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import claims from '../../data/claims.json' with { type: 'json' };
 import stats from '../../data/tb-ph-data.json' with { type: 'json' };
-import { buildPanels, HATCHES, type ChartStrings, type Panel, type PanelState } from '../lib/charts/panels.ts';
+import { buildPanels, HATCHES, PAINTS, type ChartStrings, type Panel, type PanelState } from '../lib/charts/panels.ts';
 import type { Chart, Table } from '../lib/charts/primitives.ts';
 import type { Lang } from '../lib/i18n.ts';
 
@@ -19,6 +19,21 @@ interface Props {
 
 // The prerendered width: the chart area of a 1280px window (Data.dc.html cw at vw 1280).
 const DEFAULT_WIDTH = 928;
+
+/**
+ * A shape's colours: a token's name becomes a class that reads the token (.fill-ink,
+ * .stroke-dot … in data.css), so the tokens reach the SVG and the charts follow the colour
+ * scheme (V7). 'none' and a hatch's url(#id) stay attributes.
+ */
+function paint(fill?: string, stroke?: string) {
+  const token = (value?: string): value is string => !!value && PAINTS.includes(value);
+  const classes = [token(fill) && `fill-${fill}`, token(stroke) && `stroke-${stroke}`].filter(Boolean);
+  return {
+    class: classes.length ? classes.join(' ') : undefined,
+    fill: token(fill) ? undefined : fill,
+    stroke: token(stroke) ? undefined : stroke,
+  };
+}
 
 export default function DataCharts({ lang, tx, top, regions }: Props) {
   const [cw, setCw] = useState(DEFAULT_WIDTH);
@@ -54,8 +69,8 @@ export default function DataCharts({ lang, tx, top, regions }: Props) {
         <defs>
           {Object.entries(HATCHES).map(([id, stroke]) => (
             <pattern key={id} id={id} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <rect width="6" height="6" fill="#FFFFFF" />
-              <line x1="0" y1="0" x2="0" y2="6" stroke={stroke} stroke-width="3" />
+              <rect width="6" height="6" {...paint('surface')} />
+              <line x1="0" y1="0" x2="0" y2="6" {...paint(undefined, stroke)} stroke-width="3" />
             </pattern>
           ))}
         </defs>
@@ -157,17 +172,17 @@ function ChartFigure({ g }: { g: Chart }) {
       {g.title && <h3>{g.title}</h3>}
       <svg viewBox={g.vb} width={g.w} height={g.h} role="img" aria-label={g.alt}>
         {g.rects.map((r, i) => (
-          <rect key={`r${i}`} x={r.x} y={r.y} width={r.w} height={r.h} fill={r.fill} stroke={r.stroke} stroke-width={r.sw} />
+          <rect key={`r${i}`} x={r.x} y={r.y} width={r.w} height={r.h} {...paint(r.fill, r.stroke)} stroke-width={r.sw} />
         ))}
         {g.paths.map((p, i) => (
-          <path key={`p${i}`} d={p.d} fill={p.fill} fill-opacity={p.fo} stroke={p.stroke} stroke-width={p.sw} stroke-dasharray={p.dash} stroke-linejoin="round" stroke-linecap="round" />
+          <path key={`p${i}`} d={p.d} {...paint(p.fill, p.stroke)} fill-opacity={p.fo} stroke-width={p.sw} stroke-dasharray={p.dash} stroke-linejoin="round" stroke-linecap="round" />
         ))}
         {g.circles.map((c, i) => (
-          <circle key={`c${i}`} cx={c.x} cy={c.y} r={c.r} fill={c.fill} />
+          <circle key={`c${i}`} cx={c.x} cy={c.y} r={c.r} {...paint(c.fill)} />
         ))}
         <g aria-hidden="true">
           {g.texts.map((t, i) => (
-            <text key={`t${i}`} x={t.x} y={t.y} text-anchor={t.anchor} dominant-baseline={t.baseline} font-size={t.fs} font-weight={t.fw} fill={t.fill}>
+            <text key={`t${i}`} x={t.x} y={t.y} text-anchor={t.anchor} dominant-baseline={t.baseline} font-size={t.fs} font-weight={t.fw} {...paint(t.fill)}>
               {t.s}
             </text>
           ))}

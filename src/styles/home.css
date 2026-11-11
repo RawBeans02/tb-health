@@ -176,7 +176,7 @@
 
 .choice-check {
   flex: none;
-  color: var(--teal);
+  color: var(--teal-ink);
   font-size: var(--text-20);
   font-weight: 700;
 }

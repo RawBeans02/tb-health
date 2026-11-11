@@ -43,7 +43,7 @@ main:focus {
   left: max(12px, env(safe-area-inset-left));
   top: -64px;
   z-index: 5;
-  background: var(--ink);
+  background: var(--ink-fill);
   color: var(--paper);
   padding: 12px 16px;
   border-radius: var(--radius-skip);
@@ -122,7 +122,7 @@ main:focus {
 
 @media (hover: hover) and (pointer: fine) {
   .site-nav a:hover {
-    color: var(--teal);
+    color: var(--teal-ink);
   }
 }
 
@@ -173,8 +173,16 @@ main:focus {
 }
 
 .lang-toggle a[aria-current] {
-  background: var(--ink);
-  color: var(--paper); /* kept #F2F0EA, as approved (README:321) */
+  background: var(--ink-fill);
+  color: var(--paper); /* #F2F0EA, as approved (README:321) */
+}
+
+/* Dark mode: an Ink fill with Surface text, as a selected segment has (V17, ui.css). */
+@media screen and (prefers-color-scheme: dark) {
+  .lang-toggle a[aria-current] {
+    background: var(--ink);
+    color: var(--surface);
+  }
 }
 
 @media (max-width: 23.74875em) {
@@ -254,7 +262,8 @@ main:focus {
   flex: none;
 }
 
-/* ---------- Glass turns solid (README "Glass" fallback rule) ---------- */
+/* ---------- Glass turns solid (README "Glass" fallback rule) ----------
+   In both colour schemes: the glass, surface and rule tokens carry their dark values (V7). */
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-header-glass {
@@ -281,6 +290,26 @@ main:focus {
   }
 
   .tab-bar {
+    border-color: var(--rule);
+  }
+}
+
+/* Over the Places map, which keeps its light colours (V7), the dark glass turns grey and the
+   current tab's label falls under AA: while the map shows, dark mode takes the solid fallback
+   too (V18). */
+@media screen and (prefers-color-scheme: dark) {
+  :root:has(.map-block) .site-header-glass,
+  :root:has(.map-block) .tab-bar {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--surface);
+  }
+
+  :root:has(.map-block) .site-header-glass {
+    border-bottom-color: var(--rule);
+  }
+
+  :root:has(.map-block) .tab-bar {
     border-color: var(--rule);
   }
 }
