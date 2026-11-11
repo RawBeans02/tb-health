@@ -554,9 +554,11 @@
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
 
+  /* The small viewport, as the phone stage above and v8's DotStory: the canvas keeps its
+     size when a toolbar shows or hides (step 15.3). */
   .story-stage {
     grid-column: 2;
-    height: calc(100vh - 65px - var(--nav-h));
+    height: calc(100svh - 65px - var(--nav-h));
   }
 
   .story-legend {

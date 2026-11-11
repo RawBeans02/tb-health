@@ -181,6 +181,11 @@ test.describe('map', () => {
     await expect(page.locator('.map')).toHaveAttribute('data-markers', /^[1-9]\d*$/); // markers drawn (canvas)
     await expect.poll(() => tiles.length).toBeGreaterThan(0);
     await expect(page.locator('.leaflet-control-attribution')).toContainText('OpenStreetMap');
+    // No blue tap flash on the map's links, Leaflet's own (step 15.3), where the engine has the property.
+    if (await page.evaluate(() => CSS.supports('-webkit-tap-highlight-color', 'transparent'))) {
+      const flash = await page.locator('.leaflet-control-zoom-in').evaluate((el) => getComputedStyle(el).getPropertyValue('-webkit-tap-highlight-color'));
+      expect(flash).toBe('rgba(0, 0, 0, 0)');
+    }
     await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'List' }).click();
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
   });

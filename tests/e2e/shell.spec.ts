@@ -276,3 +276,65 @@ test.describe('404', () => {
     expect(new URL(page.url()).pathname).toBe('/fil/no-such-page');
   });
 });
+
+// Step 15.3, phone feel: the computed styles behind tests/unit/phone-feel.test.ts. A finger's
+// press, the toolbar and the installed app are on the owner's device list.
+test.describe('phone feel (step 15.3)', () => {
+  /** A computed style, by its CSS name, of the first match. */
+  const style = (page: Page, selector: string, property: string) =>
+    page.locator(selector).first().evaluate((el, name) => getComputedStyle(el).getPropertyValue(name), property);
+  /** user-select, or -webkit-user-select where an engine has only that. */
+  const userSelect = (page: Page, selector: string) =>
+    page.locator(selector).first().evaluate((el) => getComputedStyle(el).getPropertyValue('user-select') || getComputedStyle(el).getPropertyValue('-webkit-user-select'));
+
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+  });
+
+  test('controls flash nothing, take a tap at once and select no label; content stays selectable', async ({ page, browserName }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-choice]').first()).toBeVisible();
+    // Touch properties: an engine without one drops the rule. Desktop Chromium has both.
+    const has = await page.evaluate(() => ({ tap: CSS.supports('-webkit-tap-highlight-color', 'transparent'), touch: CSS.supports('touch-action', 'manipulation') }));
+    if (browserName === 'chromium') expect(has).toEqual({ tap: true, touch: true });
+    for (const control of ['.locate', '.tab-bar a', '[data-choice]', '.site-header-brand']) {
+      if (has.tap) expect(await style(page, control, '-webkit-tap-highlight-color'), control).toBe('rgba(0, 0, 0, 0)');
+      if (has.touch) expect(await style(page, control, 'touch-action'), control).toBe('manipulation');
+    }
+    for (const control of ['.locate', '.tab-bar a', '[data-choice]']) expect(await userSelect(page, control), control).toBe('none');
+    // Content people copy, links among it: the lede, the wordmark, the emergency number.
+    for (const content of ['.planner-lede', '.site-header-brand', '.site-footer-emergency a']) expect(await userSelect(page, content), content).not.toBe('none');
+  });
+
+  test('a press dims a button and a choice row to 0.82 until it is let go', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#tbph-places option').first()).toBeAttached();
+    for (const selector of ['.locate', '[data-choice]']) {
+      const control = page.locator(selector).first();
+      await control.scrollIntoViewIfNeeded();
+      await expect(control, selector).toHaveCSS('opacity', '1');
+      const box = (await control.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await expect(control, `${selector}, pressed`).toHaveCSS('opacity', '0.82');
+      await page.mouse.up();
+      // "Use my location" finds no permission and says so; the first row was already chosen.
+      await expect(control, `${selector}, let go`).toHaveCSS('opacity', '1');
+    }
+  });
+
+  test('every text field and menu is 16px or larger, so iOS never zooms into one', async ({ page }) => {
+    for (const [path, width] of [
+      ['/', 390],
+      ['/places', 1280],
+      ['/data', 390],
+    ] as const) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(path);
+      const fields = page.locator('input:not([type="radio"]):not([type="checkbox"]), select, textarea');
+      await expect(fields.first(), path).toBeAttached();
+      const sizes = await fields.evaluateAll((els) => els.map((el) => parseFloat(getComputedStyle(el).fontSize)));
+      expect(Math.min(...sizes), `${path}: ${sizes.join(', ')}px`).toBeGreaterThanOrEqual(16);
+    }
+  });
+});

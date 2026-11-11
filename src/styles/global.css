@@ -12,6 +12,9 @@ html {
   color-scheme: light dark;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* No grey flash on a tap (step 15.3, mobile-native skill). It inherits, so it reaches every
+     tappable thing, the sheet's scrim among them; the pressed state below replaces it. */
+  -webkit-tap-highlight-color: transparent;
   /* Link targets and focused elements land clear of the sticky header and, on phones, the
      floating tab bar, or Check's Next bar too (audit B6, B10). */
   /* Capped by the window's height, so at high zoom (a 225px-tall window at 400%) a band is
@@ -53,7 +56,11 @@ html:has(.next-bar) {
 
 body {
   margin: 0;
-  min-height: 100vh;
+  /* The visible height, which follows a phone's browser toolbar (step 15.3, as v8's page
+     shells). In vh it was the height with the toolbar hidden, so a short page scrolled under
+     the toolbar. Every browser the build targets has dvh (Vite's baseline: Safari and iOS
+     16.4, Chrome 111, Firefox 114), so there is no vh fallback. */
+  min-height: 100dvh;
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-body);
@@ -103,6 +110,58 @@ a {
 @media (hover: hover) and (pointer: fine) {
   a:hover {
     color: var(--ink);
+  }
+}
+
+/* ---------- Phone feel (step 15.3: design/v8 theme.css, mobile-native skill) ----------
+   Every hover style sits behind (hover: hover) and (pointer: fine), so a tap leaves none
+   behind (B29). The tap flash is off (the html rule above; Leaflet's links, places.css). */
+
+/* No double-tap-to-zoom wait on controls: a tap is a click at once. Pinch zoom still works. */
+a,
+button,
+input,
+select,
+textarea,
+label,
+summary,
+[role='button'],
+[role='tab'],
+[role='option'],
+[role='switch'] {
+  touch-action: manipulation;
+}
+
+/* A pressed state, on press, for a finger as for a mouse: v8's 0.82. Home's and Check's
+   choice rows are labels, which v8's list leaves out, so they are named here. A disabled
+   button shows none. iOS Safari applies :active only while a touchstart listener is
+   registered: src/scripts/press.ts adds one. */
+a:active,
+button:not(:disabled):active,
+summary:active,
+[role='button']:active,
+[role='tab']:active,
+[data-choice]:active {
+  opacity: 0.82;
+}
+
+/* A long press on a control selects no label (B32). Only on controls: links stay selectable,
+   since people copy clinic names, addresses and numbers. */
+button,
+summary,
+[role='tab'],
+[role='switch'],
+[data-choice] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The installed app doesn't bounce or pull to refresh at the top and bottom of a page. In the
+   browser the page keeps them, as a web page. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior-y: none;
   }
 }
 

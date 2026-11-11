@@ -3,8 +3,11 @@
    so an in-place language switch moves them too: desktop nav from 1000px in English and
    1180px in Filipino (longer labels); below that, the floating tab bar. */
 
+/* The page shell fills the visible height, which follows a phone's browser toolbar, so a
+   short page's footer sits at the bottom instead of under the toolbar (step 15.3, as v8's
+   page shells; global.css's body rule says why there is no vh fallback). */
 .page {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }

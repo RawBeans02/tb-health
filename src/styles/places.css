@@ -164,6 +164,13 @@
   outline-color: var(--map-popup-text);
 }
 
+/* Leaflet gives the map's links (zoom buttons, credits, popup links) a blue tap flash of their
+   own; it goes, as everywhere (step 15.3), and they take the pressed state other links take.
+   a[href] outranks Leaflet's .leaflet-container a, whose stylesheet loads after this one. */
+.map a[href] {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .map-status {
   position: absolute;
   inset: 0;
