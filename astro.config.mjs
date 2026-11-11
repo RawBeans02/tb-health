@@ -85,6 +85,9 @@ export default defineConfig({
   vite: {
     // No data: URIs for assets, so img-src and font-src can stay 'self'.
     build: { assetsInlineLimit: 0 },
+    // The dev-only ?data=worst switch (step 15.4, src/lib/core/data.ts): compiled in only by
+    // `npm run build:worst` (and astro dev). Read from the environment, never a .env file.
+    define: { __TBPH_WORST__: JSON.stringify(process.env.TBPH_WORST === 'true') },
   },
   // On from step 1 (PLAN §4.5). Astro hashes its inline scripts and styles into a
   // <meta> CSP. Headers a meta tag can't carry (HSTS, frame-ancestors) come from

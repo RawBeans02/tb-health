@@ -6,7 +6,7 @@ import { buildDataset, loadFacilities, type FacilitiesFile } from '../../src/lib
 import { offers, prepare, serviceStatus, type FacilityRow } from '../../src/lib/core/facility.ts';
 import { buildGazetteer, distanceLabel, km, matchPlace, withKeys } from '../../src/lib/core/geo.ts';
 import { directionsUrl, homeQuery, readHomeParams } from '../../src/lib/core/links.ts';
-import { callNumber, firstPhone, telHref } from '../../src/lib/core/phone.ts';
+import { callNumber, firstPhone, phoneChunks, telHref } from '../../src/lib/core/phone.ts';
 import { resolveOrigin, route, type Origin } from '../../src/lib/core/route.ts';
 import { norm, titleCase } from '../../src/lib/core/text.ts';
 import { placeDetails } from '../../src/lib/place-details.ts';
@@ -133,6 +133,19 @@ describe('phone', () => {
     expect(callNumber('630-0000 / 0917 000 0000', 'R1')).toEqual({ first: '0917 000 0000', tel: 'tel:+639170000000' });
     expect(callNumber('8/850-0000, 0905-000 0000', 'NCR')).toEqual({ first: '0905-000 0000', tel: 'tel:+639050000000' });
     expect(callNumber('50-0000; 500-0000; 0917 000 00', 'R1')).toEqual({ first: '500-0000', tel: 'tel:5000000' });
+  });
+
+  it('cuts a phone field into whole numbers, each with the separator after it (step 15.4)', () => {
+    const chunks = (text: string) => phoneChunks(text).map((c) => `[${c.text}]${c.gap}`).join('');
+    expect(chunks('0000000000/000-0000000/000-0000000')).toBe('[0000000000/][000-0000000/][000-0000000]');
+    expect(chunks('0900-0000000, 0000000 / 0900-000-0000')).toBe('[0900-0000000,] [0000000 /] [0900-000-0000]');
+    expect(chunks('8000-0000 to 32; (000) 000-0000 loc 100')).toBe('[8000-0000 to] [32;] [(000) 000-0000 loc 100]');
+    // A field that starts with a separator, as some rows do ("/0917…"), and one number alone.
+    expect(chunks('/0900 000 0000')).toBe('[/][0900 000 0000]');
+    expect(chunks('8000-0000')).toBe('[8000-0000]');
+    for (const text of ['0000000000/000-0000000', '0900-0000000, 0000000 / 0900-000-0000', '/0900 000 0000', '8000-0000 to 32; 1']) {
+      expect(phoneChunks(text).map((c) => c.text + c.gap).join('')).toBe(text);
+    }
   });
 
   it('calls the first number on the list that can be dialled', () => {

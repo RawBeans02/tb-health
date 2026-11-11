@@ -220,6 +220,7 @@ Step 4 is deliberately early: it proves the whole chain (copy, data, logic, isla
 **How checks run on the 8 GB Mac.** The site is built once per gate. The rest runs as separate guarded jobs (`GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh …`):
 - one per Playwright project: chromium, webkit, pwa (service worker on), iphone and pixel (the @phone smoke set), and no-check through `npm run test:no-check`;
 - the worst-case fixture (`npm run build:worst-case`) and the 2,100-row synthetic build through the QA matrix when content or layout changes, and the synthetic build also through places.spec's map marker test (every located row gets a marker, B7, B76);
+- the full list's worst rows (`npm run build:worst`, step 15.4) through `tests/e2e/worst.spec.ts` with `WORST_DIR` set, on emulated phones, when the rows, Places or a place page change; then `npm run build:sample` again;
 - the prototype comparison, Chromium only;
 - Lighthouse on its own (`node scripts/lighthouse.mjs [page …]`, a few pages per job on a busy machine, on a `SITE_URL=… TBPH_PRODUCTION=true` build so the noindex header doesn't cost SEO).
 

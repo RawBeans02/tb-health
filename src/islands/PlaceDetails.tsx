@@ -2,6 +2,7 @@
 // language (Q6) and hydrated for the actions. Its links carry only id and stop (Q4a); the
 // stop motif is CSS keyed on html[data-stop], set before paint. A distance shows only from a
 // typed `near` that matches a known city or province, never from GPS (Q4b).
+import { Fragment } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import type { care } from '../content/care.ts';
 import type { place as placeStrings } from '../content/place.ts';
@@ -10,10 +11,25 @@ import { copyForSakay } from '../lib/core/clipboard.ts';
 import { SERVICES, type Place } from '../lib/core/facility.ts';
 import { distanceLabel, fromCompact, km, matchPlace, type GazBase } from '../lib/core/geo.ts';
 import { directionsUrl } from '../lib/core/links.ts';
+import { phoneChunks } from '../lib/core/phone.ts';
 import { href, type Lang } from '../lib/i18n.ts';
 import { Chip, InfoLine, SectorBadge, statusLabel } from '../ui/parts.tsx';
 
 export type PlaceStrings = Record<keyof typeof care | keyof typeof placeStrings | 'nav_home', string>;
+
+/** A phone field exactly as listed, each number kept whole: lines break only between numbers (step 15.4). */
+function PhoneText({ value }: { value: string }) {
+  return (
+    <>
+      {phoneChunks(value).map((chunk, i) => (
+        <Fragment key={i}>
+          <span class="phone-number">{chunk.text}</span>
+          {chunk.gap || <wbr />}
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
 interface Props {
   place: Place;
@@ -163,7 +179,7 @@ export default function PlaceDetails({ place: p, lang, t, details, sample }: Pro
           {details.map((d) => (
             <div key={d.label} class="detail-row">
               <dt>{d.label}</dt>
-              <dd>{d.value}</dd>
+              <dd>{d.label === t.phoneLabel ? <PhoneText value={d.value} /> : d.value}</dd>
             </div>
           ))}
         </dl>

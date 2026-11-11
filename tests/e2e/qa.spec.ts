@@ -6,7 +6,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures.ts';
 import { buildDataset } from '../../src/lib/core/data.ts';
 import { filterPlaces, NO_FILTERS } from '../../src/lib/core/places.ts';
-import { chartsSettled, outsideProblems, svgTextOutside } from './probes.ts';
+import { chartsSettled, harnessProbe as probe, outsideProblems, svgTextOutside } from './probes.ts';
 
 // The build under test, not public/ (a later prepare-data may have rewritten that).
 const file = JSON.parse(readFileSync('dist/data/facilities.json', 'utf8'));
@@ -26,45 +26,6 @@ const WORST = synthetic.length <= 5 ? synthetic.map((r) => `/place/${r.id}?stop=
 const PAGES = ['/', '/places', PLACE, '/check', '/learn', '/data', '/about', '/no-such-page', '/install', ...WORST];
 const WIDTHS = [320, 390, 768, 1280];
 const fil = (path: string) => (path === '/' ? '/fil' : `/fil${path}`);
-
-/** The harness's probe (qa-harness.html), with its thresholds. */
-function probe(page: Page) {
-  return page.evaluate(() => {
-    const w = innerWidth;
-    const visible = (el: Element) => {
-      const r = el.getBoundingClientRect();
-      const cs = getComputedStyle(el);
-      // Visually hidden controls (1px, clipped) sit inside larger labelled rows.
-      return r.width > 2 && r.height > 2 && cs.visibility !== 'hidden' && cs.display !== 'none';
-    };
-    const describe = (el: Element) => `${el.localName}.${[...el.classList].join('.')} "${(el.textContent ?? '').trim().slice(0, 30)}"`;
-
-    // Template leftovers: {{x}} or a {name} placeholder that was never filled.
-    const holes: string[] = [];
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
-      if (node.parentElement?.closest('script, style, template')) continue;
-      if (/\{\{|\{[a-z]\w*\}/i.test(node.nodeValue ?? '')) holes.push((node.nodeValue ?? '').trim().slice(0, 40));
-    }
-
-    // Targets under 44px: controls in <main>, the language links and the tab bar.
-    const small: string[] = [];
-    for (const el of document.querySelectorAll('main button, main input, main select, main [role="switch"], main a.btn, [data-lang-link], .tab-bar a')) {
-      if (visible(el) && el.getBoundingClientRect().height < 43.5) small.push(`${describe(el)} ${Math.round(el.getBoundingClientRect().height)}px`);
-    }
-
-    // Text under 14px in <main>.
-    const tiny: string[] = [];
-    for (const el of document.querySelectorAll('main :is(p, span, a, li, dd, dt, label, td, th, figcaption, small)')) {
-      if (!visible(el) || el.closest('[aria-hidden="true"]') || !(el.textContent ?? '').trim()) continue;
-      const size = parseFloat(getComputedStyle(el).fontSize);
-      if (size < 14) tiny.push(`${describe(el)} ${size}px`);
-    }
-
-    return { sideways: document.documentElement.scrollWidth - w, holes, h1: document.querySelectorAll('h1').length, small, tiny };
-  });
-}
 
 /** Each page in both languages, with the 404 page's own response allowed in the console. */
 function eachPage(body: (path: string) => void) {

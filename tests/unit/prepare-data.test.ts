@@ -8,6 +8,7 @@ import {
   slim,
   syntheticFacilities,
   worstCaseFacilities,
+  worstFullFacilities,
   validateAliases,
   validateClaims,
   validateFacilities,
@@ -153,5 +154,40 @@ describe('worstCaseFacilities (audit L2)', () => {
     expect(rows[0].name).toMatch(/Ñ.*'/);
     expect(rows.map((r) => r.phone)).toEqual(['5000-0000 loc. 1234; 5000-0001 loc. 5678', '500-0000', '5100-0000', '', '0000000000']);
     expect(rows[4].lat).toBeNull();
+  });
+});
+
+describe('worstFullFacilities (step 15.4)', () => {
+  // The full list: the worst cases it really holds.
+  const real = JSON.parse(readFileSync('data/tb-dots-facilities.json', 'utf8')).facilities;
+  const at = { lat: 14.65132, lng: 121.06498 };
+  const rows = worstFullFacilities(real, at);
+  const moved = rows.filter((r: { geo_precision?: string }) => r.geo_precision === 'synthetic');
+
+  it('keeps every row once, with the worst rows first', () => {
+    expect(rows).toHaveLength(real.length);
+    expect(new Set(rows.map((r: { id: string }) => r.id)).size).toBe(real.length);
+    expect(moved.length).toBeGreaterThanOrEqual(5);
+    expect(rows.slice(0, moved.length)).toEqual(moved);
+    expect(validateFacilities(rows).errors).toEqual([]);
+  });
+
+  it("picks the brief's two examples and the longest name, address and phone list, each once", () => {
+    const names = moved.map((r: { name: string }) => r.name);
+    expect(new Set(names).size).toBe(names.length);
+    expect(names[0].length).toBe(Math.max(...real.map((r: { name: string }) => r.name.length)));
+    expect(names).toContain('MANILA CENTRAL UNIVERSITY- DR. FILEMON D. TANCHOCO SR. MEDICAL FOUNDATION, INC.');
+    expect(moved.map((r: { phone?: string }) => r.phone)).toContain('0939-2859794, 2754585 / 0977-815-2444');
+    expect(moved.some((r: { phone?: string }) => !String(r.phone ?? '').trim())).toBe(true);
+  });
+
+  it('changes only where the worst rows are: just north of the point given, marked synthetic', () => {
+    for (const r of moved) {
+      const original = real.find((x: { id: string }) => x.id === r.id);
+      expect({ ...r, lat: original.lat, lng: original.lng, geo_precision: original.geo_precision }).toEqual(original);
+      expect(r.lat - at.lat).toBeGreaterThan(0);
+      expect(r.lat - at.lat).toBeLessThan(0.001);
+      expect(r.lng).toBe(at.lng);
+    }
   });
 });

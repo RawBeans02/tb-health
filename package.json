@@ -7,12 +7,13 @@
     "node": ">=22.23.4"
   },
   "scripts": {
-    "dev": "node scripts/check-node.mjs && node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "dev": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --with-worst && ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "prepare-data": "node scripts/check-node.mjs && node scripts/prepare-data.mjs",
-    "build": "node scripts/check-node.mjs && node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
-    "build:sample": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --sample && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
-    "build:synthetic": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --synthetic && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
-    "build:worst-case": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --worst-case && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
+    "build": "node scripts/check-node.mjs && node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-dev-only.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
+    "build:sample": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --sample && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-dev-only.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
+    "build:synthetic": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --synthetic && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-dev-only.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
+    "build:worst-case": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --worst-case && ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && node scripts/check-dev-only.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
+    "build:worst": "node scripts/check-node.mjs && node scripts/prepare-data.mjs --with-worst && TBPH_WORST=true ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/build-sw.mjs && node scripts/build-headers.mjs && node scripts/check-budgets.mjs && TBPH_WORST=true node scripts/check-dev-only.mjs && node scripts/check-links.mjs && node scripts/check-dashes.mjs",
     "check": "node scripts/check-node.mjs && node scripts/prepare-data.mjs && ASTRO_TELEMETRY_DISABLED=1 astro check && tsc -p tsconfig.sw.json",
     "check-links": "node scripts/check-node.mjs && node scripts/check-links.mjs",
     "check-dashes": "node scripts/check-node.mjs && node scripts/check-dashes.mjs",

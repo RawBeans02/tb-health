@@ -11,6 +11,23 @@ export function phoneParts(phone: unknown): string[] {
     .filter(Boolean);
 }
 
+/**
+ * A phone field as listed, cut into chunks of one number and the separator after it ("075-6327543/"),
+ * with the space that follows, if any, as the chunk's gap: joined again they give the field back.
+ * Place pages keep each chunk on one line, so lines break between numbers and never start with a
+ * separator (step 15.4).
+ */
+export function phoneChunks(phone: string): { text: string; gap: string }[] {
+  const parts = phone.split(/(\s*(?:\/|;|,|\bto\b)\s*)/i); // numbers at even places, separators between
+  const chunks: { text: string; gap: string }[] = [];
+  for (let i = 0; i < parts.length; i += 2) {
+    const separator = parts[i + 1] ?? '';
+    const kept = separator.replace(/\s+$/, '');
+    if (parts[i] || separator) chunks.push({ text: parts[i] + kept, gap: separator.slice(kept.length) });
+  }
+  return chunks;
+}
+
 /** The first number of a list such as "8123-4567 / 8765-4321", skipping empty entries ("/0917…"). */
 export function firstPhone(phone: unknown): string {
   return phoneParts(phone)[0] ?? '';

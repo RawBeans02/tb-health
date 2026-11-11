@@ -144,6 +144,8 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   letter-spacing: -0.02em;
   color: var(--tb-red);
   overflow-wrap: anywhere;
+  /* Even lines, no short word left alone ("Malasiqui Rural / Health Unit II"), step 15.4. */
+  text-wrap: balance;
 }
 
 .place-meta {
@@ -269,6 +271,16 @@ html[data-stop='3'] .motif-step[data-n='3'] .motif-name {
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
   text-align: left;
+  /* No last word alone ("Walang nakalista. Tumawag / muna." at 320px), step 15.4. */
+  text-wrap: pretty;
+}
+
+/* Step 15.4: each number of a phone field stays whole. A field such as
+   "09338678423/075-6327543/075-6157141/09126602826" has no spaces, so it used to break inside
+   a number ("075- / 6327543"); now its lines break between the numbers (PlaceDetails, phoneRuns).
+   A number wider than the row still wraps, by the overflow-wrap above. */
+.phone-number {
+  display: inline-block;
 }
 
 .place-missing {

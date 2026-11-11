@@ -79,6 +79,9 @@
   border-radius: var(--radius-capsule);
   font-weight: 700;
   text-decoration: none;
+  /* A label that wraps splits evenly, not with one word left on its own line (step 15.4:
+     "Kopyahin ang address para sa / Sakay.ph" at 320px). */
+  text-wrap: balance;
 }
 
 .btn--primary {
@@ -158,6 +161,11 @@
   text-decoration: none;
 }
 
+/* "Tingnan ang iba pang / lugar" at 320px became "Tingnan ang iba / pang lugar" (step 15.4). */
+.link-row > span:first-child {
+  text-wrap: balance;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .link-row:hover {
     background: var(--row-hover);
@@ -208,6 +216,10 @@
   font-size: var(--text-15);
   font-weight: 700;
   line-height: 1.25;
+  /* Step 15.4: in Filipino at 320px a chip or badge is often wider than its row, so it wraps
+     (white-space: nowrap would push it off the screen); balanced, so no word is left alone, as
+     "nito" was in "Libreng gamot sa TB: ✓ Mayroon / nito" and "TB)" in the Government badge. */
+  text-wrap: balance;
 }
 
 .chip {
@@ -445,7 +457,9 @@
 
 .facility-actions .btn--soft {
   min-height: 46px;
-  padding: 0 18px;
+  /* 14px, not v8's 18px (step 15.4): with 18px, "Paano mag-commute" was 2px too wide for a row
+     in Home's route at 320px and split as "Paano mag- / commute". */
+  padding: 0 14px;
   font-size: var(--text-17);
 }
 
@@ -473,6 +487,8 @@
 
 .facility-name {
   overflow-wrap: anywhere;
+  /* No name ends on one short word, as "Malasiqui Rural Health Unit / II" did (step 15.4). */
+  text-wrap: balance;
 }
 
 .text-input {
@@ -525,7 +541,10 @@
 .segmented {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
+  /* Each option at least as wide as its longest word, so a word never breaks (step 15.4). v8
+     has minmax(0, 1fr) with overflow-wrap: anywhere, which split "Governm/ent" in the 320px
+     filter panel at 1280. A label that fits keeps v8's equal widths. */
+  grid-auto-columns: minmax(min-content, 1fr);
   gap: 3px;
   padding: 3px;
   border: 1.5px solid var(--control-edge);
@@ -550,7 +569,7 @@
   font-weight: 400;
   line-height: 1.15;
   text-align: center;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   cursor: pointer;
 }
 

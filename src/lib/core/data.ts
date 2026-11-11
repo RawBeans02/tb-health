@@ -6,9 +6,26 @@ import { buildGazetteer, fromCompact, type GazBase, type GazEntry } from './geo.
 
 export const FACILITIES_URL = '/data/facilities.json';
 
+// Set by astro.config.mjs: true only in `npm run build:worst` (TBPH_WORST=true).
+declare const __TBPH_WORST__: boolean;
+
+/**
+ * The list to load. With ?data=worst, the dev-only worst-case list (step 15.4, the break-ui
+ * skill; scripts/prepare-data.mjs --with-worst): only `astro dev` and `npm run build:worst`
+ * compile this branch in. A production build drops it, and scripts/check-dev-only.mjs fails a
+ * build that didn't.
+ */
+function listUrl(): string {
+  if ((import.meta.env.DEV || __TBPH_WORST__) && typeof location !== 'undefined' && new URLSearchParams(location.search).get('data') === 'worst') {
+    return '/data/facilities-worst.json';
+  }
+  return FACILITIES_URL;
+}
+
 /** public/data/facilities.json, as scripts/prepare-data.mjs writes it. */
 export interface FacilitiesFile {
-  meta: { title: string; source: string; count: number; sample: boolean; synthetic: boolean };
+  /** `worst`: the dev-only worst-case list (step 15.4). */
+  meta: { title: string; source: string; count: number; sample: boolean; synthetic: boolean; worst?: boolean };
   /** Old place id → current id, so old links keep working (Q6). */
   aliases: Record<string, string>;
   /** Cities and provinces with their abbreviations, built by prepare-data. */
@@ -44,9 +61,10 @@ let pending: Promise<Dataset> | null = null;
 
 export function loadFacilities(fetcher: typeof fetch = fetch): Promise<Dataset> {
   if (!pending) {
-    const request = fetcher(FACILITIES_URL)
+    const url = listUrl();
+    const request = fetcher(url)
       .then((response) => {
-        if (!response.ok) throw new Error(`${FACILITIES_URL}: HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
         return response.json() as Promise<FacilitiesFile>;
       })
       .then(buildDataset);

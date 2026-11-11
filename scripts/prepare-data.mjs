@@ -7,6 +7,9 @@
 //   node scripts/prepare-data.mjs --worst-case the sample plus five fake worst-case rows (L2)
 //   node scripts/prepare-data.mjs --sample     the 93-row sample even when the real file exists: the
 //                                              browser tests' fixture (npm run build:sample)
+//   node scripts/prepare-data.mjs --with-worst also writes public/data/facilities-worst.json, the
+//                                              real list's worst rows first (step 15.4), for the
+//                                              dev-only ?data=worst switch (npm run dev, build:worst)
 //
 //   node scripts/prepare-data.mjs --accept-ids  also records this list's place ids in
 //                                               data/place-ids.json (after reviewing the report)
@@ -14,6 +17,7 @@
 // Writes (git-ignored):
 //   public/data/facilities.json       slimmed facility list with stable place ids, fetched at runtime
 //   public/data/gazetteer.json        cities and provinces (also inside facilities.json), for the Place page
+//   public/data/facilities-worst.json only with --with-worst; every other run deletes it
 //
 // data/place-abbreviations.json lists widely used short names ("QC") that find a place.
 //   src/generated/region-counts.json  facilities per region, for the Data page (d14)
@@ -22,12 +26,13 @@
 // the last accepted list of ids: each run reports ids added and removed since then, and
 // suggests renames. data/place-aliases.json maps old ids to current ones so old links work.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { prepare } from '../src/lib/core/facility.ts';
-import { buildGazetteer } from '../src/lib/core/geo.ts';
+import { buildGazetteer, matchPlace } from '../src/lib/core/geo.ts';
+import { callNumber, phoneParts } from '../src/lib/core/phone.ts';
 import { norm } from '../src/lib/core/text.ts';
 import { isMain } from './is-main.mjs';
 
@@ -36,6 +41,7 @@ const dataDir = join(root, 'data');
 const out = {
   facilities: join(root, 'public/data/facilities.json'),
   gazetteer: join(root, 'public/data/gazetteer.json'),
+  worst: join(root, 'public/data/facilities-worst.json'),
   regionCounts: join(root, 'src/generated/region-counts.json'),
 };
 const idRegistryPath = join(dataDir, 'place-ids.json');
@@ -271,6 +277,52 @@ export function worstCaseFacilities(sampleRows) {
   ];
 }
 
+// Step 15.4, worst-case data (the break-ui skill): the real list's worst rows, for
+// public/data/facilities-worst.json. Only `astro dev` and `npm run build:worst` read that file,
+// through the dev-only ?data=worst switch (src/lib/core/data.ts); meta.worst marks it, every other
+// run deletes it, and scripts/check-dev-only.mjs fails a build that would ship it. The full list
+// has no hours on any row and no email column (D23 drops it), so a row with no phone is the
+// emptiest it holds.
+export const WORST_NEAR = 'Quezon City';
+
+/**
+ * The worst real rows, each once, picked by rule so a refreshed list picks its own. Home's route
+ * shows the first three (the nearest to Quezon City once moved), so the hardest come first.
+ */
+export function worstRows(rows) {
+  const phone = (row) => String(row.phone ?? '').trim();
+  const address = (row) => [row.street, row.city_municipality, row.province_or_city_group].filter(Boolean).join(', ');
+  const top = (keep, score) => rows.filter(keep).reduce((best, row) => (!best || score(row) > score(best) ? row : best), null);
+  const picks = [
+    top(() => true, (row) => row.name.length),
+    // The two the brief names (docs/step-15-fix-pass.md, 15.4).
+    rows.find((row) => row.name.startsWith('MANILA CENTRAL UNIVERSITY- DR. FILEMON')),
+    top((row) => !phone(row), (row) => address(row).length),
+    top(() => true, (row) => address(row).length),
+    rows.find((row) => phone(row) === '0939-2859794, 2754585 / 0977-815-2444'),
+    // Numbers with no space to break at.
+    top((row) => phone(row) && !/\s/.test(phone(row)), (row) => phone(row).length),
+    // Call dials a later number: the first listed can't be dialled from every phone (audit O10).
+    top((row) => {
+      const parts = phoneParts(row.phone);
+      return parts.length > 1 && callNumber(row.phone, row.region_code).first !== parts[0];
+    }, (row) => phone(row).length),
+  ];
+  return [...new Set(picks.filter(Boolean))];
+}
+
+/**
+ * The full list with the worst rows first, moved about 11 m apart just north of `at` (Quezon
+ * City's point in the gazetteer) and marked `synthetic`, so Home's demo search routes to them
+ * and Places lists them first. Nothing else changes: their ids, so their place pages, stay.
+ */
+export function worstFullFacilities(rows, at) {
+  const worst = worstRows(rows);
+  const round = (x) => Math.round(x * 1e5) / 1e5;
+  const moved = worst.map((row, i) => ({ ...row, lat: round(at.lat + (i + 1) * 0.0001), lng: round(at.lng), geo_precision: 'synthetic' }));
+  return [...moved, ...rows.filter((row) => !worst.includes(row))];
+}
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
@@ -342,6 +394,7 @@ function main() {
   const bytes = writeJson(out.facilities, published);
   writeJson(out.regionCounts, regionCounts(rows));
   const gazBytes = writeJson(out.gazetteer, gazetteer);
+  writeWorst(published, gazEntries, { wanted: process.argv.includes('--with-worst'), real: !synthetic && !sample });
 
   const kind = synthetic ? 'SYNTHETIC' : sample ? 'SAMPLE' : 'real';
   console.log(
@@ -349,6 +402,24 @@ function main() {
       `${kb(bytes.length)}, gzip ${kb(gzipSync(bytes).length)}, brotli ${kb(brotliCompressSync(bytes).length)}; ` +
       `gazetteer ${gazetteer.length} places, gzip ${kb(gzipSync(gazBytes).length)}`,
   );
+}
+
+/** Step 15.4: the dev-only worst-case list with --with-worst, from the real list only; else none. */
+function writeWorst(published, gazEntries, { wanted, real }) {
+  if (wanted && real) {
+    const at = matchPlace(WORST_NEAR, gazEntries);
+    if (!at) fail([`--with-worst: ${WORST_NEAR} isn't in the gazetteer, so the worst rows have nowhere to go`]);
+    const facilities = worstFullFacilities(published.facilities, at);
+    const moved = facilities.filter((row) => row.geo_precision === 'synthetic').length;
+    const bytes = writeJson(out.worst, { ...published, meta: { ...published.meta, worst: true }, facilities });
+    console.log(`prepare-data: worst-case list (dev and npm run build:worst only) → ${relative(root, out.worst)} ${kb(bytes.length)}: ${moved} worst rows first, moved next to ${WORST_NEAR}`);
+    return;
+  }
+  if (wanted) console.warn('prepare-data: --with-worst needs the real list; no worst-case list written.');
+  if (existsSync(out.worst)) {
+    unlinkSync(out.worst);
+    console.log(`prepare-data: removed the dev-only ${relative(root, out.worst)}`);
+  }
 }
 
 function fail(failures) {

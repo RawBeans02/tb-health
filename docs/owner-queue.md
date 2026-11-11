@@ -1,10 +1,12 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 10 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
+Kept by the TB Health lead. Updated 11 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
 
 ## Now
 
-- **Who builds step 15**, the v8 fix pass (`docs/step-15-fix-pass.md`; your fourth batch is V6 to V14 in `docs/decisions.md`). The Jr. Builder moved to another project on 10 November 2026.
+Step 15.4 (worst-case data) went ahead on these two defaults; say if either should change.
+- **Badges on one line?** The brief lists `white-space: nowrap` for badges. In Filipino, the Government badge, "Pampubliko (libreng gamutan sa TB)", is wider than a clinic's row on a 320px phone, so on one line it would run off the screen. Default: it wraps onto two even lines and nothing is cut. The other choice is a shorter badge, which is new text for you to write.
+- **Which number Call dials.** The brief says Call "dials the first number". Since the launch (audit O10, option a, kept by R2), it dials the first number any phone can dial, and the whole phone field stays under Details. The two differ only when the first number listed can't be dialled from a mobile, as on Renmar Specialists' Hospital's row (`0935665572/0783052743/…`) or a field such as `518-2632/0922-8162458`. Default: keep the launch rule.
 
 ## Before the public launch
 

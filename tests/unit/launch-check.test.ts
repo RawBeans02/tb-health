@@ -199,7 +199,14 @@ describe('dates and reading dist/ (B74)', () => {
     expect(r.build).toEqual({ home: LIVE, check: NONE, headers: null });
     // No check-mentions: every string that named the check has a …NoCheck twin (Q9, 7 Nov 2026).
     expect(keys(assess({ strings: [ROW], ...r, today: '2026-11-05' }))).toEqual(['synthetic', 'no-headers']);
-    expect(readBuild(dist({}))).toEqual({ build: null, facilities: null });
+    expect(readBuild(dist({}))).toEqual({ build: null, facilities: null, worst: false });
+  });
+
+  it("blocks a worst-case test build (step 15.4), and the owner can't accept it", () => {
+    const r = readBuild(dist({ 'index.html': LIVE, _headers: HEADERS, 'data/facilities.json': data({}), 'data/facilities-worst.json': data({ worst: true }) }));
+    expect(r.worst).toBe(true);
+    expect(keys(assess({ strings: [ROW], ...r, today: '2026-11-05' }))).toContain('worst-case');
+    expect(ACCEPTABLE).not.toContain('worst-case');
   });
 });
 

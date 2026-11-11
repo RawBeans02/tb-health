@@ -86,6 +86,8 @@ export function readBuild(dist) {
   return {
     build: home === null ? null : { home, check: { en: existsSync(join(dist, 'check.html')), fil: existsSync(join(dist, 'fil', 'check.html')) }, headers: read('_headers') },
     facilities: json === null ? null : JSON.parse(json),
+    // The dev-only worst-case list (step 15.4): only a `npm run build:worst` test build has it.
+    worst: existsSync(join(dist, 'data/facilities-worst.json')),
   };
 }
 
@@ -107,11 +109,12 @@ export function viewTitleDashes(...dirs) {
  *   build          readBuild()'s build: null when dist/ holds no build, else { home: dist/index.html,
  *                  check: { en, fil }: which check.html pages exist, headers: dist/_headers or null }
  *   facilities     dist/data/facilities.json, or null
+ *   worst          true when dist/ holds the dev-only worst-case list (npm run build:worst)
  *   today          YYYY-MM-DD
  *   checkMentions  the strings that still mention Check (CHECK_MENTIONS)
  *   titleDashes    the views whose page titles carry an em dash (viewTitleDashes)
  */
-export function assess({ strings, build, facilities, today, checkMentions = CHECK_MENTIONS, titleDashes = /** @type {string[]} */ ([]) }) {
+export function assess({ strings, build, facilities, worst = false, today, checkMentions = CHECK_MENTIONS, titleDashes = /** @type {string[]} */ ([]) }) {
   const blocking = [];
   const decide = [...KNOWN];
   const queues = [];
@@ -176,7 +179,9 @@ export function assess({ strings, build, facilities, today, checkMentions = CHEC
   const overrides = shipped.filter((s) => s.origin === 'override');
   queues.push(`Copy overrides for the owner to confirm: ${overrides.length} strings (docs/copy-overrides.md).`);
 
-  // Data, as built
+  // Data, as built. A worst-case test build (step 15.4) holds a dev-only list and its
+  // ?data=worst switch; it never ships, so this can't be accepted.
+  if (worst) block('worst-case', 'This dist/ is a worst-case test build (npm run build:worst): its dev-only list and ?data=worst switch never ship. Build again with npm run build.');
   if (!facilities) {
     block('no-data', 'No facility list in dist/data/ (run npm run build).');
   } else {
@@ -250,8 +255,8 @@ async function main() {
   // npm run release-check empties it, so a release always judges this checkout's dist/ (B87).
   const override = process.env.LAUNCH_CHECK_DIST;
   if (override) console.error(`launch-check: judging the build in ${override} (LAUNCH_CHECK_DIST), not dist/.`);
-  const { build, facilities } = readBuild(override || path('dist/'));
-  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/'), path('src/islands/')) });
+  const { build, facilities, worst } = readBuild(override || path('dist/'));
+  const { blocking, decide, queues } = assess({ strings: await readStrings(), build, facilities, worst, today: manilaToday(), titleDashes: viewTitleDashes(path('src/views/'), path('src/islands/')) });
   const result = applyAccept(blocking, args.accept);
   if (result.error) {
     console.error(`launch-check: ${result.error}.`);
