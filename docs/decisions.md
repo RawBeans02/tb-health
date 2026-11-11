@@ -4,6 +4,17 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 11 November 2026, after step 15.3 (owner, in chat with the stand-in lead)
+
+V21 is held for the owner's no-Actions decision of the same day (16:42). Step 15.7 records it when it removes `.github/workflows/ci.yml`.
+
+### V22. On touch screens, one finger scrolls the page past the Places map (audit O9)
+- **Option (a) of audit O9.** The stand-in lead asked "Fix the Places map's one-finger drag (audit O9) now?" after step 15.3, and the owner answered "Yes, fix O9" on 11 Nov 2026.
+- Where the main pointer is a finger (`pointer: coarse`), the map no longer pans with one finger, so one finger scrolls the page past it. Two fingers pan and zoom the map. With a mouse or trackpad, dragging is unchanged.
+- This departs from v8's Places prototype, which keeps Leaflet's one-finger drag (`L.map(el, { scrollWheelZoom: false })`).
+- The smaller fix the 15.3 report put with it: Leaflet's own hover looks on the map's controls (the zoom buttons, the credits, a popup's close button) show only with a mouse, like the site's own (B29).
+- No hint was written. If testers on the device list don't find the two-finger pan, a hint is new copy and comes back to the owner.
+
 ## 11 November 2026 (owner, in chat with the stand-in lead)
 
 Why: the lead on the main account paused at its weekly limit on 11 November. Until it resets (Friday 13 November, 1 PM Manila), a session on the desktop account is lead and builder. It put the open points from the lead's handoff and from the step 15.2 reviews to the owner, each with a default. The owner answered "Use the defaults", so V15 to V20 are those defaults.
