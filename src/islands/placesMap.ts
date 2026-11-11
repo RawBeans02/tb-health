@@ -92,9 +92,13 @@ function tileLayerClass(L: LeafletApi) {
 
 export function createMap(L: LeafletApi, el: HTMLElement): PlacesMap {
   // Canvas markers: every located center is drawn, even at 2,000+ (audit B7). With reduced
-  // motion, no zoom, fade or marker animation (audit B12).
+  // motion, no zoom, fade or marker animation (audit B12). On a touch screen, no one-finger
+  // drag: one finger scrolls the page past the map, which is most of a phone's screen with the
+  // list below it, and two fingers pan and zoom it (audit O9, V22). Leaflet's CSS then gives
+  // the map touch-action: pan-x pan-y, not none. Read by capability, as the map is made; a
+  // mouse or trackpad drags it as before.
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const map = L.map(el, { scrollWheelZoom: false, preferCanvas: true, zoomAnimation: !still, fadeAnimation: !still, markerZoomAnimation: !still });
+  const map = L.map(el, { scrollWheelZoom: false, dragging: !matchMedia('(pointer: coarse)').matches, preferCanvas: true, zoomAnimation: !still, fadeAnimation: !still, markerZoomAnimation: !still });
   const Tiles = tileLayerClass(L) as unknown as typeof L.TileLayer;
   new Tiles('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,

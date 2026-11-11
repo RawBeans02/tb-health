@@ -171,6 +171,51 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Leaflet's own hover looks (the zoom buttons' grey, the credits' underline, a popup close
+   button's darker grey) have no hover gate, and each comes with :focus, which a tap can give
+   a link: on a phone they would stay after a tap (B29, V22). So the resting look is restated
+   here, above them (.map and [href] outrank Leaflet's selectors, whose stylesheet loads after
+   this one); the hover look comes back for a mouse only, and the focus look for a keyboard.
+   These are Leaflet 1.9.4's values (tests/unit/phone-feel.test.ts reads them from its CSS). A
+   disabled zoom button keeps Leaflet's grey. */
+.map .leaflet-bar a[href]:not(.leaflet-disabled) {
+  background-color: #fff;
+}
+
+.map .leaflet-bar a[href]:not(.leaflet-disabled):focus-visible {
+  background-color: #f4f4f4;
+}
+
+.map .leaflet-control-attribution a[href] {
+  text-decoration: none;
+}
+
+.map .leaflet-control-attribution a[href]:focus-visible {
+  text-decoration: underline;
+}
+
+.map .leaflet-popup a.leaflet-popup-close-button[href] {
+  color: #757575;
+}
+
+.map .leaflet-popup a.leaflet-popup-close-button[href]:focus-visible {
+  color: #585858;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .map .leaflet-bar a[href]:not(.leaflet-disabled):hover {
+    background-color: #f4f4f4;
+  }
+
+  .map .leaflet-control-attribution a[href]:hover {
+    text-decoration: underline;
+  }
+
+  .map .leaflet-popup a.leaflet-popup-close-button[href]:hover {
+    color: #585858;
+  }
+}
+
 .map-status {
   position: absolute;
   inset: 0;

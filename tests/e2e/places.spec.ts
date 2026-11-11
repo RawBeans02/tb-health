@@ -190,6 +190,53 @@ test.describe('map', () => {
     await expect(page.locator('.leaflet-container')).toHaveCount(0);
   });
 
+  // Audit O9, V22: on a touch screen Leaflet's one-finger drag is off, so its CSS leaves one
+  // finger to the page (touch-action: pan-x pan-y) and two fingers to the map. A mouse drags
+  // the map as before. Runs in every project, the phones (@phone) included.
+  test('one finger scrolls the page on a touch screen; a mouse still drags the map (audit O9, V22) @phone', async ({ page }, testInfo) => {
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    const map = page.locator('.leaflet-container');
+    await expect(map).toBeVisible();
+    const coarse = await page.evaluate(() => matchMedia('(pointer: coarse)').matches);
+    expect(coarse, 'the phone projects are touch screens; the others have a mouse').toBe(['iphone', 'pixel'].includes(testInfo.project.name));
+    await expect(map).toHaveClass(/leaflet-touch-zoom/);
+    if (coarse) await expect(map).not.toHaveClass(/leaflet-touch-drag/);
+    else await expect(map).toHaveClass(/leaflet-touch-drag/);
+    const has = await page.evaluate(() => CSS.supports('touch-action', 'pan-x pan-y'));
+    if (testInfo.project.name === 'chromium' || testInfo.project.name === 'pixel') expect(has).toBe(true);
+    if (has) expect(await map.evaluate((el) => getComputedStyle(el).touchAction)).toBe(coarse ? 'pan-x pan-y' : 'none');
+  });
+
+  // V22 restates Leaflet's hover looks behind the hover gate (places.css): with a mouse and a
+  // keyboard they look as before. (A click hands focus back to the map, Leaflet's own
+  // _refocusOnMap, so it never left grey behind.)
+  test("Leaflet's zoom buttons still turn grey under a mouse and for a keyboard, and a click leaves no grey (V22)", async ({ page }) => {
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    const zoomIn = page.locator('.leaflet-control-zoom-in');
+    await expect(page.locator('.map')).toHaveAttribute('data-markers', '93');
+    const white = 'rgb(255, 255, 255)';
+    const grey = 'rgb(244, 244, 244)'; // Leaflet's #f4f4f4
+    await expect(zoomIn).toHaveCSS('background-color', white);
+    const box = (await zoomIn.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(zoomIn, 'under the mouse').toHaveCSS('background-color', grey);
+    await page.mouse.move(5, 5);
+    await expect(zoomIn, 'the mouse gone').toHaveCSS('background-color', white);
+    // A click zooms in, and Chromium focuses the link: no grey once the mouse has gone.
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page.locator('.map')).not.toHaveAttribute('data-moving');
+    await page.mouse.move(5, 5);
+    await expect(zoomIn, 'clicked, the mouse gone').toHaveCSS('background-color', white);
+    // Keyboard focus keeps Leaflet's grey, with the ring (dark.spec.ts).
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).focus();
+    await page.keyboard.press('Tab');
+    await zoomIn.focus();
+    expect(await zoomIn.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
+    await expect(zoomIn, 'keyboard focus').toHaveCSS('background-color', grey);
+  });
+
   test.describe(() => {
     test.use({ expectedErrors: [/leaflet|net::ERR_FAILED|Failed to load resource/] });
     test('recovers from a failed load with "Try again"', async ({ page }) => {
@@ -202,6 +249,93 @@ test.describe('map', () => {
       await expect(page.locator('.leaflet-container')).toBeVisible();
       await expect(page.locator('.leaflet-container')).toBeFocused(); // B8
     });
+  });
+});
+
+test.describe('map on a touch screen (audit O9, V22)', () => {
+  test.skip(({ browserName }) => browserName !== 'chromium', "Chromium only: the swipes go through CDP's Input.dispatchTouchEvent, which WebKit lacks. On an iPhone, one finger scrolling past the map stays a device check.");
+
+  test('one finger on the map scrolls the page and leaves the map where it was; a tap leaves no grey', async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const page = await context.newPage();
+    const cdp = await context.newCDPSession(page);
+    /** One finger from (x, y) straight up by `dy`, in steps, as a scroll goes. */
+    async function swipeUp(x: number, y: number, dy: number) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+      for (let i = 1; i <= 8; i++) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - (dy * i) / 8, id: 1 }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    }
+    const scrolled = () => page.evaluate(() => Math.round(scrollY));
+    /** Waits until the page has stopped scrolling (a swipe can end in a fling). */
+    async function settle() {
+      let last = -1;
+      await expect.poll(async () => last === (last = await scrolled()), { intervals: [250] }).toBe(true);
+    }
+    await ready(page);
+    await page.getByRole('group', { name: 'View' }).getByRole('button', { name: 'Map' }).click();
+    const frame = page.locator('.map');
+    await expect(frame).toHaveAttribute('data-markers', '93');
+    await expect(frame).not.toHaveAttribute('data-moving');
+
+    // The control: a swipe on the page's heading scrolls the page, so these swipes can show it.
+    await page.evaluate(() => scrollTo(0, 0));
+    await settle();
+    const h1 = (await page.locator('h1').boundingBox())!;
+    await swipeUp(h1.x + h1.width / 2, h1.y + h1.height / 2, 120);
+    await expect.poll(scrolled, 'a swipe on the heading').toBeGreaterThan(30);
+    await settle();
+
+    // The map's top 120px down the screen.
+    await page.evaluate(() => scrollBy(0, document.querySelector('.map')!.getBoundingClientRect().top - 120));
+    await settle();
+
+    // A tap on Zoom in zooms.
+    const zoomIn = page.locator('.leaflet-control-zoom-in');
+    await zoomIn.tap();
+    await expect(frame).not.toHaveAttribute('data-moving');
+    await expect(zoomIn).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    // On a phone a tap can leave :hover, and on Android :focus, on what it touched; this
+    // emulation leaves neither, so DevTools' forced state stands in. Leaflet's hover and focus
+    // looks (grey, underline, darker grey) must not show (V22). A popup's close button is added
+    // as Leaflet builds it, as a marker's tap would open one. The control, a link with no href
+    // in the zoom bar, has Leaflet's look and not places.css's, so it must turn grey: the
+    // forced state does reach the cascade here.
+    await page.evaluate(() => {
+      const control = document.createElement('a');
+      control.className = 'forced-control';
+      control.textContent = '?';
+      document.querySelector('.leaflet-bar')!.append(control);
+      const popup = document.createElement('div');
+      popup.className = 'leaflet-popup';
+      popup.innerHTML = '<a class="leaflet-popup-close-button" role="button" href="#close">×</a>';
+      document.querySelector('.leaflet-container')!.append(popup);
+    });
+    await cdp.send('DOM.enable');
+    await cdp.send('CSS.enable');
+    const { root } = await cdp.send('DOM.getDocument');
+    for (const [selector, property, shown] of [
+      ['.leaflet-bar .forced-control', 'background-color', 'rgb(244, 244, 244)'],
+      ['.leaflet-control-zoom-in', 'background-color', 'rgb(255, 255, 255)'],
+      ['.leaflet-control-attribution a', 'text-decoration-line', 'none'],
+      ['.leaflet-popup-close-button', 'color', 'rgb(117, 117, 117)'],
+    ] as const) {
+      const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
+      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: ['hover', 'focus'] });
+      expect(await page.locator(selector).first().evaluate((el) => el.matches(':hover') && el.matches(':focus')), `${selector}: forced`).toBe(true);
+      await expect(page.locator(selector).first(), `${selector}, hovered and focused`).toHaveCSS(property, shown);
+      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
+    }
+    await page.evaluate(() => document.querySelectorAll('.forced-control, .leaflet-container .leaflet-popup').forEach((el) => el.remove()));
+
+    // One finger on the map scrolls the page, and the map doesn't move.
+    const pane = page.locator('.leaflet-map-pane');
+    const before = { y: await scrolled(), pane: await pane.evaluate((el) => el.style.transform) };
+    const box = (await frame.boundingBox())!;
+    await swipeUp(box.x + box.width / 2, box.y + 260, 150);
+    await expect.poll(scrolled, 'a swipe on the map').toBeGreaterThan(before.y + 50);
+    await settle();
+    expect(await pane.evaluate((el) => el.style.transform), 'the map pane').toBe(before.pane);
+    await context.close();
   });
 });
 

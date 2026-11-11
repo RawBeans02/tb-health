@@ -65,6 +65,8 @@ const base = (selectors: string) => {
 };
 
 const HOVER_GATE = /^@media \(hover: hover\) and \(pointer: fine\)$/;
+/** Leaflet's own stylesheet, which placesMap.ts loads with the map (outside src/). */
+const LEAFLET_CSS = 'node_modules/leaflet/dist/leaflet.css';
 
 describe('phone feel (step 15.3, mobile-native "Never ship")', () => {
   it('the walker reads every stylesheet', () => {
@@ -133,6 +135,52 @@ describe('phone feel (step 15.3, mobile-native "Never ship")', () => {
 
   it('touch-action: none only on the Filters sheet’s drag strip, which takes every touch itself', () => {
     expect(RULES.filter((r) => value(r, 'touch-action').includes('none')).map(where)).toEqual(['src/styles/ui.css: .sheet-grab']);
+  });
+
+  it('on a touch screen one finger scrolls the page past the Places map (audit O9, V22)', () => {
+    // Leaflet's one-finger drag is off where the main pointer is a finger, by capability.
+    expect(read('src/islands/placesMap.ts')).toMatch(/L\.map\(el, \{[^}]*\bdragging: !matchMedia\('\(pointer: coarse\)'\)\.matches,/);
+    // Leaflet's own CSS sets touch-action: none only with its drag handler's class, so without
+    // it the map is pan-x pan-y: one finger pans the page, and pinches stay the map's. An
+    // upgrade that changes this fails here.
+    const leaflet = parse(LEAFLET_CSS).filter((r) => value(r, 'touch-action').length);
+    expect(leaflet.map((r) => [r.selectors.join(', '), last(r, 'touch-action')])).toEqual([
+      ['.leaflet-container.leaflet-touch-zoom', 'pan-x pan-y'],
+      ['.leaflet-container.leaflet-touch-drag', 'pinch-zoom'],
+      ['.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom', 'none'],
+    ]);
+  });
+
+  it("Leaflet's own hover looks show only with a mouse, and its focus looks only for a keyboard (V22)", () => {
+    const leaflet = parse(LEAFLET_CSS);
+    const one = (selectors: string) => {
+      const found = leaflet.filter((r) => r.selectors.join(', ') === selectors);
+      if (found.length !== 1) throw new Error(`leaflet.css: ${found.length} ${selectors} rules, expected 1`);
+      return found[0];
+    };
+    const places = join('src', 'styles', 'places.css');
+    /** places.css's declarations for `selector`: top level, or behind the hover gate. */
+    const ours = (selector: string, gated = false) =>
+      rulesFor(selector)
+        .filter((r) => r.file === places && (gated ? r.at.length === 1 && HOVER_GATE.test(r.at[0]) : !r.at.length))
+        .flatMap((r) => r.decls);
+    // Leaflet 1.9.4's hover rules, each with :focus, which a tap can give a link. A new one fails here.
+    const MAP = [
+      ['.leaflet-bar a', 'background-color', '.map .leaflet-bar a[href]:not(.leaflet-disabled)'],
+      ['.leaflet-control-attribution a', 'text-decoration', '.map .leaflet-control-attribution a[href]'],
+      ['.leaflet-container a.leaflet-popup-close-button', 'color', '.map .leaflet-popup a.leaflet-popup-close-button[href]'],
+    ] as const;
+    expect(leaflet.filter((r) => r.selectors.some((s) => s.includes(':hover'))).map((r) => r.selectors.join(', '))).toEqual(MAP.map(([s]) => `${s}:hover, ${s}:focus`));
+    for (const [theirs, property, mine] of MAP) {
+      const resting = last(one(theirs), property);
+      const hovered = last(one(`${theirs}:hover, ${theirs}:focus`), property);
+      expect(resting && hovered && resting !== hovered, theirs).toBeTruthy();
+      // The resting look, restated above Leaflet's :hover and :focus; the hover look for a
+      // mouse; the focus look for a keyboard. Leaflet's values, so a mouse sees no change.
+      expect(ours(mine), mine).toEqual([[property, resting]]);
+      expect(ours(`${mine}:hover`, true), `${mine}:hover`).toEqual([[property, hovered]]);
+      expect(ours(`${mine}:focus-visible`), `${mine}:focus-visible`).toEqual([[property, hovered]]);
+    }
   });
 
   it('a press shows at once, on :active (v8: 0.82), with the listener iOS needs for it', () => {
