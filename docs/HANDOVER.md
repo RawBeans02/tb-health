@@ -4,7 +4,7 @@ How to take the build to launch. The decisions themselves are in `docs/owner-que
 
 ## Where the build is
 
-Steps 1–14 are on local branches, each cut from the one before: `build/01-scaffold` … `build/13-qa`, `build/14-release`. `build/14-release` holds everything. The TB Health lead hands over the push and merge commands.
+Steps 1–14 are on GitHub, each branch cut from the one before (`build/01-scaffold` … `build/14-release`, then `build/14-launch`), and `main` is the launch commit, 27526c8, live at https://tb-ph.pages.dev since 9 November 2026 (`docs/launch-2026-11-08.md`). Step 15, the v8 fix pass (`docs/step-15-fix-pass.md`), is on `build/15-fix-pass`. The TB Health lead hands over the push and merge commands.
 
 ## Before launch: what only you can do
 
@@ -125,10 +125,12 @@ Run the steps in one Terminal window, in order. Each is one line, so a failed pa
 
 A test copy is a non-production build deployed as a preview, at `https://test.<subdomain>.pages.dev`: it carries noindex, and Cloudflare adds its own to every preview. It needs no release gate and no accept list (`npm run launch-check` shows what's open), and it can't reach the production branch. Do steps 1 and 2 of "Each release", then:
 ```
-[ "$PWD" = "$D" ] && SITE_URL=https://test.<subdomain>.pages.dev TBPH_PRODUCTION= GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && ( T=$(security find-generic-password -s tbhealth-cloudflare -w) && [ -n "$T" ] && CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false WRANGLER_SEND_ERROR_REPORTS=false env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CLOUDFLARE_API_BASE_URL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID -u CF_API_BASE_URL npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=test )
+[ "$PWD" = "$D" ] && SITE_URL=https://test.<subdomain>.pages.dev TBPH_PRODUCTION= TBPH_CHECK=false GUARD_NO_DOCKER=1 _handoff/lowmem-run.sh npm run build && ( T=$(security find-generic-password -s tbhealth-cloudflare -w) && [ -n "$T" ] && CLOUDFLARE_API_TOKEN="$T" CLOUDFLARE_ACCOUNT_ID=<account-id> WRANGLER_SEND_METRICS=false WRANGLER_SEND_ERROR_REPORTS=false env -u CLOUDFLARE_API_KEY -u CLOUDFLARE_EMAIL -u CLOUDFLARE_API_BASE_URL -u CF_API_TOKEN -u CF_API_KEY -u CF_EMAIL -u CF_ACCOUNT_ID -u CF_API_BASE_URL npx wrangler@4.151.3 pages deploy dist --project-name=<your-project> --branch=test )
 ```
 - `TBPH_PRODUCTION=` keeps it a non-production build even if the shell has `TBPH_PRODUCTION=true` set from earlier.
-- **It's public too:** anyone who has its address, or guesses it, can open it, and it carries whatever the build has, the unreviewed symptom check included (add `TBPH_CHECK=false` before `GUARD_NO_DOCKER=1` to leave Check out). Share it only with reviewers, or turn on the project's preview access policy (Settings › General › Enable access policy; Cloudflare's docs: it limits previews to your Cloudflare account). Cloudflare Access, for letting in reviewers outside the account, is free for small teams but needs its own setup.
+- **Without Check, like production** (V15): `TBPH_CHECK=false` leaves the unreviewed symptom check out. Drop it only for a reviewer who needs to see Check, since the copy is public (next point).
+- **A branch before it's merged:** in step 1, clone that branch instead of `main` (`--branch build/15-fix-pass`), and stop unless the commit it prints is the one you pushed.
+- **It's public too:** anyone who has its address, or guesses it, can open it, and it carries whatever the build has. Share it only with reviewers, or turn on the project's preview access policy (Settings › General › Enable access policy; Cloudflare's docs: it limits previews to your Cloudflare account). Cloudflare Access, for letting in reviewers outside the account, is free for small teams but needs its own setup.
 - `npm run post-deploy-check -- https://test.<subdomain>.pages.dev` works on a test copy too, but it flags the preview's noindex header by design: Cloudflare's header comes on top of the one in `dist/_headers`.
 
 ## Other hosts (not set up)
@@ -193,9 +195,10 @@ A step killed for memory shows as `OOMKilled=true` or `oom_kill` above 0 in its 
 
 ## Device checks
 
-The audit's runtime checks need a real iPhone and Android phone (and the installed app): landscape insets, the Filters sheet's Back gesture and swipe, long-press and stuck-hover, Save as image and Share, Enter in the place field with Safari's suggestions open, VoiceOver, TalkBack and a Safari keyboard pass, and printing a check result. The list is under "Runtime checks still needed" in `docs/AUDIT-build.md` and the interim audit.
+The audit's runtime checks need a real iPhone and Android phone (and the installed app): landscape insets, the Filters sheet's Back gesture and swipe, long-press and stuck-hover, Save as image and Share, Enter in the place field with Safari's suggestions open, VoiceOver, TalkBack and a Safari keyboard pass, and printing a check result. The list is under "Runtime checks still needed" in `docs/AUDIT-build.md` and the interim audit. Step 15 adds its own (taps and the pressed look, the toolbar and the page's height, the Places map with one and two fingers, the worst-case rows on a small phone, the Filters sheet's flick, the route's draw-in on a mid-range phone, and dark mode): "The device list (step 15)" in the same file.
 
 ## Keeping it current
 
 - New facility data or a WHO report: rebuild; the dot-count tripwire (Q11) and the data guards stop a build whose numbers no longer match the copy.
+- **Em dashes in the PhilHealth list:** check-dashes ends every build, and it stops the build if a clinic's name or address has an em dash (V15), because a place page shows them in its heading, title and text. None does today. If one does, the row needs a correction, recorded like the earlier ones (`docs/data-refresh-2026-11-07.md`) and with your OK; the check stays strict.
 - Every launch deploy: steps 1–6 of "Each release" above, in a new release folder. Test copies: "Test copies" above.

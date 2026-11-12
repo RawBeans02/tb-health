@@ -1,16 +1,25 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 11 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`.
+Kept by the TB Health lead. Updated 12 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`; step 15's checks and the per-page design review are in `docs/AUDIT-build.md` (its first section).
 
 ## Now
 
-Step 15.4 (worst-case data) went ahead on these two defaults; say if either should change.
+- **The step 15 test copy.** Once you've deployed it (the lead hands you the line), check it at https://test.tb-ph.pages.dev. It's built like production, without Check (V15), and search engines are told not to index it. Production changes only after your OK. On a real iPhone and Android phone, the device list in `docs/AUDIT-build.md` ("The device list (step 15)") is what emulation couldn't confirm.
+
+Step 15.4 (worst-case data) went ahead on these defaults; say if any should change.
 - **Badges on one line?** The brief lists `white-space: nowrap` for badges. In Filipino, the Government badge, "Pampubliko (libreng gamutan sa TB)", is wider than a clinic's row on a 320px phone, so on one line it would run off the screen. Default: it wraps onto two even lines and nothing is cut. The other choice is a shorter badge, which is new text for you to write.
 - **Which number Call dials.** The brief says Call "dials the first number". Since the launch (audit O10, option a, kept by R2), it dials the first number any phone can dial, and the whole phone field stays under Details. The two differ only when the first number listed can't be dialled from a mobile, as on Renmar Specialists' Hospital's row (`0935665572/0783052743/…`) or a field such as `518-2632/0922-8162458`. Default: keep the launch rule.
+- **Two small departures from v8**, each only where v8's numbers break a label: the Commute button in a route row pads 14px instead of 18px (at 320px in Filipino, "Paano mag-commute" broke after "mag-"), and the filter segments are at least as wide as their longest word (v8's rule split "Government" mid-word at 1280px). Default: keep both.
 
-## Before the public launch
+The lead's calls in step 15 that you can overrule (each report explains them):
+- **No GitHub Actions (V21):** step 15.7 removed `.github/workflows/ci.yml`, which only ran when started by hand. The Linux check is `scripts/linux-check.sh`, in Docker on the Mac.
+- **Phone feel (15.3):** Home's "I need" rows and Check's answers get the pressed state too; a do-nothing touch listener lets iPhones show it; the Filters sheet is sized in `dvh`, though v8's Places prototype keeps `vh`.
+- **The Places map (V22):** the device's main pointer decides, so a touch-screen laptop keeps one-finger drag; no hint about two fingers (a hint would be new text for you).
+- **The Filters sheet (15.5):** no spring or rubber band when it's pulled up; the device check decides whether it needs them.
 
-Nothing is left to decide. The Cloudflare project is `tb-ph` and the launch address is https://tb-ph.pages.dev. Release with HANDOVER's "Each release" (Check off, `--accept=review` for R1), then run its live-site check.
+## Before the step 15 release
+
+After your OK on the test copy: you merge `build/15-fix-pass` into `main` (the lead hands you the command), then release with HANDOVER's "Each release" (Check off, `--accept=review` for R1) and run its live-site check. The Cloudflare project is `tb-ph`, and the address stays https://tb-ph.pages.dev.
 
 ## Decided (in `docs/decisions.md`)
 
@@ -22,6 +31,7 @@ Nothing is left to decide. The Cloudflare project is `tb-ph` and the launch addr
 - **R2, 9 Nov ("Yes, v6 defaults"):** the v6 design, no Linux check before launch, O2–O27 as they are, no alt text for the link-preview image.
 - **R1, 8 Nov ("Yes, ship them"):** the 13 strings that wait on the clinical review ship with the launch (`--accept=review`); the review itself stays open.
 - **A1, 8 Nov ("Yes, drop both"):** no "Our partners" or "Medical review" section on About at launch; About's description no longer mentions how the health content is reviewed.
+- **Step 15:** V6 to V14, the fourth batch sent on 10 Nov (v8, dark mode, no em dashes, " | " titles, Learn L5, "Aksesibilidad", the claims' rounding, no glisse, the skills); V15 to V20, 11 Nov ("Use the defaults"); V21, 11 Nov (no GitHub Actions); V22, 11 Nov ("Yes, fix O9": one finger scrolls past the map).
 
 ## After the launch
 
@@ -29,15 +39,18 @@ Nothing is left to decide. The Cloudflare project is `tb-ph` and the launch addr
 - **Phones:** 30 clinics list only numbers that can't be dialled and 60 only a local number without its area code (row numbers in `docs/data-refresh-2026-11-07.md`). Partners could confirm them.
 - **The clinic list:**
   - who refreshes it each month, and the oldest list date you'll accept (launch-check shows the current date);
-  - Q12, the 85 lapsed accreditations (D24 applies until you decide);
+  - Q12, the lapsed accreditations: 85 at the launch, 91 on 12 Nov, with 1,530 more ending by 31 Dec (launch-check counts them; D24 applies until you decide);
   - pipeline fixes before the next run: look up city groups with their province, read "Sta."/"Sto.", reject generic address text, and stop on a pin far from its province's other clinics.
 - **The sample fixture** (`data/tb-dots-facilities-SAMPLE.json`, the browser tests' 93 rows) carries the clinics' email column on 92 rows. Dropping it is a repository clean-up for your OK.
 - **Filipino review (V20):** the dot story's screen-reader label for beat 4 (`src/content/dotstory.ts`) calls the died dots "itim" (black), but in dark mode they're near-white.
+- **From the per-page design review (step 15.7, both Low; details in `docs/AUDIT-build.md`):**
+  - the "Offers this" chip on Places and Place rows is the solid teal of the main button, while the other chips are outlined, so a status looks like an action on every row: an outlined chip would match the others;
+  - in dark mode the map tiles stay light (V7), so a bright map sits in a dark page: Apple's guidelines suggest darkening such images slightly, which would change V7.
 - **Still open from earlier:**
   - O11: four symptom-check cases for the clinical review, and whether the summary card should list risk factors such as HIV (RA 10173), when Check returns;
   - the copy overrides in `docs/copy-overrides.md`;
   - C4–C11 with the content owner;
   - Q11 (the WHO 2026 report);
   - O12: the reuse terms for the WHO data and the PhilHealth list;
-  - O18 and O28, and the device checks in the audit report (a real iPhone and Android phone, VoiceOver, TalkBack, a Safari keyboard pass);
+  - O2, O3, O5's hover half, O18, O24, O27 and O28 (step 15 fixed O4, O5's pressed half and O9), and the device checks in the audit report (a real iPhone and Android phone, VoiceOver, TalkBack, a Safari keyboard pass);
   - the Sakay.ph deep links stay [VERIFY]; the site copies the address and opens sakay.ph instead.

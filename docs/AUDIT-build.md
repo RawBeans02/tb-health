@@ -1,6 +1,133 @@
-# TB PH: build audit (step 14)
+# TB PH: build audit (step 14, updated for the launch and step 15)
 
 The builder's release audit in the SOT format (`design/design_handoff_tb_ph/reference/ultimate-build-source-of-truth.md`). It brings the lead's interim audit (`docs/audit-2026-11-05.md`, snapshot 6f759ff) up to the current build: that audit's findings, N/A rationale and Check routing result stand unless a row below says otherwise. What waits on the owner is in `docs/owner-queue.md`; the release steps are in `docs/HANDOVER.md`.
+
+The first two sections are current: step 15, the v8 fix pass (`docs/step-15-fix-pass.md`), checked at 15.7 on 12 November 2026, and the launch of 9 November. From "Audit record" on, the document is step 14's audit of 5 November, kept as it was, except the rows step 15 changed, which say so.
+
+## Step 15: the v8 fix pass (QA at 15.7, 12 November 2026)
+
+- **Branch / commit:** `build/15-fix-pass`, steps 15.1 to 15.7 on the launch commit (27526c8, `main`). 15.7 changes tests, scripts and docs only, so the pages are 15.5's (87b3b1e). Production is still 27526c8 until the owner's OK on the test copy; the release then runs HANDOVER's "Each release" after the branch is merged.
+- **What step 15 changed** (decisions V6 to V22): the v8 copy with no em dashes and " | " titles (15.1, V8, V9); dark mode, following the system with no switch of its own (15.2, V7, V16 to V20); phone feel: no tap flash, a pressed state, `dvh` and `svh`, no overscroll in the installed app (15.3), and one finger scrolls past the Places map (V22, audit O9); the full list's worst rows behind a dev-only switch, with the wrapping fixes they found (15.4); the route's stop discs and the Filters sheet's drag on compositor-friendly properties, with a flick to close (15.5); Install without JavaScript and hidden chevrons (15.6). Per-step reports with their evidence are in the stand-in lead's notes (outside the repository); the commits name each change.
+- **From the interim audit:** fixed by step 15: O4 (the Type filter's mid-word split, 15.4), O5's pressed half (15.3), O9 (V22), C5 and the em dashes (15.1). Still open with the owner: O2, O3, O5's hover half, O18, O24, O27 and the rest listed in `docs/owner-queue.md`.
+
+### QA with dark mode (15.7)
+
+On 12 November 2026, one guarded job per spec file, on the 93-row sample build unless a row says otherwise (the logs are in the stand-in lead's notes, not in the repository).
+
+| Suite | 15.7 (the pages as at 87b3b1e) | 15.5's bar |
+|---|---|---|
+| unit | 2,498 passed (lighthouse.test.ts's 4 new) | 2,494 |
+| `npm run check` | 0 errors, 0 warnings, 4 hints | 0 errors |
+| screenshots of every route, EN and FIL, at 390 and 1280px | light 40 of 40 and dark 40 of 40 identical to 15.5's | |
+| chromium | 471 passed, 49 skipped (screens.spec 40, worst.spec 9) | 470, before 15.5's disc test, which ran after its chain |
+| webkit | 303 passed, 217 skipped (the Chromium-only tests) | 302, before the same test |
+| **qa.spec in dark** (`QA_SCHEME=dark`), Chromium | 124 passed | (new) |
+| **qa.spec in dark**, WebKit | 84 passed, 40 skipped (axe runs in Chromium only) | (new) |
+| pwa, iphone and pixel | 22 passed | 22 |
+| the full build (the full list, with Check) | 4,216 pages; budgets, check-dev-only, check-links and check-dashes clean; 60 files precached (2,495 KB) | 4,216 |
+| the build without Check (`npm run test:no-check`) | 4,214 pages, its 6 tests passed | 4,214 |
+| the test copy's build (`SITE_URL=https://test.tb-ph.pages.dev TBPH_PRODUCTION= TBPH_CHECK=false`) | 4,214 pages; `X-Robots-Tag: noindex` in `_headers`; no /check page or sitemap entry; canonical links and sitemap on the test address; 55 files precached (2,389 KB) | (new) |
+
+No test failed. The memory guard stopped three jobs for the Mac's memory (WebKit's data and places specs, and the dark matrix in Chromium), and each passed when the chain retried it; the guard's peak was 6.50 GB.
+
+**The matrix in dark** checks 9 pages at 320, 390, 768 and 1280px, in English and Filipino, in Chromium and WebKit: that the page sees the dark scheme, then no sideways scroll, nothing off the screen or cut off, chart labels inside their charts, no template leftovers, one H1, no target under 44px, no text under 14px, and no console error or CSP violation; then Places with one result and with none at 320, 390 and 1280px. **axe in dark** (WCAG 2.2 AA), every page in both languages at 390 and 1280px plus four interactive states: no violations, in qa.spec's own pass (40 tests) and dark.spec's (44, in every Chromium run).
+
+### Lighthouse, light and dark (15.7)
+
+Lighthouse 13.5.0 (`scripts/lighthouse.mjs`) on a production build for the live address (`SITE_URL=https://tb-ph.pages.dev TBPH_PRODUCTION=true`, so no noindex), served compressed like the host, on the ten pages step 13 measured. That build has Check in, as step 13's stand-in build did, so /check is measured too; the live site and the test copy are built without it. 40 runs: mobile and desktop, light and dark, each report's final screenshot checked to be in its scheme. Every run is within budget, and no report has a console error or a failed request.
+
+| | Mobile, light | Mobile, dark | Desktop, light | Desktop, dark |
+|---|---|---|---|---|
+| Performance | 99–100 | 99–100 | 100 | 100 |
+| Accessibility | 100 | 100 | 100 | 100 |
+| Best practices | 100 | 100 | 100 | 100 |
+| SEO | 100 | 100 | 100 | 100 |
+| LCP | 1.50–1.66 s | 1.50–1.66 s | 0.32–0.40 s | 0.32–0.41 s |
+| CLS | 0.031 at most (/places) | 0.031 at most (/places) | 0.050 at most (/fil/places) | 0.050 at most (/fil/places) |
+| TBT | 47 ms at most | 25 ms at most | 0 ms | 0 ms |
+
+The 99s are /places and /fil/places on mobile, and /data on mobile in dark. SEO is 100 on every page now that the Filipino descriptions are in (Q3). INP still needs a real device.
+
+### SOT tell #16, em dashes: passing
+
+- **The tell:** the SOT's "Avoid the default 'vibe-coded' visual fingerprint", item 16, "Em dashes everywhere in the copy" (C5 in the interim audit). V8: no em dashes in copy, and the v8 pack has none; en dashes stay for ranges and empty table cells.
+- **The check:** `scripts/check-dashes.mjs` ends every build script. It fails the build on an em dash (the character, or a reference HTML reads as one) in any page's text, `<title>`, meta description or `og:*` tag, the PhilHealth names and addresses a place page shows included (V15 keeps it strict). Its unit tests: `tests/unit/check-dashes.test.ts`.
+- **Passing on each of 15.7's builds:** the full list with Check, 4,216 pages: "no em dash in the text (310,031 text nodes), <title>, meta description or og:* tags (42,088 tags)"; without Check, 4,214 pages (297,309 text nodes, 42,068 tags); the test copy, the same 4,214; the production build for Lighthouse, the same as the full one; the sample, 208 pages (16,885 text nodes, 2,008 tags).
+- **Listed, not failed:** what a page could show later or elsewhere (island props, inline JSON, other attributes, scripts, styles and the JSON files, the clinic data among them) holds one em dash, in a script: the data file's title, "TB in the Philippines — data pack", inside Data's chart code (`_astro/DataCharts.*.js`). It's never shown, and V15 keeps it.
+
+### Apple HIG review per page (15.7)
+
+The `apple-design-hig` skill's five lenses, on the sample build's screenshots at 87b3b1e (light and dark, 390 and 1280px, English and Filipino) and step 15.4's worst-case phone shots (320 and 390px). TB PH is a website and PWA, so the guidelines' principles and foundations apply in full (accessibility, colour, type, layout, writing, dark mode, materials) and the iOS conventions (tab bar, sheets, safe areas) as patterns people know from their phones. Guideline pages read (quoted where a point rests on one): `accessibility.md`, `layout.md`, `typography.md`, `color.md`, `tab-bars.md`, `sheets.md`, `dark-mode.md`, `materials.md`, `search-fields.md`, `charting-data.md` and `writing.md`. Contrast and sizes come from the tests (contrast.test.ts, qa.spec's probes), not from the screenshots.
+
+**Rating: Excellent on the skill's scale** (nothing above Medium, and a point of view), with four Medium items open with the owner: O2, O3, O5's hover half and O24. The point of view is the interim audit's: "red means TB, teal means care", one solid teal button per screen, glass only on navigation, and the three-stop route as the signature. Step 15 carried it into dark mode without a new look. No finding below was fixed in 15.7, so the screenshots and the suites' evidence stand; the new ones are in `docs/owner-queue.md`.
+
+**Every page (header, tab bar, footer)**
+- Works: four tabs that only navigate, always visible, the current one marked (`tab-bars.md › Best practices`: "Use a tab bar to support navigation, not to provide actions."). Glass only on the header and tab bar (and Home's planner card, O27), which turn solid with Increase Contrast, Reduce Transparency or no blur support, and over the map in dark (V18) (`materials.md › Liquid Glass`: it "forms a distinct functional layer for controls and navigation elements"). Dark mode follows the system (`dark-mode.md › Best practices`: "Avoid offering an app-specific appearance setting."). A pressed state on every control and no tap flash (15.3).
+- Open: **O3 (Medium)**, the multi-word tab labels wrap to two lines in English and three in Filipino at 320px ("Hanapin / ang / gamutan") (`tab-bars.md`: "Use single words whenever possible."); shorter labels are new copy. **O5's hover half (Medium):** with a mouse, the segments, the switch, the tab links and the choice rows still don't change on hover.
+
+**Dark mode (all pages)**
+- Works: every colour is a token with a light and a dark value; the ink is a softened white (#E7ECEF); AA contrast for the dark pairs (contrast.test.ts, V16 to V18), apart from V19's accepted few, which also say what they show in text; the dot story and the charts repaint without a reload; print stays light (`dark-mode.md`: "Ensure that your app looks good in both appearance modes.").
+- **New (Low, the owner's call on V7):** the map tiles stay light in dark mode (V7), so a bright map sits in a dark page. `dark-mode.md › Dark Mode colors`: "Soften the color of white backgrounds", by "slightly darkening the image to prevent the background from glowing". A light dimming of the tiles in dark would change V7.
+
+**Home** (its job: the three stops to care; its signature: the route rail)
+- Works: one solid primary, "Show me where to go"; the place field's placeholder says what to type (`search-fields.md › Best practices`: "Use placeholder text to help people know what they can search for."); the location ask sits beside its purpose; the route draws in once, and at once with reduced motion (15.5).
+- Open: **O18 (Low)**, the primary button is below the first screen at 390x844; **O27 (Low)**, the frosted planner card is glass in the content layer (`materials.md › Liquid Glass`: "Don't use Liquid Glass in the content layer."), approved by README:78-80.
+
+**Places**
+- Works: the Filters sheet has a grab strip, a flick or Back closes it, and the filters apply as they change, so Done needs no Cancel (`sheets.md › Best practices`); one sheet at a time; a side panel at 1280px; the worst-case rows wrap inside their cards at 320px in Filipino (15.4).
+- Open: **O18 (Low)** here too, the first center starts at the fold at 390x844, under the heading, the intro, the place field, the Service control and the count.
+- **New (Low, design):** the "Offers this" chip is the solid teal of the primary button, while the other chips are outlined, so a status wears the action colour on every row (`color.md › Best practices`: "Avoid using the same color to mean different things."). It's v8's look; an outlined chip would match the others.
+
+**Place**
+- Works: the back link says where it goes (B18); one solid primary, "Commute directions", then soft Walk, Drive and Sakay; Details as a two-column table in tabular figures; long phone fields break only between numbers (15.4).
+- Open: **O24 (Medium)**, the ✓ comes from each system's fallback font.
+
+**Check** (not in the live site or the test copy, Q9 and V15)
+- Works: the privacy promise before Start; one question a screen, Next above the tab bar (B14); the urgent screen keeps its fixed colours and its white "Call 911" in dark (V7).
+- Open: the clinical review (O11).
+
+**Learn**
+- Works: an 18px body in Atkinson Hyperlegible Next at regular and bold (`typography.md › Ensuring legibility`: "In general, avoid light font weights."); the contents in a disclosure; plain language (`writing.md › Getting started`: "Write for everyone."). Nothing new.
+
+**Data** (its signature: the dot story)
+- Works: every chart has its table and a takeaway (`charting-data.md › Best practices`: "Make every chart in your app accessible."; `› Designing effective charts`: "Aid comprehension by adding descriptive text to the chart."); the canvas has a label for each beat; the story repaints in dark and prints light.
+- Open: **O2 (Medium)**, the stacked bars are told apart by colour; V19's dark-only swatches under 3:1 carry their information in text too (accepted).
+
+**About, Install, the 404 and offline pages**
+- Works: plain statements; Install's numbered steps are a real sequence, and without JavaScript only the steps show (15.6); the error pages say what happened and give the way back (`writing.md › Best practices`: "Be action oriented."). Nothing new.
+
+**Desktop (1280px)**
+- Works: the header's text links stand in for the tab bar, the current page underlined; the Places filters in a side panel; hover looks only with a mouse (B29); keyboard focus never clipped (focus.spec).
+
+### The device list (step 15)
+
+Checked in code, in desktop Chromium and WebKit and in phone emulation, not yet on a phone. For a real iPhone and an Android phone, with the installed app where it says so:
+- **Taps and presses (15.3):**
+  - no grey or blue flash on a tap, the map's buttons included;
+  - the pressed look under a finger, and none when a scroll starts on a row or a button;
+  - no double-tap delay;
+  - no long-press selection on buttons, tabs and choice rows, while links, names and numbers can still be selected.
+- **Heights (15.3):** the page and the Filters sheet with the browser's toolbar shown and hidden; the dot story's stage doesn't resize as the toolbar moves.
+- **The installed app (15.3):** no bounce or pull-to-refresh, while the browser keeps them.
+- **The Places map (V22):**
+  - one finger scrolls the page past the map;
+  - two fingers pan and zoom, and a double tap zooms in;
+  - a tap on a marker opens its popup;
+  - no grey stays after a tap on the zoom buttons, the credits or the popup's close button;
+  - whether testers find the two-finger pan without a hint (a hint would be new text, for the owner).
+- **Worst-case rows (15.4):** on a small phone (320px wide), in Filipino, the long names, chips and badges wrap with no word left alone and nothing cut, and long phone fields break only between numbers; Call on a row with several numbers (Renmar Specialists' Hospital's) opens the dialler with the first number a phone can dial.
+- **The Filters sheet (15.5):** a flick closes it; a pull past the line that turns back up leaves it open; grabbing it while it slides open takes it from where it is.
+- **Motion (15.5):** the route's draw-in stays smooth on a mid-range Android phone.
+- **Dark mode (15.2):** switching the phone's appearance repaints an open page, the dot story included; the browser's toolbar takes the page's colour in each scheme; the installed app opens light, as its manifest stays light (V7).
+
+## The launch (8 and 9 November 2026)
+
+The lead's full record is `docs/launch-2026-11-08.md` (every commit, the place search's three review rounds and its numbers); this is its audit part.
+- **The owner's launch decisions:** Q7 (the free pages.dev address, built without Check), Q8 (PhilHealth's full list, 2,097 clinics, positioned with Nominatim), Q5, Q3 and Q9 (the owner's wording), A1 to A3 (About), R1 (the 13 strings waiting on the clinical review ship, `--accept=review`) and R2 (the v6 design, no Linux check before launch, O2 to O27 as they were). Each is in `docs/decisions.md`.
+- **The independent review of the launch build** found clinic pins in the wrong town, Davao Region numbers without their area code's 0, typed province names planning from a same-named town, Check's code still built in a build without it, test-tooling leftovers and the Sakay.ph button copying the name. Each was fixed and reviewed again before the launch.
+- **Gates:** at d9fb27e, every job passed on its first attempt (unit 2,318; chromium 370; webkit 250; pwa 10; iphone and pixel 10; no-check 6; the full build 4,216 pages). The release rehearsal built without Check for a pages.dev address: 4,214 pages, production headers, and no /check page, link, file or page naming the check.
+- **Deployed:** 27526c8 on 9 November 2026 at 23:42 Manila, to https://tb-ph.pages.dev (Cloudflare Pages project `tb-ph`, deployment `381d34e7`), by the owner from a fresh clone of `main`, with `SITE_URL=https://tb-ph.pages.dev TBPH_PRODUCTION=true TBPH_CHECK=false` and `npm run release-check -- --accept=review`.
+- **Post-deploy check:** three runs of `npm run post-deploy-check -- https://tb-ph.pages.dev` found no problem (every page identical to `dist/`, no cookies, every header as `dist/_headers` sets it, both 404s). Each run marked itself incomplete over a few pages that didn't answer within 15 s on a home connection; each of those, fetched alone, answered 200 with the same body and headers.
 
 ## Audit record
 
@@ -34,13 +161,13 @@ The builder's release audit in the SOT format (`design/design_handoff_tb_ph/refe
   - the reuse terms for the WHO data and the PhilHealth list not recorded (O12);
   - the 28 cited outside sources never fetched (L8);
   - lapsed accreditations shown as listed (Q12, D24);
-  - no dark mode until the v7 import (V2);
+  - no dark mode until the v7 import (V2; dark mode shipped in step 15.2, V7);
   - the device-only checks not yet done (VoiceOver, TalkBack, real installs, landscape insets);
   - the accepted risks below.
 - **Accepted risks (pending the owner):** see "Accepted risks" below.
 - **Post-release checks:** `npm run post-deploy-check -- <origin>` after every deploy; the runtime checks below; Search Console for the `fil` alternates. No metrics are collected, by design.
 
-## Master Build Audit (current state)
+## Master Build Audit (step 14; rows step 15 changed say so)
 
 Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-11-05.md`. A row is Verified only when no open owner item undercuts it; "Verified (automated) / Runtime check" means the automated evidence passes and part of the row can only be confirmed on a device or the deployed host (B66). The status of each SOT rule is in the appendix at the end.
 
@@ -50,14 +177,14 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Audience / positioning clarity | Partial | Unchanged: Home names the job; About's lede and partners are placeholders [placeholders]. |
 | Empty-state / first-value activation | Partial | Loading, error, empty and no-match states, all keyboard-reachable (B8). O1 open. |
 | System handoff / in-context flow quality | Partial | tel: links +632 for every NCR number (B20), 44px actions on phones (phone.spec), Sakay copy-then-open. Open: O10, O14, O22; Sakay [VERIFY]. |
-| Familiar interaction patterns | Partial | System Back closes the Filters sheet (B15), robust drag (B30), back links that say where they go (B18), no stuck hover on touch (B29), no long-press callout on controls (B32). Tests: places.spec, home.spec, phone.spec. Open for the owner: back links don't return people to their route or filtered list (O7). Device-only: Android Back on the sheet (B15), long-press callouts (B32), stuck hover after a call (B29), the sheet swipe on an iPhone (B30). |
-| Responsive/mobile behavior | Partial | QA matrix: 9 pages × 320/390/768/1280 × EN/FIL in Chromium and WebKit, no sideways scroll, nothing off-screen or cut off, one H1, 44px targets, 14px text (qa.spec, probes B50); worst-case content and 2,100 rows pass it (L2); side safe areas (B5), svh stage (B19), tab bar measured before first paint (B14, B68), phone profiles (B42). Open for the owner: the tab labels wrap and "Check symptoms" overflows at 320px (O3, offered as an accepted risk, not yet accepted); the Type filter splits "Government" and "Pampubliko" mid-word (O4). Device-only: landscape insets (B5), the toolbar and svh (B19). |
-| Accessibility | Partial | axe WCAG 2.2 AA on every page EN/FIL at 390/1280 and four interactive states (qa.spec); focus ring never clipped (focus.spec, B1); text follows the browser size to 200% (textsize.spec, B2); forced colours (B11, B44); error in view and described (B3); announcements (B28); token contrast (contrast.test). Open for the owner: stacked bars told apart by colour alone (O2), the map controls' small targets and English names (O13), directions opening a new tab unannounced (O14), and the accessibility statement's [email] placeholder. Still by hand: VoiceOver, TalkBack, Safari keyboard (owner list). |
+| Familiar interaction patterns | Partial | System Back closes the Filters sheet (B15), robust drag (B30), back links that say where they go (B18), no stuck hover on touch (B29), no long-press callout on controls (B32). Tests: places.spec, home.spec, phone.spec. Open for the owner: back links don't return people to their route or filtered list (O7). Device-only: Android Back on the sheet (B15), long-press callouts (B32), stuck hover after a call (B29), the sheet swipe on an iPhone (B30). **Step 15:** a flick closes the Filters sheet (15.5); one finger scrolls the page past the map (V22, O9); both on the device list. |
+| Responsive/mobile behavior | Partial | QA matrix: 9 pages × 320/390/768/1280 × EN/FIL in Chromium and WebKit, no sideways scroll, nothing off-screen or cut off, one H1, 44px targets, 14px text (qa.spec, probes B50); worst-case content and 2,100 rows pass it (L2); side safe areas (B5), svh stage (B19), tab bar measured before first paint (B14, B68), phone profiles (B42). Open for the owner: the tab labels wrap and "Check symptoms" overflows at 320px (O3, offered as an accepted risk, not yet accepted); the Type filter splits "Government" and "Pampubliko" mid-word (O4). Device-only: landscape insets (B5), the toolbar and svh (B19). **Step 15:** O4 fixed (15.4); the full list's worst rows at 320 and 390px, EN and FIL, light and dark (worst.spec, 15.4); the matrix in dark too (15.7, `QA_SCHEME=dark`). |
+| Accessibility | Partial | axe WCAG 2.2 AA on every page EN/FIL at 390/1280 and four interactive states (qa.spec); focus ring never clipped (focus.spec, B1); text follows the browser size to 200% (textsize.spec, B2); forced colours (B11, B44); error in view and described (B3); announcements (B28); token contrast (contrast.test). Open for the owner: stacked bars told apart by colour alone (O2), the map controls' small targets and English names (O13), directions opening a new tab unannounced (O14), and the accessibility statement's [email] placeholder. Still by hand: VoiceOver, TalkBack, Safari keyboard (owner list). **Step 15:** axe in dark on every page and state (dark.spec in every Chromium run, and qa.spec's in dark at 15.7); AA contrast for the dark tokens (contrast.test; V19's few accepted exceptions say what they show in text too); reduced motion shows every end state (15.5). |
 | Website technical SEO | Partial | Titles, descriptions, canonical, hreflang, Open Graph, sitemap and robots (step 12); every sitemap, canonical and hreflang URL answers 200 without a redirect (seo.spec); check-links resolves 800 canonical and hreflang links (B41). Open: Filipino descriptions [owner-strings], og:image:alt (owner copy), structured data (D17), the real domain (Q7). |
 | SEO audit tooling / agent-assisted verification | Partial | seo.spec, check-links, the sitemap test and Lighthouse on a production-mode stand-in build (SEO 100 on the ten measured pages; 92 on /fil/data, with no Filipino description until Q3). Open: Search Console on the production domain after launch (owner list). |
 | Domain / DNS / email-deliverability setup | Missing | Blocked on Q7 [domain]. No email sent, so SPF/DKIM/DMARC N/A. |
-| Frontend quality metrics | Partial | Real 404s in both languages, print (card only), copy feedback, data dates, sticky bars never cover targets or focus (bars.spec, B10); each metric in the appendix. Open: no dark mode until v7 (V2), hover and pressed states (O5), the tab bar's wrapping labels (O3). Device-only: printing a check result. |
-| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode stand-in build (a stand-in address, `TBPH_PRODUCTION=true`), compressed like the host, mobile and desktop (B66): every page 99–100 performance, 100 in accessibility and best practices; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05 (Install 0.059 while its install prompt shows); TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). SEO isn't counted in this row while Q3 is open: SEO 100 on the ten measured pages; 92 on /fil/data, with no Filipino description until Q3. |
+| Frontend quality metrics | Partial | Real 404s in both languages, print (card only), copy feedback, data dates, sticky bars never cover targets or focus (bars.spec, B10); each metric in the appendix. Open: no dark mode until v7 (V2), hover and pressed states (O5), the tab bar's wrapping labels (O3). Device-only: printing a check result. **Step 15:** dark mode (15.2) and a pressed state on every control (15.3) are in; O5's hover half and O3 stay open. |
+| Performance / Lighthouse | Verified (lab) / Runtime check | Lighthouse 13.5.0 on a production-mode stand-in build (a stand-in address, `TBPH_PRODUCTION=true`), compressed like the host, mobile and desktop (B66): every page 99–100 performance, 100 in accessibility and best practices; LCP ≤ 1.81 s mobile, ≤ 0.41 s desktop; CLS ≤ 0.05 (Install 0.059 while its install prompt shows); TBT ≤ 62 ms; no failed requests or console errors (appendix). The desktop run found /places at CLS 0.116, fixed (B66). Budgets in every build (check-budgets). INP needs a real device; L3's off-screen scroll work removed (its trace was Chromium at 6x CPU slowdown; a mid-range Android trace stays a runtime check). SEO isn't counted in this row while Q3 is open: SEO 100 on the ten measured pages; 92 on /fil/data, with no Filipino description until Q3. **Step 15.7:** rerun on a production build for https://tb-ph.pages.dev, mobile and desktop, light and dark (the step 15 section). |
 | Authentication / authorization | N/A | No accounts, backend or admin. |
 | Data integrity / sensitive fields | Partial | Every located center on the map (B7), +632 tel links (B20), hatch patterns (B21), the Q11 dot-count tripwire, no silent sample fallback; synthetic and worst-case fixtures only. Open: the 93-row sample ships until the real list (Q8): launch-check blocks [sample]; whether the saved card lists risk factors such as HIV waits on the clinical review (O11). |
 | API / caching / database performance | Verified | No API or database. Caching: Workbox precache (60 files, 1,145 KB; at 60 of its 60 entries, so one more file in `dist/_astro` or one more precached page fails the build: if the v7 work, dark mode, adds one, it goes to the lead rather than the budget being changed, B92), runtime caches per release, `_headers` Cache-Control (L6; hashed assets immutable, build fails on an unhashed one). |
@@ -66,7 +193,7 @@ Status words follow the SOT legend. "Interim" means the row of `docs/audit-2026-
 | Cancellation / unsubscribe / dark-pattern review | N/A | Nothing to subscribe to. |
 | Child/age-related compliance | N/A | Unchanged (interim). |
 | Reliability / retries / failure handling | Partial | Try again on list and map with focus kept (B8), submits kept through errors (B16), malformed hashes ignored (B37), offline after one visit with the place shell and offline page (pwa.spec, L10). Open for the owner: a message for a location timeout (O6) and for a location outside the Philippines (O21). |
-| Tests / CI / regression coverage | Partial | 2,220 unit tests; e2e on chromium (369), webkit (249), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Verified locally. The CI evidence is still pending: `main` is at 359d6a5 (5 Nov 2026), but GitHub refused both runs before any step started because of a billing lock on the owner's GitHub account, not the code (see Evidence). |
+| Tests / CI / regression coverage | Partial | 2,220 unit tests; e2e on chromium (369), webkit (249), pwa (10), iphone (5), pixel (5), no-check (3); CSP violations and console errors fail every test; `.github/workflows/ci.yml` (D22, manual). Verified locally. The CI evidence is still pending: `main` is at 359d6a5 (5 Nov 2026), but GitHub refused both runs before any step started because of a billing lock on the owner's GitHub account, not the code (see Evidence). **Step 15:** no CI: TB Health uses no GitHub Actions (V21), and 15.7 removed `ci.yml`. Every suite runs on the Mac through the guard, one spec file at a time; the Linux check (`scripts/linux-check.sh`) hasn't been run yet. The 15.7 counts are in the step 15 section. |
 | Agent model/provider routing & fallback safety | N/A | No AI at runtime. |
 | Release-build verification | Verified (automated) / Runtime check | Tests run on `dist/` served like the host; the Check-off variant is built and tested (B26); `launch-check --release` is the gate, reading `dist/` and unit-tested (B59–B62); the post-deploy check reads the live site back (no cookies, HTML identical to `dist/`, every response's headers exactly as `dist/_headers` sets them, the 404s in both languages; unit-tested, B63). It hasn't run against a host yet: it runs after the first deploy. Deploys (HANDOVER, B86, B88): every wrangler line runs in a subshell that reads a Pages-only API token from the Keychain, stops if it's missing or empty, passes it through the environment (never an argument `ps` could show), pins the TB Health account, clears other Cloudflare credentials and API addresses, and turns off wrangler's usage data and error reports; never wrangler's own login (it would share a login file with KitaMo's projects). The token can be read by any program running as this Mac user unless the owner stores it with `-T ""`. Test copies are non-production previews on `--branch=test`, public to anyone with the address; only a `--branch=main` deploy, through the gate, is the public launch. |
 | App Store / platform compliance | N/A | No store; installable PWA (manifest, service worker) tested in step 11. |
@@ -107,7 +234,7 @@ Earlier ones are in PLAN §7 (D1–D25) and `docs/copy-overrides.md`.
 - The bold "Check symptoms" tab label overflows its slot by 6px at 320px, also at the default size (O3, short labels).
 - Lighthouse CLS 0.059 on Install: the one-tap install button appears when the browser offers it (by design, under the 0.1 budget).
 - Safari takes the first Enter in the place field while its suggestion list is open (native; B31).
-- No dark mode until the v7 import (V2).
+- No dark mode until the v7 import (V2). Closed: dark mode shipped in step 15.2 (V7).
 - HSTS without includeSubDomains until the domain is known (Q7).
 - Places' footnotes move down when the list arrives below them: CLS 0.031 on mobile, up to 0.050 on desktop, within the 0.1 budget (B66).
 
@@ -159,7 +286,7 @@ Review queues (3)
 
 ## Runtime checks still needed
 
-The interim audit's list stands (device and deployed-host checks), with these changes:
+Step 15's are in "The device list (step 15)" at the top. The interim audit's list stands (device and deployed-host checks), with these changes:
 - Covered by automated tests now: focus rings at 390px (B1), the Check error in view (B3), map layers under the tab bar (B4), deep links after hydration (B6), Next above the tab bar at 360–390px (B14), zoom and Shift+Tab (B10), forced-colours selected states (B11), sheet drag and second finger in Chromium (B30). The iphone project closes the Filters sheet with Done, because WebKit can't drive the swipe, so the swipe on an iPhone stays a runtime check (B30).
 - Added: iPhone Safari, Enter in the place field with the suggestion list open (B31).
 - Still device-only: landscape insets (B5), the toolbar and svh (B19), Android Back on the sheet (B15), long-press callouts (B32), stuck hover after a call (B29), Save as image and share, back-forward cache after a Check result, printing, VoiceOver and TalkBack, a mid-range Android trace of the dot story (L3), the Filters sheet swipe on an iPhone (B30), Lighthouse INP.
@@ -183,7 +310,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | Mascot or character | ⭕ | The approved design has none, and a mascot would be a design change for the owner on a site about a serious illness. |
 | Home-screen widgets | ⭕ | A web app can't place a home-screen widget on iOS or Android; there is no native app. |
 | High-frequency actions in context | 🟡 | Calls, directions and Sakay hand off to the system or the other site with a status line; see "System handoff" above (O10, O14, O22, Sakay [VERIFY]). |
-| The "vibe-coded" visual fingerprint | 🟡 | The prototype's own design system (tokens, Newsreader and Atkinson Hyperlegible, TB red), recreated pixel-accurately. Open: em dashes in copy (V3, C5; launch-check lists them) and Home's frosted card in the content layer (O27). |
+| The "vibe-coded" visual fingerprint | 🟡 | The prototype's own design system (tokens, Newsreader and Atkinson Hyperlegible, TB red), recreated pixel-accurately. Open: em dashes in copy (V3, C5; launch-check lists them) and Home's frosted card in the content layer (O27). **Step 15:** tell #16, em dashes, passes (15.1, V8; the step 15 section has the evidence). O27 stays open. |
 
 ### Website / SEO / Technical Launch Checklist
 
@@ -192,7 +319,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | sitemap.xml | ✅ | Built for the domain, both languages, every place; leaves out `/offline` and the `/place` shells; every URL answers 200 without a redirect (seo.spec). |
 | robots.txt | ✅ | Built for the domain, names the sitemap (step 12). |
 | No unintended noindex | ✅ | Noindex only in a non-production `_headers`; launch-check blocks [not-production]; the post-deploy check fails a production page that says noindex. |
-| Meta titles | 🟡 | Every page in both languages (seo.spec). Open: their " — TB PH" em dashes (V3, C5). |
+| Meta titles | ✅ | Every page in both languages (seo.spec). Step 14 left their " — TB PH" em dashes open (V3, C5). **Step 15.1:** " \| " titles and `og:title` on every route (V9, title.test.ts), and check-dashes fails a build with an em dash in any title. |
 | Meta descriptions | 🟡 | English everywhere; Filipino for About, Data, Install, Learn and Place waits on the owner (Q3) [owner-strings]. |
 | Canonical tags | ✅ | Without state params; check-links resolves 800 canonical and hreflang links (B41). |
 | Heading hierarchy | ✅ | axe on every page; the H2-to-H4 skip fixed (B28). |
@@ -208,7 +335,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | HTTPS | 🔍 | HSTS in `_headers`; the host serves HTTPS. The post-deploy check reads HSTS on every response. |
 | Backlink strategy | ❌ | Not a build task: the owner's outreach once the domain is chosen (Q7). |
 | Google Search Console | ❌ | After launch, on the owner's list (release step 7). |
-| Mobile responsiveness | 🟡 🔍 | The QA matrix (see "Responsive/mobile behavior"). Open: tab labels wrapping and overflowing at 320px (O3), the Type filter's mid-word split (O4). Landscape insets and the phone toolbar are runtime checks. |
+| Mobile responsiveness | 🟡 🔍 | The QA matrix (see "Responsive/mobile behavior"). Open: tab labels wrapping and overflowing at 320px (O3), the Type filter's mid-word split (O4; fixed in 15.4). Landscape insets and the phone toolbar are runtime checks. |
 | Search discovery: production domain crawlable, URLs inspected | 🔍 | Needs the domain (Q7) and Search Console. Metadata is deliberate (titles and descriptions per page, §4.3). |
 | Agent-assisted SEO tooling | ✅ ⭕ | The SEO checks run on `dist/` built like production (seo.spec, check-links, Lighthouse: SEO 100 on the ten measured pages; 92 on /fil/data, with no Filipino description until Q3); every change goes through branches and tests. No SEO service, keyword data, credentials or Search Console data is connected. |
 | Domain, app and email subdomains | 🟡 ⭕ | One static site on one domain, no app or API subdomains; the domain waits on Q7. No email is sent, so SPF, DKIM and DMARC are N/A. |
@@ -217,10 +344,10 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 
 | Metric | Status | Evidence or N/A reason |
 |---|---|---|
-| Dark mode | ❌ | No dark mode until the v7 import (V2). |
+| Dark mode | ✅ 🔍 | **Step 15.2 (V7):** it follows the system setting, with no switch of its own. dark.spec: every route in both languages takes the dark canvas and ink; the glass and its solid fallbacks; V17 and V18; the dot story repaints when the system flips; the charts take every colour from the tokens; the urgent Film screen, the saved image, the map and print keep their light colours; axe in dark. contrast.test: AA for the dark pairs (V16 to V18), apart from V19's accepted few, which say what they show in text too. 15.7: the QA matrix in dark too. Switching on a real phone is on the device list. (Step 14: none until the v7 import, V2.) |
 | Sticky header | ✅ | Never covers an anchor or the focused control (scroll-padding; bars.spec, B10); keyboard reachable. |
 | Mobile menu | 🟡 | The phone tab bar replaces a menu (README), labelled, never covering targets (B14). Open: its labels wrap to two or three lines and "Check symptoms" overflows at 320px (O3). |
-| Hover states | 🟡 | Hover only on hover-capable fine pointers (B29); focus-visible rings everywhere, never clipped (focus.spec, B1). Open: hover and pressed states missing on several controls (O5). |
+| Hover states | 🟡 | Hover only on hover-capable fine pointers (B29); focus-visible rings everywhere, never clipped (focus.spec, B1). Open: hover and pressed states missing on several controls (O5). **Step 15.3:** a pressed state on every control (`:active`, shell.spec); O5's hover half stays open. |
 | Scroll progress bar | ⭕ | No long read where position matters; Check counts its questions. |
 | Back-to-top | ⭕ | Not in the design; Data and Learn have "On this page" links. |
 | Loading states | ✅ | Places list and map, Home's route, Data's charts: loading, error with Try again, empty and no-match, focus kept (B8, B16). |
@@ -258,7 +385,7 @@ Each rule of the SOT sections that apply to a static site (B66), with the SOT le
 | Load balancer | ⭕ | Static host. |
 | Compress API payloads | ✅ | `facilities.json` 6.9 KB Brotli (29.8 KB at 2,100 rows), slimmed fields. |
 | Connection pooling, expensive-query caching, N+1, server caching | ⭕ | No server or database. |
-| Lighthouse audit | 🟡 | Mobile and desktop on a production-mode stand-in build, before B68 except the rechecks (below). Open: rerun on the release build and on the deployed site. |
+| Lighthouse audit | ✅ 🔍 | Mobile and desktop on a production-mode stand-in build, before B68 except the rechecks (below). Open: rerun on the release build and on the deployed site. **Step 15.7:** rerun on a production build for https://tb-ph.pages.dev, mobile and desktop, light and dark, every page within budget (the step 15 section). Still open: a run on the deployed site. |
 
 ### Lighthouse / web performance release gate
 
