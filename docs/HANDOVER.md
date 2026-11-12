@@ -141,12 +141,12 @@ The release steps above are for Cloudflare Pages only. Another host needs this f
 
 ## Pending first runs
 
-- **No CI** (V21, 11 Nov 2026): TB Health uses no GitHub Actions, so `.github/workflows/ci.yml` is gone, and every check runs on the Mac through the guard. The Linux run is `scripts/linux-check.sh` (next section). It isn't required before a release (R2), and it hasn't been run yet. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
+- **No CI** (V21, 11 Nov 2026): TB Health uses no GitHub Actions, so `.github/workflows/ci.yml` is gone, and every check runs on the Mac through the guard. The Linux run is `scripts/linux-check.sh` (next section). The launch went without it (R2); whether a later release runs it is your call. It hasn't been run yet. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
 - **Outside links** (L8): `node scripts/outside-links.mjs --fetch` asks each of the 28 cited sources whether it still answers. It contacts those 23 sites only (it reports redirects instead of following them), so it waits for your OK. Dead or moved sources go to the content owner.
 
 ## Linux check on the Mac
 
-With no GitHub Actions (V21), this is how to run the tests on Linux before a release, if you want to: `scripts/linux-check.sh` runs the install, the type check, the unit tests, both builds (the full list, then the 93-row sample the browser tests use), every browser project, the build without Check and `npm audit --omit=dev`, in Docker on this Mac, against the commit you'll release. It isn't required before a release (R2). It runs on arm64 Linux, with the Playwright image's fonts and libraries (Liberation Sans stands in for Arial), and as root; the script's header lists how it runs.
+With no GitHub Actions (V21), this is how to run the tests on Linux before a release, if you want to: `scripts/linux-check.sh` runs the install, the type check, the unit tests, both builds (the full list, then the 93-row sample the browser tests use), every browser project, the build without Check and `npm audit --omit=dev`, in Docker on this Mac, against the commit you'll release. The launch went without it (R2); whether a later release runs it is your call. It runs on arm64 Linux, with the Playwright image's fonts and libraries (Liberation Sans stands in for Arial), and as root; the script's header lists how it runs.
 
 **Results: not run yet.** The script has never produced results (V15), so no release evidence comes from it so far.
 

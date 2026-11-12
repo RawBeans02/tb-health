@@ -20,6 +20,7 @@ The lead's calls in step 15 that you can overrule (each report explains them):
 ## Before the step 15 release
 
 After your OK on the test copy: you merge `build/15-fix-pass` into `main` (the lead hands you the command), then release with HANDOVER's "Each release" (Check off, `--accept=review` for R1) and run its live-site check. The Cloudflare project is `tb-ph`, and the address stays https://tb-ph.pages.dev.
+- **The Linux check before this release?** `scripts/linux-check.sh` (Docker on the Mac, HANDOVER's "Linux check on the Mac") has never run, and the launch went without it (R2). Default: release step 15 without it too; every other suite ran on the Mac.
 
 ## Decided (in `docs/decisions.md`)
 

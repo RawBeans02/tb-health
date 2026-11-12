@@ -17,7 +17,7 @@ The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
 ### V21. No GitHub Actions (goes further than D22's 6 November amendment)
 - **TB Health uses no GitHub Actions, and neither do the owner's other personal projects.** The owner said it in the Account Admin's chat, which relayed it to the stand-in lead: "we wont use the run actions, we only did that before for the kitamo, but these are not website products that require a prod, these are personal projects".
-- No workflow is planned, added or fixed. Every check runs locally on the Mac, through the memory guard (`_handoff/lowmem-run.sh`). The Linux check is `scripts/linux-check.sh`, in Docker on the Mac (D22, amended 6 Nov); it isn't required before a release (R2), and it hasn't been run yet.
+- No workflow is planned, added or fixed. Every check runs locally on the Mac, through the memory guard (`_handoff/lowmem-run.sh`). The Linux check is `scripts/linux-check.sh`, in Docker on the Mac (D22, amended 6 Nov). The launch went without it (R2); whether a later release runs it is the owner's call. It hasn't been run yet.
 - D22's 6 November amendment had kept `.github/workflows/ci.yml`, manual only, "if the hold is lifted". This decision goes further: there's no GitHub run to keep it for.
 - **The stand-in lead's call, which the owner can object to:** step 15.7 removed `.github/workflows/ci.yml`. It had only a manual trigger, and GitHub refused each run started with it before any step ran (D22). `scripts/linux-check.sh` is now the only definition of the Linux check, and HANDOVER and PLAN's D22 say so. The decision waited for 15.7 because the step 15.3 session shared the checkout.
 
