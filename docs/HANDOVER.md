@@ -135,12 +135,61 @@ A test copy is a non-production build deployed as a preview, at `https://test.<s
 
 The release steps above are for Cloudflare Pages only. Another host needs this first:
 - **Netlify:** `netlify deploy` builds the project again unless given `--no-build`, and that build would have no `SITE_URL`, `TBPH_PRODUCTION` or `TBPH_CHECK`: a non-production site, and in a launch without Check, the unreviewed check back. It also needs 404 rules in a `netlify.toml`, most specific first: `/fil/place/*` to `/fil/place/404.html`, `/place/*` to `/place/404.html`, then `/fil/*` to `/fil/404.html`, each with status 404. It reads `_headers`.
-- **GitHub Pages:** it ignores `_headers`, so it can't send our security headers (HSTS, frame-ancestors, Permissions-Policy, nosniff) or the noindex, and it serves only the English root 404. `post-deploy-check` fails there by design. It also needs a `.nojekyll` file and a GitHub Actions deploy of `dist/`. See PLAN §3, Host.
+- **GitHub Pages:** it ignores `_headers`, so it can't send our security headers (HSTS, frame-ancestors, Permissions-Policy, nosniff) or the noindex, and it serves only the English root 404. `post-deploy-check` fails there by design. It also needs a `.nojekyll` file and a GitHub Actions deploy of `dist/`, which V21 (no GitHub Actions) rules out. See PLAN §3, Host.
 
 ## Pending first runs
 
-- **CI** (`.github/workflows/ci.yml`, D22): manual only. GitHub offers a manual workflow only once its file is on the default branch, so start it from the repository's Actions tab after the merge to `main`; it runs the type check, unit tests, the build, every browser project and the Check-off build. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
+- **No CI** (V21, 11 Nov 2026): TB Health uses no GitHub Actions, so `.github/workflows/ci.yml` is gone, and every check runs on the Mac through the guard. The Linux run is `scripts/linux-check.sh` (next section). It isn't required before a release (R2), and it hasn't been run yet. Its `npm audit` sends the dependency list to the npm registry (the same lookup `npm install` does).
 - **Outside links** (L8): `node scripts/outside-links.mjs --fetch` asks each of the 28 cited sources whether it still answers. It contacts those 23 sites only (it reports redirects instead of following them), so it waits for your OK. Dead or moved sources go to the content owner.
+
+## Linux check on the Mac
+
+With no GitHub Actions (V21), this is how to run the tests on Linux before a release, if you want to: `scripts/linux-check.sh` runs the install, the type check, the unit tests, both builds (the full list, then the 93-row sample the browser tests use), every browser project, the build without Check and `npm audit --omit=dev`, in Docker on this Mac, against the commit you'll release. It isn't required before a release (R2). It runs on arm64 Linux, with the Playwright image's fonts and libraries (Liberation Sans stands in for Arial), and as root; the script's header lists how it runs.
+
+**Results: not run yet.** The script has never produced results (V15), so no release evidence comes from it so far.
+
+**A quiet hour.** Docker's VM has about 2 GB, shared with every container, and the guard stops a job above 6.5 GB on the Mac:
+- KitaMo's containers stopped and its heavy jobs paused (ask the Account Admin);
+- Chrome, Codex and ChatGPT quit;
+- Docker Desktop left open.
+
+The script waits for room by itself, without the shared lock: until Memory Used, plus what Docker's VM can still grow, is under the guard's soft limit with 0.15 GB to spare. With the VM asleep that's Memory Used at most about 4.3 GB. It gives up after 2 hours.
+
+**Once:** the image, pulled by its digest, and Node for Linux at the version in `.nvmrc`, checked against nodejs.org's checksums, in the script's folder (`~/tbh-linux-check`; `TBH_LINUX_CHECK_HOME` moves it, but never into the repo or a temporary folder). From the repository folder:
+```
+_handoff/lowmem-run.sh docker pull mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+N=~/tbh-linux-check/node/v22.23.4 && mkdir -p "$N" && cd "$N" && curl -fsSLO https://nodejs.org/dist/v22.23.4/SHASUMS256.txt && curl -fsSLO https://nodejs.org/dist/v22.23.4/node-v22.23.4-linux-arm64.tar.xz && grep ' node-v22.23.4-linux-arm64.tar.xz$' SHASUMS256.txt | shasum -a 256 -c && tar -xJf node-v22.23.4-linux-arm64.tar.xz && cd -
+```
+
+**Each check,** from the repository folder:
+```
+scripts/linux-check.sh <commit>
+```
+It fills a new Docker volume with the commit, straight from git so the file names never pass through the Mac's file system, and checks it holds exactly git's file list. Then it runs each step as one guarded job, in a container capped at 1,400 MB with no swap and a 1 GB Node heap, and never while another container runs. It checks Node and Playwright in every step. It goes on after a failed test step, so one pass shows everything, but stops after a failed `npm ci`. Results go to a new folder, `~/tbh-linux-check/runs/<first 12 characters of the commit>-<UTC time>/`:
+- `linux-check.log`;
+- `summary.tsv`, one row per step;
+- a folder per step with the guard's output, the log, the exit state and the memory figures, plus the Playwright reports for the browser steps.
+
+To rerun from one step on the same volume: `scripts/linux-check.sh --from <step> <commit>`. A new full run of the same commit needs the old volume removed first, with the `docker volume rm` line the script prints at the end. Keep the volume until the results are reviewed.
+
+| Exit | Meaning |
+|---|---|
+| 0 | Every step passed. |
+| 1 | A step failed: see `summary.tsv` and that step's log. |
+| 2 | Wrong arguments, or a missing prerequisite (Docker not running, the image or Node not set up): nothing ran. |
+| 90 | A container named `tbh-linux-ci` is left over from an earlier run. |
+| 91 | Another container was running, or started during a step: pick a quieter hour. |
+| 92 | The volume already exists for a full run, or a rerun found it missing or holding another commit. |
+| 93 | Node, Playwright, the volume's file list or Node's checksum didn't match. |
+| 97 / 98 / 99 | The guard: the lock was busy for 2 h, memory stayed high for 2 h, or it stopped the step. The Mac ran out of room, not a test result. |
+| 125 | A Docker error. |
+| 143 | The container was stopped from outside (`docker stop`). |
+
+A step killed for memory shows as `OOMKilled=true` or `oom_kill` above 0 in its row, whatever its exit code: usually a browser or a test worker is killed and the step exits 1. That's a result to report, not a reason to raise the caps. If the unit tests are killed for memory, the script runs them once more with one worker (`unit-1worker`) and records both.
+
+**To stop a run,** type `docker stop tbh-linux-ci` in another Terminal tab. Ctrl-C in the script's window works too: it stops the container first, then waits for the guard to finish. Never kill the guard (`lowmem-run.sh`): that frees the shared lock while the step goes on running.
+
+**Afterwards,** `docker ps -a --format '{{.Names}}' | grep -x tbh-linux-ci` should print nothing (KitaMo's stopped containers may still be listed by `docker ps -a`; leave them). Keep the image for next time, and quit Docker Desktop when no one else needs it.
 
 ## Device checks
 

@@ -1,7 +1,8 @@
 #!/bin/bash
-# The Linux check (decisions.md D22, amended 6 Nov 2026): runs the steps of
-# .github/workflows/ci.yml, in its order, in Docker on the Mac, one guarded job per step. It
-# mirrors ci.yml step for step, so change the two together.
+# The Linux check (decisions.md D22, amended 6 Nov 2026): the install, type check, unit tests,
+# builds, browser projects, the build without Check and the dependency audit, in Docker on the
+# Mac, one guarded job per step. TB Health uses no GitHub Actions (V21, 11 Nov 2026), so this
+# script is the only definition of the Linux check.
 #
 #   scripts/linux-check.sh <commit>                 full run, in a new volume holding <commit>
 #   scripts/linux-check.sh --from <step> <commit>   rerun from <step>, in the volume a full run filled
@@ -9,18 +10,18 @@
 # Steps: fill, npm-ci, check, unit, build, chromium, webkit, pwa, phones, no-check, audit.
 # unit-1worker (npm test -- --maxWorkers=1) runs after unit only if unit was killed for memory.
 #
-# How it differs from ci.yml on GitHub:
+# How it runs:
 # - Platform: arm64 Linux in Docker Desktop's VM, with the Playwright image's fonts and
 #   libraries, running as root.
-# - No `npx playwright install --with-deps`: the image's 1.64.1 browsers and packages stand in.
-# - git archive into a Docker volume instead of checkout. The official Node build that .nvmrc
-#   names is mounted read-only instead of setup-node.
+# - The image's 1.64.1 browsers and packages, with no `npx playwright install --with-deps`.
+# - git archive into a Docker volume, not a checkout. The official Node build that .nvmrc
+#   names is mounted read-only.
 # - Playwright runs from node_modules/.bin, not npx, so only npm ci and npm audit reach the
 #   registry (test:no-check's own npx finds the same local copy, checked before each step).
-# - Later steps still run after a failed test step; ci.yml stops at the first failure, except
-#   for the audit.
+# - Later steps still run after a failed test step, so one pass shows everything; the audit
+#   runs last.
 # - Each container gets 1,400 MB with no swap and a 1 GB Node heap.
-# As on GitHub's 4-vCPU runner: Playwright's 1 worker (no E2E_WORKERS) and Vitest's 3 forks.
+# - Playwright's 1 worker (no E2E_WORKERS) and Vitest's 3 forks, as on a 4-vCPU machine.
 #
 # One-time setup (docs/HANDOVER.md, "Linux check on the Mac"): pull IMAGE by its digest, and put
 # Node's linux tarball, its SHASUMS256.txt and the extracted tree in
@@ -70,7 +71,7 @@ utc() { date -u +%Y-%m-%dT%H:%M:%SZ; }
 say() { echo "linux-check: $*"; }
 die() { echo "linux-check: $1" >&2; exit "${2:-2}"; }
 
-# Each step's command in the container. ci.yml's npx becomes node_modules/.bin.
+# Each step's command in the container, Playwright from node_modules/.bin.
 step_cmd() {
   case $1 in
     npm-ci) echo 'uname -m; . /etc/os-release && echo "$PRETTY_NAME"; id; echo "image node: $(/usr/bin/node -v 2>/dev/null || echo none)"; echo "fonts: $(fc-list | wc -l) files; Arial: $(fc-match Arial)"; npm ci' ;;
