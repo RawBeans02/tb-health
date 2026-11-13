@@ -1,21 +1,12 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 13 November 2026, after the step 15 release. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`; step 15's checks and the per-page design review are in `docs/AUDIT-build.md` (its first section); the step 15 release is in `docs/release-2026-11-13.md`.
+Kept by the TB Health lead. Updated 14 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`; step 15's checks and the per-page design review are in `docs/AUDIT-build.md` (its first section); the step 15 release is in `docs/release-2026-11-13.md`.
 
 ## Now
 
 - **Step 15 is live** at https://tb-ph.pages.dev since 13 November, and you reported your phone check the same night: "check done, its great, even the night mode" (R4). If something from the device list in `docs/AUDIT-build.md` ("The device list (step 15)") shows up later, tell the lead: the phone, the browser or the installed app, and the page.
 
-Step 15.4 (worst-case data) went live on these defaults; say if any should change.
-- **Badges on one line?** The brief lists `white-space: nowrap` for badges. In Filipino, the Government badge, "Pampubliko (libreng gamutan sa TB)", is wider than a clinic's row on a 320px phone, so on one line it would run off the screen. Default: it wraps onto two even lines and nothing is cut. The other choice is a shorter badge, which is new text for you to write.
-- **Which number Call dials.** The brief says Call "dials the first number". Since the launch (audit O10, option a, kept by R2), it dials the first number any phone can dial, and the whole phone field stays under Details. The two differ only when the first number listed can't be dialled from a mobile, as on Renmar Specialists' Hospital's row (`0935665572/0783052743/…`) or a field such as `518-2632/0922-8162458`. Default: keep the launch rule.
-- **Two small departures from v8**, each only where v8's numbers break a label: the Commute button in a route row pads 14px instead of 18px (at 320px in Filipino, "Paano mag-commute" broke after "mag-"), and the filter segments are at least as wide as their longest word (v8's rule split "Government" mid-word at 1280px). Default: keep both.
-
-The lead's calls in step 15 that you can overrule (each report explains them):
-- **No GitHub Actions (V21):** step 15.7 removed `.github/workflows/ci.yml`, which only ran when started by hand. The Linux check is `scripts/linux-check.sh`, in Docker on the Mac.
-- **Phone feel (15.3):** Home's "I need" rows and Check's answers get the pressed state too; a do-nothing touch listener lets iPhones show it; the Filters sheet is sized in `dvh`, though v8's Places prototype keeps `vh`.
-- **The Places map (V22):** the device's main pointer decides, so a touch-screen laptop keeps one-finger drag; no hint about two fingers (a hint would be new text for you).
-- **The Filters sheet (15.5):** no spring or rubber band when it's pulled up; the device check decides whether it needs them.
+Step 15's defaults are settled: you kept them all on 14 November (V23).
 
 ## Before a later release
 
@@ -24,6 +15,7 @@ The lead's calls in step 15 that you can overrule (each report explains them):
 
 ## Decided (in `docs/decisions.md`)
 
+- **V23, 14 Nov ("Keep them all"):** step 15's defaults stay as they went live: the Filipino badge wraps at 320px, Call keeps the launch rule, the two small departures from v8, no GitHub Actions, the phone-feel calls, the map's pointer rule without a two-finger hint, and no spring on the Filters sheet.
 - **R3, 13 Nov ("Yes, release"):** step 15 went live with the 13 strings that wait on the clinical review, as at the launch (`--accept=review`); the review itself stays open.
 - **R4, 13 Nov ("I'll check them"):** you check step 15's device list on your phones, after the release. Done the same night: "check done, its great, even the night mode".
 

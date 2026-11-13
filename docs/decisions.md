@@ -4,6 +4,21 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 14 November 2026 (owner, in chat with the lead)
+
+### V23. Step 15's defaults stay as they went live
+- **The owner keeps every step 15 default listed under "Now" in `docs/owner-queue.md`.** The owner answered "Keep them all" to the lead's question "Keep all of step 15's defaults as they went live?" on 14 Nov 2026, after the lead's review of the stand-in lead's step 15 work (9075def to ddb4317) found no defects.
+- From step 15.4 (worst-case data):
+  - in Filipino, the Government badge "Pampubliko (libreng gamutan sa TB)" wraps onto two lines on a 320px phone, instead of the brief's `white-space: nowrap`; no shorter badge is needed;
+  - Call keeps the launch rule (audit O10, option a): it dials the first number any phone can dial, and the whole phone field stays under Details;
+  - the two small departures from v8: the Commute button in a route row pads 14px instead of 18px, and the filter segments are at least as wide as their longest word.
+- The lead's calls in step 15:
+  - no GitHub Actions (V21), with the Linux check in Docker on the Mac;
+  - phone feel (15.3): Home's "I need" rows and Check's answers get the pressed state; a do-nothing touch listener lets iPhones show it; the Filters sheet is sized in `dvh`;
+  - the Places map (V22): the device's main pointer decides, so a touch-screen laptop keeps one-finger drag, and no two-finger hint is written;
+  - the Filters sheet (15.5): no spring or rubber band when it's pulled up.
+- Nothing changes in the site, so nothing needs a release.
+
 ## 13 November 2026 (owner, in chat with the stand-in lead and the Account Admin)
 
 ### R4. The owner checks step 15's device list after the release
