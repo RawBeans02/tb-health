@@ -6,7 +6,7 @@ The first two sections are current: step 15, the v8 fix pass (`docs/step-15-fix-
 
 ## Step 15: the v8 fix pass (QA at 15.7, 12 November 2026)
 
-- **Branch / commit:** `build/15-fix-pass`, steps 15.1 to 15.7 on the launch commit (27526c8, `main`). 15.7 changes tests, scripts and docs only, so the pages are 15.5's (87b3b1e). Production is still 27526c8 until the owner's OK on the test copy; the release then runs HANDOVER's "Each release" after the branch is merged.
+- **Branch / commit:** `build/15-fix-pass`, steps 15.1 to 15.7 on the launch commit (27526c8, `main`). 15.7 changes tests, scripts and docs only, so the pages are 15.5's (87b3b1e). Released on 13 November 2026 from ddb4317, live at https://tb-ph.pages.dev (deployment 2789bb48; `docs/release-2026-11-13.md`).
 - **What step 15 changed** (decisions V6 to V22): the v8 copy with no em dashes and " | " titles (15.1, V8, V9); dark mode, following the system with no switch of its own (15.2, V7, V16 to V20); phone feel: no tap flash, a pressed state, `dvh` and `svh`, no overscroll in the installed app (15.3), and one finger scrolls past the Places map (V22, audit O9); the full list's worst rows behind a dev-only switch, with the wrapping fixes they found (15.4); the route's stop discs and the Filters sheet's drag on compositor-friendly properties, with a flick to close (15.5); Install without JavaScript and hidden chevrons (15.6). Per-step reports with their evidence are in the stand-in lead's notes (outside the repository); the commits name each change.
 - **From the interim audit:** fixed by step 15: O4 (the Type filter's mid-word split, 15.4), O5's pressed half (15.3), O9 (V22), C5 and the em dashes (15.1). Still open with the owner: O2, O3, O5's hover half, O18, O24, O27 and the rest listed in `docs/owner-queue.md`.
 
@@ -119,6 +119,8 @@ Checked in code, in desktop Chromium and WebKit and in phone emulation, not yet 
 - **The Filters sheet (15.5):** a flick closes it; a pull past the line that turns back up leaves it open; grabbing it while it slides open takes it from where it is.
 - **Motion (15.5):** the route's draw-in stays smooth on a mid-range Android phone.
 - **Dark mode (15.2):** switching the phone's appearance repaints an open page, the dot story included; the browser's toolbar takes the page's colour in each scheme; the installed app opens light, as its manifest stays light (V7).
+
+**After the release (13 November 2026):** the owner checked the live site and reported "check done, its great, even the night mode" (R4). No item was reported failing.
 
 ## The launch (8 and 9 November 2026)
 

@@ -4,7 +4,7 @@ How to take the build to launch. The decisions themselves are in `docs/owner-que
 
 ## Where the build is
 
-Steps 1–14 are on GitHub, each branch cut from the one before (`build/01-scaffold` … `build/14-release`, then `build/14-launch`), and `main` is the launch commit, 27526c8, live at https://tb-ph.pages.dev since 9 November 2026 (`docs/launch-2026-11-08.md`). Step 15, the v8 fix pass (`docs/step-15-fix-pass.md`), is on `build/15-fix-pass`. The TB Health lead hands over the push and merge commands.
+Steps 1–14 are on GitHub, each branch cut from the one before (`build/01-scaffold` … `build/14-release`, then `build/14-launch`), and the launch commit, 27526c8, went live at https://tb-ph.pages.dev on 9 November 2026 (`docs/launch-2026-11-08.md`). Step 15, the v8 fix pass (`docs/step-15-fix-pass.md`), was built on `build/15-fix-pass` and went live on 13 November 2026, released from ddb4317 (deployment 2789bb48, `docs/release-2026-11-13.md`). The TB Health lead hands over the push and merge commands.
 
 ## Before launch: what only you can do
 
@@ -131,7 +131,15 @@ A test copy is a non-production build deployed as a preview, at `https://test.<s
 - **Without Check, like production** (V15): `TBPH_CHECK=false` leaves the unreviewed symptom check out. Drop it only for a reviewer who needs to see Check, since the copy is public (next point).
 - **A branch before it's merged:** in step 1, clone that branch instead of `main` (`--branch build/15-fix-pass`), and stop unless the commit it prints is the one you pushed.
 - **It's public too:** anyone who has its address, or guesses it, can open it, and it carries whatever the build has. Share it only with reviewers, or turn on the project's preview access policy (Settings › General › Enable access policy; Cloudflare's docs: it limits previews to your Cloudflare account). Cloudflare Access, for letting in reviewers outside the account, is free for small teams but needs its own setup.
-- `npm run post-deploy-check -- https://test.<subdomain>.pages.dev` works on a test copy too, but it flags the preview's noindex header by design: Cloudflare's header comes on top of the one in `dist/_headers`.
+- `npm run post-deploy-check -- https://test.<subdomain>.pages.dev` works on a test copy too. A copy built with `TBPH_PRODUCTION=` sets noindex in `dist/_headers` itself, so the check passes, as on step 15's test copy (13 November 2026). A preview of a production build would be flagged for Cloudflare's noindex header, which `dist/_headers` doesn't set.
+
+### Rolling back
+
+Each release is a new Cloudflare deployment, and the earlier ones stay in the project. Neither way back has been tried on `tb-ph` yet:
+- **In Cloudflare's dashboard** (the owner's login): Cloudflare Pages can roll production back to an earlier production deployment from the project's list of deployments, with no rebuild.
+- **From the Mac,** without the dashboard: "Each release" for the earlier commit. In step 1, run `git checkout --detach <commit>` after the clone, and stop unless `git rev-parse HEAD` prints that commit. Any key the gate lists needs the owner's yes again, as for any release (R1 and R3 each covered one).
+- `main` doesn't move back by itself, so the next release ships what's on `main` again. If the rollback should last, the owner decides whether to revert on `main` first.
+- Each release's record names its deployment: the launch is 381d34e7 (27526c8, `docs/launch-2026-11-08.md`), step 15 is 2789bb48 (ddb4317, `docs/release-2026-11-13.md`).
 
 ## Other hosts (not set up)
 

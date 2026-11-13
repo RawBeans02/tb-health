@@ -4,6 +4,17 @@ Decisions the owner (Rovince) made, recorded by the TB Health lead. Question num
 
 The lead keeps this file. The Jr. Builder reads it and doesn't edit it.
 
+## 13 November 2026 (owner, in chat with the stand-in lead and the Account Admin)
+
+### R4. The owner checks step 15's device list after the release
+- **The owner checks the device list on a real iPhone and an Android phone, after the release.** The owner answered "I'll check them" to the stand-in lead's question "Who checks the site on a real iPhone and Android phone after the release?" on 13 Nov 2026. The list is "The device list (step 15)" in `docs/AUDIT-build.md`.
+- **Done the same night:** the owner reported "check done, its great, even the night mode" on 13 Nov 2026. No item was reported failing.
+
+### R3. The step 15 release ships the strings that wait on the clinical review (release key [review])
+- **The owner accepts the release check's [review] key for the step 15 release:** the 13 strings R1 lists ship again before their clinical review. Twelve are word for word what the launch shipped; `learn.l6_p5`'s em dash became a full stop, in English and Filipino (the v8 pack, V8). The owner answered "Yes, release" to the stand-in lead's question "Release step 15 to the live site, with the 13 review strings as at launch?" on 13 Nov 2026, and gave the Account Admin the same answer before it ran the release.
+- **What follows:** the release ran `npm run release-check -- --accept=review`, and the gate accepted [review] only (`docs/release-2026-11-13.md`). Like R1, this covers one release: a later release asks again.
+- **Still open:** the clinical review itself. The [REVIEW] flags stay on these strings until it is recorded.
+
 ## 11 November 2026, after step 15.3 (owner, in chat with the stand-in lead)
 
 ### V22. On touch screens, one finger scrolls the page past the Places map (audit O9)

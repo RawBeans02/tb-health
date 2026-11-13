@@ -1,13 +1,12 @@
 # JR resume — TB Health
 
-## Now (13 Nov 2026): step 15 is built, and the release waits on the owner
-- **Step 15, the v8 fix pass, is built and pushed:** steps 15.1 to 15.7 are on `build/15-fix-pass` at ddb4317. The brief is `docs/step-15-fix-pass.md`, the decisions are V6 to V22 in `docs/decisions.md`, and the QA, Lighthouse and design review are in `docs/AUDIT-build.md` (its step 15 section). `main` is still the launch commit, 27526c8, and the live site, https://tb-ph.pages.dev, is still the launch build.
-- **What's left, each step after its own yes from the owner:**
-  1. A test copy of ddb4317, without Check and with noindex, at https://test.tb-ph.pages.dev (HANDOVER: "Test copies", "A branch before it's merged"), and a check of it.
-  2. The owner looks at the test copy and says OK for production.
-  3. ddb4317 goes to `main` (a fast-forward), then HANDOVER's "Each release" with `SITE_URL=https://tb-ph.pages.dev TBPH_PRODUCTION=true TBPH_CHECK=false`. The gate should block only on [review], the 13 strings that wait on the clinical review. The owner accepted them for the launch (R1); accepting them again is his call.
-  4. A release record like `docs/launch-2026-11-08.md`, and this file brought up to date.
-- **The owner's open questions** are in `docs/owner-queue.md` under "Now".
+## Now (13 Nov 2026): step 15 is live
+- **Step 15, the v8 fix pass, went live on 13 Nov 2026** at https://tb-ph.pages.dev: `main` moved from the launch commit, 27526c8, to ddb4317, released from a fresh clone (deployment 2789bb48). The record is `docs/release-2026-11-13.md`. The brief is `docs/step-15-fix-pass.md`, the decisions are V6 to V22, R3 and R4 in `docs/decisions.md`, and the QA, Lighthouse and design review are in `docs/AUDIT-build.md` (its step 15 section).
+- **What's left:**
+  1. The owner's phone check (R4) is done: "check done, its great, even the night mode" (13 Nov). Fix anything reported later from "The device list (step 15)" in `docs/AUDIT-build.md`, each fix in its own commit, released after the owner's yes.
+  2. The owner's open questions in `docs/owner-queue.md`: "Now" (step 15's defaults, each the owner's to overrule), "Before a later release" and "After the launch".
+  3. The clinical review (Check, Learn L6 and the route's six stop strings) and the Filipino review stay open; the [REVIEW] and FIL-REVIEW flags stay until each is recorded.
+- **The way back:** HANDOVER's "Rolling back" (the launch is deployment 381d34e7).
 - **The sections below stop at step 14,** and the session addresses under Contacts are out of date. The detailed handover for the next lead is in the local notes on the owner's Mac (`~/Documents/tb-health/_local/HANDOFF.md`, kept out of git). Ask the owner who leads now.
 
 ## Done

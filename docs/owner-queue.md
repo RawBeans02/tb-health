@@ -1,12 +1,12 @@
 # Waiting on the owner
 
-Kept by the TB Health lead. Updated 12 November 2026. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`; step 15's checks and the per-page design review are in `docs/AUDIT-build.md` (its first section).
+Kept by the TB Health lead. Updated 13 November 2026, after the step 15 release. Answer in chat in any order; each answer is recorded in `docs/decisions.md`. The O and C numbers point to `docs/audit-2026-11-05.md`, which gives the options and the reasons. What changed for the launch, and its test evidence, is in `docs/launch-2026-11-08.md`; step 15's checks and the per-page design review are in `docs/AUDIT-build.md` (its first section); the step 15 release is in `docs/release-2026-11-13.md`.
 
 ## Now
 
-- **The step 15 test copy.** Once you've deployed it (the lead hands you the line), check it at https://test.tb-ph.pages.dev. It's built like production, without Check (V15), and search engines are told not to index it. Production changes only after your OK. On a real iPhone and Android phone, the device list in `docs/AUDIT-build.md` ("The device list (step 15)") is what emulation couldn't confirm.
+- **Step 15 is live** at https://tb-ph.pages.dev since 13 November, and you reported your phone check the same night: "check done, its great, even the night mode" (R4). If something from the device list in `docs/AUDIT-build.md` ("The device list (step 15)") shows up later, tell the lead: the phone, the browser or the installed app, and the page.
 
-Step 15.4 (worst-case data) went ahead on these defaults; say if any should change.
+Step 15.4 (worst-case data) went live on these defaults; say if any should change.
 - **Badges on one line?** The brief lists `white-space: nowrap` for badges. In Filipino, the Government badge, "Pampubliko (libreng gamutan sa TB)", is wider than a clinic's row on a 320px phone, so on one line it would run off the screen. Default: it wraps onto two even lines and nothing is cut. The other choice is a shorter badge, which is new text for you to write.
 - **Which number Call dials.** The brief says Call "dials the first number". Since the launch (audit O10, option a, kept by R2), it dials the first number any phone can dial, and the whole phone field stays under Details. The two differ only when the first number listed can't be dialled from a mobile, as on Renmar Specialists' Hospital's row (`0935665572/0783052743/…`) or a field such as `518-2632/0922-8162458`. Default: keep the launch rule.
 - **Two small departures from v8**, each only where v8's numbers break a label: the Commute button in a route row pads 14px instead of 18px (at 320px in Filipino, "Paano mag-commute" broke after "mag-"), and the filter segments are at least as wide as their longest word (v8's rule split "Government" mid-word at 1280px). Default: keep both.
@@ -17,12 +17,15 @@ The lead's calls in step 15 that you can overrule (each report explains them):
 - **The Places map (V22):** the device's main pointer decides, so a touch-screen laptop keeps one-finger drag; no hint about two fingers (a hint would be new text for you).
 - **The Filters sheet (15.5):** no spring or rubber band when it's pulled up; the device check decides whether it needs them.
 
-## Before the step 15 release
+## Before a later release
 
-After your OK on the test copy: you merge `build/15-fix-pass` into `main` (the lead hands you the command), then release with HANDOVER's "Each release" (Check off, `--accept=review` for R1) and run its live-site check. The Cloudflare project is `tb-ph`, and the address stays https://tb-ph.pages.dev.
-- **The Linux check before this release?** `scripts/linux-check.sh` (Docker on the Mac, HANDOVER's "Linux check on the Mac") has never run, and the launch went without it (R2). Default: release step 15 without it too; every other suite ran on the Mac.
+- **The Linux check?** `scripts/linux-check.sh` (Docker on the Mac, HANDOVER's "Linux check on the Mac") has never run: the launch (R2) and step 15 went without it, on the default. Your call before the next release; every other suite runs on the Mac.
+- **The clinical review's 13 strings:** R1 and R3 each accepted them for one release, so the next release asks again unless the review is recorded first.
 
 ## Decided (in `docs/decisions.md`)
+
+- **R3, 13 Nov ("Yes, release"):** step 15 went live with the 13 strings that wait on the clinical review, as at the launch (`--accept=review`); the review itself stays open.
+- **R4, 13 Nov ("I'll check them"):** you check step 15's device list on your phones, after the release. Done the same night: "check done, its great, even the night mode".
 
 - **Q7, 7 Nov:** a public launch on a free `*.pages.dev` address, built without Check (`TBPH_CHECK=false`).
 - **Q8, 7 Nov:** the full PhilHealth list, geocoded with Nominatim; the run and its 8 Nov corrections are in `docs/data-refresh-2026-11-07.md`.
